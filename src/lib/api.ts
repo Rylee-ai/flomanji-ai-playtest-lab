@@ -1,47 +1,11 @@
-
-import OpenAI from "openai";
 import { AgentMessage, AgentRole, SimulationConfig, SimulationResult, SimulationSummary } from "@/types";
 import { simulateRandomId } from "@/lib/utils";
 
 // Local storage keys
 const SIMULATIONS_STORAGE_KEY = "flomanji:simulations";
 
-// OpenAI client instance
-// In a real implementation, this would use environment variables from Netlify Functions
-let openaiApiKey = localStorage.getItem("openai-api-key") || "";
-let openAIClient: OpenAI | null = null;
-
-// Initialize OpenAI client
-export const initializeOpenAI = (apiKey: string) => {
-  try {
-    openaiApiKey = apiKey;
-    localStorage.setItem("openai-api-key", apiKey);
-    openAIClient = new OpenAI({
-      apiKey,
-      dangerouslyAllowBrowser: true // In production this would be in a serverless function
-    });
-    return true;
-  } catch (error) {
-    console.error("Failed to initialize OpenAI client:", error);
-    return false;
-  }
-};
-
-// Get OpenAI client (or initialize if needed)
-export const getOpenAIClient = (): OpenAI => {
-  if (!openAIClient && openaiApiKey) {
-    openAIClient = new OpenAI({
-      apiKey: openaiApiKey,
-      dangerouslyAllowBrowser: true
-    });
-  }
-  
-  if (!openAIClient) {
-    throw new Error("OpenAI client not initialized. Please set API key.");
-  }
-  
-  return openAIClient;
-};
+// OpenRouter client configuration
+const OPENROUTER_API_KEY = localStorage.getItem("openrouter-api-key") || "";
 
 // Agent-specific system prompts
 const getGMSystemPrompt = (rules: string, scenario: string): string => {
@@ -91,25 +55,32 @@ const createChatCompletion = async (
   messages: {role: string, content: string}[]
 ): Promise<string> => {
   try {
-    const openai = getOpenAIClient();
-    
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: systemPrompt },
-        ...messages.map(msg => ({
-          role: msg.role === "user" ? "user" : "assistant",
-          content: msg.content
-        } as OpenAI.ChatCompletionMessageParam))
-      ],
-      temperature: 0.7,
-      max_tokens: 2000
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'HTTP-Referer': window.location.href,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'anthropic/claude-3-opus',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...messages.map(msg => ({
+            role: msg.role === "user" ? "user" : "assistant",
+            content: msg.content
+          }))
+        ],
+        temperature: 0.7,
+        max_tokens: 2000
+      }),
     });
     
-    return response.choices[0]?.message?.content || "No response generated";
+    const data = await response.json();
+    return data.choices[0]?.message?.content || "No response generated";
   } catch (error) {
     console.error("Error creating chat completion:", error);
-    throw new Error(`Failed to get response from OpenAI: ${error}`);
+    throw new Error(`Failed to get response from OpenRouter: ${error}`);
   }
 };
 
