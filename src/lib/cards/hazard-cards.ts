@@ -3,57 +3,72 @@ import { HazardCard } from '@/types/cards/hazard';
 
 export const HAZARD_CARDS: HazardCard[] = [
   {
-    id: "panther-ambush",
-    name: "Panther Ambush",
+    id: "sudden-downpour",
+    name: "Sudden Downpour",
     type: "hazard",
+    subType: "environmental",
     icons: [
-      { symbol: "⚔️", meaning: "Fight" },
+      { symbol: "🌧️", meaning: "Weather" },
       { symbol: "🌳", meaning: "Forest" }
     ],
-    keywords: ["Creature", "Ambush", "Forest"],
+    keywords: ["Environmental", "Wet"],
     difficultyClasses: {
-      fight: 11,
-      flee: 9,
-      negotiate: 13,
-      outsmart: 10
+      grit: 7
     },
-    onFailure: "Take 2 Damage and gain 1 Weirdness",
     rules: [
-      "Surprise Attack: -1 penalty on first response roll",
-      "On Success: Draw 1 Treasure"
+      "Grit Check DC 7 → Failure: Choose to Lose 1 Action or Gain 1 Weirdness",
+      "Rain Poncho: Auto-Success"
     ],
-    flavor: "Silent shadows with gleaming eyes.",
-    imagePrompt: "Sleek black panther emerging from dense foliage, eyes reflecting neon glow"
+    onFailure: "Choose: Lose 1 Action OR Gain 1 Weirdness",
+    gearBonuses: [
+      {
+        itemName: "Rain Poncho",
+        effect: "autoSuccess"
+      }
+    ],
+    flavor: "Blue skies, then sheets of rain—welcome to Flomanji.",
+    imagePrompt: "Thick sheets of rain slamming into a palm-lined street, harsh backlighting creating heavy silhouettes; neon pastel reflections on wet asphalt"
   },
   {
-    id: "quicksand-bog",
-    name: "Quicksand Bog",
+    id: "heat-stroke-risk",
+    name: "Heat Stroke Risk",
     type: "hazard",
+    subType: "environmental",
     icons: [
-      { symbol: "🏃", meaning: "Flee" },
-      { symbol: "🐊", meaning: "Swamp" }
+      { symbol: "☀️", meaning: "Weather" },
+      { symbol: "🏜️", meaning: "Exposed" }
     ],
-    keywords: ["Environmental", "Trap", "Swamp"],
+    keywords: ["Environmental", "Heat"],
     difficultyClasses: {
-      fight: 12,
-      flee: 10,
-      negotiate: 15,
-      outsmart: 8
+      grit: 7
     },
-    onFailure: "Take 1 Damage and discard 1 Gear card",
     rules: [
-      "Slow Sink: Each round in the Quicksand adds +1 to all DCs",
-      "On Success: Safe passage"
+      "Grit Check DC 7 (DC 9 if you lack Drink Gear) → Failure: Take 1 Damage",
+      "Bottled Water: Auto-Success",
+      "Sturdy Hat: +1 Bonus"
     ],
-    flavor: "The ground betrays with a hungry embrace.",
-    imagePrompt: "Bubbling mud surface with half-submerged debris, a hand reaching desperately upward"
+    onFailure: "Take 1 Damage",
+    gearBonuses: [
+      {
+        itemName: "Bottled Water",
+        effect: "autoSuccess"
+      },
+      {
+        itemName: "Sturdy Hat",
+        effect: "bonus",
+        bonusValue: 1
+      }
+    ],
+    flavor: "The sun feels like a lead weight.",
+    imagePrompt: "A lone figure clutching their head under a blistering sun, heat haze shimmering off cracked pavement; vibrant neon-yellow sky"
   },
   {
     id: "meth-gator",
     name: "Meth Gator",
     type: "hazard",
+    subType: "creature",
     icons: [
-      { symbol: "⚔️", meaning: "Fight" },
+      { symbol: "🐊", meaning: "Creature" },
       { symbol: "🐊", meaning: "Swamp" },
       { symbol: "☣️", meaning: "Toxic" }
     ],
@@ -64,14 +79,14 @@ export const HAZARD_CARDS: HazardCard[] = [
       negotiate: 14,
       outsmart: 10
     },
-    onFailure: "Take 3 Damage and gain 2 Weirdness",
-    bossHazard: true,
     rules: [
       "Boss: HP = 3 × number of Survivors",
       "Toxic Bite: On failed Fight check, gain 1 Weirdness",
       "Chaos Strike: During Chaos Phase, deals 1 Damage to closest Survivor",
       "Trophy: On defeat, one player may take the Meth Gator Tooth artifact"
     ],
+    onFailure: "Take 3 Damage and gain 2 Weirdness",
+    bossHazard: true,
     flavor: "Chemical fury and ancient hunger in one package.",
     imagePrompt: "Massive alligator with glowing green eyes and crystalline scales, jaw agape with chemical steam rising from its mouth"
   }
