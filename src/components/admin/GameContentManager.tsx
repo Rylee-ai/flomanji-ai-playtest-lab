@@ -2,14 +2,6 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Plus } from "lucide-react";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
@@ -21,8 +13,10 @@ import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
 import { GEAR_CARDS } from "@/lib/cards/gear-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
-import { CardDisplay } from "@/components/cards/CardDisplay";
 import { GameCard } from "@/types/cards";
+import { TreasureCardsTable } from "./tables/TreasureCardsTable";
+import { HazardCardsTable } from "./tables/HazardCardsTable";
+import { CardPreviewModal } from "./CardPreviewModal";
 
 const GameContentManager = () => {
   const [selectedCard, setSelectedCard] = React.useState<string | null>(null);
@@ -44,6 +38,12 @@ const GameContentManager = () => {
     return allCards.find(card => card.id === id);
   };
 
+  const handleViewCard = (id: string) => {
+    setSelectedCard(id);
+  };
+
+  const card = selectedCard ? getCardById(selectedCard) : null;
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -62,79 +62,28 @@ const GameContentManager = () => {
         >
           <TabsList className="flex flex-wrap">
             <TabsTrigger value="treasure">Treasure Cards</TabsTrigger>
-            <TabsTrigger value="secret">Secret Objectives</TabsTrigger>
+            <TabsTrigger value="hazard">Hazard Cards</TabsTrigger>
             <TabsTrigger value="automa">Automa Cards</TabsTrigger>
             <TabsTrigger value="region">Region Cards</TabsTrigger>
             <TabsTrigger value="npc">NPC Cards</TabsTrigger>
             <TabsTrigger value="mission">Mission Sheets</TabsTrigger>
-            <TabsTrigger value="hazard">Hazard Cards</TabsTrigger>
             <TabsTrigger value="gear">Gear Cards</TabsTrigger>
             <TabsTrigger value="chaos">Chaos Cards</TabsTrigger>
             <TabsTrigger value="flomanjified">Flomanjified Roles</TabsTrigger>
           </TabsList>
 
           <TabsContent value="treasure" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Value</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {TREASURE_CARDS.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>Treasure</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>{card.value || "-"}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <TreasureCardsTable
+              cards={TREASURE_CARDS}
+              onViewCard={handleViewCard}
+            />
           </TabsContent>
 
-          <TabsContent value="secret" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Alignment</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {SECRET_OBJECTIVES.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>{card.alignment}</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+          <TabsContent value="hazard" className="space-y-4">
+            <HazardCardsTable
+              cards={HAZARD_CARDS}
+              onViewCard={handleViewCard}
+            />
           </TabsContent>
 
           <TabsContent value="automa" className="space-y-4">
@@ -261,39 +210,6 @@ const GameContentManager = () => {
             </Table>
           </TabsContent>
 
-          <TabsContent value="hazard" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Fight DC</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Boss?</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {HAZARD_CARDS.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>{card.difficultyClasses.fight || "-"}</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>{card.bossHazard ? "Yes" : "No"}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TabsContent>
-
           <TabsContent value="gear" className="space-y-4">
             <Table>
               <TableHeader>
@@ -394,29 +310,11 @@ const GameContentManager = () => {
           </TabsContent>
         </Tabs>
 
-        {selectedCard && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-background p-6 rounded-lg max-w-xl w-full">
-              <div className="flex justify-between items-start mb-4">
-                <h3 className="text-lg font-semibold">Card Preview</h3>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setSelectedCard(null)}
-                >
-                  Close
-                </Button>
-              </div>
-              <div className="flex justify-center">
-                {getCardById(selectedCard) && (
-                  <CardDisplay 
-                    card={getCardById(selectedCard)!} 
-                    showDetails={true}
-                  />
-                )}
-              </div>
-            </div>
-          </div>
+        {card && (
+          <CardPreviewModal
+            card={card}
+            onClose={() => setSelectedCard(null)}
+          />
         )}
       </CardContent>
     </Card>
