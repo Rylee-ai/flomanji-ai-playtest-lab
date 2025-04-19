@@ -1,3 +1,4 @@
+
 // Agent-specific system prompts
 export const getGMSystemPrompt = (rules: string, scenario: string): string => {
   return `You are the Game Master for Flomanji, a semi-cooperative survival horror card-and-dice adventure game set in a heightened 1987 Florida.
@@ -21,6 +22,8 @@ In your responses:
 
 Remember that at Heat 9, all players gain +1 Weirdness each round, and at Heat 10 the game ends in defeat.`;
 };
+
+import { FlomanjiCharacter } from "@/types";
 
 export const getPlayerSystemPrompt = (rules: string, playerIndex: number, character?: FlomanjiCharacter): string => {
   const characterInfo = character 

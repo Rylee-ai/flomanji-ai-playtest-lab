@@ -1,5 +1,5 @@
 
-import { FlomanjiCharacter } from "@/types";
+import { FlomanjiCharacter, CharacterStats } from "@/types";
 
 export const PREDEFINED_CHARACTERS: FlomanjiCharacter[] = [
   {
@@ -72,6 +72,6 @@ export const getCharacterById = (id: string): FlomanjiCharacter | undefined => {
 };
 
 export const validateCharacterStats = (stats: CharacterStats): boolean => {
-  const totalPoints = Object.values(stats).reduce((sum, stat) => sum + stat, 0);
-  return totalPoints <= 10 && Object.values(stats).every(stat => stat >= 0 && stat <= 5);
+  const totalPoints = Object.values(stats).reduce((sum, stat) => sum + Number(stat), 0);
+  return totalPoints <= 10 && Object.values(stats).every(stat => Number(stat) >= 0 && Number(stat) <= 5);
 };
