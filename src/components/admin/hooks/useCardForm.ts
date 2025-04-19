@@ -74,7 +74,8 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
       const npcCard = card as NPCCard;
       return {
         checkDC: npcCard.checkDC,
-        actions: npcCard.actions ? JSON.stringify(npcCard.actions) : ""
+        // Fix: properly handle actions as an array instead of a string
+        actions: npcCard.actions || []
       };
     }
     case "gear": {

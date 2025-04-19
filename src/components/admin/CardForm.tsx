@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Dialog,
@@ -109,6 +110,15 @@ export const cardFormSchema = z.object({
 });
 
 export type CardFormValues = z.infer<typeof cardFormSchema>;
+
+// Define the missing interface
+export interface CardFormProps {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (data: CardFormValues) => void;
+  initialData?: GameCard;
+  activeTab: string;
+}
 
 export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: CardFormProps) => {
   const form = useCardForm(initialData);
