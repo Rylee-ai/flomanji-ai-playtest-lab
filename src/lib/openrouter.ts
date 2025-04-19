@@ -1,6 +1,7 @@
 
 // OpenRouter client configuration
 export const OPENROUTER_API_KEY = localStorage.getItem("openrouter-api-key") || "";
+export const OPENROUTER_MODEL = localStorage.getItem("openrouter-model") || "anthropic/claude-3-opus";
 
 // Chat completion helper function
 export const createChatCompletion = async (
@@ -16,7 +17,7 @@ export const createChatCompletion = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3-opus',
+        model: OPENROUTER_MODEL,
         messages: [
           { role: 'system', content: systemPrompt },
           ...messages.map(msg => ({
