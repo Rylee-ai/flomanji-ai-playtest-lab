@@ -1,4 +1,3 @@
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -21,6 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CardType, GameCard } from "@/types/cards";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const cardSchema = z.object({
   id: z.string().min(1, "ID is required"),
@@ -43,16 +43,22 @@ type CardFormProps = {
   onClose: () => void;
   onSubmit: (data: CardFormValues) => void;
   initialData?: GameCard;
-  cardType?: CardType;
+  activeTab?: CardType;
 };
 
-export function CardForm({ open, onClose, onSubmit, initialData, cardType }: CardFormProps) {
+export function CardForm({ 
+  open, 
+  onClose, 
+  onSubmit, 
+  initialData, 
+  activeTab 
+}: CardFormProps) {
   const form = useForm<CardFormValues>({
     resolver: zodResolver(cardSchema),
     defaultValues: initialData || {
       id: "",
       name: "",
-      type: cardType || "treasure",
+      type: activeTab || "treasure",
       icons: [],
       keywords: [],
       rules: [],
@@ -83,6 +89,34 @@ export function CardForm({ open, onClose, onSubmit, initialData, cardType }: Car
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Card Type</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select card type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {["treasure", "artifact", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified", "secret"].map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="id"

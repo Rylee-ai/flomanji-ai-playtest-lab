@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -177,7 +176,7 @@ const GameContentManager = () => {
           onClose={() => setIsFormOpen(false)}
           onSubmit={handleFormSubmit}
           initialData={editingCard}
-          cardType={activeTab as CardType}
+          activeTab={activeTab as CardType}
         />
       </CardContent>
     </Card>
