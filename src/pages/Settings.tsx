@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/sonner";
+import { ExternalLink } from "lucide-react";
 
 const Settings = () => {
   const [apiKey, setApiKey] = useState("");
@@ -25,6 +26,10 @@ const Settings = () => {
       console.error("Error saving API key:", error);
       toast.error("Failed to save API key");
     }
+  };
+
+  const openSupabaseIntegration = () => {
+    window.open("https://supabase.com/docs/guides/platform/oauth-apps", "_blank");
   };
 
   return (
@@ -51,13 +56,22 @@ const Settings = () => {
               placeholder="or-..."
             />
             <p className="text-sm text-muted-foreground">
-              Your API key is stored locally and never sent to our servers. Get your API key from <a href="https://openrouter.ai/keys" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">OpenRouter</a>.
+              📋 Temporary Solution: API key is stored locally and never sent to our servers. 
+              <br />
+              🔒 For enhanced security, we recommend integrating with Supabase for secret management.
             </p>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-between items-center">
           <Button onClick={handleSaveApiKey} disabled={!apiKey}>
             Save API Key
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={openSupabaseIntegration}
+          >
+            Learn about Supabase Integration
+            <ExternalLink className="ml-2 h-4 w-4" />
           </Button>
         </CardFooter>
       </Card>
