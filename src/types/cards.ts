@@ -1,5 +1,5 @@
 
-export type CardType = 'treasure' | 'artifact' | 'automa' | 'secret' | 'hazard' | 'gear' | 'npc' | 'region' | 'chaos';
+export type CardType = 'treasure' | 'artifact' | 'automa' | 'secret' | 'hazard' | 'gear' | 'npc' | 'region' | 'chaos' | 'mission' | 'flomanjified';
 
 export interface CardIcon {
   symbol: string;

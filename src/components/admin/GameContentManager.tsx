@@ -22,13 +22,14 @@ import { GEAR_CARDS } from "@/lib/cards/gear-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
 import { CardDisplay } from "@/components/cards/CardDisplay";
+import { GameCard } from "@/types/cards";
 
 const GameContentManager = () => {
   const [selectedCard, setSelectedCard] = React.useState<string | null>(null);
   const [activeTab, setActiveTab] = React.useState<string>("treasure");
 
-  const getCardById = (id: string) => {
-    const allCards = [
+  const getCardById = (id: string): GameCard | undefined => {
+    const allCards: GameCard[] = [
       ...TREASURE_CARDS,
       ...SECRET_OBJECTIVES,
       ...AUTOMA_CARDS,
@@ -407,10 +408,12 @@ const GameContentManager = () => {
                 </Button>
               </div>
               <div className="flex justify-center">
-                <CardDisplay 
-                  card={getCardById(selectedCard)!} 
-                  showDetails={true}
-                />
+                {getCardById(selectedCard) && (
+                  <CardDisplay 
+                    card={getCardById(selectedCard)!} 
+                    showDetails={true}
+                  />
+                )}
               </div>
             </div>
           </div>

@@ -7,7 +7,7 @@ export interface MissionObjective {
   reward?: string;
 }
 
-export interface MissionSheet extends Omit<GameCard, 'type'> {
+export interface MissionSheet extends GameCard {
   type: 'mission';
   hook: string;
   mapLayout: string;

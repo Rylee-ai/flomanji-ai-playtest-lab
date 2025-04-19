@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { GameCard, SecretObjectiveCard, TreasureCard, AutomaCard } from '@/types/cards';
+import { GameCard, SecretObjectiveCard, TreasureCard, AutomaCard, CardType } from '@/types/cards';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { RegionCard } from '@/types/cards/region';
 import { NPCCard } from '@/types/cards/npc';
