@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
 
@@ -30,7 +31,7 @@ export const ChaosCardForm = ({ form }: ChaosCardFormProps) => {
                 type="number" 
                 placeholder="Heat Change" 
                 {...field}
-                value={field.value || ""}
+                value={field.value ?? ""}
                 onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
               />
             </FormControl>
@@ -48,9 +49,34 @@ export const ChaosCardForm = ({ form }: ChaosCardFormProps) => {
               <Textarea 
                 placeholder="Effect on all players" 
                 {...field}
-                value={field.value || ""}
+                value={field.value ?? ""}
               />
             </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="duration"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Duration</FormLabel>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select duration" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="immediate">Immediate</SelectItem>
+                <SelectItem value="ongoing">Ongoing</SelectItem>
+                <SelectItem value="end-of-round">End of Round</SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
 
@@ -31,6 +32,25 @@ export const GearCardForm = ({ form }: GearCardFormProps) => {
                 placeholder="consumable, tool, weapon, vehicle, supply" 
                 {...field}
                 value={field.value || ""}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="actionCost"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Action Cost</FormLabel>
+            <FormControl>
+              <Input 
+                type="number" 
+                placeholder="Number of actions to use" 
+                {...field}
+                value={field.value || ""}
+                onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
               />
             </FormControl>
             <FormMessage />
@@ -70,6 +90,23 @@ export const GearCardForm = ({ form }: GearCardFormProps) => {
                 {...field}
                 value={field.value || ""}
                 onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="passive"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Passive Effect</FormLabel>
+            <FormControl>
+              <Textarea 
+                placeholder="Passive bonus or effect" 
+                {...field}
+                value={field.value || ""}
               />
             </FormControl>
             <FormMessage />

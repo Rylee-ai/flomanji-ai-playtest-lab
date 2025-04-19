@@ -9,8 +9,7 @@ import { NPCCard } from "@/types/cards/npc";
 import { GearCard } from "@/types/cards/gear";
 import { ChaosCard } from "@/types/cards/chaos";
 import { FlomanjifiedRoleCard } from "@/types/cards/flomanjified";
-import { SecretObjectiveCard } from "@/types/cards";
-import { AutomaCard } from "@/types/cards";
+import { SecretObjectiveCard, AutomaCard } from "@/types/cards";
 
 export const useCardForm = (initialData?: GameCard) => {
   const form = useForm<CardFormValues>({
@@ -51,7 +50,9 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
       return {
         subType: hazardCard.subType,
         difficultyClasses: hazardCard.difficultyClasses,
-        bossHazard: hazardCard.bossHazard
+        bossHazard: hazardCard.bossHazard,
+        onFailure: hazardCard.onFailure,
+        onSuccess: hazardCard.onSuccess
       };
     }
     case "region": {
@@ -59,6 +60,8 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
       return {
         biomeTags: regionCard.biomeTags?.map(tag => tag) || [],
         onEnter: regionCard.onEnter,
+        action: regionCard.action,
+        rest: regionCard.rest,
         bonusZone: regionCard.bonusZone
       };
     }
@@ -74,14 +77,18 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
       return {
         category: gearCard.category,
         consumable: gearCard.consumable,
-        uses: gearCard.uses
+        uses: gearCard.uses,
+        actionCost: gearCard.actionCost,
+        passive: gearCard.passive,
+        statBonus: gearCard.statBonus
       };
     }
     case "chaos": {
       const chaosCard = card as ChaosCard;
       return {
         heatEffect: chaosCard.heatEffect,
-        globalEffect: chaosCard.globalEffect
+        globalEffect: chaosCard.globalEffect,
+        duration: chaosCard.duration
       };
     }
     case "flomanjified": {
@@ -102,7 +109,6 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
     case "automa": {
       const automaCard = card as AutomaCard;
       return {
-        // Include automa specific fields
         movement: automaCard.movement,
         combatBonus: automaCard.combatBonus,
         specialEffect: automaCard.specialEffect

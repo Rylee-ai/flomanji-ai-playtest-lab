@@ -12,25 +12,42 @@ import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
 
-interface NPCCardFormProps {
+interface AutomaCardFormProps {
   form: UseFormReturn<CardFormValues>;
 }
 
-export const NPCCardForm = ({ form }: NPCCardFormProps) => {
+export const AutomaCardForm = ({ form }: AutomaCardFormProps) => {
   return (
     <>
       <FormField
         control={form.control}
-        name="checkDC"
+        name="movement"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Check DC</FormLabel>
+            <FormLabel>Movement</FormLabel>
+            <FormControl>
+              <Input 
+                placeholder="Movement pattern" 
+                {...field}
+                value={field.value || ""}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="combatBonus"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Combat Bonus</FormLabel>
             <FormControl>
               <Input 
                 type="number" 
-                placeholder="Difficulty Check" 
+                placeholder="Combat bonus modifier" 
                 {...field}
-                value={field.value ?? ""}
+                value={field.value || ""}
                 onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
               />
             </FormControl>
@@ -40,15 +57,15 @@ export const NPCCardForm = ({ form }: NPCCardFormProps) => {
       />
       <FormField
         control={form.control}
-        name="actions"
+        name="specialEffect"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Actions</FormLabel>
+            <FormLabel>Special Effect</FormLabel>
             <FormControl>
               <Textarea 
-                placeholder="NPC Actions" 
+                placeholder="Special effect description" 
                 {...field}
-                value={field.value ?? ""}
+                value={field.value || ""}
               />
             </FormControl>
             <FormMessage />

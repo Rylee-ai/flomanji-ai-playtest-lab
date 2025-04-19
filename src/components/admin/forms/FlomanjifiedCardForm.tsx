@@ -29,7 +29,7 @@ export const FlomanjifiedCardForm = ({ form }: FlomanjifiedCardFormProps) => {
               <Input 
                 placeholder="Original character role" 
                 {...field}
-                value={field.value || ""}
+                value={field.value ?? ""}
               />
             </FormControl>
             <FormMessage />
@@ -46,7 +46,7 @@ export const FlomanjifiedCardForm = ({ form }: FlomanjifiedCardFormProps) => {
               <Textarea 
                 placeholder="Action during chaos phase" 
                 {...field}
-                value={field.value || ""}
+                value={field.value ?? ""}
               />
             </FormControl>
             <FormMessage />
@@ -63,7 +63,7 @@ export const FlomanjifiedCardForm = ({ form }: FlomanjifiedCardFormProps) => {
               <Textarea 
                 placeholder="Special ability description" 
                 {...field}
-                value={field.value || ""}
+                value={field.value ?? ""}
               />
             </FormControl>
             <FormMessage />

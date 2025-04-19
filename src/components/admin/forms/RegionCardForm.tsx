@@ -52,6 +52,32 @@ export const RegionCardForm = ({ form }: RegionCardFormProps) => {
       />
       <FormField
         control={form.control}
+        name="action"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Action Effect</FormLabel>
+            <FormControl>
+              <Textarea placeholder="Optional action that can be performed in this region" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="rest"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Rest Effect</FormLabel>
+            <FormControl>
+              <Textarea placeholder="Effects when resting in this region" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
         name="bonusZone"
         render={({ field }) => (
           <FormItem>

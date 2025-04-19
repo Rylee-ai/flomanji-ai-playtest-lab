@@ -27,7 +27,13 @@ export const TreasureCardForm = ({ form }: TreasureCardFormProps) => {
           <FormItem>
             <FormLabel>Value</FormLabel>
             <FormControl>
-              <Input type="number" placeholder="Card Value" {...field} />
+              <Input 
+                type="number" 
+                placeholder="Card Value" 
+                {...field}
+                value={field.value ?? ""}
+                onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -46,7 +52,7 @@ export const TreasureCardForm = ({ form }: TreasureCardFormProps) => {
             </div>
             <FormControl>
               <Switch
-                checked={field.value}
+                checked={field.value || false}
                 onCheckedChange={field.onChange}
               />
             </FormControl>

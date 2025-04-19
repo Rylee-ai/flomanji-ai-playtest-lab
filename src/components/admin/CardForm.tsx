@@ -22,6 +22,7 @@ import { GearCardForm } from "./forms/GearCardForm";
 import { ChaosCardForm } from "./forms/ChaosCardForm";
 import { FlomanjifiedCardForm } from "./forms/FlomanjifiedCardForm";
 import { SecretCardForm } from "./forms/SecretCardForm";
+import { AutomaCardForm } from "./forms/AutomaCardForm";
 
 interface CardFormProps {
   open: boolean;
@@ -54,12 +55,20 @@ const cardFormSchema = z.object({
     flee: z.number().optional(),
     negotiate: z.number().optional(),
     outsmart: z.number().optional(),
+    grit: z.number().optional(),
+    moxie: z.number().optional(),
+    charm: z.number().optional(),
+    weirdSense: z.number().optional()
   }).optional(),
   bossHazard: z.boolean().optional(),
+  onFailure: z.string().optional(),
+  onSuccess: z.string().optional(),
   
   // Region fields
   biomeTags: z.array(z.string()).optional(),
   onEnter: z.string().optional(),
+  action: z.string().optional(),
+  rest: z.string().optional(),
   bonusZone: z.string().optional(),
   
   // NPC fields
@@ -69,10 +78,17 @@ const cardFormSchema = z.object({
   // Gear fields
   category: z.string().optional(),
   uses: z.number().optional(),
+  actionCost: z.number().optional(),
+  passive: z.string().optional(),
+  statBonus: z.object({
+    stat: z.enum(["brawn", "moxie", "charm", "grit", "weirdSense"]).optional(),
+    value: z.number().optional()
+  }).optional(),
   
   // Chaos fields
   heatEffect: z.number().optional(),
   globalEffect: z.string().optional(),
+  duration: z.enum(["immediate", "ongoing", "end-of-round"]).optional(),
   
   // Flomanjified fields
   originalRole: z.string().optional(),
@@ -82,6 +98,11 @@ const cardFormSchema = z.object({
   // Secret Objective fields
   alignment: z.string().optional(),
   winCondition: z.string().optional(),
+  
+  // Automa fields
+  movement: z.string().optional(),
+  combatBonus: z.number().optional(),
+  specialEffect: z.string().optional(),
 });
 
 export type CardFormValues = z.infer<typeof cardFormSchema>;
@@ -112,6 +133,7 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
             {type === "chaos" && <ChaosCardForm form={form} />}
             {type === "flomanjified" && <FlomanjifiedCardForm form={form} />}
             {type === "secret" && <SecretCardForm form={form} />}
+            {type === "automa" && <AutomaCardForm form={form} />}
 
             <DialogFooter>
               <Button type="submit">
