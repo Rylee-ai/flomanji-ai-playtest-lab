@@ -1,8 +1,17 @@
+
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
 import { AUTOMA_CARDS } from "@/lib/cards/automa-cards";
@@ -17,6 +26,13 @@ import { GameCard } from "@/types/cards";
 import { TreasureCardsTable } from "./tables/TreasureCardsTable";
 import { HazardCardsTable } from "./tables/HazardCardsTable";
 import { CardPreviewModal } from "./CardPreviewModal";
+import { AutomaCardsTable } from "./tables/AutomaCardsTable";
+import { RegionCardsTable } from "./tables/RegionCardsTable";
+import { NPCCardsTable } from "./tables/NPCCardsTable";
+import { MissionCardsTable } from "./tables/MissionCardsTable";
+import { GearCardsTable } from "./tables/GearCardsTable";
+import { ChaosCardsTable } from "./tables/ChaosCardsTable";
+import { FlomanjifiedCardsTable } from "./tables/FlomanjifiedCardsTable";
 
 const GameContentManager = () => {
   const [selectedCard, setSelectedCard] = React.useState<string | null>(null);
@@ -87,226 +103,52 @@ const GameContentManager = () => {
           </TabsContent>
 
           <TabsContent value="automa" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Combat Bonus</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {AUTOMA_CARDS.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>{card.combatBonus || "-"}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <AutomaCardsTable
+              cards={AUTOMA_CARDS}
+              onViewCard={handleViewCard}
+            />
           </TabsContent>
 
           <TabsContent value="region" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Biome</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {REGION_CARDS.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>{card.biomeTags.join(", ")}</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <RegionCardsTable
+              cards={REGION_CARDS}
+              onViewCard={handleViewCard}
+            />
           </TabsContent>
 
           <TabsContent value="npc" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Check DC</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {NPC_CARDS.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>{card.checkDC || "-"}</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <NPCCardsTable
+              cards={NPC_CARDS}
+              onViewCard={handleViewCard}
+            />
           </TabsContent>
 
           <TabsContent value="mission" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Starting Heat</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {MISSION_CARDS.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>{card.startingHeat}</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <MissionCardsTable
+              cards={MISSION_CARDS}
+              onViewCard={handleViewCard}
+            />
           </TabsContent>
 
           <TabsContent value="gear" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Consumable</TableHead>
-                  <TableHead>Stat Bonus</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {GEAR_CARDS.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>{card.consumable ? "Yes" : "No"}</TableCell>
-                    <TableCell>
-                      {card.statBonus ? `${card.statBonus.stat} +${card.statBonus.value}` : "-"}
-                    </TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <GearCardsTable
+              cards={GEAR_CARDS}
+              onViewCard={handleViewCard}
+            />
           </TabsContent>
 
           <TabsContent value="chaos" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Heat Effect</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {CHAOS_CARDS.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>{card.heatEffect ? `+${card.heatEffect}` : "-"}</TableCell>
-                    <TableCell>{card.duration || "immediate"}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <ChaosCardsTable
+              cards={CHAOS_CARDS}
+              onViewCard={handleViewCard}
+            />
           </TabsContent>
 
           <TabsContent value="flomanjified" className="space-y-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Keywords</TableHead>
-                  <TableHead>Special Ability</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {FLOMANJIFIED_CARDS.map((card) => (
-                  <TableRow key={card.id}>
-                    <TableCell>{card.name}</TableCell>
-                    <TableCell>{card.keywords.join(", ")}</TableCell>
-                    <TableCell>{card.specialAbility || "-"}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => setSelectedCard(card.id)}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <FlomanjifiedCardsTable
+              cards={FLOMANJIFIED_CARDS}
+              onViewCard={handleViewCard}
+            />
           </TabsContent>
         </Tabs>
 
