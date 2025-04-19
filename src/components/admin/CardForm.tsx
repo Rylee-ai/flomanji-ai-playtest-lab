@@ -15,6 +15,12 @@ import { z } from "zod";
 import { BaseCardForm } from "./forms/BaseCardForm";
 import { TreasureCardForm } from "./forms/TreasureCardForm";
 import { HazardCardForm } from "./forms/HazardCardForm";
+import { RegionCardForm } from "./forms/RegionCardForm";
+import { NPCCardForm } from "./forms/NPCCardForm";
+import { GearCardForm } from "./forms/GearCardForm";
+import { ChaosCardForm } from "./forms/ChaosCardForm";
+import { FlomanjifiedCardForm } from "./forms/FlomanjifiedCardForm";
+import { SecretCardForm } from "./forms/SecretCardForm";
 
 interface CardFormProps {
   open: boolean;
@@ -65,6 +71,12 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
             
             {type === "treasure" && <TreasureCardForm form={form} />}
             {type === "hazard" && <HazardCardForm form={form} />}
+            {type === "region" && <RegionCardForm form={form} />}
+            {type === "npc" && <NPCCardForm form={form} />}
+            {type === "gear" && <GearCardForm form={form} />}
+            {type === "chaos" && <ChaosCardForm form={form} />}
+            {type === "flomanjified" && <FlomanjifiedCardForm form={form} />}
+            {type === "secret" && <SecretCardForm form={form} />}
 
             <DialogFooter>
               <Button type="submit">
