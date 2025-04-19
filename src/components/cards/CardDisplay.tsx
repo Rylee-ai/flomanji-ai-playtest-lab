@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { GameCard } from '@/types/cards';
+import { GameCard, CardType, TreasureCard, SecretObjectiveCard, AutomaCard } from '@/types/cards';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Badge } from "@/components/ui/badge";
 import { TreasureCardDisplay } from './types/TreasureCardDisplay';
@@ -12,6 +12,12 @@ import { GearCardDisplay } from './types/GearCardDisplay';
 import { NPCCardDisplay } from './types/NPCCardDisplay';
 import { ChaosCardDisplay } from './types/ChaosCardDisplay';
 import { FlomanjifiedCardDisplay } from './types/FlomanjifiedCardDisplay';
+import { RegionCard } from '@/types/cards/region';
+import { HazardCard } from '@/types/cards/hazard';
+import { GearCard } from '@/types/cards/gear';
+import { NPCCard } from '@/types/cards/npc';
+import { ChaosCard } from '@/types/cards/chaos';
+import { FlomanjifiedRoleCard } from '@/types/cards/flomanjified';
 
 interface CardDisplayProps {
   card: GameCard;
@@ -25,23 +31,23 @@ export const CardDisplay = ({ card, showDetails = true }: CardDisplayProps) => {
     switch (card.type) {
       case 'treasure':
       case 'artifact':
-        return <TreasureCardDisplay card={card} />;
+        return <TreasureCardDisplay card={card as TreasureCard} />;
       case 'secret':
-        return <SecretCardDisplay card={card} />;
+        return <SecretCardDisplay card={card as SecretObjectiveCard} />;
       case 'automa':
-        return <AutomaCardDisplay card={card} />;
+        return <AutomaCardDisplay card={card as AutomaCard} />;
       case 'region':
-        return <RegionCardDisplay card={card} />;
+        return <RegionCardDisplay card={card as RegionCard} />;
       case 'hazard':
-        return <HazardCardDisplay card={card} />;
+        return <HazardCardDisplay card={card as HazardCard} />;
       case 'gear':
-        return <GearCardDisplay card={card} />;
+        return <GearCardDisplay card={card as GearCard} />;
       case 'npc':
-        return <NPCCardDisplay card={card} />;
+        return <NPCCardDisplay card={card as NPCCard} />;
       case 'chaos':
-        return <ChaosCardDisplay card={card} />;
+        return <ChaosCardDisplay card={card as ChaosCard} />;
       case 'flomanjified':
-        return <FlomanjifiedCardDisplay card={card} />;
+        return <FlomanjifiedCardDisplay card={card as FlomanjifiedRoleCard} />;
       default:
         return null;
     }
