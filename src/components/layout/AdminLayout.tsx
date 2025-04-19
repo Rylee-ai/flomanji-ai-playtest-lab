@@ -1,11 +1,13 @@
 
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Bot, BookOpen, Gamepad2, Home, Settings } from "lucide-react";
 
 const AdminLayout = () => {
+  const location = useLocation();
+  
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
