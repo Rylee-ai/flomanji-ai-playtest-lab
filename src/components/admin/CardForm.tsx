@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   Dialog,
@@ -30,7 +31,9 @@ interface CardFormProps {
   activeTab: CardType;
 }
 
+// Enhanced schema with all possible fields for different card types
 const cardFormSchema = z.object({
+  // Base fields
   name: z.string().min(2, {
     message: "Card name must be at least 2 characters.",
   }),
@@ -39,14 +42,44 @@ const cardFormSchema = z.object({
   icons: z.array(z.object({ symbol: z.string(), meaning: z.string() })),
   rules: z.array(z.string()),
   flavor: z.string().optional(),
+  
+  // Treasure/Artifact fields
   value: z.number().optional(),
   consumable: z.boolean().optional(),
+  
+  // Hazard fields
   subType: z.string().optional(),
   difficultyClasses: z.object({
     fight: z.number().optional(),
     flee: z.number().optional(),
   }).optional(),
   bossHazard: z.boolean().optional(),
+  
+  // Region fields
+  biomeTags: z.array(z.string()).optional(),
+  onEnter: z.string().optional(),
+  bonusZone: z.string().optional(),
+  
+  // NPC fields
+  checkDC: z.number().optional(),
+  actions: z.string().optional(),
+  
+  // Gear fields
+  category: z.string().optional(),
+  uses: z.number().optional(),
+  
+  // Chaos fields
+  heatEffect: z.number().optional(),
+  globalEffect: z.string().optional(),
+  
+  // Flomanjified fields
+  originalRole: z.string().optional(),
+  chaosAction: z.string().optional(),
+  specialAbility: z.string().optional(),
+  
+  // Secret Objective fields
+  alignment: z.string().optional(),
+  winCondition: z.string().optional(),
 });
 
 export type CardFormValues = z.infer<typeof cardFormSchema>;

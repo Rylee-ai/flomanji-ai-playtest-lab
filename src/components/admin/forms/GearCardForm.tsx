@@ -27,7 +27,11 @@ export const GearCardForm = ({ form }: GearCardFormProps) => {
           <FormItem>
             <FormLabel>Category</FormLabel>
             <FormControl>
-              <Input placeholder="consumable, tool, weapon, vehicle, supply" {...field} />
+              <Input 
+                placeholder="consumable, tool, weapon, vehicle, supply" 
+                {...field}
+                value={field.value || ""}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -46,7 +50,7 @@ export const GearCardForm = ({ form }: GearCardFormProps) => {
             </div>
             <FormControl>
               <Switch
-                checked={field.value}
+                checked={field.value || false}
                 onCheckedChange={field.onChange}
               />
             </FormControl>
@@ -60,7 +64,13 @@ export const GearCardForm = ({ form }: GearCardFormProps) => {
           <FormItem>
             <FormLabel>Uses</FormLabel>
             <FormControl>
-              <Input type="number" placeholder="Number of uses" {...field} />
+              <Input 
+                type="number" 
+                placeholder="Number of uses" 
+                {...field}
+                value={field.value || ""}
+                onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -26,7 +26,11 @@ export const FlomanjifiedCardForm = ({ form }: FlomanjifiedCardFormProps) => {
           <FormItem>
             <FormLabel>Original Role</FormLabel>
             <FormControl>
-              <Input placeholder="Original character role" {...field} />
+              <Input 
+                placeholder="Original character role" 
+                {...field}
+                value={field.value || ""}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -39,7 +43,11 @@ export const FlomanjifiedCardForm = ({ form }: FlomanjifiedCardFormProps) => {
           <FormItem>
             <FormLabel>Chaos Action</FormLabel>
             <FormControl>
-              <Textarea placeholder="Action during chaos phase" {...field} />
+              <Textarea 
+                placeholder="Action during chaos phase" 
+                {...field}
+                value={field.value || ""}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -52,7 +60,11 @@ export const FlomanjifiedCardForm = ({ form }: FlomanjifiedCardFormProps) => {
           <FormItem>
             <FormLabel>Special Ability</FormLabel>
             <FormControl>
-              <Textarea placeholder="Special ability description" {...field} />
+              <Textarea 
+                placeholder="Special ability description" 
+                {...field}
+                value={field.value || ""}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -26,7 +26,13 @@ export const ChaosCardForm = ({ form }: ChaosCardFormProps) => {
           <FormItem>
             <FormLabel>Heat Effect</FormLabel>
             <FormControl>
-              <Input type="number" placeholder="Heat Change" {...field} />
+              <Input 
+                type="number" 
+                placeholder="Heat Change" 
+                {...field}
+                value={field.value || ""}
+                onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -39,7 +45,11 @@ export const ChaosCardForm = ({ form }: ChaosCardFormProps) => {
           <FormItem>
             <FormLabel>Global Effect</FormLabel>
             <FormControl>
-              <Textarea placeholder="Effect on all players" {...field} />
+              <Textarea 
+                placeholder="Effect on all players" 
+                {...field}
+                value={field.value || ""}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

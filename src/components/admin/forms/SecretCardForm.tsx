@@ -26,7 +26,11 @@ export const SecretCardForm = ({ form }: SecretCardFormProps) => {
           <FormItem>
             <FormLabel>Alignment</FormLabel>
             <FormControl>
-              <Input placeholder="saboteur or innocent" {...field} />
+              <Input 
+                placeholder="saboteur or innocent" 
+                {...field}
+                value={field.value || ""}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -39,7 +43,11 @@ export const SecretCardForm = ({ form }: SecretCardFormProps) => {
           <FormItem>
             <FormLabel>Win Condition</FormLabel>
             <FormControl>
-              <Textarea placeholder="Condition to win" {...field} />
+              <Textarea 
+                placeholder="Condition to win" 
+                {...field}
+                value={field.value || ""}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
