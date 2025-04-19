@@ -50,7 +50,7 @@ export const MINOR_TREASURES: TreasureCard[] = [
     rules: [
       "Choose one:",
       "Discard when trading with a Mechanic or Pawn Shop NPC → Counts as 1 basic Gear.",
-      "Discard (0 Actions) with a "Duct Tape" use before a Repair check → Gain +2 Bonus."
+      "Discard (0 Actions) with a \"Duct Tape\" use before a Repair check → Gain +2 Bonus."
     ],
     flavor: "One man's trash is another's treasure… maybe.",
     imagePrompt: "Heap of rusty pipes, bent rebar, and old car parts"

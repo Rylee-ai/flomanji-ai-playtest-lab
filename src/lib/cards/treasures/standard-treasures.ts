@@ -63,7 +63,7 @@ export const STANDARD_TREASURES: TreasureCard[] = [
       "Acquire: Gain +1 Weirdness.",
       "Use (0 Actions): Moxie Check DC 9 → On success: Gain a hint about a nearby Bonus Zone or hidden path; on failure: no effect."
     ],
-    flavor: ""Wish you were here!" …Do you, though?",
+    flavor: "\"Wish you were here!\" …Do you, though?",
     imagePrompt: "Faded postcard of a kitschy roadside attraction (giant orange or gator wrestling), cryptic message scribbled on back"
   },
   {
@@ -77,7 +77,7 @@ export const STANDARD_TREASURES: TreasureCard[] = [
     ],
     keywords: ["Communication", "Weirdness", "Luck", "Unique"],
     rules: [
-      "Use (1 Action): Discard → Luck Check DC 10 → On success: choose to Reduce Heat by 2 or Draw 2 Gear cards; on failure: choose to Gain 2 Weirdness or Trigger the "Sudden Street Closure" Hazard."
+      "Use (1 Action): Discard → Luck Check DC 10 → On success: choose to Reduce Heat by 2 or Draw 2 Gear cards; on failure: choose to Gain 2 Weirdness or Trigger the \"Sudden Street Closure\" Hazard."
     ],
     flavor: "Do you even remember how to use one? Got change?",
     imagePrompt: "Vandalized phone booth with dangling receiver and glowing payphone light; overgrown weeds around base"

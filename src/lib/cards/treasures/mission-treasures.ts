@@ -14,9 +14,9 @@ export const MISSION_TREASURES: TreasureCard[] = [
     keywords: ["Information", "Clue (Meth Gator)", "Swamp"],
     rules: [
       "Mission 3 specific — Counts as 1 Clue.",
-      "Use (1 Action): Discard to auto‑succeed one navigate/avoid "Lost" check in a Swamp Region."
+      "Use (1 Action): Discard to auto‑succeed one navigate/avoid \"Lost\" check in a Swamp Region."
     ],
-    flavor: ""X" marks the spot… or where someone dissolved.",
+    flavor: "\"X\" marks the spot… or where someone dissolved.",
     imagePrompt: "Torn piece of hand‑drawn map showing swampy terrain with ominous symbols and claw prints"
   },
   {
@@ -52,7 +52,7 @@ export const MISSION_TREASURES: TreasureCard[] = [
       "Mission 3 specific — Counts as 1 Clue.",
       "Use (0 Actions): Discard when Interacting with a Swamp Denizen/Cryptozoologist/Historian NPC → Gain +2 Bonus on that Charm or Moxie check."
     ],
-    flavor: ""Too many eyes… or maybe not enough?"",
+    flavor: "\"Too many eyes… or maybe not enough?\"",
     imagePrompt: "Crumpled pencil sketch of an alligator distorted with extra teeth and odd eyes"
   },
   {
@@ -71,7 +71,7 @@ export const MISSION_TREASURES: TreasureCard[] = [
       "Interact (1 Action) at Safe House: Deliver to auto‑win Mission 6; if you lose it, the Mission fails."
     ],
     flavor: "Chicken Tender SubSub… the order is long, specific, vital.",
-    imagePrompt: "Revered crumpled receipt from "Sublix" with exact sandwich instructions stamped in neon‑pastel ink"
+    imagePrompt: "Revered crumpled receipt from \"Sublix\" with exact sandwich instructions stamped in neon‑pastel ink"
   },
   {
     id: "meth-gator-tooth",
@@ -109,6 +109,6 @@ export const MISSION_TREASURES: TreasureCard[] = [
       "Discard (0 Actions) during Fortify action → Counts as 1 Supply Gear."
     ],
     flavor: "Tip #1: Evacuate. Well, that ship sailed.",
-    imagePrompt: "Soggy, water‑stained government pamphlet reading "Hurricane Survival" on the cover"
+    imagePrompt: "Soggy, water‑stained government pamphlet reading \"Hurricane Survival\" on the cover"
   }
 ];

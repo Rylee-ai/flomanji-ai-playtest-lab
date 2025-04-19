@@ -14,7 +14,7 @@ export const ARTIFACTS: TreasureCard[] = [
     keywords: ["Unique", "Tool", "Movement", "Weirdness"],
     rules: [
       "Passive: Gain +1 Weirdness per End Phase.",
-      "Use (0 Actions): Once per turn before moving, ignore any "Lost" checks and peek at one adjacent face‑down Region card.",
+      "Use (0 Actions): Once per turn before moving, ignore any \"Lost\" checks and peek at one adjacent face‑down Region card.",
       "Elimination: Return to box after use."
     ],
     flavor: "Points toward trouble… or tacos.",
@@ -112,6 +112,6 @@ export const ARTIFACTS: TreasureCard[] = [
       "Drop/Elimination: If you drop it, another player on the same tile may Interact (0 Actions) to pick it up; otherwise return to box."
     ],
     flavor: "Reminds you of a tougher, simpler Flomanji. Maybe.",
-    imagePrompt: "Worn hardcover first edition with cattle‑drive scene on cover, embossed title "A Land Remembered""
+    imagePrompt: "Worn hardcover first edition with cattle‑drive scene on cover, embossed title \"A Land Remembered\""
   }
 ];
