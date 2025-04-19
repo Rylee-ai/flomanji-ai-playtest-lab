@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Eye, Pencil } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -14,9 +15,10 @@ import { MissionSheet } from "@/types/cards/mission";
 interface MissionCardsTableProps {
   cards: MissionSheet[];
   onViewCard: (id: string) => void;
+  onEditCard: (card: MissionSheet) => void;
 }
 
-export const MissionCardsTable = ({ cards, onViewCard }: MissionCardsTableProps) => {
+export const MissionCardsTable = ({ cards, onViewCard, onEditCard }: MissionCardsTableProps) => {
   return (
     <Table>
       <TableHeader>
@@ -33,13 +35,22 @@ export const MissionCardsTable = ({ cards, onViewCard }: MissionCardsTableProps)
             <TableCell>{card.name}</TableCell>
             <TableCell>{card.startingHeat}</TableCell>
             <TableCell>{card.keywords.join(", ")}</TableCell>
-            <TableCell>
+            <TableCell className="space-x-2">
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => onViewCard(card.id)}
               >
+                <Eye className="h-4 w-4 mr-1" />
                 View
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => onEditCard(card)}
+              >
+                <Pencil className="h-4 w-4 mr-1" />
+                Edit
               </Button>
             </TableCell>
           </TableRow>
