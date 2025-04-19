@@ -121,8 +121,8 @@ export const PLAYER_CHARACTER_CARDS: PlayerCharacterCard[] = [
     ],
     flavor: "In the derby, Sandy learned that sometimes the best defense is being too fast to hit. That lesson still serves her well in Flomanji.",
     imagePrompt: "A muscular woman in her 30s with colorful tattoos, wearing shorts and a tank top, with a baseball bat slung across her shoulders, looking confident and ready for action."
-  },
+  }
   // Add the remaining character cards in the same format
-],
+];
 
 export default PLAYER_CHARACTER_CARDS;
