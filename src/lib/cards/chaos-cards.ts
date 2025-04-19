@@ -1,3 +1,4 @@
+
 import { ChaosCard } from '@/types/cards/chaos';
 
 export const CHAOS_CARDS: ChaosCard[] = [
@@ -97,7 +98,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Ranged and spot checks suffer penalties",
       "Persistent effect until next chaos card"
     ],
-    flavor: "You can’t see your hand in front of your face.",
+    flavor: "You can't see your hand in front of your face.",
     imagePrompt: "Dense white fog rolling across a swamp boardwalk, obscuring all but the closest shapes; neon-pastel orbs of light barely glowing through mist"
   },
   {
@@ -139,7 +140,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Damage taken on failed Grit checks"
     ],
     flavor: "That bridge seemed safe yesterday…",
-    imagePrompt: "A battered overpass crumbled in mid-span, “CLOSED” barricades in harsh neon paint blocking one lane; broken girders jut into the sky"
+    imagePrompt: "A battered overpass crumbled in mid-span, "CLOSED" barricades in harsh neon paint blocking one lane; broken girders jut into the sky"
   },
   {
     id: "alligator-migration",
@@ -159,7 +160,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Hazards appear in swamp, river, and coastal regions",
       "Additional hazard in adjacent empty region"
     ],
-    flavor: "They’re on the move—and you’re in their path.",
+    flavor: "They're on the move—and you're in their path.",
     imagePrompt: "Dozens of gators slithering across swamp, beach, and canal toward civilization; neon-green eyes and scales glint in fading light"
   },
   {
@@ -178,7 +179,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Hazards appear in swamp and coastal regions",
       "Random hazard card drawn for each region"
     ],
-    flavor: "Nature’s invaders don’t care who signed treaties.",
+    flavor: "Nature's invaders don't care who signed treaties.",
     imagePrompt: "Overgrown foliage bursting with alien pythons, giant snails, walking catfish; neon pastel flora tangled with dangerous fauna"
   },
   {
@@ -196,7 +197,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Higher heat intensifies the effect",
       "Players discard random cards"
     ],
-    flavor: "Everybody’s screaming—and nobody’s listening.",
+    flavor: "Everybody's screaming—and nobody's listening.",
     imagePrompt: "Flickering TV screens show shouting candidates over glitchy static; a pile of discarded ballots smolders in foreground"
   },
   {
@@ -216,7 +217,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Gear drawn on successful checks"
     ],
     flavor: "Dreams of riches, nightmares of lines.",
-    imagePrompt: "A crowded convenience store, patrons furiously scratching tickets, neon signs promising “$1 Million!” glowing overhead"
+    imagePrompt: "A crowded convenience store, patrons furiously scratching tickets, neon signs promising "$1 Million!" glowing overhead"
   },
   {
     id: "governor-signs-weird-law",
@@ -235,7 +236,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Choice affects individual stats"
     ],
     flavor: "Bureaucracy meets lunacy in Tallahassee.",
-    imagePrompt: "A governor’s desk piled with bizarre decrees, an official signing a neon-pink parchment under flickering fluorescent lights"
+    imagePrompt: "A governor's desk piled with bizarre decrees, an official signing a neon-pink parchment under flickering fluorescent lights"
   },
   {
     id: "rolling-black-market-shutdown",
@@ -253,7 +254,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Gear loss in urban and residential areas",
       "Non-weapon gear discarded"
     ],
-    flavor: "What you can’t buy legally fuels desperation here.",
+    flavor: "What you can't buy legally fuels desperation here.",
     imagePrompt: "Shadowy figures dashing from a shuttered shop, underground stalls torn down, neon flicker from broken signs"
   },
   {
@@ -292,7 +293,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Grit checks required for all players",
       "Action loss and heat gain on failed checks"
     ],
-    flavor: "The pipes burst when no one’s there to fix them.",
+    flavor: "The pipes burst when no one's there to fix them.",
     imagePrompt: "Broken water main flooding an industrial lot, steam rising through grates, riot-taped barricades fluttering"
   },
     {
@@ -312,7 +313,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Moxie checks required for urban movement",
       "NPC checks suffer penalties"
     ],
-    flavor: "Selfies block your path; “Excuse me?” she shouts.",
+    flavor: "Selfies block your path; "Excuse me?" she shouts.",
     imagePrompt: "Teeming boardwalk clogged with pastel-shirted tourists and flashing cameras; thick black outlines enforce the swarm."
   },
   {
@@ -450,7 +451,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
   },
   {
     id: "swamp-witchs-curse",
-    name: "Swamp Witch’s Curse",
+    name: "Swamp Witch's Curse",
     type: "chaos",
     icons: [
       { symbol: "🧙", meaning: "NPC" },
@@ -502,7 +503,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Grit checks determine outcome",
       "Damage and weirdness gain on failed checks"
     ],
-    flavor: "Science’s monstrosity lurks in every swamp.",
+    flavor: "Science's monstrosity lurks in every swamp.",
     imagePrompt: "A hulking gator streaked with neon-green radiation burns, pustules oozing toxic slime."
   },
   {
