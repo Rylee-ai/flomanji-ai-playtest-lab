@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,10 +26,11 @@ import { MissionCardsTable } from "./tables/MissionCardsTable";
 import { GearCardsTable } from "./tables/GearCardsTable";
 import { ChaosCardsTable } from "./tables/ChaosCardsTable";
 import { FlomanjifiedCardsTable } from "./tables/FlomanjifiedCardsTable";
+import { toast } from "sonner";
 
 const GameContentManager = () => {
   const [selectedCard, setSelectedCard] = React.useState<string | null>(null);
-  const [activeTab, setActiveTab] = React.useState<string>("treasure");
+  const [activeTab, setActiveTab] = React.useState<CardType>("treasure");
   const [isFormOpen, setIsFormOpen] = React.useState(false);
   const [editingCard, setEditingCard] = React.useState<GameCard | undefined>();
 
@@ -65,7 +67,7 @@ const GameContentManager = () => {
   const handleFormSubmit = (data: CardFormValues) => {
     console.log("Form submitted:", data);
     // In a real implementation, this would update the card in the database
-    // For now, we just close the modal
+    toast.success(`${data.name} ${editingCard ? "updated" : "created"} successfully`);
     setIsFormOpen(false);
   };
 
@@ -77,14 +79,14 @@ const GameContentManager = () => {
         <CardTitle>Game Content Management</CardTitle>
         <Button size="sm" onClick={handleAddNew}>
           <Plus className="mr-2 h-4 w-4" />
-          Add New
+          Add New Card
         </Button>
       </CardHeader>
       <CardContent>
         <Tabs 
           defaultValue={activeTab} 
           value={activeTab}
-          onValueChange={setActiveTab}
+          onValueChange={(value) => setActiveTab(value as CardType)}
           className="w-full"
         >
           <TabsList className="flex flex-wrap">
@@ -97,12 +99,14 @@ const GameContentManager = () => {
             <TabsTrigger value="gear">Gear Cards</TabsTrigger>
             <TabsTrigger value="chaos">Chaos Cards</TabsTrigger>
             <TabsTrigger value="flomanjified">Flomanjified Roles</TabsTrigger>
+            <TabsTrigger value="secret">Secret Objectives</TabsTrigger>
           </TabsList>
 
           <TabsContent value="treasure" className="space-y-4">
             <TreasureCardsTable
               cards={TREASURE_CARDS}
               onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
             />
           </TabsContent>
 
@@ -110,6 +114,7 @@ const GameContentManager = () => {
             <HazardCardsTable
               cards={HAZARD_CARDS}
               onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
             />
           </TabsContent>
 
@@ -117,6 +122,7 @@ const GameContentManager = () => {
             <AutomaCardsTable
               cards={AUTOMA_CARDS}
               onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
             />
           </TabsContent>
 
@@ -124,6 +130,7 @@ const GameContentManager = () => {
             <RegionCardsTable
               cards={REGION_CARDS}
               onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
             />
           </TabsContent>
 
@@ -131,6 +138,7 @@ const GameContentManager = () => {
             <NPCCardsTable
               cards={NPC_CARDS}
               onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
             />
           </TabsContent>
 
@@ -138,6 +146,7 @@ const GameContentManager = () => {
             <MissionCardsTable
               cards={MISSION_CARDS}
               onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
             />
           </TabsContent>
 
@@ -145,6 +154,7 @@ const GameContentManager = () => {
             <GearCardsTable
               cards={GEAR_CARDS}
               onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
             />
           </TabsContent>
 
@@ -152,6 +162,7 @@ const GameContentManager = () => {
             <ChaosCardsTable
               cards={CHAOS_CARDS}
               onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
             />
           </TabsContent>
 
@@ -159,6 +170,15 @@ const GameContentManager = () => {
             <FlomanjifiedCardsTable
               cards={FLOMANJIFIED_CARDS}
               onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
+            />
+          </TabsContent>
+
+          <TabsContent value="secret" className="space-y-4">
+            <TreasureCardsTable
+              cards={SECRET_OBJECTIVES}
+              onViewCard={handleViewCard}
+              onEditCard={handleEditCard}
             />
           </TabsContent>
         </Tabs>
@@ -176,7 +196,7 @@ const GameContentManager = () => {
           onClose={() => setIsFormOpen(false)}
           onSubmit={handleFormSubmit}
           initialData={editingCard}
-          activeTab={activeTab as CardType}
+          activeTab={activeTab}
         />
       </CardContent>
     </Card>
