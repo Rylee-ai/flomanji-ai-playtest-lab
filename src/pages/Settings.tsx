@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,9 +35,9 @@ const Settings = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>OpenAI API Key</CardTitle>
+          <CardTitle>OpenRouter API Key</CardTitle>
           <CardDescription>
-            Set your OpenAI API key to enable AI simulations
+            Set your OpenRouter API key to enable AI simulations. OpenRouter provides access to various AI models including Claude 3.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -47,10 +48,10 @@ const Settings = () => {
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="sk-..."
+              placeholder="or-..."
             />
             <p className="text-sm text-muted-foreground">
-              Your API key is stored locally and never sent to our servers.
+              Your API key is stored locally and never sent to our servers. Get your API key from <a href="https://openrouter.ai/keys" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">OpenRouter</a>.
             </p>
           </div>
         </CardContent>
@@ -75,7 +76,7 @@ const Settings = () => {
           </div>
           <div>
             <h3 className="font-medium">Powered By</h3>
-            <p className="text-sm text-muted-foreground">OpenAI, React, TailwindCSS, and Netlify</p>
+            <p className="text-sm text-muted-foreground">OpenRouter, React, TailwindCSS, and Netlify</p>
           </div>
         </CardContent>
       </Card>
