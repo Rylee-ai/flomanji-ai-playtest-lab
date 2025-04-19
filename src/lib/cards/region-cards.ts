@@ -611,4 +611,11 @@ export const REGION_CARDS: RegionCard[] = [
     ],
     keywords: ["Underground", "Toxic", "Hazard"],
     onEnter: "Gain 1 Weirdness & 1 Heat (fumes)",
-    action: "Mask Up (Gas Mask) →
+    action: "Mask Up (Gas Mask) → Auto-success here; Else Grit DC 11 → Failure: Take 1 Damage",
+    rest: "Gain 1 Weirdness (wild)",
+    bonusZone: "Hidden Tunnel – Spend 1 Action → Move to any Sewer tile",
+    rules: ["Stench so thick it sticks to your lungs"],
+    flavor: "Stench so thick it sticks to your lungs.",
+    imagePrompt: "Rusted pipes overhead dripping neon-green sludge onto cracked tiles"
+  }
+];
