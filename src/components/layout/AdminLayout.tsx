@@ -3,7 +3,7 @@ import React from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Bot, BookOpen, Gamepad2, Home, Settings } from "lucide-react";
+import { Bot, BookOpen, Database, Gamepad2, Home, Settings } from "lucide-react";
 
 const AdminLayout = () => {
   const location = useLocation();
@@ -34,6 +34,14 @@ const AdminLayout = () => {
                       <Link to="/simulations">
                         <Gamepad2 />
                         <span>Simulations</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/content">
+                        <Database />
+                        <span>Content Manager</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

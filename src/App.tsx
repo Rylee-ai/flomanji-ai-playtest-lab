@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import SimulationsList from "./pages/SimulationsList";
 import NewSimulation from "./pages/NewSimulation";
 import SimulationDetail from "./pages/SimulationDetail";
+import ContentManager from "./pages/ContentManager";
 import Rules from "./pages/Rules";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/simulations" element={<SimulationsList />} />
             <Route path="/simulations/new" element={<NewSimulation />} />
             <Route path="/simulations/:id" element={<SimulationDetail />} />
+            <Route path="/content" element={<ContentManager />} />
             <Route path="/rules" element={<Rules />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
