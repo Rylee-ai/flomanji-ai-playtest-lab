@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface BaseCardFormProps {
   form: UseFormReturn<CardFormValues>;
@@ -40,9 +41,29 @@ export const BaseCardForm = ({ form }: BaseCardFormProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Type</FormLabel>
-            <FormControl>
-              <Input placeholder="Card Type" {...field} />
-            </FormControl>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              value={field.value}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select card type" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="treasure">Treasure</SelectItem>
+                <SelectItem value="artifact">Artifact</SelectItem>
+                <SelectItem value="hazard">Hazard</SelectItem>
+                <SelectItem value="region">Region</SelectItem>
+                <SelectItem value="npc">NPC</SelectItem>
+                <SelectItem value="gear">Gear</SelectItem>
+                <SelectItem value="chaos">Chaos</SelectItem>
+                <SelectItem value="flomanjified">Flomanjified</SelectItem>
+                <SelectItem value="secret">Secret Objective</SelectItem>
+                <SelectItem value="automa">Automa</SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}

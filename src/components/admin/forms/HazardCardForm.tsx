@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface HazardCardFormProps {
   form: UseFormReturn<CardFormValues>;
@@ -27,13 +28,22 @@ export const HazardCardForm = ({ form }: HazardCardFormProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Sub Type</FormLabel>
-            <FormControl>
-              <Input 
-                placeholder="environmental, creature, social, weird" 
-                {...field}
-                value={field.value || ""}
-              />
-            </FormControl>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select hazard subtype" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="environmental">Environmental</SelectItem>
+                <SelectItem value="creature">Creature</SelectItem>
+                <SelectItem value="social">Social</SelectItem>
+                <SelectItem value="weird">Weird</SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}

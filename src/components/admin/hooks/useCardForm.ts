@@ -25,7 +25,7 @@ export const useCardForm = (initialData?: GameCard) => {
       ...getTypeSpecificData(initialData)
     } : {
       name: "",
-      type: "treasure",
+      type: "treasure", // Default type
       keywords: [],
       icons: [],
       rules: [],
@@ -74,7 +74,7 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
       const npcCard = card as NPCCard;
       return {
         checkDC: npcCard.checkDC,
-        // Fix: properly handle actions as an array instead of a string
+        // Properly handle actions as an array
         actions: npcCard.actions || []
       };
     }

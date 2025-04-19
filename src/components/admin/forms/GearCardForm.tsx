@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface GearCardFormProps {
   form: UseFormReturn<CardFormValues>;
@@ -27,13 +28,23 @@ export const GearCardForm = ({ form }: GearCardFormProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Category</FormLabel>
-            <FormControl>
-              <Input 
-                placeholder="consumable, tool, weapon, vehicle, supply" 
-                {...field}
-                value={field.value || ""}
-              />
-            </FormControl>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select gear category" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="consumable">Consumable</SelectItem>
+                <SelectItem value="tool">Tool</SelectItem>
+                <SelectItem value="weapon">Weapon</SelectItem>
+                <SelectItem value="vehicle">Vehicle</SelectItem>
+                <SelectItem value="supply">Supply</SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}

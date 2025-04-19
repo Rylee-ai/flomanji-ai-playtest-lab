@@ -111,7 +111,7 @@ export const cardFormSchema = z.object({
 
 export type CardFormValues = z.infer<typeof cardFormSchema>;
 
-// Define the missing interface
+// Define the CardFormProps interface
 export interface CardFormProps {
   open: boolean;
   onClose: () => void;
