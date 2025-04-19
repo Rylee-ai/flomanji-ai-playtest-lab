@@ -22,6 +22,7 @@ export const CardDisplay = ({ card, showDetails = true }: CardDisplayProps) => {
 
     switch (card.type) {
       case 'treasure':
+      case 'artifact':
         const treasureCard = card as TreasureCard;
         return (
           <div className="space-y-2">
@@ -35,7 +36,7 @@ export const CardDisplay = ({ card, showDetails = true }: CardDisplayProps) => {
             )}
             {treasureCard.passiveEffect && (
               <div className="mt-2">
-                <p className="text-sm font-medium">Passive:</p>
+                <p className="text-sm font-medium">Passive Effect:</p>
                 <p className="text-sm">{treasureCard.passiveEffect}</p>
               </div>
             )}
