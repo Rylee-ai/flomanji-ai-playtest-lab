@@ -6,6 +6,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,6 +33,7 @@ export const BaseCardForm = ({ form }: BaseCardFormProps) => {
           </FormItem>
         )}
       />
+      
       <FormField
         control={form.control}
         name="type"
@@ -45,6 +47,7 @@ export const BaseCardForm = ({ form }: BaseCardFormProps) => {
           </FormItem>
         )}
       />
+      
       <FormField
         control={form.control}
         name="flavor"
@@ -52,7 +55,21 @@ export const BaseCardForm = ({ form }: BaseCardFormProps) => {
           <FormItem>
             <FormLabel>Flavor Text</FormLabel>
             <FormControl>
-              <Textarea placeholder="Card Flavor" {...field} />
+              <Textarea placeholder="Card Flavor" {...field} value={field.value || ""} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      
+      <FormField
+        control={form.control}
+        name="imagePrompt"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Image Prompt</FormLabel>
+            <FormControl>
+              <Textarea placeholder="Description for image generation" {...field} value={field.value || ""} />
             </FormControl>
             <FormMessage />
           </FormItem>

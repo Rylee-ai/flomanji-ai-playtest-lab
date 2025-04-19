@@ -29,7 +29,7 @@ export const SecretCardForm = ({ form }: SecretCardFormProps) => {
               <Input 
                 placeholder="saboteur or innocent" 
                 {...field}
-                value={field.value ?? ""}
+                value={field.value || ""}
               />
             </FormControl>
             <FormMessage />
@@ -46,7 +46,7 @@ export const SecretCardForm = ({ form }: SecretCardFormProps) => {
               <Textarea 
                 placeholder="Condition to win" 
                 {...field}
-                value={field.value ?? ""}
+                value={field.value || ""}
               />
             </FormControl>
             <FormMessage />

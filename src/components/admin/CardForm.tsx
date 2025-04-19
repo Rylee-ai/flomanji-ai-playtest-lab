@@ -33,20 +33,23 @@ interface CardFormProps {
 }
 
 // Enhanced schema with all possible fields for different card types
-const cardFormSchema = z.object({
+export const cardFormSchema = z.object({
   // Base fields
   name: z.string().min(2, {
     message: "Card name must be at least 2 characters.",
   }),
-  type: z.enum(["treasure", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified", "secret"]),
-  keywords: z.array(z.string()),
-  icons: z.array(z.object({ symbol: z.string(), meaning: z.string() })),
-  rules: z.array(z.string()),
+  type: z.enum(["treasure", "artifact", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified", "secret"]),
+  keywords: z.array(z.string()).optional(),
+  icons: z.array(z.object({ symbol: z.string(), meaning: z.string() })).optional(),
+  rules: z.array(z.string()).optional(),
   flavor: z.string().optional(),
+  imagePrompt: z.string().optional(),
   
   // Treasure/Artifact fields
   value: z.number().optional(),
   consumable: z.boolean().optional(),
+  passiveEffect: z.string().optional(),
+  useEffect: z.string().optional(),
   
   // Hazard fields
   subType: z.string().optional(),
@@ -63,6 +66,11 @@ const cardFormSchema = z.object({
   bossHazard: z.boolean().optional(),
   onFailure: z.string().optional(),
   onSuccess: z.string().optional(),
+  gearBonuses: z.array(z.object({
+    itemName: z.string(),
+    effect: z.enum(["autoSuccess", "bonus"]),
+    bonusValue: z.number().optional()
+  })).optional(),
   
   // Region fields
   biomeTags: z.array(z.string()).optional(),
@@ -73,7 +81,7 @@ const cardFormSchema = z.object({
   
   // NPC fields
   checkDC: z.number().optional(),
-  actions: z.string().optional(),
+  actions: z.string().optional(), // Serialized JSON for the actions array
   
   // Gear fields
   category: z.string().optional(),
@@ -114,7 +122,7 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEditing ? `Edit ${initialData?.name}` : "Create Card"}</DialogTitle>
           <DialogDescription>

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
 
@@ -56,6 +57,40 @@ export const TreasureCardForm = ({ form }: TreasureCardFormProps) => {
                 onCheckedChange={field.onChange}
               />
             </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="passiveEffect"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Passive Effect</FormLabel>
+            <FormControl>
+              <Textarea 
+                placeholder="Continuous effect when owned" 
+                {...field}
+                value={field.value || ""}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="useEffect"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Use Effect</FormLabel>
+            <FormControl>
+              <Textarea 
+                placeholder="Effect when card is used/activated" 
+                {...field}
+                value={field.value || ""}
+              />
+            </FormControl>
+            <FormMessage />
           </FormItem>
         )}
       />

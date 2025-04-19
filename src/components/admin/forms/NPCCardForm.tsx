@@ -30,7 +30,7 @@ export const NPCCardForm = ({ form }: NPCCardFormProps) => {
                 type="number" 
                 placeholder="Difficulty Check" 
                 {...field}
-                value={field.value ?? ""}
+                value={field.value || ""}
                 onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
               />
             </FormControl>
@@ -46,9 +46,9 @@ export const NPCCardForm = ({ form }: NPCCardFormProps) => {
             <FormLabel>Actions</FormLabel>
             <FormControl>
               <Textarea 
-                placeholder="NPC Actions" 
+                placeholder="NPC Actions (JSON format or description)" 
                 {...field}
-                value={field.value ?? ""}
+                value={field.value || ""}
               />
             </FormControl>
             <FormMessage />

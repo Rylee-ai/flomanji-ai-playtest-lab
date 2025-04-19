@@ -1,7 +1,7 @@
 
 import { useForm } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
-import { GameCard } from "@/types/cards";
+import { GameCard, CardType } from "@/types/cards";
 import { TreasureCard } from "@/types/cards/treasure";
 import { HazardCard } from "@/types/cards/hazard";
 import { RegionCard } from "@/types/cards/region";
@@ -20,6 +20,7 @@ export const useCardForm = (initialData?: GameCard) => {
       icons: initialData.icons || [],
       rules: initialData.rules || [],
       flavor: initialData.flavor || "",
+      imagePrompt: initialData.imagePrompt || "",
       // Type-specific fields are handled based on the card type
       ...getTypeSpecificData(initialData)
     } : {
@@ -28,7 +29,8 @@ export const useCardForm = (initialData?: GameCard) => {
       keywords: [],
       icons: [],
       rules: [],
-      flavor: ""
+      flavor: "",
+      imagePrompt: ""
     }
   });
 
@@ -42,7 +44,9 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
       const treasureCard = card as TreasureCard;
       return {
         value: treasureCard.value,
-        consumable: treasureCard.consumable
+        consumable: treasureCard.consumable,
+        passiveEffect: treasureCard.passiveEffect,
+        useEffect: treasureCard.useEffect
       };
     }
     case "hazard": {
@@ -52,7 +56,8 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
         difficultyClasses: hazardCard.difficultyClasses,
         bossHazard: hazardCard.bossHazard,
         onFailure: hazardCard.onFailure,
-        onSuccess: hazardCard.onSuccess
+        onSuccess: hazardCard.onSuccess,
+        gearBonuses: hazardCard.gearBonuses
       };
     }
     case "region": {
