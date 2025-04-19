@@ -9,10 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FlomanjifiedCard } from "@/types/cards/flomanjified";
+import { FlomanjifiedRoleCard } from "@/types/cards/flomanjified";
 
 interface FlomanjifiedCardsTableProps {
-  cards: FlomanjifiedCard[];
+  cards: FlomanjifiedRoleCard[];
   onViewCard: (id: string) => void;
 }
 

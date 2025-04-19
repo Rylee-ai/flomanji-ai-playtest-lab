@@ -9,10 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MissionCard } from "@/types/cards/mission";
+import { MissionSheet } from "@/types/cards/mission";
 
 interface MissionCardsTableProps {
-  cards: MissionCard[];
+  cards: MissionSheet[];
   onViewCard: (id: string) => void;
 }
 

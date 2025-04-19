@@ -4,14 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { GameCard } from "@/types/cards";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
 import { AUTOMA_CARDS } from "@/lib/cards/automa-cards";
@@ -22,7 +15,6 @@ import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
 import { GEAR_CARDS } from "@/lib/cards/gear-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
-import { GameCard } from "@/types/cards";
 import { TreasureCardsTable } from "./tables/TreasureCardsTable";
 import { HazardCardsTable } from "./tables/HazardCardsTable";
 import { CardPreviewModal } from "./CardPreviewModal";
