@@ -24,21 +24,19 @@ export const NPCCardsTable = ({ cards, onViewCard, onEditCard }: NPCCardsTablePr
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
-          <TableHead>Icons</TableHead>
-          <TableHead>Keywords</TableHead>
           <TableHead>Check DC</TableHead>
-          <TableHead>Actions Count</TableHead>
           <TableHead>Actions</TableHead>
+          <TableHead>Keywords</TableHead>
+          <TableHead>Operations</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {cards.map((card) => (
           <TableRow key={card.id}>
             <TableCell>{card.name}</TableCell>
-            <TableCell>{card.icons.map(icon => icon.symbol).join(" ")}</TableCell>
+            <TableCell>{card.checkDC || "N/A"}</TableCell>
+            <TableCell>{card.actions?.length || 0}</TableCell>
             <TableCell>{card.keywords.join(", ")}</TableCell>
-            <TableCell>{card.checkDC || "-"}</TableCell>
-            <TableCell>{card.actions.length}</TableCell>
             <TableCell className="space-x-2">
               <Button 
                 variant="outline" 

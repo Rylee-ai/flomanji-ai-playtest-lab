@@ -51,9 +51,12 @@ export const useCardManagement = () => {
   };
 
   const handleFormSubmit = (data: CardFormValues) => {
-    console.log("Form submitted:", data);
+    console.log("Form submitted with data:", data);
+    // Here you would typically save the data to your database
+    // For now, we just show a success message
     toast.success(`${data.name} ${editingCard ? "updated" : "created"} successfully`);
     setIsFormOpen(false);
+    setEditingCard(undefined);
   };
 
   const getActiveCards = () => {
@@ -85,7 +88,7 @@ export const useCardManagement = () => {
 
   return {
     selectedCard,
-    setSelectedCard, // Expose this to the component
+    setSelectedCard,
     activeTab,
     isFormOpen,
     editingCard,

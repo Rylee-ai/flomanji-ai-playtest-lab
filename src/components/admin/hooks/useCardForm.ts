@@ -46,6 +46,7 @@ export const useCardForm = (initialData?: GameCard) => {
       onFailure: "",
       onSuccess: "",
       bossHazard: false,
+      gearBonuses: [],
       biomeTags: [],
       onEnter: "",
       action: "",

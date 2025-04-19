@@ -63,7 +63,7 @@ export const NPCCardForm = ({ form }: NPCCardFormProps) => {
           </Button>
         </div>
 
-        {actions.map((_, index) => (
+        {actions.map((action, index) => (
           <div key={index} className="space-y-4 p-4 border rounded-md">
             <div className="flex justify-end">
               <Button 
@@ -104,7 +104,8 @@ export const NPCCardForm = ({ form }: NPCCardFormProps) => {
                       type="number" 
                       placeholder="Number of actions required" 
                       {...field}
-                      onChange={e => field.onChange(e.target.value ? Number(e.target.value) : 0)}
+                      value={field.value || 1}
+                      onChange={e => field.onChange(e.target.value ? Number(e.target.value) : 1)}
                     />
                   </FormControl>
                   <FormMessage />
