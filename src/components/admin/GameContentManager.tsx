@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -103,83 +102,103 @@ const GameContentManager = () => {
           </TabsList>
 
           <TabsContent value="treasure" className="space-y-4">
-            <TreasureCardsTable
-              cards={TREASURE_CARDS}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "treasure" && (
+              <TreasureCardsTable
+                cards={TREASURE_CARDS}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="hazard" className="space-y-4">
-            <HazardCardsTable
-              cards={HAZARD_CARDS}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "hazard" && (
+              <HazardCardsTable
+                cards={HAZARD_CARDS}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="automa" className="space-y-4">
-            <AutomaCardsTable
-              cards={AUTOMA_CARDS}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "automa" && (
+              <AutomaCardsTable
+                cards={AUTOMA_CARDS}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="region" className="space-y-4">
-            <RegionCardsTable
-              cards={REGION_CARDS}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "region" && (
+              <RegionCardsTable
+                cards={REGION_CARDS}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="npc" className="space-y-4">
-            <NPCCardsTable
-              cards={NPC_CARDS}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "npc" && (
+              <NPCCardsTable
+                cards={NPC_CARDS}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="mission" className="space-y-4">
-            <MissionCardsTable
-              cards={MISSION_CARDS}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "mission" && (
+              <MissionCardsTable
+                cards={MISSION_CARDS}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="gear" className="space-y-4">
-            <GearCardsTable
-              cards={GEAR_CARDS}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "gear" && (
+              <GearCardsTable
+                cards={GEAR_CARDS}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="chaos" className="space-y-4">
-            <ChaosCardsTable
-              cards={CHAOS_CARDS}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "chaos" && (
+              <ChaosCardsTable
+                cards={CHAOS_CARDS}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="flomanjified" className="space-y-4">
-            <FlomanjifiedCardsTable
-              cards={FLOMANJIFIED_CARDS}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "flomanjified" && (
+              <FlomanjifiedCardsTable
+                cards={FLOMANJIFIED_CARDS}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="secret" className="space-y-4">
-            <TreasureCardsTable
-              cards={SECRET_OBJECTIVES}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-            />
+            {activeTab === "secret" && (
+              <TreasureCardsTable
+                cards={SECRET_OBJECTIVES as TreasureCard[]}
+                onViewCard={handleViewCard}
+                onEditCard={handleEditCard}
+              />
+            )}
           </TabsContent>
         </Tabs>
 
