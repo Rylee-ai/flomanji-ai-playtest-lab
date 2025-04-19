@@ -1,9 +1,9 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { CardForm } from "./CardForm";
 import { GameCard } from "@/types/cards";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
@@ -29,6 +29,8 @@ import { FlomanjifiedCardsTable } from "./tables/FlomanjifiedCardsTable";
 const GameContentManager = () => {
   const [selectedCard, setSelectedCard] = React.useState<string | null>(null);
   const [activeTab, setActiveTab] = React.useState<string>("treasure");
+  const [isFormOpen, setIsFormOpen] = React.useState(false);
+  const [editingCard, setEditingCard] = React.useState<GameCard | undefined>();
 
   const getCardById = (id: string): GameCard | undefined => {
     const allCards: GameCard[] = [
@@ -50,13 +52,27 @@ const GameContentManager = () => {
     setSelectedCard(id);
   };
 
+  const handleEditCard = (card: GameCard) => {
+    setEditingCard(card);
+    setIsFormOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setEditingCard(undefined);
+    setIsFormOpen(true);
+  };
+
+  const handleFormSubmit = (data: any) => {
+    console.log("Form submitted:", data);
+  };
+
   const card = selectedCard ? getCardById(selectedCard) : null;
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Game Content Management</CardTitle>
-        <Button size="sm">
+        <Button size="sm" onClick={handleAddNew}>
           <Plus className="mr-2 h-4 w-4" />
           Add New
         </Button>
@@ -148,8 +164,17 @@ const GameContentManager = () => {
           <CardPreviewModal
             card={card}
             onClose={() => setSelectedCard(null)}
+            onEdit={() => handleEditCard(card)}
           />
         )}
+
+        <CardForm
+          open={isFormOpen}
+          onClose={() => setIsFormOpen(false)}
+          onSubmit={handleFormSubmit}
+          initialData={editingCard}
+          cardType={activeTab as CardType}
+        />
       </CardContent>
     </Card>
   );

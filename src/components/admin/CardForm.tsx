@@ -1,0 +1,153 @@
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { CardType, GameCard } from "@/types/cards";
+
+const cardSchema = z.object({
+  id: z.string().min(1, "ID is required"),
+  name: z.string().min(1, "Name is required"),
+  type: z.enum(["treasure", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified"]),
+  icons: z.array(z.object({
+    symbol: z.string(),
+    meaning: z.string()
+  })),
+  keywords: z.array(z.string()),
+  rules: z.array(z.string()),
+  flavor: z.string(),
+  imagePrompt: z.string()
+});
+
+type CardFormProps = {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (data: z.infer<typeof cardSchema>) => void;
+  initialData?: GameCard;
+  cardType?: CardType;
+};
+
+export function CardForm({ open, onClose, onSubmit, initialData, cardType }: CardFormProps) {
+  const form = useForm<z.infer<typeof cardSchema>>({
+    resolver: zodResolver(cardSchema),
+    defaultValues: initialData || {
+      id: "",
+      name: "",
+      type: cardType || "treasure",
+      icons: [],
+      keywords: [],
+      rules: [],
+      flavor: "",
+      imagePrompt: ""
+    }
+  });
+
+  const handleSubmit = async (data: z.infer<typeof cardSchema>) => {
+    try {
+      await onSubmit(data);
+      toast.success(`Card ${initialData ? "updated" : "created"} successfully`);
+      onClose();
+    } catch (error) {
+      toast.error("Failed to save card");
+      console.error(error);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {initialData ? "Edit Card" : "Add New Card"}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ID</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="unique-card-id" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Card Name" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="flavor"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Flavor Text</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} placeholder="Enter flavor text..." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="imagePrompt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image Prompt</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} placeholder="Enter image prompt..." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                {initialData ? "Save Changes" : "Create Card"}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
