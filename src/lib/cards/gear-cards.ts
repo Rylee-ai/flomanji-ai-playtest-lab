@@ -2,60 +2,102 @@
 import { GearCard } from '@/types/cards/gear';
 
 export const GEAR_CARDS: GearCard[] = [
+  // Consumables
+  {
+    id: "first-aid-kit",
+    name: "First Aid Kit",
+    type: "gear",
+    category: "consumable",
+    icons: [
+      { symbol: "🩹", meaning: "Healing" },
+      { symbol: "🛠️", meaning: "Tool" }
+    ],
+    keywords: ["Healing", "Supply"],
+    rules: [
+      "Use (1 Action): Discard → Heal 2 Damage on any one Survivor."
+    ],
+    flavor: "Better than Flomanji dirt.",
+    imagePrompt: "Worn red first-aid box with white cross, slightly open to reveal bandages and vials; placed on cracked asphalt under hot sun.",
+    consumable: true,
+    actionCost: 1
+  },
+  {
+    id: "bottled-water",
+    name: "Bottled Water (Case)",
+    type: "gear",
+    category: "consumable",
+    icons: [
+      { symbol: "💧", meaning: "Drink" },
+      { symbol: "📦", meaning: "Supply" }
+    ],
+    keywords: ["Healing", "Hydration"],
+    rules: [
+      "Uses 3. Spend 1 Use (1 Action) → Heal 1 Damage OR auto-succeed Grit DC 9 vs Heat Stroke."
+    ],
+    flavor: "Heavy, but life-saving.",
+    imagePrompt: "Plastic-wrapped case of water bottles, sweat beading on the plastic, box dented from travel.",
+    consumable: true,
+    uses: 3,
+    actionCost: 1
+  },
+  // Tools & Oddities
+  {
+    id: "flashlight",
+    name: "Flashlight & Batteries",
+    type: "gear",
+    category: "tool",
+    icons: [
+      { symbol: "🔦", meaning: "Light" },
+      { symbol: "🔋", meaning: "Battery" }
+    ],
+    keywords: ["Exploration", "Utility"],
+    rules: [
+      "Uses 4 Batteries. Use (1 Action): Spend 1 Battery → Ignore darkness penalties OR view adjacent Region's Hazard table."
+    ],
+    flavor: "Might keep the boogeyman away.",
+    imagePrompt: "Scuffed metal flashlight, beam cutting through darkness, spare batteries at its base.",
+    uses: 4,
+    actionCost: 1
+  },
+  // Weapons
   {
     id: "machete",
     name: "Machete",
     type: "gear",
+    category: "weapon",
     icons: [
-      { symbol: "⚔️", meaning: "Fight" },
-      { symbol: "🛠️", meaning: "Tool" }
+      { symbol: "⚔️", meaning: "Weapon" },
+      { symbol: "🌿", meaning: "Swamp" }
     ],
-    keywords: ["Weapon", "Tool", "Melee"],
+    keywords: ["Melee", "Constricting Vines"],
     rules: [
-      "Passive: +2 to Fight checks",
-      "Use (1 Action): Clear dense vegetation in Swamp or Forest regions"
+      "Use (1 Action): Melee attack (Deal 2 Damage). Use (0 Actions) vs Vines → Auto-Success."
     ],
-    flavor: "Jungle ready, tourist tested.",
-    imagePrompt: "Weathered machete with neon-tinted rust spots on the blade, worn handle wrapped in electrical tape",
+    flavor: "Great for vines... or villains.",
+    imagePrompt: "Long, blood-spattered blade against dense foliage.",
+    actionCost: 1,
     statBonus: {
       stat: "brawn",
       value: 2
     }
   },
+  // Vehicles
   {
-    id: "first-aid-kit",
-    name: "First Aid Kit",
+    id: "airboat",
+    name: "Airboat",
     type: "gear",
+    category: "vehicle",
     icons: [
-      { symbol: "🧨", meaning: "Consumable" },
-      { symbol: "🛍️", meaning: "Supply" }
+      { symbol: "🚤", meaning: "Vehicle" },
+      { symbol: "🐊", meaning: "Swamp" }
     ],
-    keywords: ["Healing", "Consumable", "Supply"],
+    keywords: ["Swamp Mastery"],
     rules: [
-      "Use (1 Action): Heal 2 Health OR reduce 1 Weirdness",
-      "Elimination: Discard after use"
+      "Use (0 Actions): Move 1 Swamp tile; ignore swamp movement costs."
     ],
-    flavor: "Red cross, green hope.",
-    imagePrompt: "Small white box with red cross, slightly bloodstained, contents partially visible through cracked plastic",
-    actionCost: 1,
-    consumable: true
-  },
-  {
-    id: "bug-spray",
-    name: "Bug Spray (Half Empty)",
-    type: "gear",
-    icons: [
-      { symbol: "🧨", meaning: "Consumable" },
-      { symbol: "🛡️", meaning: "Defense" }
-    ],
-    keywords: ["Protection", "Consumable", "Insect"],
-    rules: [
-      "Use (0 Actions): When facing Insect Hazards, gain +2 to all checks",
-      "Use (1 Action): Reduce Heat by 1 in Swamp regions",
-      "Elimination: Roll d6 after use; on 1-3, discard"
-    ],
-    flavor: "Smells like childhood trauma and victory.",
-    imagePrompt: "Aerosol can with faded label, pressure gauge showing half-empty, surrounded by fleeing mosquitoes",
-    consumable: true
+    flavor: "Skim the muck like a pro.",
+    imagePrompt: "Fan-powered boat gliding over grassy water.",
+    actionCost: 0
   }
 ];
+
