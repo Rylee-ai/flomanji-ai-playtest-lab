@@ -1,10 +1,11 @@
+
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { CardForm } from "./CardForm";
-import { GameCard } from "@/types/cards";
+import { CardForm, CardFormValues } from "./CardForm";
+import { CardType, GameCard } from "@/types/cards";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
 import { AUTOMA_CARDS } from "@/lib/cards/automa-cards";
@@ -62,8 +63,11 @@ const GameContentManager = () => {
     setIsFormOpen(true);
   };
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = (data: CardFormValues) => {
     console.log("Form submitted:", data);
+    // In a real implementation, this would update the card in the database
+    // For now, we just close the modal
+    setIsFormOpen(false);
   };
 
   const card = selectedCard ? getCardById(selectedCard) : null;

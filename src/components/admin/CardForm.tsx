@@ -25,27 +25,29 @@ import { CardType, GameCard } from "@/types/cards";
 const cardSchema = z.object({
   id: z.string().min(1, "ID is required"),
   name: z.string().min(1, "Name is required"),
-  type: z.enum(["treasure", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified"]),
+  type: z.enum(["treasure", "artifact", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified", "secret"]),
   icons: z.array(z.object({
     symbol: z.string(),
     meaning: z.string()
-  })),
-  keywords: z.array(z.string()),
-  rules: z.array(z.string()),
-  flavor: z.string(),
-  imagePrompt: z.string()
+  })).default([]),
+  keywords: z.array(z.string()).default([]),
+  rules: z.array(z.string()).default([]),
+  flavor: z.string().default(""),
+  imagePrompt: z.string().default("")
 });
+
+export type CardFormValues = z.infer<typeof cardSchema>;
 
 type CardFormProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: z.infer<typeof cardSchema>) => void;
+  onSubmit: (data: CardFormValues) => void;
   initialData?: GameCard;
   cardType?: CardType;
 };
 
 export function CardForm({ open, onClose, onSubmit, initialData, cardType }: CardFormProps) {
-  const form = useForm<z.infer<typeof cardSchema>>({
+  const form = useForm<CardFormValues>({
     resolver: zodResolver(cardSchema),
     defaultValues: initialData || {
       id: "",
@@ -59,7 +61,7 @@ export function CardForm({ open, onClose, onSubmit, initialData, cardType }: Car
     }
   });
 
-  const handleSubmit = async (data: z.infer<typeof cardSchema>) => {
+  const handleSubmit = async (data: CardFormValues) => {
     try {
       await onSubmit(data);
       toast.success(`Card ${initialData ? "updated" : "created"} successfully`);
