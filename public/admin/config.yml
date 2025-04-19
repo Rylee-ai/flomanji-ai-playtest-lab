@@ -1,0 +1,45 @@
+
+# Decap CMS Configuration
+backend:
+  name: git-gateway
+  branch: main # Branch to update (optional; defaults to master)
+
+# Media and public folder settings
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+# Content collections
+collections:
+  - name: "rules"
+    label: "Game Rules"
+    folder: "content/rules"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Section", name: "section", widget: "string" }
+      - { label: "Content", name: "body", widget: "markdown" }
+      - { label: "Order", name: "order", widget: "number", default: 1 }
+
+  - name: "cards"
+    label: "Game Cards"
+    folder: "content/cards"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Type", name: "type", widget: "select", options: ["hazard", "treasure", "event"] }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Effects", name: "effects", widget: "markdown" }
+
+  - name: "scenarios"
+    label: "Game Scenarios"
+    folder: "content/scenarios"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Setup Instructions", name: "setup", widget: "markdown" }
+      - { label: "Goals", name: "goals", widget: "markdown" }
+      - { label: "Special Rules", name: "specialRules", widget: "markdown", required: false }

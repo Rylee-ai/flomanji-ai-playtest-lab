@@ -1,73 +1,83 @@
-# Welcome to your Lovable project
 
-## Project info
+# Flomanji AI Playtest Lab
 
-**URL**: https://lovable.dev/projects/457cd21c-cd07-4a62-8120-937c43db71a2
+An AI-powered simulation tool for testing tabletop RPG gameplay scenarios.
 
-## How can I edit this code?
+## Overview
 
-There are several ways of editing your application.
+Flomanji AI Playtest Lab is a web-based system that enables game designers to conduct AI-driven playtest sessions for the Flomanji tabletop RPG. Using OpenAI-based agents to act as the Game Master, players, and a critic, the tool can simulate game rounds and produce detailed play logs.
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/457cd21c-cd07-4a62-8120-937c43db71a2) and start prompting.
+- **AI-driven Simulations:** Start playtest sessions by entering prompt scenarios and settings
+- **Multi-Agent System:** Orchestrates Game Master, Player, and Critic AI agents
+- **Rich Output Logs:** Generate detailed transcripts of each session
+- **Markdown-Driven Rules:** Maintain game rules and card details in Markdown format
+- **Admin Dashboard:** Configure and launch simulations, review archives of past logs
+- **Decap CMS Integration:** Easy content management for game rules and cards
 
-Changes made via Lovable will be committed automatically to this repo.
+## Technology Stack
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
 - React
-- shadcn-ui
-- Tailwind CSS
+- TypeScript
+- TailwindCSS
+- Shadcn UI
+- OpenAI API
+- Decap CMS (formerly Netlify CMS)
+- Netlify Hosting
 
-## How can I deploy this project?
+## Getting Started
 
-Simply open [Lovable](https://lovable.dev/projects/457cd21c-cd07-4a62-8120-937c43db71a2) and click on Share -> Publish.
+### Prerequisites
 
-## Can I connect a custom domain to my Lovable project?
+- Node.js (v18+)
+- OpenAI API key
 
-Yes, you can!
+### Installation
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Start the development server: `npm run dev`
+4. Access the app at http://localhost:8080
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Setting Up OpenAI API
+
+1. Navigate to the Settings page
+2. Enter your OpenAI API key
+3. Click "Save API Key"
+
+## Usage
+
+### Running a Simulation
+
+1. Navigate to Simulations > New Simulation
+2. Enter a scenario prompt
+3. Configure settings (rounds, players, etc.)
+4. Click "Start Simulation"
+
+### Viewing Results
+
+1. Navigate to the Simulations page
+2. Select a simulation from the list
+3. View the full transcript, critique, and add your own annotations
+
+### Editing Game Rules
+
+1. Navigate to the /admin route
+2. Log in with your credentials
+3. Edit rules, cards, and scenarios through the CMS interface
+
+## Deployment
+
+This application is designed to be deployed on Netlify:
+
+1. Connect your GitHub repository to Netlify
+2. Configure build settings:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+3. Enable Netlify Identity for authentication
+4. Configure environment variables (OPENAI_API_KEY) in Netlify settings
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

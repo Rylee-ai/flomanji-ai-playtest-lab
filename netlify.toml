@@ -1,0 +1,17 @@
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# Redirect all URLs to index.html for SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Enable Netlify Identity for authentication
+[template.environment]
+  NODE_VERSION = "18"
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
