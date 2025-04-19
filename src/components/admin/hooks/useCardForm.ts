@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
 import { GameCard, CardType } from "@/types/cards";
@@ -10,6 +9,7 @@ import { GearCard } from "@/types/cards/gear";
 import { ChaosCard } from "@/types/cards/chaos";
 import { FlomanjifiedRoleCard } from "@/types/cards/flomanjified";
 import { SecretObjectiveCard, AutomaCard } from "@/types/cards";
+import { PlayerCharacterCard } from "@/types/cards/player-character";
 
 export const useCardForm = (initialData?: GameCard) => {
   const form = useForm<CardFormValues>({
@@ -72,7 +72,24 @@ export const useCardForm = (initialData?: GameCard) => {
       winCondition: "",
       movement: "",
       combatBonus: undefined,
-      specialEffect: ""
+      specialEffect: "",
+      // Player Character defaults
+      role: "",
+      stats: {
+        brawn: 1,
+        moxie: 1,
+        charm: 1,
+        grit: 1,
+        weirdSense: 1
+      },
+      ability: {
+        name: "",
+        description: ""
+      },
+      health: 5,
+      weirdness: 0,
+      luck: 5,
+      starterGear: []
     }
   });
 
@@ -175,6 +192,27 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
         movement: automaCard.movement || "",
         combatBonus: automaCard.combatBonus,
         specialEffect: automaCard.specialEffect || ""
+      };
+    }
+    case "player-character": {
+      const playerCharCard = card as PlayerCharacterCard;
+      return {
+        role: playerCharCard.role || "",
+        stats: {
+          brawn: playerCharCard.stats?.brawn || 1,
+          moxie: playerCharCard.stats?.moxie || 1,
+          charm: playerCharCard.stats?.charm || 1,
+          grit: playerCharCard.stats?.grit || 1,
+          weirdSense: playerCharCard.stats?.weirdSense || 1
+        },
+        ability: {
+          name: playerCharCard.ability?.name || "",
+          description: playerCharCard.ability?.description || ""
+        },
+        health: playerCharCard.health || 5,
+        weirdness: playerCharCard.weirdness || 0,
+        luck: playerCharCard.luck || 5,
+        starterGear: playerCharCard.starterGear || []
       };
     }
     default:

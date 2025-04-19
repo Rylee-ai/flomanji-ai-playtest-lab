@@ -62,6 +62,7 @@ export const BaseCardForm = ({ form }: BaseCardFormProps) => {
                 <SelectItem value="flomanjified">Flomanjified</SelectItem>
                 <SelectItem value="secret">Secret Objective</SelectItem>
                 <SelectItem value="automa">Automa</SelectItem>
+                <SelectItem value="player-character">Player Character</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

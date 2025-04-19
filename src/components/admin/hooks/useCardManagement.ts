@@ -13,6 +13,7 @@ import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
 import { GEAR_CARDS } from "@/lib/cards/gear-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
+import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 
 export const useCardManagement = () => {
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -31,7 +32,8 @@ export const useCardManagement = () => {
       ...HAZARD_CARDS,
       ...GEAR_CARDS,
       ...CHAOS_CARDS,
-      ...FLOMANJIFIED_CARDS
+      ...FLOMANJIFIED_CARDS,
+      ...PLAYER_CHARACTER_CARDS
     ];
     return allCards.find(card => card.id === id);
   };
@@ -81,6 +83,8 @@ export const useCardManagement = () => {
         return FLOMANJIFIED_CARDS;
       case "secret":
         return SECRET_OBJECTIVES;
+      case "player-character":
+        return PLAYER_CHARACTER_CARDS;
       default:
         return [];
     }

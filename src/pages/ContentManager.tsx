@@ -11,8 +11,8 @@ const ContentManager = () => {
           Create and manage game cards, characters, missions, and content
         </div>
         <p className="mt-2">
-          Use the tabs below to view and edit different card types. The NPC tab contains 
-          character cards like Swamp Witch, Airboat Guide, and other characters for your game.
+          Use the tabs below to view and edit different card types. The system supports all card types 
+          from the Flomanji game, including player characters, NPCs, hazards, treasures, and more.
         </p>
       </div>
       <GameContentManager />

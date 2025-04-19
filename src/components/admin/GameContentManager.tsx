@@ -46,8 +46,9 @@ const GameContentManager = () => {
           className="w-full"
         >
           <div className="mb-4">
-            <h3 className="text-sm font-medium mb-2">Character & NPC Cards</h3>
+            <h3 className="text-sm font-medium mb-2">Character Cards</h3>
             <TabsList className="flex flex-wrap mb-4">
+              <TabsTrigger value="player-character">Player Characters</TabsTrigger>
               <TabsTrigger value="npc">NPC Characters</TabsTrigger>
               <TabsTrigger value="flomanjified">Flomanjified Roles</TabsTrigger>
             </TabsList>

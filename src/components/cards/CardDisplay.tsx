@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { GameCard, CardType, TreasureCard, SecretObjectiveCard, AutomaCard } from '@/types/cards';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -12,12 +11,14 @@ import { GearCardDisplay } from './types/GearCardDisplay';
 import { NPCCardDisplay } from './types/NPCCardDisplay';
 import { ChaosCardDisplay } from './types/ChaosCardDisplay';
 import { FlomanjifiedCardDisplay } from './types/FlomanjifiedCardDisplay';
+import { PlayerCharacterCardDisplay } from './types/PlayerCharacterCardDisplay';
 import { RegionCard } from '@/types/cards/region';
 import { HazardCard } from '@/types/cards/hazard';
 import { GearCard } from '@/types/cards/gear';
 import { NPCCard } from '@/types/cards/npc';
 import { ChaosCard } from '@/types/cards/chaos';
 import { FlomanjifiedRoleCard } from '@/types/cards/flomanjified';
+import { PlayerCharacterCard } from '@/types/cards/player-character';
 
 interface CardDisplayProps {
   card: GameCard;
@@ -48,6 +49,8 @@ export const CardDisplay = ({ card, showDetails = true }: CardDisplayProps) => {
         return <ChaosCardDisplay card={card as ChaosCard} />;
       case 'flomanjified':
         return <FlomanjifiedCardDisplay card={card as FlomanjifiedRoleCard} />;
+      case 'player-character':
+        return <PlayerCharacterCardDisplay card={card as PlayerCharacterCard} />;
       default:
         return null;
     }

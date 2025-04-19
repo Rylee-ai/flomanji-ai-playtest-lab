@@ -10,6 +10,7 @@ import { HazardCard } from "@/types/cards/hazard";
 import { RegionCard } from "@/types/cards/region";
 import { NPCCard } from "@/types/cards/npc";
 import { FlomanjifiedRoleCard } from "@/types/cards/flomanjified";
+import { PlayerCharacterCard } from "@/types/cards/player-character";
 import { TreasureCardsTable } from "./TreasureCardsTable";
 import { AutomaCardsTable } from "./AutomaCardsTable";
 import { MissionCardsTable } from "./MissionCardsTable";
@@ -19,6 +20,7 @@ import { HazardCardsTable } from "./HazardCardsTable";
 import { RegionCardsTable } from "./RegionCardsTable";
 import { NPCCardsTable } from "./NPCCardsTable";
 import { FlomanjifiedCardsTable } from "./FlomanjifiedCardsTable";
+import { PlayerCharacterCardsTable } from "./PlayerCharacterCardsTable";
 import { SecretObjectiveCard } from "@/types/cards";
 import { SecretCardsTable } from "./SecretCardsTable";
 
@@ -99,6 +101,14 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard }: Table
       return (
         <FlomanjifiedCardsTable
           cards={cards as FlomanjifiedRoleCard[]}
+          onViewCard={onViewCard}
+          onEditCard={onEditCard}
+        />
+      );
+    case "player-character":
+      return (
+        <PlayerCharacterCardsTable
+          cards={cards as PlayerCharacterCard[]}
           onViewCard={onViewCard}
           onEditCard={onEditCard}
         />

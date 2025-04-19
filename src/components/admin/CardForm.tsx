@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import {
   Dialog,
@@ -23,11 +22,12 @@ import { ChaosCardForm } from "./forms/ChaosCardForm";
 import { FlomanjifiedCardForm } from "./forms/FlomanjifiedCardForm";
 import { SecretCardForm } from "./forms/SecretCardForm";
 import { AutomaCardForm } from "./forms/AutomaCardForm";
+import { PlayerCharacterForm } from "./forms/PlayerCharacterForm";
 
 export const cardFormSchema = z.object({
   // Base fields for all cards
   name: z.string().min(2, { message: "Card name must be at least 2 characters." }),
-  type: z.enum(["treasure", "artifact", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified", "secret"]),
+  type: z.enum(["treasure", "artifact", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified", "secret", "player-character"]),
   keywords: z.array(z.string()).optional(),
   icons: z.array(z.object({ 
     symbol: z.string(),
@@ -107,6 +107,28 @@ export const cardFormSchema = z.object({
   movement: z.string().optional(),
   combatBonus: z.number().optional(),
   specialEffect: z.string().optional(),
+
+  // Player Character specific fields
+  role: z.string().optional(),
+  stats: z.object({
+    brawn: z.number().optional(),
+    moxie: z.number().optional(),
+    charm: z.number().optional(),
+    grit: z.number().optional(),
+    weirdSense: z.number().optional()
+  }).optional(),
+  ability: z.object({
+    name: z.string().optional(),
+    description: z.string().optional()
+  }).optional(),
+  health: z.number().optional(),
+  weirdness: z.number().optional(),
+  luck: z.number().optional(),
+  starterGear: z.array(z.object({
+    name: z.string(),
+    type: z.string(),
+    effect: z.string()
+  })).optional(),
 });
 
 export type CardFormValues = z.infer<typeof cardFormSchema>;
@@ -154,6 +176,7 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
             {type === "flomanjified" && <FlomanjifiedCardForm form={form} />}
             {type === "secret" && <SecretCardForm form={form} />}
             {type === "automa" && <AutomaCardForm form={form} />}
+            {type === "player-character" && <PlayerCharacterForm form={form} />}
 
             <DialogFooter>
               <Button type="submit">
