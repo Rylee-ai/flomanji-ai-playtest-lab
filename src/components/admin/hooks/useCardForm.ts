@@ -30,7 +30,48 @@ export const useCardForm = (initialData?: GameCard) => {
       icons: [],
       rules: [],
       flavor: "",
-      imagePrompt: ""
+      imagePrompt: "",
+      // Default empty values for type-specific fields
+      value: undefined,
+      consumable: false,
+      passiveEffect: "",
+      useEffect: "",
+      subType: undefined,
+      difficultyClasses: {
+        fight: undefined,
+        flee: undefined,
+        negotiate: undefined,
+        outsmart: undefined
+      },
+      onFailure: "",
+      onSuccess: "",
+      bossHazard: false,
+      biomeTags: [],
+      onEnter: "",
+      action: "",
+      rest: "",
+      bonusZone: "",
+      checkDC: undefined,
+      actions: [],
+      category: undefined,
+      uses: undefined,
+      actionCost: undefined,
+      passive: "",
+      statBonus: {
+        stat: undefined,
+        value: undefined
+      },
+      heatEffect: undefined,
+      globalEffect: "",
+      duration: undefined,
+      originalRole: "",
+      chaosAction: "",
+      specialAbility: "",
+      alignment: undefined,
+      winCondition: "",
+      movement: "",
+      combatBonus: undefined,
+      specialEffect: ""
     }
   });
 
@@ -44,80 +85,95 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
       const treasureCard = card as TreasureCard;
       return {
         value: treasureCard.value,
-        consumable: treasureCard.consumable,
-        passiveEffect: treasureCard.passiveEffect,
-        useEffect: treasureCard.useEffect
+        consumable: treasureCard.consumable || false,
+        passiveEffect: treasureCard.passiveEffect || "",
+        useEffect: treasureCard.useEffect || ""
       };
     }
     case "hazard": {
       const hazardCard = card as HazardCard;
       return {
         subType: hazardCard.subType,
-        difficultyClasses: hazardCard.difficultyClasses,
-        bossHazard: hazardCard.bossHazard,
-        onFailure: hazardCard.onFailure,
-        onSuccess: hazardCard.onSuccess,
-        gearBonuses: hazardCard.gearBonuses
+        difficultyClasses: {
+          fight: hazardCard.difficultyClasses?.fight,
+          flee: hazardCard.difficultyClasses?.flee,
+          negotiate: hazardCard.difficultyClasses?.negotiate,
+          outsmart: hazardCard.difficultyClasses?.outsmart,
+          grit: hazardCard.difficultyClasses?.grit,
+          moxie: hazardCard.difficultyClasses?.moxie,
+          charm: hazardCard.difficultyClasses?.charm,
+          weirdSense: hazardCard.difficultyClasses?.weirdSense
+        },
+        bossHazard: hazardCard.bossHazard || false,
+        onFailure: hazardCard.onFailure || "",
+        onSuccess: hazardCard.onSuccess || "",
+        gearBonuses: hazardCard.gearBonuses || []
       };
     }
     case "region": {
       const regionCard = card as RegionCard;
       return {
-        biomeTags: regionCard.biomeTags?.map(tag => tag) || [],
-        onEnter: regionCard.onEnter,
-        action: regionCard.action,
-        rest: regionCard.rest,
-        bonusZone: regionCard.bonusZone
+        biomeTags: regionCard.biomeTags || [],
+        onEnter: regionCard.onEnter || "",
+        action: regionCard.action || "",
+        rest: regionCard.rest || "",
+        bonusZone: regionCard.bonusZone || ""
       };
     }
     case "npc": {
       const npcCard = card as NPCCard;
       return {
         checkDC: npcCard.checkDC,
-        // Properly handle actions as an array
-        actions: npcCard.actions || []
+        actions: npcCard.actions?.map(action => ({
+          description: action.description || "",
+          cost: action.cost || 1,
+          effect: action.effect || ""
+        })) || []
       };
     }
     case "gear": {
       const gearCard = card as GearCard;
       return {
         category: gearCard.category,
-        consumable: gearCard.consumable,
+        consumable: gearCard.consumable || false,
         uses: gearCard.uses,
         actionCost: gearCard.actionCost,
-        passive: gearCard.passive,
-        statBonus: gearCard.statBonus
+        passive: gearCard.passive || "",
+        statBonus: {
+          stat: gearCard.statBonus?.stat,
+          value: gearCard.statBonus?.value
+        }
       };
     }
     case "chaos": {
       const chaosCard = card as ChaosCard;
       return {
         heatEffect: chaosCard.heatEffect,
-        globalEffect: chaosCard.globalEffect,
+        globalEffect: chaosCard.globalEffect || "",
         duration: chaosCard.duration
       };
     }
     case "flomanjified": {
       const flomanjifiedCard = card as FlomanjifiedRoleCard;
       return {
-        originalRole: flomanjifiedCard.originalRole,
-        chaosAction: flomanjifiedCard.chaosAction,
-        specialAbility: flomanjifiedCard.specialAbility
+        originalRole: flomanjifiedCard.originalRole || "",
+        chaosAction: flomanjifiedCard.chaosAction || "",
+        specialAbility: flomanjifiedCard.specialAbility || ""
       };
     }
     case "secret": {
       const secretCard = card as SecretObjectiveCard;
       return {
         alignment: secretCard.alignment,
-        winCondition: secretCard.winCondition
+        winCondition: secretCard.winCondition || ""
       };
     }
     case "automa": {
       const automaCard = card as AutomaCard;
       return {
-        movement: automaCard.movement,
+        movement: automaCard.movement || "",
         combatBonus: automaCard.combatBonus,
-        specialEffect: automaCard.specialEffect
+        specialEffect: automaCard.specialEffect || ""
       };
     }
     default:

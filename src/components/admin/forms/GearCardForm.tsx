@@ -124,6 +124,58 @@ export const GearCardForm = ({ form }: GearCardFormProps) => {
           </FormItem>
         )}
       />
+      
+      <div className="space-y-4 border rounded-lg p-4">
+        <FormLabel>Stat Bonus</FormLabel>
+        
+        <FormField
+          control={form.control}
+          name="statBonus.stat"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Stat</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select stat to boost" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="brawn">Brawn</SelectItem>
+                  <SelectItem value="moxie">Moxie</SelectItem>
+                  <SelectItem value="charm">Charm</SelectItem>
+                  <SelectItem value="grit">Grit</SelectItem>
+                  <SelectItem value="weirdSense">Weird Sense</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="statBonus.value"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Bonus Value</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  placeholder="Bonus amount" 
+                  {...field}
+                  value={field.value || ""}
+                  onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </>
   );
 };

@@ -20,6 +20,7 @@ import { RegionCardsTable } from "./RegionCardsTable";
 import { NPCCardsTable } from "./NPCCardsTable";
 import { FlomanjifiedCardsTable } from "./FlomanjifiedCardsTable";
 import { SecretObjectiveCard } from "@/types/cards";
+import { SecretCardsTable } from "./SecretCardsTable";
 
 interface TableWrapperProps {
   activeTab: string;
@@ -104,8 +105,8 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard }: Table
       );
     case "secret":
       return (
-        <TreasureCardsTable
-          cards={cards as TreasureCard[]}
+        <SecretCardsTable
+          cards={cards as SecretObjectiveCard[]}
           onViewCard={onViewCard}
           onEditCard={onEditCard}
         />

@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -124,6 +124,13 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
   const form = useCardForm(initialData);
   const isEditing = !!initialData;
   const type = form.watch("type");
+  
+  // Set the form type based on activeTab when creating a new card
+  useEffect(() => {
+    if (!isEditing && activeTab) {
+      form.setValue("type", activeTab as CardType);
+    }
+  }, [activeTab, form, isEditing]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
