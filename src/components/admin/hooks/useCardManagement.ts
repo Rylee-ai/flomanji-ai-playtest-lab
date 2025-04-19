@@ -85,6 +85,7 @@ export const useCardManagement = () => {
 
   return {
     selectedCard,
+    setSelectedCard, // Expose this to the component
     activeTab,
     isFormOpen,
     editingCard,

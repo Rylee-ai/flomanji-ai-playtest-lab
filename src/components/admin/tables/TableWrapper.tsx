@@ -6,6 +6,10 @@ import { AutomaCard } from "@/types/cards";
 import { MissionSheet } from "@/types/cards/mission";
 import { GearCard } from "@/types/cards/gear";
 import { ChaosCard } from "@/types/cards/chaos";
+import { HazardCard } from "@/types/cards/hazard";
+import { RegionCard } from "@/types/cards/region";
+import { NPCCard } from "@/types/cards/npc";
+import { FlomanjifiedRoleCard } from "@/types/cards/flomanjified";
 import { TreasureCardsTable } from "./TreasureCardsTable";
 import { AutomaCardsTable } from "./AutomaCardsTable";
 import { MissionCardsTable } from "./MissionCardsTable";
@@ -15,6 +19,7 @@ import { HazardCardsTable } from "./HazardCardsTable";
 import { RegionCardsTable } from "./RegionCardsTable";
 import { NPCCardsTable } from "./NPCCardsTable";
 import { FlomanjifiedCardsTable } from "./FlomanjifiedCardsTable";
+import { SecretObjectiveCard } from "@/types/cards";
 
 interface TableWrapperProps {
   activeTab: string;
@@ -68,7 +73,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard }: Table
     case "hazard":
       return (
         <HazardCardsTable
-          cards={cards}
+          cards={cards as HazardCard[]}
           onViewCard={onViewCard}
           onEditCard={onEditCard}
         />
@@ -76,7 +81,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard }: Table
     case "region":
       return (
         <RegionCardsTable
-          cards={cards}
+          cards={cards as RegionCard[]}
           onViewCard={onViewCard}
           onEditCard={onEditCard}
         />
@@ -84,7 +89,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard }: Table
     case "npc":
       return (
         <NPCCardsTable
-          cards={cards}
+          cards={cards as NPCCard[]}
           onViewCard={onViewCard}
           onEditCard={onEditCard}
         />
@@ -92,7 +97,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard }: Table
     case "flomanjified":
       return (
         <FlomanjifiedCardsTable
-          cards={cards}
+          cards={cards as FlomanjifiedRoleCard[]}
           onViewCard={onViewCard}
           onEditCard={onEditCard}
         />

@@ -17,6 +17,7 @@ const GameContentManager = () => {
     editingCard,
     setActiveTab,
     setIsFormOpen,
+    setSelectedCard, // Make sure this is exposed from the hook
     getCardById,
     handleViewCard,
     handleEditCard,
