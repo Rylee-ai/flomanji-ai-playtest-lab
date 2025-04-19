@@ -52,6 +52,8 @@ const cardFormSchema = z.object({
   difficultyClasses: z.object({
     fight: z.number().optional(),
     flee: z.number().optional(),
+    negotiate: z.number().optional(),
+    outsmart: z.number().optional(),
   }).optional(),
   bossHazard: z.boolean().optional(),
   

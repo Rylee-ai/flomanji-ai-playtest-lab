@@ -10,6 +10,7 @@ import { GearCard } from "@/types/cards/gear";
 import { ChaosCard } from "@/types/cards/chaos";
 import { FlomanjifiedRoleCard } from "@/types/cards/flomanjified";
 import { SecretObjectiveCard } from "@/types/cards";
+import { AutomaCard } from "@/types/cards";
 
 export const useCardForm = (initialData?: GameCard) => {
   const form = useForm<CardFormValues>({
@@ -96,6 +97,15 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
       return {
         alignment: secretCard.alignment,
         winCondition: secretCard.winCondition
+      };
+    }
+    case "automa": {
+      const automaCard = card as AutomaCard;
+      return {
+        // Include automa specific fields
+        movement: automaCard.movement,
+        combatBonus: automaCard.combatBonus,
+        specialEffect: automaCard.specialEffect
       };
     }
     default:
