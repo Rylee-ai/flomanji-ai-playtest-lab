@@ -18,9 +18,11 @@ export interface GameCard {
 }
 
 export interface TreasureCard extends GameCard {
-  type: 'treasure';
+  type: 'treasure' | 'artifact';
   value?: number;
   consumable?: boolean;
+  passiveEffect?: string;
+  useEffect?: string;
 }
 
 export interface AutomaCard extends GameCard {
