@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { NPCCard } from "@/types/cards/npc";
+import { Badge } from "@/components/ui/badge";
 
 interface NPCCardsTableProps {
   cards: NPCCard[];
@@ -24,7 +25,8 @@ export const NPCCardsTable = ({ cards, onViewCard, onEditCard }: NPCCardsTablePr
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
-          <TableHead>Check DC</TableHead>
+          <TableHead>Type</TableHead>
+          <TableHead>Stats</TableHead>
           <TableHead>Actions</TableHead>
           <TableHead>Keywords</TableHead>
           <TableHead>Operations</TableHead>
@@ -33,10 +35,39 @@ export const NPCCardsTable = ({ cards, onViewCard, onEditCard }: NPCCardsTablePr
       <TableBody>
         {cards.map((card) => (
           <TableRow key={card.id}>
-            <TableCell>{card.name}</TableCell>
-            <TableCell>{card.checkDC || "N/A"}</TableCell>
-            <TableCell>{card.actions?.length || 0}</TableCell>
-            <TableCell>{card.keywords.join(", ")}</TableCell>
+            <TableCell className="font-medium">{card.name}</TableCell>
+            <TableCell>
+              {card.icons.map(icon => (
+                <span key={icon.symbol} title={icon.meaning} className="mr-1">
+                  {icon.symbol}
+                </span>
+              ))}
+            </TableCell>
+            <TableCell>
+              {card.checkDC ? `DC ${card.checkDC}` : "No check"}
+            </TableCell>
+            <TableCell>
+              {card.actions && card.actions.length > 0 ? (
+                <div className="flex flex-col gap-1">
+                  {card.actions.map((action, idx) => (
+                    <Badge key={idx} variant="outline" className="whitespace-nowrap">
+                      {action.cost}🎲 - {action.description.substring(0, 15)}...
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                "No actions"
+              )}
+            </TableCell>
+            <TableCell>
+              <div className="flex flex-wrap gap-1">
+                {card.keywords.map((keyword, idx) => (
+                  <Badge key={idx} variant="secondary" className="text-xs">
+                    {keyword}
+                  </Badge>
+                ))}
+              </div>
+            </TableCell>
             <TableCell className="space-x-2">
               <Button 
                 variant="outline" 
@@ -57,6 +88,13 @@ export const NPCCardsTable = ({ cards, onViewCard, onEditCard }: NPCCardsTablePr
             </TableCell>
           </TableRow>
         ))}
+        {cards.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={6} className="text-center py-4 text-muted-foreground">
+              No NPC character cards found
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

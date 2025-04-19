@@ -45,18 +45,33 @@ const GameContentManager = () => {
           onValueChange={(value) => setActiveTab(value as any)}
           className="w-full"
         >
-          <TabsList className="flex flex-wrap">
-            <TabsTrigger value="treasure">Treasure Cards</TabsTrigger>
-            <TabsTrigger value="hazard">Hazard Cards</TabsTrigger>
-            <TabsTrigger value="automa">Automa Cards</TabsTrigger>
-            <TabsTrigger value="region">Region Cards</TabsTrigger>
-            <TabsTrigger value="npc">NPC Cards</TabsTrigger>
-            <TabsTrigger value="mission">Mission Sheets</TabsTrigger>
-            <TabsTrigger value="gear">Gear Cards</TabsTrigger>
-            <TabsTrigger value="chaos">Chaos Cards</TabsTrigger>
-            <TabsTrigger value="flomanjified">Flomanjified Roles</TabsTrigger>
-            <TabsTrigger value="secret">Secret Objectives</TabsTrigger>
-          </TabsList>
+          <div className="mb-4">
+            <h3 className="text-sm font-medium mb-2">Character & NPC Cards</h3>
+            <TabsList className="flex flex-wrap mb-4">
+              <TabsTrigger value="npc">NPC Characters</TabsTrigger>
+              <TabsTrigger value="flomanjified">Flomanjified Roles</TabsTrigger>
+            </TabsList>
+
+            <h3 className="text-sm font-medium mb-2">Item Cards</h3>
+            <TabsList className="flex flex-wrap mb-4">
+              <TabsTrigger value="treasure">Treasure Cards</TabsTrigger>
+              <TabsTrigger value="gear">Gear Cards</TabsTrigger>
+            </TabsList>
+
+            <h3 className="text-sm font-medium mb-2">Event & Encounter Cards</h3>
+            <TabsList className="flex flex-wrap mb-4">
+              <TabsTrigger value="hazard">Hazard Cards</TabsTrigger>
+              <TabsTrigger value="chaos">Chaos Cards</TabsTrigger>
+              <TabsTrigger value="region">Region Cards</TabsTrigger>
+            </TabsList>
+
+            <h3 className="text-sm font-medium mb-2">Game Structure</h3>
+            <TabsList className="flex flex-wrap">
+              <TabsTrigger value="mission">Mission Sheets</TabsTrigger>
+              <TabsTrigger value="secret">Secret Objectives</TabsTrigger>
+              <TabsTrigger value="automa">Automa Cards</TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value={activeTab} className="space-y-4">
             <TableWrapper
