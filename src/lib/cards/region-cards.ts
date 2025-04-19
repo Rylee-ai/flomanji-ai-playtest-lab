@@ -80,5 +80,89 @@ export const REGION_CARDS: RegionCard[] = [
     rules: ["Tourists take selfies… and the gators take souvenirs"],
     flavor: "Tourists take selfies… and the gators take souvenirs.",
     imagePrompt: "Rusty cages and feeding platforms by a muddy pond, neon-pastel warning signs, lurking jaws"
+  },
+  {
+    id: "quicksand-bog",
+    name: "Quicksand Bog",
+    type: "region",
+    biomeTags: ["🐊"],
+    icons: [{ symbol: "🐊", meaning: "Swamp Biome" }],
+    keywords: ["Swamp", "Hazard", "Movement"],
+    onEnter: "Moxie DC 11 → Failure: become Immobilized until you spend 1 Action to free yourself",
+    action: "Use Machete → +2 Bonus to free yourself or clear a path",
+    rest: "Cannot rest here (bog sucks you in)",
+    bonusZone: "Rope Anchor: Spend 1 Action + 1 Gear to auto-free all players",
+    rules: ["What looks like solid ground is secretly your worst enemy"],
+    flavor: "What looks like solid ground is secretly your worst enemy.",
+    imagePrompt: "Sinking boot in golden muck, ripples spreading across luminescent green water"
+  },
+  {
+    id: "mangrove-tangle",
+    name: "Mangrove Tangle",
+    type: "region",
+    biomeTags: ["🐊"],
+    icons: [{ symbol: "🐊", meaning: "Swamp Biome" }],
+    keywords: ["Swamp", "Natural", "Resource"],
+    onEnter: "Grit DC 9 → Success: +1 Luck; Failure: Lose 1 Action",
+    action: "Spend 1 Action + 1 Gear → Draw 1 Clue",
+    rest: "Heal 1 Weirdness (soothing shade)",
+    bonusZone: "Hidden Den: Discard 1 Gear → Gain 1 Treasure Card",
+    rules: ["Roots twist like serpents—twist yourself free if you can"],
+    flavor: "Roots twist like serpents—twist yourself free if you can.",
+    imagePrompt: "Knotted roots above dark water, shafts of neon-pastel light filtering through dense canopy"
+  },
+  {
+    id: "abandoned-airboat-dock",
+    name: "Abandoned Airboat Dock",
+    type: "region",
+    biomeTags: ["🐊"],
+    icons: [
+      { symbol: "🐊", meaning: "Swamp Biome" },
+      { symbol: "🚤", meaning: "Vehicle" }
+    ],
+    keywords: ["Swamp", "Vehicle", "Safe"],
+    onEnter: "Draw 1 Gear (vehicle or tool)",
+    action: "Repair Vehicle (Grit DC 9) → Restore 1 Use to any Vehicle Gear",
+    rest: "Safe (no Hazards)",
+    bonusZone: "Spare Parts Cache: Search → Draw 1 Tool",
+    rules: ["Engine husks creak in the breeze—if only they still ran"],
+    flavor: "Engine husks creak in the breeze—if only they still ran.",
+    imagePrompt: "Rusted dock boards leading to a stripped-out airboat hull, broken canopies swaying in humidity"
+  },
+  {
+    id: "mosquito-infestation",
+    name: "Mosquito Infestation Site",
+    type: "region",
+    biomeTags: ["🐊"],
+    icons: [
+      { symbol: "🐊", meaning: "Swamp Biome" },
+      { symbol: "🌱", meaning: "Environmental" }
+    ],
+    keywords: ["Swamp", "Hazard", "Insect"],
+    onEnter: "Gain 1 Weirdness (itchy bites)",
+    action: "Use Bug Spray → Auto-success all Insect Hazards this turn",
+    rest: "Gain 1 Heat (no cover)",
+    bonusZone: "Natural Repellent: Spend 1 Action → Reduce 2 Weirdness",
+    rules: ["One buzz, one bite… a hundred reminders you're not alone"],
+    flavor: "One buzz, one bite… a hundred reminders you're not alone.",
+    imagePrompt: "Clouds of tiny mosquitoes swirling over stagnant water, neon glow highlighting each wingbeat"
+  },
+  {
+    id: "old-sugar-mill",
+    name: "Old Sugar Mill Ruins",
+    type: "region",
+    biomeTags: ["🐊"],
+    icons: [
+      { symbol: "🐊", meaning: "Swamp Biome" },
+      { symbol: "🏭", meaning: "Industrial" }
+    ],
+    keywords: ["Swamp", "Industrial", "Ruins"],
+    onEnter: "Moxie DC 9 → Success: Draw 1 Treasure; Failure: Take 1 Damage",
+    action: "Investigate (Charm DC 9) → Gain 1 Clue or reduce 1 Heat",
+    rest: "Safe (solid floor)",
+    bonusZone: "Crystalline Cache: Spend 1 Action + 1 Luck → Draw 1 Artifact-Proxy",
+    rules: ["Once sweet, now sour—ghosts of labor hang in the air"],
+    flavor: "Once sweet, now sour—ghosts of labor hang in the air.",
+    imagePrompt: "Crumbling brick mill towers over reedy swamp, sugar-coated walls now cracked and moss-streaked"
   }
 ];
