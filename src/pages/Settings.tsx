@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { initializeOpenAI } from "@/lib/api";
 import { toast } from "@/components/ui/sonner";
 
 const Settings = () => {
@@ -12,7 +10,7 @@ const Settings = () => {
 
   useEffect(() => {
     // Load saved API key if available
-    const savedKey = localStorage.getItem("openai-api-key");
+    const savedKey = localStorage.getItem("openrouter-api-key");
     if (savedKey) {
       setApiKey(savedKey);
     }
@@ -20,12 +18,8 @@ const Settings = () => {
 
   const handleSaveApiKey = () => {
     try {
-      const success = initializeOpenAI(apiKey);
-      if (success) {
-        toast.success("API key saved successfully");
-      } else {
-        toast.error("Failed to initialize OpenAI client");
-      }
+      localStorage.setItem("openrouter-api-key", apiKey);
+      toast.success("API key saved successfully");
     } catch (error) {
       console.error("Error saving API key:", error);
       toast.error("Failed to save API key");
