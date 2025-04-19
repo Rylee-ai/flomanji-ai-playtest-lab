@@ -2,15 +2,17 @@
 import { useForm } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
 import { GameCard } from "@/types/cards";
+import { TreasureCard } from "@/types/cards/treasure";
+import { HazardCard } from "@/types/cards/hazard";
 
 export const useCardForm = (initialData?: GameCard) => {
   const form = useForm<CardFormValues>({
     defaultValues: initialData ? {
       name: initialData.name,
-      type: initialData.type,
-      keywords: initialData.keywords,
-      icons: initialData.icons,
-      rules: initialData.rules,
+      type: initialData.type === "artifact" ? "treasure" : initialData.type, // Handle artifact as treasure
+      keywords: initialData.keywords || [],
+      icons: initialData.icons || [],
+      rules: initialData.rules || [],
       flavor: initialData.flavor || "",
       // Type-specific fields are handled in the form conditionally
       ...getTypeSpecificData(initialData)
@@ -30,17 +32,21 @@ export const useCardForm = (initialData?: GameCard) => {
 const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
   switch (card.type) {
     case "treasure":
-    case "artifact":
+    case "artifact": {
+      const treasureCard = card as TreasureCard;
       return {
-        value: card.value,
-        consumable: card.consumable
+        value: treasureCard.value,
+        consumable: treasureCard.consumable
       };
-    case "hazard":
+    }
+    case "hazard": {
+      const hazardCard = card as HazardCard;
       return {
-        subType: card.subType,
-        difficultyClasses: card.difficultyClasses,
-        bossHazard: card.bossHazard
+        subType: hazardCard.subType,
+        difficultyClasses: hazardCard.difficultyClasses,
+        bossHazard: hazardCard.bossHazard
       };
+    }
     // Add other card type specific data here
     default:
       return {};
