@@ -1,4 +1,3 @@
-
 // Agent types
 export type AgentRole = 'GM' | 'Player' | 'Critic';
 
@@ -6,6 +5,36 @@ export interface AgentMessage {
   role: AgentRole;
   message: string;
   timestamp?: string;
+}
+
+// Character types
+export interface CharacterStats {
+  brawn: number;
+  moxie: number;
+  charm: number;
+  grit: number;
+  weirdSense: number;
+}
+
+export interface CharacterGear {
+  name: string;
+  type: string;
+  effect: string;
+}
+
+export interface FlomanjiCharacter {
+  id: string;
+  name: string;
+  role: string;
+  stats: CharacterStats;
+  ability: {
+    name: string;
+    description: string;
+  };
+  health: number;
+  weirdness: number;
+  luck: number;
+  starterGear: CharacterGear[];
 }
 
 // Simulation types
@@ -22,6 +51,7 @@ export interface SimulationConfig {
   arcadeModule?: boolean;
   nightmareDifficulty?: boolean;
   competitiveMode?: boolean;
+  characters?: FlomanjiCharacter[];
 }
 
 export interface SimulationResult {
