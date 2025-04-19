@@ -15,6 +15,13 @@ export interface SimulationConfig {
   players?: number;
   enableCritic?: boolean;
   outputMode?: 'full' | 'narrative-only' | 'minimal';
+  // Flomanji specific options
+  startingHeat?: number;
+  missionType?: 'exploration' | 'escape' | 'escort' | 'collection' | 'boss';
+  secretTraitor?: boolean;
+  arcadeModule?: boolean;
+  nightmareDifficulty?: boolean;
+  competitiveMode?: boolean;
 }
 
 export interface SimulationResult {
@@ -46,9 +53,16 @@ export interface GameRule {
 export interface Card {
   id: string;
   name: string;
-  type: 'hazard' | 'treasure' | 'event';
+  type: 'hazard' | 'treasure' | 'event' | 'gear' | 'npc' | 'region' | 'chaos';
   description: string;
   effects: string;
+  biome?: string[];
+  stats?: {
+    fightDC?: number;
+    fleeDC?: number;
+    negotiateDC?: number;
+    outsmartDC?: number;
+  };
 }
 
 // CMS types

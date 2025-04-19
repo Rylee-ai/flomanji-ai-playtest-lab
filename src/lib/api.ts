@@ -1,3 +1,4 @@
+
 import { SimulationConfig, SimulationResult } from "@/types";
 import { simulateRandomId } from "@/lib/utils";
 import { createChatCompletion } from "@/lib/openrouter";
@@ -8,44 +9,65 @@ import { saveSimulationResult, getSimulationSummaries, getSimulationById, update
 export const getExampleRules = (): string => {
   return `# Flomanji Rules Guide
 
-## Core Mechanics
-Flomanji is a cooperative tabletop RPG set in a mysterious jungle. Players explore, overcome hazards, and collect treasures while managing their Heat and Weirdness levels.
+## Core Game Concept
+Flomanji is a semi-cooperative card-and-dice adventure for 2-6 players set in a heightened 1987 Florida. It blends survival-horror tension with tongue-in-cheek 'Florida Man' absurdity. Players must complete mission objectives and reach extraction before the Heat timer reaches 10.
 
-## Key Stats
-- **Heat**: Represents physical danger. Starts at 0, max 10. At 10, player is eliminated.
-- **Weirdness**: Represents supernatural exposure. Starts at 0, max 10. At 10, player transforms.
+## Core Loop
+Each round follows this sequence:
+1. Draw Trouble - Reveal a card from the Trouble deck (Gear, Hazard, NPC, or Event)
+2. Take Two Actions - Move, use equipment, rest, team-up, or advance the Mission
+3. Chaos Strikes - Reveal and resolve one Chaos card
+4. Advance Timers - Global Heat ticks upward; personal Weirdness may spike
+5. Repeat until victory or defeat
 
-## Dice Mechanics
-- Roll d10 for skill checks
-- 1-3: Failure
-- 4-7: Partial success
-- 8-10: Complete success
+## Key Stats & Mechanics
+- **Five Core Stats**: Brawn, Moxie, Charm, Grit, Weird Sense (range 0-5)
+- **Check Formula**: 2d6 + Stat + Modifiers ≥ DC → Success
+- **Difficulty Classes**: Easy (7), Standard (9), Hard (11), Heroic (13)
+- **Health**: Track on d6 (start at 5, incapacitated at 0)
+- **Weirdness**: Track on d10 (start at 0, Flomanjified at 10)
+- **Luck Tokens**: Start with half your total Stats (rounded up)
 
-## Cards
-### Hazard Cards
-- Quicksand: Heat +2, requires Strength check to escape
-- Poison Dart Trap: Heat +3, requires Dexterity check to avoid
-- Wild Beast: Heat +2, requires Animal Handling check to pacify
+## The Twin Timers
+- **Heat**: Global danger meter. Increases by +1 each round (+2 if 4-6 players). Game ends in defeat at Heat 10.
+- **Weirdness**: Individual sanity meter. Gain pips from weird events; at Weirdness 10, flip to a Flomanjified Role.
+  - 3 pips: Attuned (+1 on Weird checks)
+  - 5 pips: Hallucinating (draw extra Gear on success; -1 Charm)
+  - 7 pips: Paranoid (cannot Team-Up; -1 Action per turn)
+  - 10 pips: Flomanjified (flip to a Flomanjified Role card)
 
-### Treasure Cards
-- Ancient Idol: Weirdness +2, grants one reroll per session
-- Jungle Map: Reduces Heat by 1 for navigation checks
-- Healing Herb: Can reduce Heat by 2 when used
+## Action Catalog
+Each turn players get 2 Actions from:
+- **Move**: Shift to an adjacent Region
+- **Use Gear**: Activate a card's ability
+- **Interact**: Engage with NPCs or features
+- **Team-Up**: Grant +1 to an ally's check or trade Gear
+- **Rest**: Heal 1 Health or reduce 1 Weirdness (safe Regions only)
+- **Mission**: Advance mission objectives
 
-### Event Cards
-- Rainstorm: All players reduce Heat by 1 but terrain becomes slippery
-- Strange Lights: Weirdness +1 for all players, grants vision in darkness
-- Native Encounter: Roll Charisma check to gain allies or create enemies
+## Combat & Hazards
+When facing a Hazard, players choose one response and make a group check:
+1. **Fight**: Roll 2d6 + Brawn + bonuses ≥ Fight DC
+2. **Flee**: Roll 2d6 + Moxie + bonuses ≥ Flee DC
+3. **Negotiate**: Roll 2d6 + Charm + bonuses ≥ Negotiate DC
+4. **Outsmart**: Roll 2d6 + Weird Sense + bonuses ≥ Outsmart DC
 
-## Turn Sequence
-1. GM describes the scene
-2. Players declare actions
-3. GM calls for appropriate checks
-4. GM narrates consequences and draws appropriate cards
-5. Update Heat and Weirdness trackers
+## Map & Regions
+The game uses Region cards laid out in a pattern. Each Region has:
+- On Enter effect (triggered when flipped)
+- Optional Action ability
+- Rest benefit
+- Bonus Zone (one-off special use)
 
-## Success Conditions
-Find the Temple of Flomanji and escape with the legendary treasure before any player reaches maximum Heat or Weirdness.`;
+## Victory & Defeat
+- **Victory**: Complete all Primary Objectives and reach Extraction before Heat 10
+- **Defeat**: Heat reaches 10, or all un-Flomanjified Survivors are eliminated
+
+## Optional Modules
+- **Competitive Florida Man Mode**: Race for Treasure with player vs player elements
+- **Nightmare Difficulty**: Start Heat 3; passive Chaos effect; Rest adds Weirdness
+- **Secret Traitor Variant**: Some players work against the group
+- **Solo Automa**: AI deck simulates a partner`;
 };
 
 // Start a simulation
