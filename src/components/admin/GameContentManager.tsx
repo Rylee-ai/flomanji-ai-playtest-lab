@@ -14,97 +14,34 @@ import { Plus } from "lucide-react";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
 import { AUTOMA_CARDS } from "@/lib/cards/automa-cards";
+import { REGION_CARDS } from "@/lib/cards/region-cards";
+import { NPC_CARDS } from "@/lib/cards/npc-cards";
+import { MISSION_CARDS } from "@/lib/cards/mission-cards";
+import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
+import { GEAR_CARDS } from "@/lib/cards/gear-cards";
+import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
+import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
 import { CardDisplay } from "@/components/cards/CardDisplay";
-
-const REGION_CARDS = [
-  {
-    id: "everglades-marsh",
-    name: "Everglades Marsh",
-    type: "region",
-    biomeTags: ["🐊"],
-    icons: [{ symbol: "🐊", meaning: "Swamp Biome" }],
-    keywords: ["Swamp", "Marsh", "Dangerous"],
-    onEnter: "Draw 1 Hazard card",
-    rest: "Heal 1 Health",
-    bonusZone: "Find rare herbs: Draw 1 Gear",
-    rules: ["Entering costs +1 Action unless you have Swamp Gear"],
-    flavor: "The heart of old Florida, where gators rule supreme.",
-    imagePrompt: "Misty marshland with tall grass and cypress knees breaking the surface"
-  },
-  {
-    id: "ghost-mall",
-    name: "Ghost Mall",
-    type: "region",
-    biomeTags: ["🏙️"],
-    icons: [{ symbol: "🏙️", meaning: "Urban Biome" }],
-    keywords: ["Urban", "Abandoned", "Shelter"],
-    onEnter: "Roll Weird check DC 9",
-    rest: "Reduce 1 Weirdness",
-    bonusZone: "Loot stores: Draw 1 Treasure",
-    rules: ["Safe haven: No Hazard draws while resting"],
-    flavor: "Once packed with shoppers, now only echoes remain.",
-    imagePrompt: "Abandoned mall interior with broken skylights and overgrown plants"
-  }
-];
-
-const NPC_CARDS = [
-  {
-    id: "voodoo-priestess",
-    name: "Voodoo Priestess",
-    type: "npc",
-    icons: [{ symbol: "🗣️", meaning: "Social" }, { symbol: "🔮", meaning: "Weirdness" }],
-    keywords: ["Mystic", "Helper", "Trade"],
-    checkDC: 11,
-    actions: [
-      {
-        description: "Trade herbs for healing",
-        cost: 1,
-        effect: "Discard 1 Gear → Heal 2 Health"
-      },
-      {
-        description: "Seek guidance",
-        cost: 1,
-        effect: "Reduce 1 Weirdness"
-      }
-    ],
-    rules: ["Must pass Charm DC 11 to interact", "Leaves if Heat reaches 8"],
-    flavor: "Her eyes hold ancient secrets of the swamp.",
-    imagePrompt: "Elderly woman in colorful robes surrounded by mystical trinkets"
-  }
-];
-
-const MISSION_CARDS = [
-  {
-    id: "blood-tide",
-    name: "Blood Tide",
-    type: "mission",
-    icons: [{ symbol: "🏖️", meaning: "Coastal" }, { symbol: "☣️", meaning: "Toxic" }],
-    keywords: ["Escape", "Toxic", "Urgent"],
-    hook: "Red tide turns deadly as something rises from the deep.",
-    mapLayout: "3x3 grid",
-    startingHeat: 3,
-    objectives: [
-      {
-        description: "Collect 3 water samples",
-        required: true,
-        reward: "Draw 1 Treasure"
-      },
-      {
-        description: "Save all survivors",
-        required: false,
-        reward: "Reduce Heat by 2"
-      }
-    ],
-    extractionRegion: "Research Lab",
-    specialRules: ["Water contact causes +1 Weirdness", "Heat increases by 2 each round"],
-    rules: ["Complete all required objectives and reach extraction"],
-    flavor: "The waves glow an unnatural red under the setting sun.",
-    imagePrompt: "Beach at sunset with crimson waves and dark shapes beneath the surface"
-  }
-];
 
 const GameContentManager = () => {
   const [selectedCard, setSelectedCard] = React.useState<string | null>(null);
+  const [activeTab, setActiveTab] = React.useState<string>("treasure");
+
+  const getCardById = (id: string) => {
+    const allCards = [
+      ...TREASURE_CARDS,
+      ...SECRET_OBJECTIVES,
+      ...AUTOMA_CARDS,
+      ...REGION_CARDS,
+      ...NPC_CARDS,
+      ...MISSION_CARDS,
+      ...HAZARD_CARDS,
+      ...GEAR_CARDS,
+      ...CHAOS_CARDS,
+      ...FLOMANJIFIED_CARDS
+    ];
+    return allCards.find(card => card.id === id);
+  };
 
   return (
     <Card>
@@ -116,14 +53,23 @@ const GameContentManager = () => {
         </Button>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="treasure" className="w-full">
-          <TabsList>
+        <Tabs 
+          defaultValue={activeTab} 
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
+          <TabsList className="flex flex-wrap">
             <TabsTrigger value="treasure">Treasure Cards</TabsTrigger>
             <TabsTrigger value="secret">Secret Objectives</TabsTrigger>
             <TabsTrigger value="automa">Automa Cards</TabsTrigger>
             <TabsTrigger value="region">Region Cards</TabsTrigger>
             <TabsTrigger value="npc">NPC Cards</TabsTrigger>
             <TabsTrigger value="mission">Mission Sheets</TabsTrigger>
+            <TabsTrigger value="hazard">Hazard Cards</TabsTrigger>
+            <TabsTrigger value="gear">Gear Cards</TabsTrigger>
+            <TabsTrigger value="chaos">Chaos Cards</TabsTrigger>
+            <TabsTrigger value="flomanjified">Flomanjified Roles</TabsTrigger>
           </TabsList>
 
           <TabsContent value="treasure" className="space-y-4">
@@ -313,6 +259,138 @@ const GameContentManager = () => {
               </TableBody>
             </Table>
           </TabsContent>
+
+          <TabsContent value="hazard" className="space-y-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Fight DC</TableHead>
+                  <TableHead>Keywords</TableHead>
+                  <TableHead>Boss?</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {HAZARD_CARDS.map((card) => (
+                  <TableRow key={card.id}>
+                    <TableCell>{card.name}</TableCell>
+                    <TableCell>{card.difficultyClasses.fight || "-"}</TableCell>
+                    <TableCell>{card.keywords.join(", ")}</TableCell>
+                    <TableCell>{card.bossHazard ? "Yes" : "No"}</TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setSelectedCard(card.id)}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TabsContent>
+
+          <TabsContent value="gear" className="space-y-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Keywords</TableHead>
+                  <TableHead>Consumable</TableHead>
+                  <TableHead>Stat Bonus</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {GEAR_CARDS.map((card) => (
+                  <TableRow key={card.id}>
+                    <TableCell>{card.name}</TableCell>
+                    <TableCell>{card.keywords.join(", ")}</TableCell>
+                    <TableCell>{card.consumable ? "Yes" : "No"}</TableCell>
+                    <TableCell>
+                      {card.statBonus ? `${card.statBonus.stat} +${card.statBonus.value}` : "-"}
+                    </TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setSelectedCard(card.id)}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TabsContent>
+
+          <TabsContent value="chaos" className="space-y-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Keywords</TableHead>
+                  <TableHead>Heat Effect</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {CHAOS_CARDS.map((card) => (
+                  <TableRow key={card.id}>
+                    <TableCell>{card.name}</TableCell>
+                    <TableCell>{card.keywords.join(", ")}</TableCell>
+                    <TableCell>{card.heatEffect ? `+${card.heatEffect}` : "-"}</TableCell>
+                    <TableCell>{card.duration || "immediate"}</TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setSelectedCard(card.id)}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TabsContent>
+
+          <TabsContent value="flomanjified" className="space-y-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Keywords</TableHead>
+                  <TableHead>Special Ability</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {FLOMANJIFIED_CARDS.map((card) => (
+                  <TableRow key={card.id}>
+                    <TableCell>{card.name}</TableCell>
+                    <TableCell>{card.keywords.join(", ")}</TableCell>
+                    <TableCell>{card.specialAbility || "-"}</TableCell>
+                    <TableCell>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setSelectedCard(card.id)}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TabsContent>
         </Tabs>
 
         {selectedCard && (
@@ -330,7 +408,7 @@ const GameContentManager = () => {
               </div>
               <div className="flex justify-center">
                 <CardDisplay 
-                  card={[...TREASURE_CARDS, ...SECRET_OBJECTIVES, ...AUTOMA_CARDS].find(c => c.id === selectedCard)!} 
+                  card={getCardById(selectedCard)!} 
                   showDetails={true}
                 />
               </div>
