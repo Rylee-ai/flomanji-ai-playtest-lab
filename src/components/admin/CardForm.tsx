@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Dialog,
@@ -24,35 +23,27 @@ import { FlomanjifiedCardForm } from "./forms/FlomanjifiedCardForm";
 import { SecretCardForm } from "./forms/SecretCardForm";
 import { AutomaCardForm } from "./forms/AutomaCardForm";
 
-interface CardFormProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (values: CardFormValues) => void;
-  initialData?: GameCard;
-  activeTab: CardType;
-}
-
-// Enhanced schema with all possible fields for different card types
 export const cardFormSchema = z.object({
-  // Base fields
-  name: z.string().min(2, {
-    message: "Card name must be at least 2 characters.",
-  }),
+  // Base fields for all cards
+  name: z.string().min(2, { message: "Card name must be at least 2 characters." }),
   type: z.enum(["treasure", "artifact", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified", "secret"]),
   keywords: z.array(z.string()).optional(),
-  icons: z.array(z.object({ symbol: z.string(), meaning: z.string() })).optional(),
+  icons: z.array(z.object({ 
+    symbol: z.string(),
+    meaning: z.string() 
+  })).optional(),
   rules: z.array(z.string()).optional(),
   flavor: z.string().optional(),
   imagePrompt: z.string().optional(),
-  
-  // Treasure/Artifact fields
+
+  // Treasure & Artifact specific fields
   value: z.number().optional(),
   consumable: z.boolean().optional(),
   passiveEffect: z.string().optional(),
   useEffect: z.string().optional(),
-  
-  // Hazard fields
-  subType: z.string().optional(),
+
+  // Hazard specific fields
+  subType: z.enum(["environmental", "creature", "social", "weird"]).optional(),
   difficultyClasses: z.object({
     fight: z.number().optional(),
     flee: z.number().optional(),
@@ -63,28 +54,32 @@ export const cardFormSchema = z.object({
     charm: z.number().optional(),
     weirdSense: z.number().optional()
   }).optional(),
-  bossHazard: z.boolean().optional(),
   onFailure: z.string().optional(),
   onSuccess: z.string().optional(),
+  bossHazard: z.boolean().optional(),
   gearBonuses: z.array(z.object({
     itemName: z.string(),
     effect: z.enum(["autoSuccess", "bonus"]),
     bonusValue: z.number().optional()
   })).optional(),
-  
-  // Region fields
+
+  // Region specific fields
   biomeTags: z.array(z.string()).optional(),
   onEnter: z.string().optional(),
   action: z.string().optional(),
   rest: z.string().optional(),
   bonusZone: z.string().optional(),
-  
-  // NPC fields
+
+  // NPC specific fields
   checkDC: z.number().optional(),
-  actions: z.string().optional(), // Serialized JSON for the actions array
-  
-  // Gear fields
-  category: z.string().optional(),
+  actions: z.array(z.object({
+    description: z.string(),
+    cost: z.number(),
+    effect: z.string()
+  })).optional(),
+
+  // Gear specific fields
+  category: z.enum(["consumable", "tool", "weapon", "vehicle", "supply"]).optional(),
   uses: z.number().optional(),
   actionCost: z.number().optional(),
   passive: z.string().optional(),
@@ -92,22 +87,22 @@ export const cardFormSchema = z.object({
     stat: z.enum(["brawn", "moxie", "charm", "grit", "weirdSense"]).optional(),
     value: z.number().optional()
   }).optional(),
-  
-  // Chaos fields
+
+  // Chaos specific fields
   heatEffect: z.number().optional(),
   globalEffect: z.string().optional(),
   duration: z.enum(["immediate", "ongoing", "end-of-round"]).optional(),
-  
-  // Flomanjified fields
+
+  // Flomanjified specific fields
   originalRole: z.string().optional(),
   chaosAction: z.string().optional(),
   specialAbility: z.string().optional(),
-  
-  // Secret Objective fields
-  alignment: z.string().optional(),
+
+  // Secret objective specific fields
+  alignment: z.enum(["saboteur", "innocent"]).optional(),
   winCondition: z.string().optional(),
-  
-  // Automa fields
+
+  // Automa specific fields
   movement: z.string().optional(),
   combatBonus: z.number().optional(),
   specialEffect: z.string().optional(),

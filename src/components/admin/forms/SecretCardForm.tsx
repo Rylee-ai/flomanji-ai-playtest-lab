@@ -7,10 +7,10 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface SecretCardFormProps {
   form: UseFormReturn<CardFormValues>;
@@ -25,13 +25,20 @@ export const SecretCardForm = ({ form }: SecretCardFormProps) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Alignment</FormLabel>
-            <FormControl>
-              <Input 
-                placeholder="saboteur or innocent" 
-                {...field}
-                value={field.value || ""}
-              />
-            </FormControl>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+            >
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select alignment" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="saboteur">Saboteur</SelectItem>
+                <SelectItem value="innocent">Innocent</SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}
@@ -44,7 +51,7 @@ export const SecretCardForm = ({ form }: SecretCardFormProps) => {
             <FormLabel>Win Condition</FormLabel>
             <FormControl>
               <Textarea 
-                placeholder="Condition to win" 
+                placeholder="Condition to win (e.g., If Heat reaches 10...)" 
                 {...field}
                 value={field.value || ""}
               />
