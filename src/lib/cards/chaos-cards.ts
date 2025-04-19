@@ -1,4 +1,3 @@
-
 import { ChaosCard } from '@/types/cards/chaos';
 
 export const CHAOS_CARDS: ChaosCard[] = [
@@ -140,7 +139,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Damage taken on failed Grit checks"
     ],
     flavor: "That bridge seemed safe yesterday…",
-    imagePrompt: "A battered overpass crumbled in mid-span, "CLOSED" barricades in harsh neon paint blocking one lane; broken girders jut into the sky"
+    imagePrompt: "A battered overpass crumbled in mid-span, 'CLOSED' barricades in harsh neon paint blocking one lane; broken girders jut into the sky"
   },
   {
     id: "alligator-migration",
@@ -217,7 +216,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Gear drawn on successful checks"
     ],
     flavor: "Dreams of riches, nightmares of lines.",
-    imagePrompt: "A crowded convenience store, patrons furiously scratching tickets, neon signs promising "$1 Million!" glowing overhead"
+    imagePrompt: "A crowded convenience store, patrons furiously scratching tickets, neon signs promising \"$1 Million!\" glowing overhead"
   },
   {
     id: "governor-signs-weird-law",
@@ -313,7 +312,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
       "Moxie checks required for urban movement",
       "NPC checks suffer penalties"
     ],
-    flavor: "Selfies block your path; "Excuse me?" she shouts.",
+    flavor: "Selfies block your path; \"Excuse me?\" she shouts.",
     imagePrompt: "Teeming boardwalk clogged with pastel-shirted tourists and flashing cameras; thick black outlines enforce the swarm."
   },
   {
