@@ -3,8 +3,8 @@
 title: "Heat Wave"
 type: "chaos"
 icons: ["☀️ Weather", "🌡️ Environmental"]
-keywords: ["Environmental", "Heat Increase"]
-globalEffect: "Increase Heat +1. All players: Grit DC 7 → Failure: Take 1 Damage; suffer –1 penalty if in 🏙️ Urban or 🛣️ Highway Regions."
+keywords: ["Environmental", "Heat", "Increase"]
+globalEffect: "Increase Heat +1. All players: Grit DC 7 → Failure: Take 1 Damage; suffer -1 penalty if in Urban or Highway Regions."
 heatEffect: 1
 rules:
   - "Heat penalty applies to all Urban/Highway regions"
@@ -19,10 +19,10 @@ imagePrompt: "A blistering white sun overhead, heat haze warping palm-lined stre
 ## Type: CHAOS
 
 **Icons:** ☀️ Weather · 🌡️ Environmental  
-**Keywords:** Environmental, Heat Increase
+**Keywords:** Environmental, Heat, Increase
 
 ### Rules
-Increase Heat +1. All players: Grit DC 7 → Failure: Take 1 Damage; suffer –1 penalty if in 🏙️ Urban or 🛣️ Highway Regions.
+Increase Heat +1. All players: Grit DC 7 → Failure: Take 1 Damage; suffer -1 penalty if in Urban or Highway Regions.
 
 ### Effects
 - Heat penalty applies to all Urban/Highway regions

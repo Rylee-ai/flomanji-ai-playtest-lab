@@ -4,7 +4,7 @@ title: "Flash Flood Warning"
 type: "chaos"
 icons: ["🌧️ Weather", "🌊 Coastal", "💧 River"]
 keywords: ["Environmental", "Flood", "Heat Increase"]
-globalEffect: "Increase Heat +1. Players in 🐊 Swamp, 🏖️ Coastal, or 💧 River (or adjacent 🏙️/🏘️): Grit DC 7 → Failure: Lose 1 non-Vehicle Gear or Take 1 Damage."
+globalEffect: "Increase Heat +1. Players in Swamp, Coastal, or River (or adjacent Urban/Residential): Grit DC 7 → Failure: Lose 1 non-Vehicle Gear or Take 1 Damage."
 heatEffect: 1
 rules:
   - "Flood damage affects coastal and river regions"
@@ -22,7 +22,7 @@ imagePrompt: "Torrential water surging over curbs, half-submerged cars, swirling
 **Keywords:** Environmental, Flood, Heat Increase
 
 ### Rules
-Increase Heat +1. Players in 🐊 Swamp, 🏖️ Coastal, or 💧 River (or adjacent 🏙️/🏘️): Grit DC 7 → Failure: Lose 1 non-Vehicle Gear or Take 1 Damage.
+Increase Heat +1. Players in Swamp, Coastal, or River (or adjacent Urban/Residential): Grit DC 7 → Failure: Lose 1 non-Vehicle Gear or Take 1 Damage.
 
 ### Effects
 - Flood damage affects coastal and river regions
