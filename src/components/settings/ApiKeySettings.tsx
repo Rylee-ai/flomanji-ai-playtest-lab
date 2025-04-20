@@ -1,31 +1,31 @@
 
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Key } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Key, CheckCircle2, Pencil, Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { getOpenRouterApiKey, setOpenRouterApiKey } from "@/lib/openrouter";
 
 export const ApiKeySettings = () => {
-  const [apiKey, setApiKey] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newApiKey, setNewApiKey] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasApiKey, setHasApiKey] = useState(false);
+  const [apiKeyError, setApiKeyError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchApiKey = async () => {
       try {
         setIsLoading(true);
-        const key = await getOpenRouterApiKey();
-        // Mask the key for security
-        setApiKey(key ? key.slice(0, 5) + '***' + key.slice(-4) : "");
+        setApiKeyError(null);
+        
+        const apiKey = await getOpenRouterApiKey();
+        console.log("API Key retrieved (masked):", apiKey ? "***" : "none");
+        setHasApiKey(!!apiKey);
       } catch (error) {
-        console.error("Error fetching API key:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load API key. Please try again."
-        });
+        console.error("Error checking API key:", error);
+        setApiKeyError("Failed to retrieve API key status");
       } finally {
         setIsLoading(false);
       }
@@ -34,41 +34,56 @@ export const ApiKeySettings = () => {
     fetchApiKey();
   }, []);
 
-  const handleSaveApiKey = async () => {
-    // Allow both "or-" and "sk-or-v1-" prefixes
-    const trimmedKey = apiKey.trim();
-    if (trimmedKey && !(trimmedKey.startsWith("or-") || trimmedKey.startsWith("sk-or-v1-"))) {
-      toast({
-        variant: "destructive",
-        title: "Invalid API Key",
-        description: "OpenRouter API keys must start with 'or-' or 'sk-or-v1-'"
-      });
-      return;
-    }
-
+  const handleUpdateApiKey = async () => {
     try {
-      setIsSaving(true);
-      const success = await setOpenRouterApiKey(trimmedKey);
+      if (!newApiKey.trim()) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "API key cannot be empty"
+        });
+        return;
+      }
+
+      if (!newApiKey.startsWith('or-')) {
+        toast({
+          variant: "destructive",
+          title: "Invalid API key format",
+          description: "OpenRouter keys should start with 'or-'"
+        });
+        return;
+      }
+
+      setIsLoading(true);
+      setApiKeyError(null);
       
+      const success = await setOpenRouterApiKey(newApiKey);
+
       if (success) {
         toast({
           title: "Success",
-          description: "API key saved successfully"
+          description: "API key updated successfully"
         });
-        // Mask the key after saving
-        setApiKey(trimmedKey ? trimmedKey.slice(0, 5) + '***' + trimmedKey.slice(-4) : "");
+        setIsEditing(false);
+        setNewApiKey("");
+        setHasApiKey(true);
       } else {
-        throw new Error("Failed to save API key");
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to update API key in database"
+        });
       }
     } catch (error) {
-      console.error("Error saving API key:", error);
+      console.error("Error updating API key:", error);
+      setApiKeyError("Failed to update API key");
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to save API key. Please check your connection and try again."
+        description: "Failed to update API key"
       });
     } finally {
-      setIsSaving(false);
+      setIsLoading(false);
     }
   };
 
@@ -80,40 +95,73 @@ export const ApiKeySettings = () => {
           <CardTitle>OpenRouter API Key</CardTitle>
         </div>
         <CardDescription>
-          Enter your OpenRouter API key to connect to LLM models.
+          Configure your OpenRouter API key for AI simulations.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="flex space-x-2">
-            <Input
-              type="password"
-              placeholder="Enter OpenRouter API key"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              disabled={isLoading || isSaving}
-              className="flex-1"
-            />
+      <CardContent className="space-y-4">
+        {isLoading ? (
+          <div className="flex items-center space-x-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm text-muted-foreground">Loading API key status...</span>
+          </div>
+        ) : apiKeyError ? (
+          <div className="text-sm text-red-500">
+            {apiKeyError}. Please try refreshing the page or check your database connection.
+          </div>
+        ) : !isEditing ? (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              {hasApiKey ? (
+                <>
+                  <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <span>API key is set and ready to use</span>
+                </>
+              ) : (
+                <span className="text-amber-500">No API key set. Please add your OpenRouter API key.</span>
+              )}
+            </div>
             <Button 
-              onClick={handleSaveApiKey} 
-              disabled={isLoading || isSaving}
+              variant="outline" 
+              size="sm"
+              onClick={() => setIsEditing(true)}
             >
-              {isSaving ? "Saving..." : "Save"}
+              <Pencil className="h-4 w-4 mr-2" />
+              {hasApiKey ? "Edit Key" : "Add Key"}
             </Button>
           </div>
-
-          <div className="space-y-2 text-sm">
-            <p className="text-xs text-muted-foreground mb-1">
+        ) : (
+          <div className="space-y-4">
+            <Input
+              type="password"
+              value={newApiKey}
+              onChange={(e) => setNewApiKey(e.target.value)}
+              placeholder="Enter your OpenRouter API key"
+            />
+            <div className="flex space-x-2">
+              <Button 
+                onClick={handleUpdateApiKey} 
+                disabled={!newApiKey || isLoading}
+              >
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Save Changes
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setIsEditing(false);
+                  setNewApiKey("");
+                }}
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
               You can get an OpenRouter API key at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="underline">openrouter.ai/keys</a>
             </p>
-            <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-md border border-blue-200 dark:border-blue-800">
-              <p className="text-blue-700 dark:text-blue-300">OpenRouter keys start with <code className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">or-</code> or <code className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">sk-or-v1-</code> and connect to multiple AI models.</p>
-            </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
 };
-
-export default ApiKeySettings;
