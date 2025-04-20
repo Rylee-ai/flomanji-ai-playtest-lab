@@ -1,4 +1,5 @@
 
+// Re-export all OpenRouter related functionality
 export { createChatCompletion, fetchOpenRouterModels } from './api';
 export { getOpenRouterApiKey, setOpenRouterApiKey } from './apiKey';
 export { getOpenRouterModel, setOpenRouterModel } from './model';
