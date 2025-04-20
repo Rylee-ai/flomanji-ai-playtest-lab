@@ -3,40 +3,34 @@ import { MissionSheet } from '@/types/cards/mission';
 
 export const MISSION_CARDS: MissionSheet[] = [
   {
-    id: "everglades-escape",
-    name: "Everglades Escape",
+    id: "blood-tide",
+    name: "Blood Tide",
     type: "mission",
-    icons: [{ symbol: "🐊", meaning: "Swamp" }, { symbol: "🏃", meaning: "Escape" }],
-    keywords: ["Swamp", "Escape", "Time Limit"],
-    rules: [
-      "Players must reach extraction point before nightfall (10 rounds)",
-      "At least one player must survive",
-      "Water spaces require Swimming checks"
-    ],
-    hook: "Players must navigate through a treacherous swamp filled with natural hazards and supernatural phenomena to reach safety.",
-    mapLayout: "6 spaces from start to extraction",
-    startingHeat: 2,
+    icons: [{ symbol: "🏖️", meaning: "Coastal" }, { symbol: "☣️", meaning: "Toxic" }],
+    keywords: ["Escape", "Toxic", "Urgent"],
+    hook: "Red tide turns deadly as something rises from the deep.",
+    mapLayout: "3x3 grid",
+    startingHeat: 3,
     objectives: [
       {
-        description: "Reach the extraction point",
-        required: true
+        description: "Collect 3 water samples",
+        required: true,
+        reward: "Draw 1 Treasure"
       },
       {
-        description: "Find the hidden shrine",
+        description: "Save all survivors",
         required: false,
-        reward: "Heat reset for all players"
+        reward: "Reduce Heat by 2"
       }
     ],
-    extractionRegion: "Extraction Point",
-    specialRules: [
-      "Night brings additional Weirdness (+1 per round after round 5)",
-      "Water spaces require Swimming checks to cross"
-    ],
+    extractionRegion: "Research Lab",
+    specialRules: ["Water contact causes +1 Weirdness", "Heat increases by 2 each round"],
+    rules: ["Complete all required objectives and reach extraction"],
+    flavor: "The waves glow an unnatural red under the setting sun.",
+    imagePrompt: "Beach at sunset with crimson waves and dark shapes beneath the surface",
     scaling: {
-      small: "Reduce distance to 4 spaces",
-      large: "Add additional optional objectives"
-    },
-    flavor: "The swamp holds dark secrets... and darker destinies.",
-    imagePrompt: "A neon-lit swamp path leading to a distant extraction point, danger lurking in the waters"
+      small: "Reduce required samples to 2",
+      large: "Add 1 extra survivor to save"
+    }
   }
 ];

@@ -1,8 +1,6 @@
-
 import { ChaosCard } from '@/types/cards/chaos';
 
 export const CHAOS_CARDS: ChaosCard[] = [
-  // Deck A - Environmental & Terrain
   {
     id: "heat-wave",
     name: "Heat Wave",
@@ -183,8 +181,6 @@ export const CHAOS_CARDS: ChaosCard[] = [
     flavor: "Nature's invaders don't care who signed treaties.",
     imagePrompt: "Overgrown foliage bursting with alien pythons, giant snails, walking catfish; neon pastel flora tangled with dangerous fauna"
   },
-  
-  // Deck B - Social & Infrastructure
   {
     id: "political-meltdown",
     name: "Political Meltdown",
@@ -299,7 +295,7 @@ export const CHAOS_CARDS: ChaosCard[] = [
     flavor: "The pipes burst when no one's there to fix them.",
     imagePrompt: "Broken water main flooding an industrial lot, steam rising through grates, riot-taped barricades fluttering"
   },
-  {
+    {
     id: "tourist-season-surge",
     name: "Tourist Season Surge",
     type: "chaos",
@@ -319,8 +315,6 @@ export const CHAOS_CARDS: ChaosCard[] = [
     flavor: "Selfies block your path; \"Excuse me?\" she shouts.",
     imagePrompt: "Teeming boardwalk clogged with pastel-shirted tourists and flashing cameras; thick black outlines enforce the swarm."
   },
-  
-  // Deck C - Creature-Triggered
   {
     id: "alligator-ambush",
     name: "Alligator Ambush!",
@@ -416,8 +410,6 @@ export const CHAOS_CARDS: ChaosCard[] = [
     flavor: "Hungry strays turn deadly in the alleys.",
     imagePrompt: "Mangy dogs snarling under flickering streetlights, pastel graffiti walls behind, tension crackling in neon outlines"
   },
-  
-  // Deck D - Weird & Rare
   {
     id: "meteor-shower",
     name: "Meteor Shower",

@@ -1,3 +1,4 @@
+
 export type CardType = 'treasure' | 'artifact' | 'automa' | 'secret' | 'hazard' | 'gear' | 'npc' | 'region' | 'chaos' | 'mission' | 'flomanjified' | 'player-character';
 
 export interface CardIcon {
@@ -14,7 +15,6 @@ export interface GameCard {
   rules: string[];
   flavor: string;
   imagePrompt: string;
-  markdownContent?: string;
 }
 
 export interface TreasureCard extends GameCard {
