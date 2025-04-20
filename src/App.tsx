@@ -46,7 +46,6 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 2,
-      useErrorBoundary: false,
       onError: (error) => {
         console.error("Query error:", error);
       }
