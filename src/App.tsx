@@ -15,7 +15,6 @@ import Settings from "./pages/Settings";
 import AgentManager from "./pages/AgentManager";
 import NotFound from "./pages/NotFound";
 
-// Create a new QueryClient instance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -25,32 +24,29 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = () => {
-  console.log("App component rendering");
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <BrowserRouter>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route element={<AdminLayout />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/simulations" element={<SimulationsList />} />
-              <Route path="/simulations/new" element={<NewSimulation />} />
-              <Route path="/simulations/:id" element={<SimulationDetail />} />
-              <Route path="/content" element={<ContentManager />} />
-              <Route path="/rules" element={<Rules />} />
-              <Route path="/agents" element={<AgentManager />} />
-              <Route path="/settings" element={<Settings />} />
-            </Route>
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-};
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <BrowserRouter>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route element={<AdminLayout />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/simulations" element={<SimulationsList />} />
+            <Route path="/simulations/new" element={<NewSimulation />} />
+            <Route path="/simulations/:id" element={<SimulationDetail />} />
+            <Route path="/content" element={<ContentManager />} />
+            <Route path="/rules" element={<Rules />} />
+            <Route path="/agents" element={<AgentManager />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;

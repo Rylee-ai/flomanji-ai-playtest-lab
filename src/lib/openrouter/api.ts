@@ -26,7 +26,10 @@ export const createChatCompletion = async (
         model: model,
         messages: [
           { role: 'system', content: systemPrompt },
-          ...messages
+          ...messages.map(msg => ({
+            role: msg.role === "user" ? "user" : "assistant",
+            content: msg.content
+          }))
         ],
         temperature: 0.7,
         max_tokens: 2000
@@ -34,7 +37,7 @@ export const createChatCompletion = async (
     });
     
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorData = await response.json();
       throw new Error(`OpenRouter API error: ${errorData.error?.message || response.statusText}`);
     }
     
@@ -42,7 +45,7 @@ export const createChatCompletion = async (
     return data.choices[0]?.message?.content || "No response generated";
   } catch (error) {
     console.error("Error creating chat completion:", error);
-    throw new Error(`Failed to get response from OpenRouter: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(`Failed to get response from OpenRouter: ${error}`);
   }
 };
 

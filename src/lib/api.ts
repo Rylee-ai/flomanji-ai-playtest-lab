@@ -4,7 +4,6 @@ import { simulateRandomId } from "@/lib/utils";
 import { createChatCompletion } from "@/lib/openrouter";
 import { getGMSystemPrompt, getPlayerSystemPrompt, getCriticSystemPrompt } from "@/lib/prompts";
 import { saveSimulationResult, getSimulationSummaries, getSimulationById, updateSimulationAnnotations } from "@/lib/storage";
-import { OpenRouterMessage } from "@/lib/openrouter/types";
 
 // Get rules content - first try localStorage, then fallback to the default
 export const getExampleRules = (): string => {
@@ -551,7 +550,7 @@ export const startSimulation = async (
     // Start with GM introduction
     const gmIntroMessage = await createChatCompletion(
       gmSystemPrompt,
-      [{ role: "user" as const, content: "Introduce the scenario and set the scene for the players." }]
+      [{ role: "user", content: "Introduce the scenario and set the scene for the players." }]
     );
     
     conversationLog.push({
@@ -564,8 +563,8 @@ export const startSimulation = async (
     for (let round = 0; round < rounds; round++) {
       for (let playerIdx = 0; playerIdx < players; playerIdx++) {
         // Convert the conversation log to messages format for this player
-        const playerMessages: OpenRouterMessage[] = conversationLog.map(entry => ({
-          role: (entry.role === 'Player' ? 'assistant' : 'user') as 'system' | 'user' | 'assistant',
+        const playerMessages = conversationLog.map(entry => ({
+          role: entry.role === 'Player' ? 'assistant' : 'user',
           content: `${entry.role}: ${entry.message}`
         }));
         
@@ -582,8 +581,8 @@ export const startSimulation = async (
         });
         
         // GM responds to this player
-        const gmMessages: OpenRouterMessage[] = conversationLog.map(entry => ({
-          role: (entry.role === 'GM' ? 'assistant' : 'user') as 'system' | 'user' | 'assistant',
+        const gmMessages = conversationLog.map(entry => ({
+          role: entry.role === 'GM' ? 'assistant' : 'user',
           content: `${entry.role}: ${entry.message}`
         }));
         
@@ -610,7 +609,7 @@ export const startSimulation = async (
       
       criticFeedback = await createChatCompletion(
         criticSystemPrompt,
-        [{ role: "user" as const, content: `Here is the transcript of the session:\n\n${fullTranscript}\n\nPlease provide your analysis.` }]
+        [{ role: "user", content: `Here is the transcript of the session:\n\n${fullTranscript}\n\nPlease provide your analysis.` }]
       );
     }
     
