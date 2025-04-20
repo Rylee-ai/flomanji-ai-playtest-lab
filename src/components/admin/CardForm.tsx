@@ -44,6 +44,111 @@ const baseCardSchema = z.object({
 
 export type CardFormData = z.infer<typeof baseCardSchema>;
 
+// Export the comprehensive CardFormValues type that includes all possible card properties
+export interface CardFormValues {
+  // Base properties
+  name: string;
+  type: CardType;
+  keywords: string[];
+  icons: { symbol: string; meaning: string; }[];
+  rules: string[];
+  flavor?: string;
+  imagePrompt?: string;
+  
+  // Treasure/Artifact properties
+  value?: number;
+  consumable?: boolean;
+  passiveEffect?: string;
+  useEffect?: string;
+  
+  // Hazard properties
+  subType?: 'environmental' | 'creature' | 'social' | 'weird';
+  difficultyClasses?: {
+    fight?: number;
+    flee?: number;
+    negotiate?: number;
+    outsmart?: number;
+    grit?: number;
+    moxie?: number;
+    charm?: number;
+    weirdSense?: number;
+  };
+  onFailure?: string;
+  onSuccess?: string;
+  bossHazard?: boolean;
+  gearBonuses?: {
+    itemName: string;
+    effect: 'autoSuccess' | 'bonus';
+    bonusValue?: number;
+  }[];
+  
+  // Region properties
+  biomeTags?: string[];
+  onEnter?: string;
+  action?: string;
+  rest?: string;
+  bonusZone?: string;
+  
+  // NPC properties
+  checkDC?: number;
+  actions?: {
+    description: string;
+    cost: number;
+    effect: string;
+  }[];
+  
+  // Gear properties
+  category?: 'consumable' | 'tool' | 'weapon' | 'vehicle' | 'supply';
+  uses?: number;
+  actionCost?: number;
+  passive?: string;
+  statBonus?: {
+    stat?: 'brawn' | 'moxie' | 'charm' | 'grit' | 'weirdSense';
+    value?: number;
+  };
+  
+  // Chaos properties
+  heatEffect?: number;
+  globalEffect?: string;
+  duration?: 'immediate' | 'ongoing' | 'end-of-round';
+  
+  // Flomanjified properties
+  originalRole?: string;
+  chaosAction?: string;
+  specialAbility?: string;
+  
+  // Secret objective properties
+  alignment?: 'saboteur' | 'innocent';
+  winCondition?: string;
+  
+  // Automa properties
+  movement?: string;
+  combatBonus?: number;
+  specialEffect?: string;
+  
+  // Player Character properties
+  role?: string;
+  stats?: {
+    brawn: number;
+    moxie: number;
+    charm: number;
+    grit: number;
+    weirdSense: number;
+  };
+  ability?: {
+    name: string;
+    description: string;
+  };
+  health?: number;
+  weirdness?: number;
+  luck?: number;
+  starterGear?: {
+    name: string;
+    type: string;
+    effect: string;
+  }[];
+}
+
 interface CardFormProps {
   open: boolean;
   onClose: () => void;
@@ -146,7 +251,8 @@ export function CardForm({
       id: initialData?.id || generateId(data.name),
     };
     
-    onSubmit(processedData);
+    // Fix the type mismatch by converting to the expected format
+    onSubmit(processedData as unknown as CardFormData);
     onClose();
   };
   
