@@ -60,4 +60,3 @@ Eddie Alvarez grew up in the Everglades, learning its ways from his father and g
 - Strong survival skills
 - Natural leader in water-based scenarios
 - Balanced combat capabilities
-
