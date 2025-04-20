@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -7,6 +6,7 @@ let cachedApiKey: string | null = null;
 let cachedModel: string | null = null;
 
 export const getOpenRouterApiKey = async (): Promise<string> => {
+  // If we already have a cached key, return it
   if (cachedApiKey) return cachedApiKey;
   
   // Try to get the API key from Supabase
@@ -19,26 +19,35 @@ export const getOpenRouterApiKey = async (): Promise<string> => {
       
     if (error) {
       console.error("Error fetching API key from database:", error);
-      // If there's an error or no key found, fall back to localStorage
+      // If there's an error, we'll fall back to localStorage
     } else if (data && data.value) {
+      console.log("Retrieved API key from database (masked)");
       cachedApiKey = data.value;
       return data.value;
     }
   } catch (e) {
-    console.error("Error fetching API key from database:", e);
+    console.error("Exception during API key fetch:", e);
   }
   
   // Fallback to localStorage if database fetch fails
-  const localKey = localStorage.getItem("openrouter-api-key") || "";
-  if (localKey) {
-    cachedApiKey = localKey;
+  try {
+    const localKey = localStorage.getItem("openrouter-api-key");
+    if (localKey) {
+      console.log("Retrieved API key from localStorage (masked)");
+      cachedApiKey = localKey;
+      return localKey;
+    }
+  } catch (e) {
+    console.error("Error accessing localStorage:", e);
   }
   
-  return cachedApiKey || "";
+  console.log("No API key found in database or localStorage");
+  return "";
 };
 
 export const setOpenRouterApiKey = async (apiKey: string): Promise<boolean> => {
   try {
+    console.log("Attempting to save API key to database");
     // Update the database
     const { error } = await supabase
       .from('settings')
@@ -48,17 +57,27 @@ export const setOpenRouterApiKey = async (apiKey: string): Promise<boolean> => {
         updated_at: new Date().toISOString()
       });
       
-    if (error) throw error;
+    if (error) {
+      console.error("Error saving API key to database:", error);
+      throw error;
+    }
+    
+    console.log("API key saved to database successfully");
     
     // Update the cache
     cachedApiKey = apiKey;
     
     // Also update localStorage as fallback
-    localStorage.setItem("openrouter-api-key", apiKey);
+    try {
+      localStorage.setItem("openrouter-api-key", apiKey);
+    } catch (e) {
+      console.error("Failed to save API key to localStorage:", e);
+      // Continue anyway since we saved to database
+    }
     
     return true;
   } catch (e) {
-    console.error("Error setting API key in database:", e);
+    console.error("Error setting API key:", e);
     return false;
   }
 };

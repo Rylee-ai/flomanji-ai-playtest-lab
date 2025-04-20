@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Key, CheckCircle2, Pencil, Loader2 } from "lucide-react";
+import { Key, CheckCircle2, Pencil, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { getOpenRouterApiKey, setOpenRouterApiKey } from "@/lib/openrouter";
 
@@ -13,6 +13,7 @@ export const ApiKeySettings = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasApiKey, setHasApiKey] = useState(false);
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
+  const [fetchAttempts, setFetchAttempts] = useState(0);
 
   useEffect(() => {
     const fetchApiKey = async () => {
@@ -20,9 +21,12 @@ export const ApiKeySettings = () => {
         setIsLoading(true);
         setApiKeyError(null);
         
+        console.log("Fetching API key, attempt:", fetchAttempts + 1);
         const apiKey = await getOpenRouterApiKey();
         console.log("API Key retrieved (masked):", apiKey ? "***" : "none");
-        setHasApiKey(!!apiKey);
+        
+        // Set state based on whether we got a key
+        setHasApiKey(!!apiKey && apiKey.length > 0);
       } catch (error) {
         console.error("Error checking API key:", error);
         setApiKeyError("Failed to retrieve API key status");
@@ -32,7 +36,7 @@ export const ApiKeySettings = () => {
     };
 
     fetchApiKey();
-  }, []);
+  }, [fetchAttempts]);
 
   const handleUpdateApiKey = async () => {
     try {
@@ -87,6 +91,10 @@ export const ApiKeySettings = () => {
     }
   };
 
+  const handleRetryFetch = () => {
+    setFetchAttempts(prev => prev + 1);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -105,23 +113,34 @@ export const ApiKeySettings = () => {
             <span className="text-sm text-muted-foreground">Loading API key status...</span>
           </div>
         ) : apiKeyError ? (
-          <div className="text-sm text-red-500">
-            {apiKeyError}. Please try refreshing the page or check your database connection.
+          <div className="space-y-2">
+            <div className="text-sm text-red-500 flex items-center">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              {apiKeyError}. Please check your database connection.
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRetryFetch}
+            >
+              <Loader2 className="h-4 w-4 mr-2" />
+              Retry
+            </Button>
           </div>
         ) : !isEditing ? (
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+            <div className="flex items-center space-x-2 text-sm">
               {hasApiKey ? (
                 <>
                   <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  <span>API key is set and ready to use</span>
+                  <span className="text-green-600">API key is set and ready to use</span>
                 </>
               ) : (
                 <span className="text-amber-500">No API key set. Please add your OpenRouter API key.</span>
               )}
             </div>
             <Button 
-              variant="outline" 
+              variant={hasApiKey ? "outline" : "default"}
               size="sm"
               onClick={() => setIsEditing(true)}
             >
