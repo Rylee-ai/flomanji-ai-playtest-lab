@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { CardType, GameCard } from "@/types/cards";
+import { CardType, GameCard, CardIcon } from "@/types/cards";
 import { toast } from "sonner";
 import { CardFormValues } from "../CardForm";
 import { TREASURE_CARDS } from "@/lib/cards/treasures";
@@ -57,7 +58,10 @@ export const useCardManagement = () => {
         id: data.id || crypto.randomUUID(),
         name: data.name,
         type: data.type,
-        icons: data.icons || [],
+        icons: (data.icons || []).map((icon): CardIcon => ({
+          symbol: icon.symbol || '',
+          meaning: icon.meaning || ''
+        })),
         keywords: data.keywords || [],
         rules: data.rules || [],
         flavor: data.flavor || "",
