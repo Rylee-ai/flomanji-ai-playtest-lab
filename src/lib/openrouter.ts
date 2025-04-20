@@ -1,6 +1,6 @@
 
-// OpenRouter client configuration
 import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 
 // Cache for API key to avoid frequent database calls
 let cachedApiKey: string | null = null;
@@ -15,7 +15,7 @@ export const getOpenRouterApiKey = async (): Promise<string> => {
       .from('settings')
       .select('value')
       .eq('key', 'openrouter-api-key')
-      .single();
+      .single<Tables['settings']>();
       
     if (error) throw error;
     
@@ -71,7 +71,7 @@ export const getOpenRouterModel = async (): Promise<string> => {
       .from('settings')
       .select('value')
       .eq('key', 'openrouter-model')
-      .single();
+      .single<Tables['settings']>();
       
     if (error) throw error;
     
