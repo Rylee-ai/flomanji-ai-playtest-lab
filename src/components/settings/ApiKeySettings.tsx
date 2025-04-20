@@ -17,13 +17,14 @@ export const ApiKeySettings = () => {
       try {
         setIsLoading(true);
         const key = await getOpenRouterApiKey();
-        setApiKey(key);
+        // Mask the key for security
+        setApiKey(key ? key.slice(0, 5) + '***' + key.slice(-4) : "");
       } catch (error) {
         console.error("Error fetching API key:", error);
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to load API key"
+          description: "Failed to load API key. Please try again."
         });
       } finally {
         setIsLoading(false);
@@ -34,8 +35,9 @@ export const ApiKeySettings = () => {
   }, []);
 
   const handleSaveApiKey = async () => {
-    // Basic validation for OpenRouter API key format
-    if (apiKey && !(apiKey.startsWith("or-") || apiKey.startsWith("sk-or-v1-"))) {
+    // Allow both "or-" and "sk-or-v1-" prefixes
+    const trimmedKey = apiKey.trim();
+    if (trimmedKey && !(trimmedKey.startsWith("or-") || trimmedKey.startsWith("sk-or-v1-"))) {
       toast({
         variant: "destructive",
         title: "Invalid API Key",
@@ -46,26 +48,24 @@ export const ApiKeySettings = () => {
 
     try {
       setIsSaving(true);
-      const success = await setOpenRouterApiKey(apiKey);
+      const success = await setOpenRouterApiKey(trimmedKey);
       
       if (success) {
         toast({
           title: "Success",
           description: "API key saved successfully"
         });
+        // Mask the key after saving
+        setApiKey(trimmedKey ? trimmedKey.slice(0, 5) + '***' + trimmedKey.slice(-4) : "");
       } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to save API key"
-        });
+        throw new Error("Failed to save API key");
       }
     } catch (error) {
       console.error("Error saving API key:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to save API key"
+        description: "Failed to save API key. Please check your connection and try again."
       });
     } finally {
       setIsSaving(false);
