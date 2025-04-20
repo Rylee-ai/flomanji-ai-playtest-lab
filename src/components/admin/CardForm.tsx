@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import {
   Dialog,
@@ -23,6 +24,7 @@ import { FlomanjifiedCardForm } from "./forms/FlomanjifiedCardForm";
 import { SecretCardForm } from "./forms/SecretCardForm";
 import { AutomaCardForm } from "./forms/AutomaCardForm";
 import { PlayerCharacterForm } from "./forms/PlayerCharacterForm";
+import { MissionCardForm } from "./forms/MissionCardForm";
 
 export const cardFormSchema = z.object({
   // Base fields for all cards
@@ -129,6 +131,45 @@ export const cardFormSchema = z.object({
     type: z.string(),
     effect: z.string()
   })).optional(),
+  
+  // Mission specific fields
+  hook: z.string().optional(),
+  mapLayout: z.string().optional(),
+  startingHeat: z.number().optional(),
+  extractionRegion: z.string().optional(),
+  specialRules: z.array(z.string()).optional(),
+  objectives: z.array(z.object({
+    description: z.string(),
+    required: z.boolean(),
+    reward: z.string().optional(),
+    difficultyLevel: z.number().optional(),
+    completionCheck: z.string().optional()
+  })).optional(),
+  challenges: z.array(z.object({
+    description: z.string(),
+    frequency: z.enum(["once", "recurring", "triggered"]),
+    trigger: z.string().optional(),
+    heatEffect: z.number().optional(),
+    weirdnessEffect: z.number().optional()
+  })).optional(),
+  phases: z.array(z.object({
+    name: z.string(),
+    description: z.string(),
+    objectives: z.array(z.object({
+      description: z.string(),
+      required: z.boolean(),
+      reward: z.string().optional(),
+      difficultyLevel: z.number().optional()
+    })),
+    timeLimit: z.number().optional()
+  })).optional(),
+  scaling: z.object({
+    small: z.string(),
+    large: z.string()
+  }).optional(),
+  recommendedPlayerCount: z.array(z.number()).optional(),
+  estimatedDuration: z.number().optional(),
+  difficultyRating: z.number().optional()
 });
 
 export type CardFormValues = z.infer<typeof cardFormSchema>;
@@ -171,6 +212,7 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
             {type === "hazard" && <HazardCardForm form={form} />}
             {type === "region" && <RegionCardForm form={form} />}
             {type === "npc" && <NPCCardForm form={form} />}
+            {type === "mission" && <MissionCardForm form={form} />}
             {type === "gear" && <GearCardForm form={form} />}
             {type === "chaos" && <ChaosCardForm form={form} />}
             {type === "flomanjified" && <FlomanjifiedCardForm form={form} />}
