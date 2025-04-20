@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/sonner";
+import { parseMarkdown } from "@/lib/utils";
 
 const FLOMANJI_RULES = `# Flomanji Master Players Guide
 *Survive the sunshine. Embrace the chaos.* *Version 1.0 — Production-Ready — 18 April 2025*
