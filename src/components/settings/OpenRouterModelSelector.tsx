@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, AlertCircle } from "lucide-react";
+import { Search, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { fetchOpenRouterModels } from "@/lib/openrouter";
 
@@ -37,13 +37,18 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
       try {
         setIsLoadingModels(true);
         setFetchError(null);
-        const data = await fetchOpenRouterModels();
         
-        if (!data || !data.data) {
-          throw new Error("Received invalid data from OpenRouter API");
+        const data = await fetchOpenRouterModels().catch(error => {
+          console.error("Error in fetchOpenRouterModels:", error);
+          throw error;
+        });
+        
+        if (!data || !Array.isArray(data.data)) {
+          console.error("Invalid data format from OpenRouter API:", data);
+          throw new Error("Received invalid data format from OpenRouter API");
         }
         
-        const sortedModels = data.data.sort((a: OpenRouterModel, b: OpenRouterModel) => 
+        const sortedModels = [...data.data].sort((a: OpenRouterModel, b: OpenRouterModel) => 
           a.id.localeCompare(b.id)
         );
         
@@ -52,6 +57,7 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
       } catch (error) {
         console.error("Error fetching OpenRouter models:", error);
         setFetchError(`Failed to fetch models: ${error.message || "Unknown error"}`);
+        
         toast({
           variant: "destructive",
           title: "Error",
@@ -66,7 +72,7 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
   }, []);
 
   useEffect(() => {
-    if (modelSearchTerm) {
+    if (modelSearchTerm && openRouterModels.length > 0) {
       const filtered = openRouterModels.filter(model => 
         model.id.toLowerCase().includes(modelSearchTerm.toLowerCase()) || 
         model.name.toLowerCase().includes(modelSearchTerm.toLowerCase())
@@ -80,6 +86,7 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
   // Safely handle model selection
   const handleModelChange = (value: string) => {
     try {
+      console.log("Model selected:", value);
       onModelChange(value);
     } catch (error) {
       console.error("Error changing model:", error);
@@ -108,7 +115,10 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
       </div>
 
       {isLoadingModels ? (
-        <div className="py-4 text-center text-muted-foreground">Loading available models...</div>
+        <div className="py-4 text-center text-muted-foreground flex items-center justify-center">
+          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          <span>Loading available models...</span>
+        </div>
       ) : fetchError ? (
         <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 p-4 rounded-md">
           <div className="flex items-center text-red-600 dark:text-red-400 mb-2">

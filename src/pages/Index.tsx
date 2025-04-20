@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 
 const Index = () => {
+  console.log("Index page rendering");
   return (
     <div className="container max-w-5xl py-6">
       <div className="mb-8 text-center">

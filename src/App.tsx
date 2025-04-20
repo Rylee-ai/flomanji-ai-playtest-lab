@@ -14,6 +14,7 @@ import Rules from "./pages/Rules";
 import Settings from "./pages/Settings";
 import AgentManager from "./pages/AgentManager";
 import NotFound from "./pages/NotFound";
+import Index from "./pages/Index";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,7 +33,8 @@ const App = () => (
         <Sonner />
         <Routes>
           <Route element={<AdminLayout />}>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/simulations" element={<SimulationsList />} />
             <Route path="/simulations/new" element={<NewSimulation />} />
             <Route path="/simulations/:id" element={<SimulationDetail />} />

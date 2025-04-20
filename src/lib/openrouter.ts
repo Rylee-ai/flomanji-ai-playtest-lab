@@ -23,6 +23,11 @@ export const getOpenRouterApiKey = async (attempts = 0): Promise<string> => {
   try {
     console.log(`Retrieving API key from database (attempt ${attempts + 1}/${MAX_RETRIEVAL_ATTEMPTS})`);
     
+    if (!supabase) {
+      console.error("Supabase client not initialized");
+      throw new Error("Database connection not available");
+    }
+    
     // Use maybeSingle to properly handle no results case
     const { data, error } = await supabase
       .from('settings')
@@ -76,6 +81,11 @@ export const getOpenRouterApiKey = async (attempts = 0): Promise<string> => {
 export const setOpenRouterApiKey = async (apiKey: string): Promise<boolean> => {
   try {
     console.log("Saving API key to database");
+    
+    if (!supabase) {
+      console.error("Supabase client not initialized");
+      throw new Error("Database connection not available");
+    }
     
     // Check if a record already exists
     const { data: existingData, error: checkError } = await supabase
@@ -132,8 +142,15 @@ export const getOpenRouterModel = async (): Promise<string> => {
     return cachedModel;
   }
   
+  const defaultModel = "anthropic/claude-3-opus";
+  
   // Try to get the model from Supabase
   try {
+    if (!supabase) {
+      console.error("Supabase client not initialized");
+      return defaultModel;
+    }
+    
     const { data, error } = await supabase
       .from('settings')
       .select('value')
@@ -151,12 +168,17 @@ export const getOpenRouterModel = async (): Promise<string> => {
   }
   
   // Fallback to localStorage
-  const localModel = localStorage.getItem("openrouter-model") || "anthropic/claude-3-opus";
-  if (localModel) {
-    cachedModel = localModel;
+  try {
+    const localModel = localStorage.getItem("openrouter-model");
+    if (localModel) {
+      cachedModel = localModel;
+      return localModel;
+    }
+  } catch (e) {
+    console.error("Error accessing localStorage for model:", e);
   }
   
-  return cachedModel || "anthropic/claude-3-opus";
+  return defaultModel;
 };
 
 /**
@@ -164,13 +186,26 @@ export const getOpenRouterModel = async (): Promise<string> => {
  */
 export const setOpenRouterModel = async (model: string): Promise<boolean> => {
   try {
+    if (!supabase) {
+      console.error("Supabase client not initialized");
+      
+      // Fallback to just localStorage if supabase is unavailable
+      localStorage.setItem("openrouter-model", model);
+      cachedModel = model;
+      return true;
+    }
+    
     // Check if a record already exists
-    const { data: existingData } = await supabase
+    const { data: existingData, error: checkError } = await supabase
       .from('settings')
       .select('id')
       .eq('key', 'openrouter-model')
       .maybeSingle();
       
+    if (checkError) {
+      console.error("Error checking existing model record:", checkError);
+    }
+    
     // Update the database
     const { error } = await supabase
       .from('settings')
@@ -181,7 +216,10 @@ export const setOpenRouterModel = async (model: string): Promise<boolean> => {
         updated_at: new Date().toISOString()
       });
       
-    if (error) throw error;
+    if (error) {
+      console.error("Error saving model to database:", error);
+      throw error;
+    }
     
     // Update the cache
     cachedModel = model;
@@ -192,7 +230,16 @@ export const setOpenRouterModel = async (model: string): Promise<boolean> => {
     return true;
   } catch (e) {
     console.error("Error setting model in database:", e);
-    return false;
+    
+    // Try localStorage as last resort
+    try {
+      localStorage.setItem("openrouter-model", model);
+      cachedModel = model;
+      return true;
+    } catch (localError) {
+      console.error("Failed to save model even to localStorage:", localError);
+      return false;
+    }
   }
 };
 
@@ -216,6 +263,8 @@ export const createChatCompletion = async (
       throw new Error("OpenRouter API key not found. Please set it in the Settings page.");
     }
 
+    console.log(`Making API request to OpenRouter with model: ${model}`);
+    
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -233,7 +282,9 @@ export const createChatCompletion = async (
           }))
         ],
         temperature: 0.7,
-        max_tokens: 2000
+        max_tokens: 2000,
+        return_images: false,
+        return_related_questions: false,
       }),
     });
     
@@ -265,6 +316,8 @@ export const fetchOpenRouterModels = async () => {
   }
   
   try {
+    console.log("Fetching models from OpenRouter API");
+    
     const response = await fetch('https://openrouter.ai/api/v1/models', {
       method: 'GET',
       headers: {
@@ -274,12 +327,15 @@ export const fetchOpenRouterModels = async () => {
     });
     
     if (!response.ok) {
+      console.error(`OpenRouter API error: ${response.status} ${response.statusText}`);
       const errorData = await response.json().catch(() => ({}));
       const errorMessage = errorData.error || response.statusText || `Status ${response.status}`;
       throw new Error(`Failed to fetch models: ${errorMessage}`);
     }
     
-    return await response.json();
+    const data = await response.json();
+    console.log("Models fetched successfully:", data.data ? data.data.length : 0, "models");
+    return data;
   } catch (error) {
     console.error("Error fetching OpenRouter models:", error);
     throw error;

@@ -19,18 +19,25 @@ export const ModelSettings = () => {
         setError(null);
         
         // First check if the API key exists
-        const apiKey = await getOpenRouterApiKey();
+        const apiKey = await getOpenRouterApiKey().catch(e => {
+          console.error("Error getting API key:", e);
+          return "";
+        });
+        
         const hasApiKey = !!apiKey && apiKey.length > 0;
         setApiKeyMissing(!hasApiKey);
         
         if (hasApiKey) {
           // Only try to fetch the model if we have an API key
-          const model = await getOpenRouterModel();
+          const model = await getOpenRouterModel().catch(e => {
+            console.error("Error getting model:", e);
+            return "anthropic/claude-3-opus"; // Default fallback
+          });
           setSelectedModel(model);
         }
       } catch (error) {
         console.error("Error fetching model settings:", error);
-        setError("Failed to load model settings");
+        setError(`Failed to load model settings: ${error.message || "Unknown error"}`);
         toast({
           variant: "destructive",
           title: "Error",
@@ -56,6 +63,8 @@ export const ModelSettings = () => {
       }
       
       setIsLoading(true);
+      console.log("Updating model to:", model);
+      
       const success = await setOpenRouterModel(model);
       
       if (success) {
@@ -65,11 +74,7 @@ export const ModelSettings = () => {
           description: "LLM model updated successfully"
         });
       } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to update model in database"
-        });
+        throw new Error("Failed to update model in database");
       }
     } catch (error) {
       console.error("Error updating model:", error);
