@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -11,11 +12,14 @@ export const getOpenRouterApiKey = async (): Promise<string> => {
   
   // Try to get the API key from Supabase
   try {
+    console.log("Attempting to retrieve API key from database");
+    
+    // Use maybeSingle instead of single to handle case where no record exists
     const { data, error } = await supabase
       .from('settings')
       .select('value')
       .eq('key', 'openrouter-api-key')
-      .single();
+      .maybeSingle();
       
     if (error) {
       console.error("Error fetching API key from database:", error);
@@ -24,6 +28,8 @@ export const getOpenRouterApiKey = async (): Promise<string> => {
       console.log("Retrieved API key from database (masked)");
       cachedApiKey = data.value;
       return data.value;
+    } else {
+      console.log("No API key record found in database");
     }
   } catch (e) {
     console.error("Exception during API key fetch:", e);
@@ -48,10 +54,18 @@ export const getOpenRouterApiKey = async (): Promise<string> => {
 export const setOpenRouterApiKey = async (apiKey: string): Promise<boolean> => {
   try {
     console.log("Attempting to save API key to database");
-    // Update the database
+    // Check if a record already exists
+    const { data: existingData } = await supabase
+      .from('settings')
+      .select('id')
+      .eq('key', 'openrouter-api-key')
+      .maybeSingle();
+    
+    // Update the database - use upsert to handle both insert and update cases
     const { error } = await supabase
       .from('settings')
       .upsert({ 
+        id: existingData?.id, // Will be undefined for new records
         key: 'openrouter-api-key', 
         value: apiKey,
         updated_at: new Date().toISOString()
@@ -91,7 +105,7 @@ export const getOpenRouterModel = async (): Promise<string> => {
       .from('settings')
       .select('value')
       .eq('key', 'openrouter-model')
-      .single();
+      .maybeSingle();
       
     if (error) {
       console.error("Error fetching model from database:", error);
@@ -115,10 +129,18 @@ export const getOpenRouterModel = async (): Promise<string> => {
 
 export const setOpenRouterModel = async (model: string): Promise<boolean> => {
   try {
+    // Check if a record already exists
+    const { data: existingData } = await supabase
+      .from('settings')
+      .select('id')
+      .eq('key', 'openrouter-model')
+      .maybeSingle();
+      
     // Update the database
     const { error } = await supabase
       .from('settings')
       .upsert({ 
+        id: existingData?.id, // Will be undefined for new records
         key: 'openrouter-model', 
         value: model,
         updated_at: new Date().toISOString()

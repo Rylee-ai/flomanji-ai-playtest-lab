@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Key, CheckCircle2, Pencil, Loader2, AlertCircle } from "lucide-react";
+import { Key, CheckCircle2, Pencil, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { getOpenRouterApiKey, setOpenRouterApiKey } from "@/lib/openrouter";
 
@@ -71,6 +71,8 @@ export const ApiKeySettings = () => {
         setIsEditing(false);
         setNewApiKey("");
         setHasApiKey(true);
+        // Trigger a refresh to verify the key was saved
+        setFetchAttempts(prev => prev + 1);
       } else {
         toast({
           variant: "destructive",
@@ -122,8 +124,9 @@ export const ApiKeySettings = () => {
               variant="outline" 
               size="sm" 
               onClick={handleRetryFetch}
+              className="flex items-center"
             >
-              <Loader2 className="h-4 w-4 mr-2" />
+              <RefreshCw className="h-4 w-4 mr-2" />
               Retry
             </Button>
           </div>
@@ -143,6 +146,7 @@ export const ApiKeySettings = () => {
               variant={hasApiKey ? "outline" : "default"}
               size="sm"
               onClick={() => setIsEditing(true)}
+              className="flex items-center"
             >
               <Pencil className="h-4 w-4 mr-2" />
               {hasApiKey ? "Edit Key" : "Add Key"}
@@ -155,11 +159,13 @@ export const ApiKeySettings = () => {
               value={newApiKey}
               onChange={(e) => setNewApiKey(e.target.value)}
               placeholder="Enter your OpenRouter API key"
+              className="font-mono"
             />
             <div className="flex space-x-2">
               <Button 
                 onClick={handleUpdateApiKey} 
                 disabled={!newApiKey || isLoading}
+                className="flex items-center"
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Save Changes

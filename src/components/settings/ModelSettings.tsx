@@ -13,10 +13,16 @@ export const ModelSettings = () => {
   useEffect(() => {
     const fetchModel = async () => {
       try {
+        setIsLoading(true);
         const model = await getOpenRouterModel();
         setSelectedModel(model);
       } catch (error) {
         console.error("Error fetching model:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load model settings"
+        });
       } finally {
         setIsLoading(false);
       }
