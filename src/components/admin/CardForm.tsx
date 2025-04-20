@@ -152,7 +152,7 @@ export interface CardFormValues {
 interface CardFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: CardFormData) => void;
+  onSubmit: (data: CardFormValues) => void;
   initialData?: GameCard;
   activeTab: CardType;
 }
@@ -244,15 +244,19 @@ export function CardForm({
   // Submit handler
   const onFormSubmit = (data: CardFormData) => {
     // Process data before submission
-    const processedData = {
+    const processedData: CardFormValues = {
       ...data,
       keywords: data.keywords.split(',').map(k => k.trim()),
       rules: data.rules.split('\n').filter(r => r.trim()),
       id: initialData?.id || generateId(data.name),
+      // Add the required icons property that's missing
+      icons: initialData?.icons || [{ symbol: "🔹", meaning: "Generic" }],
+      // Set the correct type
+      type: (data.type || activeTab) as CardType,
     };
     
-    // Fix the type mismatch by converting to the expected format
-    onSubmit(processedData as unknown as CardFormData);
+    // Pass the properly formatted data to onSubmit
+    onSubmit(processedData);
     onClose();
   };
   

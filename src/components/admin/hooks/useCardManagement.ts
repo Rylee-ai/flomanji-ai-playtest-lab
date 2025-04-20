@@ -2,14 +2,14 @@
 import { useState } from "react";
 import { CardType, GameCard } from "@/types/cards";
 import { toast } from "sonner";
-import { CardFormValues } from "../CardForm";
+import { CardFormValues, CardFormData } from "../CardForm";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
 import { AUTOMA_CARDS } from "@/lib/cards/automa-cards";
 import { REGION_CARDS } from "@/lib/cards/region-cards";
-import { NPC_CARDS } from "@/lib/cards/npc-cards";
+import { NPC_CARDS } from "@/lib/cards/npcs";
 import { MISSION_CARDS } from "@/lib/cards/mission-cards";
-import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
+import { HAZARD_CARDS } from "@/lib/cards/hazards";
 import { GEAR_CARDS } from "@/lib/cards/gear-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
@@ -52,6 +52,7 @@ export const useCardManagement = () => {
     setIsFormOpen(true);
   };
 
+  // Update the parameter type to accept CardFormValues instead of CardFormData
   const handleFormSubmit = (data: CardFormValues) => {
     console.log("Form submitted with data:", data);
     // Here you would typically save the data to your database
