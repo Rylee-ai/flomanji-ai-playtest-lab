@@ -6,15 +6,25 @@ import type { Database } from "@/integrations/supabase/types";
 let cachedApiKey: string | null = null;
 let cachedModel: string | null = null;
 
-export const getOpenRouterApiKey = async (): Promise<string> => {
+// Maximum retry attempts for API key retrieval
+const MAX_RETRIEVAL_ATTEMPTS = 3;
+
+/**
+ * Gets the OpenRouter API key with retry mechanism
+ * Fetches from database first, then fallbacks to localStorage
+ */
+export const getOpenRouterApiKey = async (attempts = 0): Promise<string> => {
   // If we already have a cached key, return it
-  if (cachedApiKey) return cachedApiKey;
+  if (cachedApiKey) {
+    console.log("Using cached API key (masked)");
+    return cachedApiKey;
+  }
   
   // Try to get the API key from Supabase
   try {
-    console.log("Attempting to retrieve API key from database");
+    console.log(`Retrieving API key from database (attempt ${attempts + 1}/${MAX_RETRIEVAL_ATTEMPTS})`);
     
-    // Use maybeSingle instead of single to handle case where no record exists
+    // Use maybeSingle to properly handle no results case
     const { data, error } = await supabase
       .from('settings')
       .select('value')
@@ -22,10 +32,12 @@ export const getOpenRouterApiKey = async (): Promise<string> => {
       .maybeSingle();
       
     if (error) {
-      console.error("Error fetching API key from database:", error);
-      // If there's an error, we'll fall back to localStorage
-    } else if (data && data.value) {
-      console.log("Retrieved API key from database (masked)");
+      console.error("Database error fetching API key:", error.message);
+      throw new Error(`Database error: ${error.message}`);
+    } 
+    
+    if (data && data.value) {
+      console.log("Successfully retrieved API key from database");
       cachedApiKey = data.value;
       return data.value;
     } else {
@@ -33,13 +45,21 @@ export const getOpenRouterApiKey = async (): Promise<string> => {
     }
   } catch (e) {
     console.error("Exception during API key fetch:", e);
+    
+    // If we haven't reached max attempts, retry with exponential backoff
+    if (attempts < MAX_RETRIEVAL_ATTEMPTS - 1) {
+      const delay = Math.pow(2, attempts) * 500; // Exponential backoff
+      console.log(`Retrying in ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return getOpenRouterApiKey(attempts + 1);
+    }
   }
   
   // Fallback to localStorage if database fetch fails
   try {
     const localKey = localStorage.getItem("openrouter-api-key");
     if (localKey) {
-      console.log("Retrieved API key from localStorage (masked)");
+      console.log("Retrieved API key from localStorage");
       cachedApiKey = localKey;
       return localKey;
     }
@@ -51,15 +71,23 @@ export const getOpenRouterApiKey = async (): Promise<string> => {
   return "";
 };
 
+/**
+ * Saves the OpenRouter API key to both database and localStorage
+ */
 export const setOpenRouterApiKey = async (apiKey: string): Promise<boolean> => {
   try {
-    console.log("Attempting to save API key to database");
+    console.log("Saving API key to database");
+    
     // Check if a record already exists
-    const { data: existingData } = await supabase
+    const { data: existingData, error: checkError } = await supabase
       .from('settings')
       .select('id')
       .eq('key', 'openrouter-api-key')
       .maybeSingle();
+    
+    if (checkError) {
+      console.error("Error checking existing API key:", checkError);
+    }
     
     // Update the database - use upsert to handle both insert and update cases
     const { error } = await supabase
@@ -84,6 +112,7 @@ export const setOpenRouterApiKey = async (apiKey: string): Promise<boolean> => {
     // Also update localStorage as fallback
     try {
       localStorage.setItem("openrouter-api-key", apiKey);
+      console.log("API key saved to localStorage");
     } catch (e) {
       console.error("Failed to save API key to localStorage:", e);
       // Continue anyway since we saved to database
@@ -96,8 +125,13 @@ export const setOpenRouterApiKey = async (apiKey: string): Promise<boolean> => {
   }
 };
 
+/**
+ * Gets the selected OpenRouter model
+ */
 export const getOpenRouterModel = async (): Promise<string> => {
-  if (cachedModel) return cachedModel;
+  if (cachedModel) {
+    return cachedModel;
+  }
   
   // Try to get the model from Supabase
   try {
@@ -109,7 +143,6 @@ export const getOpenRouterModel = async (): Promise<string> => {
       
     if (error) {
       console.error("Error fetching model from database:", error);
-      // If there's an error or no model found, fall back to localStorage
     } else if (data && data.value) {
       cachedModel = data.value;
       return data.value;
@@ -127,6 +160,9 @@ export const getOpenRouterModel = async (): Promise<string> => {
   return cachedModel || "anthropic/claude-3-opus";
 };
 
+/**
+ * Saves the selected OpenRouter model
+ */
 export const setOpenRouterModel = async (model: string): Promise<boolean> => {
   try {
     // Check if a record already exists
@@ -159,6 +195,13 @@ export const setOpenRouterModel = async (model: string): Promise<boolean> => {
     console.error("Error setting model in database:", e);
     return false;
   }
+};
+
+// Function to clear cached values (for testing or debugging)
+export const clearOpenRouterCache = () => {
+  cachedApiKey = null;
+  cachedModel = null;
+  console.log("OpenRouter cache cleared");
 };
 
 // Chat completion helper function
@@ -216,17 +259,23 @@ export const fetchOpenRouterModels = async () => {
     throw new Error("OpenRouter API key not found");
   }
   
-  const response = await fetch('https://openrouter.ai/api/v1/models', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'HTTP-Referer': window.location.href,
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/models', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': window.location.href,
+      }
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Failed to fetch models: ${errorData.error || response.statusText || response.status}`);
     }
-  });
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch models: ${response.status}`);
+    
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching OpenRouter models:", error);
+    throw error;
   }
-  
-  return await response.json();
 };

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Key, CheckCircle2, Pencil, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { getOpenRouterApiKey, setOpenRouterApiKey } from "@/lib/openrouter";
+import { getOpenRouterApiKey, setOpenRouterApiKey, clearOpenRouterCache } from "@/lib/openrouter";
 
 export const ApiKeySettings = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -14,6 +14,7 @@ export const ApiKeySettings = () => {
   const [hasApiKey, setHasApiKey] = useState(false);
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   const [fetchAttempts, setFetchAttempts] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const fetchApiKey = async () => {
@@ -93,8 +94,21 @@ export const ApiKeySettings = () => {
     }
   };
 
-  const handleRetryFetch = () => {
-    setFetchAttempts(prev => prev + 1);
+  const handleRetryFetch = async () => {
+    setIsRefreshing(true);
+    try {
+      // Clear the cache to force a fresh fetch
+      clearOpenRouterCache();
+      // Increment attempt counter to trigger useEffect
+      setFetchAttempts(prev => prev + 1);
+      
+      toast({
+        title: "Refreshing",
+        description: "Attempting to reconnect to database"
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   return (
@@ -125,9 +139,14 @@ export const ApiKeySettings = () => {
               size="sm" 
               onClick={handleRetryFetch}
               className="flex items-center"
+              disabled={isRefreshing}
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Retry
+              {isRefreshing ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-2" />
+              )}
+              Retry Connection
             </Button>
           </div>
         ) : !isEditing ? (
@@ -139,18 +158,38 @@ export const ApiKeySettings = () => {
                   <span className="text-green-600">API key is set and ready to use</span>
                 </>
               ) : (
-                <span className="text-amber-500">No API key set. Please add your OpenRouter API key.</span>
+                <div className="flex items-center space-x-2 text-amber-500">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>No API key set. Please add your OpenRouter API key.</span>
+                </div>
               )}
             </div>
-            <Button 
-              variant={hasApiKey ? "outline" : "default"}
-              size="sm"
-              onClick={() => setIsEditing(true)}
-              className="flex items-center"
-            >
-              <Pencil className="h-4 w-4 mr-2" />
-              {hasApiKey ? "Edit Key" : "Add Key"}
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                variant={hasApiKey ? "outline" : "default"}
+                size="sm"
+                onClick={() => setIsEditing(true)}
+                className="flex items-center"
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+                {hasApiKey ? "Edit Key" : "Add Key"}
+              </Button>
+              {hasApiKey && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRetryFetch}
+                  disabled={isRefreshing}
+                >
+                  {isRefreshing ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                  )}
+                  Refresh
+                </Button>
+              )}
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
@@ -181,9 +220,14 @@ export const ApiKeySettings = () => {
                 Cancel
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              You can get an OpenRouter API key at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="underline">openrouter.ai/keys</a>
-            </p>
+            <div className="space-y-2 text-sm">
+              <p className="text-xs text-muted-foreground mb-1">
+                You can get an OpenRouter API key at <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="underline">openrouter.ai/keys</a>
+              </p>
+              <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-md border border-blue-200 dark:border-blue-800">
+                <p className="text-blue-700 dark:text-blue-300">OpenRouter keys start with <code className="font-mono bg-blue-100 dark:bg-blue-900 px-1 rounded">or-</code> and connect to multiple AI models.</p>
+              </div>
+            </div>
           </div>
         )}
       </CardContent>
