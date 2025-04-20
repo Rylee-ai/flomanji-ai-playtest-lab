@@ -1,12 +1,66 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Loader2, AlertCircle } from "lucide-react";
 
 const Index = () => {
-  console.log("Index page rendering");
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    console.log("Index page mounting");
+    
+    try {
+      // Basic initialization - simulate checking for critical resources
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    } catch (error) {
+      console.error("Error initializing Index page:", error);
+      setHasError(true);
+      setIsLoading(false);
+    }
+    
+    return () => {
+      console.log("Index page unmounting");
+    };
+  }, []);
+
+  // Error state
+  if (hasError) {
+    return (
+      <div className="container max-w-5xl py-6">
+        <div className="p-4 mb-4 text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold mb-2">Something went wrong</h1>
+          <p className="text-gray-600 mb-4">
+            We encountered an error while loading the Flomanji AI Playtest Lab.
+          </p>
+          <Button onClick={() => window.location.reload()}>
+            Try again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container max-w-5xl py-6 flex justify-center items-center" style={{ minHeight: "70vh" }}>
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading Flomanji AI Playtest Lab...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Normal content
   return (
     <div className="container max-w-5xl py-6">
       <div className="mb-8 text-center">
