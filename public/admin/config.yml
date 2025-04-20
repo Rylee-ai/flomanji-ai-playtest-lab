@@ -2,44 +2,140 @@
 # Decap CMS Configuration
 backend:
   name: git-gateway
-  branch: main # Branch to update (optional; defaults to master)
+  branch: main
 
-# Media and public folder settings
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
-# Content collections
 collections:
-  - name: "rules"
-    label: "Game Rules"
-    folder: "content/rules"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Title", name: "title", widget: "string" }
-      - { label: "Section", name: "section", widget: "string" }
-      - { label: "Content", name: "body", widget: "markdown" }
-      - { label: "Order", name: "order", widget: "number", default: 1 }
-
-  - name: "cards"
-    label: "Game Cards"
-    folder: "content/cards"
+  - name: "hazards"
+    label: "Hazard Cards"
+    folder: "content/cards/hazards"
     create: true
     slug: "{{slug}}"
     fields:
       - { label: "Name", name: "name", widget: "string" }
-      - { label: "Type", name: "type", widget: "select", options: ["hazard", "treasure", "event"] }
+      - { label: "Type", name: "type", widget: "hidden", default: "hazard" }
+      - { label: "Subtype", name: "subType", widget: "select", options: ["environmental", "creature", "social", "weird"] }
+      - label: "Icons"
+        name: "icons"
+        widget: "list"
+        fields:
+          - { label: "Symbol", name: "symbol", widget: "string" }
+          - { label: "Meaning", name: "meaning", widget: "string" }
+      - { label: "Keywords", name: "keywords", widget: "list" }
+      - label: "Difficulty Classes"
+        name: "difficultyClasses"
+        widget: "object"
+        fields:
+          - { label: "Fight DC", name: "fight", widget: "number", required: false }
+          - { label: "Grit DC", name: "grit", widget: "number", required: false }
+          - { label: "Moxie DC", name: "moxie", widget: "number", required: false }
+          - { label: "Charm DC", name: "charm", widget: "number", required: false }
+          - { label: "Weird Sense DC", name: "weirdSense", widget: "number", required: false }
+      - { label: "On Failure", name: "onFailure", widget: "string" }
+      - { label: "On Success", name: "onSuccess", widget: "string", required: false }
+      - { label: "Rules", name: "rules", widget: "list" }
+      - { label: "Flavor Text", name: "flavor", widget: "text" }
+      - { label: "Image Prompt", name: "imagePrompt", widget: "text" }
       - { label: "Description", name: "description", widget: "text" }
-      - { label: "Effects", name: "effects", widget: "markdown" }
+      - { label: "Content", name: "body", widget: "markdown" }
 
-  - name: "scenarios"
-    label: "Game Scenarios"
-    folder: "content/scenarios"
+  - name: "treasures"
+    label: "Treasure Cards"
+    folder: "content/cards/treasures"
     create: true
     slug: "{{slug}}"
     fields:
-      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Type", name: "type", widget: "select", options: ["treasure", "artifact"] }
+      - label: "Icons"
+        name: "icons"
+        widget: "list"
+        fields:
+          - { label: "Symbol", name: "symbol", widget: "string" }
+          - { label: "Meaning", name: "meaning", widget: "string" }
+      - { label: "Keywords", name: "keywords", widget: "list" }
+      - { label: "Rules", name: "rules", widget: "list" }
+      - { label: "Consumable", name: "consumable", widget: "boolean", default: false }
+      - { label: "Value", name: "value", widget: "number", required: false }
+      - { label: "Flavor Text", name: "flavor", widget: "text" }
+      - { label: "Image Prompt", name: "imagePrompt", widget: "text" }
       - { label: "Description", name: "description", widget: "text" }
-      - { label: "Setup Instructions", name: "setup", widget: "markdown" }
-      - { label: "Goals", name: "goals", widget: "markdown" }
-      - { label: "Special Rules", name: "specialRules", widget: "markdown", required: false }
+      - { label: "Content", name: "body", widget: "markdown" }
+
+  - name: "npcs"
+    label: "NPC Cards"
+    folder: "content/cards/npcs"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Type", name: "type", widget: "hidden", default: "npc" }
+      - label: "Icons"
+        name: "icons"
+        widget: "list"
+        fields:
+          - { label: "Symbol", name: "symbol", widget: "string" }
+          - { label: "Meaning", name: "meaning", widget: "string" }
+      - { label: "Keywords", name: "keywords", widget: "list" }
+      - { label: "Check DC", name: "checkDC", widget: "number", required: false }
+      - label: "Actions"
+        name: "actions"
+        widget: "list"
+        fields:
+          - { label: "Description", name: "description", widget: "string" }
+          - { label: "Cost", name: "cost", widget: "number" }
+          - { label: "Effect", name: "effect", widget: "string" }
+      - { label: "Rules", name: "rules", widget: "list" }
+      - { label: "Flavor Text", name: "flavor", widget: "text" }
+      - { label: "Image Prompt", name: "imagePrompt", widget: "text" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Content", name: "body", widget: "markdown" }
+
+  - name: "player-characters"
+    label: "Player Characters"
+    folder: "content/cards/player-characters"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Role", name: "role", widget: "string" }
+      - { label: "Type", name: "type", widget: "hidden", default: "player-character" }
+      - label: "Stats"
+        name: "stats"
+        widget: "object"
+        fields:
+          - { label: "Brawn", name: "brawn", widget: "number" }
+          - { label: "Moxie", name: "moxie", widget: "number" }
+          - { label: "Charm", name: "charm", widget: "number" }
+          - { label: "Grit", name: "grit", widget: "number" }
+          - { label: "Weird Sense", name: "weirdSense", widget: "number" }
+      - label: "Ability"
+        name: "ability"
+        widget: "object"
+        fields:
+          - { label: "Name", name: "name", widget: "string" }
+          - { label: "Description", name: "description", widget: "string" }
+      - { label: "Health", name: "health", widget: "number" }
+      - { label: "Weirdness", name: "weirdness", widget: "number" }
+      - { label: "Luck", name: "luck", widget: "number" }
+      - label: "Starter Gear"
+        name: "starterGear"
+        widget: "list"
+        fields:
+          - { label: "Name", name: "name", widget: "string" }
+          - { label: "Type", name: "type", widget: "string" }
+          - { label: "Effect", name: "effect", widget: "string" }
+      - label: "Icons"
+        name: "icons"
+        widget: "list"
+        fields:
+          - { label: "Symbol", name: "symbol", widget: "string" }
+          - { label: "Meaning", name: "meaning", widget: "string" }
+      - { label: "Keywords", name: "keywords", widget: "list" }
+      - { label: "Rules", name: "rules", widget: "list" }
+      - { label: "Flavor Text", name: "flavor", widget: "text" }
+      - { label: "Image Prompt", name: "imagePrompt", widget: "text" }
+      - { label: "Content", name: "body", widget: "markdown" }
+
