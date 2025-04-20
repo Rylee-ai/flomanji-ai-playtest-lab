@@ -46,6 +46,15 @@ export const ModelSettings = () => {
 
   const handleModelChange = async (model: string) => {
     try {
+      if (!model) {
+        toast({
+          variant: "destructive",
+          title: "Invalid Selection",
+          description: "Please select a valid model"
+        });
+        return;
+      }
+      
       setIsLoading(true);
       const success = await setOpenRouterModel(model);
       
@@ -67,7 +76,7 @@ export const ModelSettings = () => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to update model"
+        description: `Failed to update model: ${error.message || "Unknown error"}`
       });
     } finally {
       setIsLoading(false);

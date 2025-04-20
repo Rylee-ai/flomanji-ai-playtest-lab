@@ -1,6 +1,5 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
 
 // Cache for API key to avoid frequent database calls
 let cachedApiKey: string | null = null;
@@ -239,15 +238,21 @@ export const createChatCompletion = async (
     });
     
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`OpenRouter API error: ${errorData.error?.message || response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error?.message || response.statusText || `Status ${response.status}`;
+      throw new Error(`OpenRouter API error: ${errorMessage}`);
     }
     
     const data = await response.json();
-    return data.choices[0]?.message?.content || "No response generated";
+    
+    if (!data.choices || !data.choices[0]?.message?.content) {
+      throw new Error("Received invalid response format from OpenRouter");
+    }
+    
+    return data.choices[0].message.content;
   } catch (error) {
     console.error("Error creating chat completion:", error);
-    throw new Error(`Failed to get response from OpenRouter: ${error}`);
+    throw new Error(`Failed to get response from OpenRouter: ${error.message || error}`);
   }
 };
 
@@ -270,7 +275,8 @@ export const fetchOpenRouterModels = async () => {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Failed to fetch models: ${errorData.error || response.statusText || response.status}`);
+      const errorMessage = errorData.error || response.statusText || `Status ${response.status}`;
+      throw new Error(`Failed to fetch models: ${errorMessage}`);
     }
     
     return await response.json();
