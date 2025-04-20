@@ -12,6 +12,7 @@ import SimulationDetail from "./pages/SimulationDetail";
 import ContentManager from "./pages/ContentManager";
 import Rules from "./pages/Rules";
 import Settings from "./pages/Settings";
+import AgentManager from "./pages/AgentManager";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/simulations/:id" element={<SimulationDetail />} />
             <Route path="/content" element={<ContentManager />} />
             <Route path="/rules" element={<Rules />} />
+            <Route path="/agents" element={<AgentManager />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
