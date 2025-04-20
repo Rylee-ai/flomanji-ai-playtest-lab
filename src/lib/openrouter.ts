@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
+import type { Database } from "@/integrations/supabase/types";
 
 // Cache for API key to avoid frequent database calls
 let cachedApiKey: string | null = null;
@@ -15,11 +15,12 @@ export const getOpenRouterApiKey = async (): Promise<string> => {
       .from('settings')
       .select('value')
       .eq('key', 'openrouter-api-key')
-      .single<Tables['settings']>();
+      .single();
       
-    if (error) throw error;
-    
-    if (data && data.value) {
+    if (error) {
+      console.error("Error fetching API key from database:", error);
+      // If there's an error or no key found, fall back to localStorage
+    } else if (data && data.value) {
       cachedApiKey = data.value;
       return data.value;
     }
@@ -71,11 +72,12 @@ export const getOpenRouterModel = async (): Promise<string> => {
       .from('settings')
       .select('value')
       .eq('key', 'openrouter-model')
-      .single<Tables['settings']>();
+      .single();
       
-    if (error) throw error;
-    
-    if (data && data.value) {
+    if (error) {
+      console.error("Error fetching model from database:", error);
+      // If there's an error or no model found, fall back to localStorage
+    } else if (data && data.value) {
       cachedModel = data.value;
       return data.value;
     }

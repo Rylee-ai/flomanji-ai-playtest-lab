@@ -12,15 +12,21 @@ export const ApiKeySettings = () => {
   const [newApiKey, setNewApiKey] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [apiKeyError, setApiKeyError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchApiKey = async () => {
       try {
+        setIsLoading(true);
+        setApiKeyError(null);
+        
         const apiKey = await getOpenRouterApiKey();
+        console.log("API Key retrieved (masked):", apiKey ? "***" : "none");
         setHasApiKey(!!apiKey);
-        setIsLoading(false);
       } catch (error) {
         console.error("Error checking API key:", error);
+        setApiKeyError("Failed to retrieve API key status");
+      } finally {
         setIsLoading(false);
       }
     };
@@ -30,6 +36,15 @@ export const ApiKeySettings = () => {
 
   const handleUpdateApiKey = async () => {
     try {
+      if (!newApiKey.trim()) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "API key cannot be empty"
+        });
+        return;
+      }
+
       if (!newApiKey.startsWith('or-')) {
         toast({
           variant: "destructive",
@@ -40,6 +55,8 @@ export const ApiKeySettings = () => {
       }
 
       setIsLoading(true);
+      setApiKeyError(null);
+      
       const success = await setOpenRouterApiKey(newApiKey);
 
       if (success) {
@@ -59,6 +76,7 @@ export const ApiKeySettings = () => {
       }
     } catch (error) {
       console.error("Error updating API key:", error);
+      setApiKeyError("Failed to update API key");
       toast({
         variant: "destructive",
         title: "Error",
@@ -85,6 +103,10 @@ export const ApiKeySettings = () => {
           <div className="flex items-center space-x-2">
             <Loader2 className="h-4 w-4 animate-spin" />
             <span className="text-sm text-muted-foreground">Loading API key status...</span>
+          </div>
+        ) : apiKeyError ? (
+          <div className="text-sm text-red-500">
+            {apiKeyError}. Please try refreshing the page or check your database connection.
           </div>
         ) : !isEditing ? (
           <div className="flex items-center justify-between">
