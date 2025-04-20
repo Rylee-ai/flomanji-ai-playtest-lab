@@ -1,7 +1,12 @@
 
 // OpenRouter client configuration
-export const OPENROUTER_API_KEY = localStorage.getItem("openrouter-api-key") || "";
-export const OPENROUTER_MODEL = localStorage.getItem("openrouter-model") || "anthropic/claude-3-opus";
+export const getOpenRouterApiKey = (): string => {
+  return localStorage.getItem("openrouter-api-key") || "";
+};
+
+export const getOpenRouterModel = (): string => {
+  return localStorage.getItem("openrouter-model") || "anthropic/claude-3-opus";
+};
 
 // Chat completion helper function
 export const createChatCompletion = async (
@@ -9,15 +14,22 @@ export const createChatCompletion = async (
   messages: {role: string, content: string}[]
 ): Promise<string> => {
   try {
+    const apiKey = getOpenRouterApiKey();
+    const model = getOpenRouterModel();
+    
+    if (!apiKey) {
+      throw new Error("OpenRouter API key not found. Please set it in the Settings page.");
+    }
+
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
         'HTTP-Referer': window.location.href,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: OPENROUTER_MODEL,
+        model: model,
         messages: [
           { role: 'system', content: systemPrompt },
           ...messages.map(msg => ({
@@ -30,10 +42,38 @@ export const createChatCompletion = async (
       }),
     });
     
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`OpenRouter API error: ${errorData.error?.message || response.statusText}`);
+    }
+    
     const data = await response.json();
     return data.choices[0]?.message?.content || "No response generated";
   } catch (error) {
     console.error("Error creating chat completion:", error);
     throw new Error(`Failed to get response from OpenRouter: ${error}`);
   }
+};
+
+// Function to fetch available OpenRouter models
+export const fetchOpenRouterModels = async () => {
+  const apiKey = getOpenRouterApiKey();
+  
+  if (!apiKey) {
+    throw new Error("OpenRouter API key not found");
+  }
+  
+  const response = await fetch('https://openrouter.ai/api/v1/models', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': window.location.href,
+    }
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch models: ${response.status}`);
+  }
+  
+  return await response.json();
 };

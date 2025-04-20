@@ -1,3 +1,4 @@
+
 // Agent types
 export type AgentRole = 'GM' | 'Player' | 'Critic';
 
@@ -5,6 +6,7 @@ export interface AgentMessage {
   role: AgentRole;
   message: string;
   timestamp?: string;
+  characterId?: string; // Added to track messages from specific characters
 }
 
 // Character types
@@ -37,6 +39,29 @@ export interface FlomanjiCharacter {
   starterGear: CharacterGear[];
 }
 
+// Character performance metrics in simulation
+export interface CharacterPerformanceMetrics {
+  characterId: string;
+  characterName: string;
+  actionsUsed: number;
+  statChecks: {
+    brawn: { attempts: number, successes: number },
+    moxie: { attempts: number, successes: number },
+    charm: { attempts: number, successes: number },
+    grit: { attempts: number, successes: number },
+    weirdSense: { attempts: number, successes: number },
+  };
+  damageTaken: number;
+  damageCaused: number;
+  heatIncreases: number;
+  abilityUses: number;
+  regionsExplored: number;
+  gearUsed: string[];
+  finalHealth: number;
+  finalWeirdness: number;
+  finalLuck: number;
+}
+
 // Simulation types
 export interface SimulationConfig {
   scenarioPrompt: string;
@@ -62,6 +87,10 @@ export interface SimulationResult {
   log: AgentMessage[];
   criticFeedback?: string;
   annotations?: string;
+  characterMetrics?: CharacterPerformanceMetrics[]; // New field for character performance
+  missionOutcome?: 'success' | 'partial' | 'failure';
+  missionType?: string;
+  keyEvents?: { round: number, description: string }[];
 }
 
 export interface SimulationSummary {
@@ -71,6 +100,8 @@ export interface SimulationSummary {
   rounds: number;
   result?: string;
   notes?: string;
+  missionOutcome?: 'success' | 'partial' | 'failure';
+  characters?: { id: string, name: string }[];
 }
 
 // Game content types
