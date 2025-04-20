@@ -1,14 +1,32 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Key, CheckCircle2, Pencil } from "lucide-react";
+import { Key, CheckCircle2, Pencil, Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { getOpenRouterApiKey, setOpenRouterApiKey } from "@/lib/openrouter";
 
 export const ApiKeySettings = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [newApiKey, setNewApiKey] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasApiKey, setHasApiKey] = useState(false);
+
+  useEffect(() => {
+    const fetchApiKey = async () => {
+      try {
+        const apiKey = await getOpenRouterApiKey();
+        setHasApiKey(!!apiKey);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error checking API key:", error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchApiKey();
+  }, []);
 
   const handleUpdateApiKey = async () => {
     try {
@@ -21,14 +39,24 @@ export const ApiKeySettings = () => {
         return;
       }
 
-      localStorage.setItem("openrouter-api-key", newApiKey);
+      setIsLoading(true);
+      const success = await setOpenRouterApiKey(newApiKey);
 
-      toast({
-        title: "Success",
-        description: "API key updated successfully"
-      });
-      setIsEditing(false);
-      setNewApiKey("");
+      if (success) {
+        toast({
+          title: "Success",
+          description: "API key updated successfully"
+        });
+        setIsEditing(false);
+        setNewApiKey("");
+        setHasApiKey(true);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to update API key in database"
+        });
+      }
     } catch (error) {
       console.error("Error updating API key:", error);
       toast({
@@ -36,6 +64,8 @@ export const ApiKeySettings = () => {
         title: "Error",
         description: "Failed to update API key"
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -51,10 +81,15 @@ export const ApiKeySettings = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!isEditing ? (
+        {isLoading ? (
+          <div className="flex items-center space-x-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm text-muted-foreground">Loading API key status...</span>
+          </div>
+        ) : !isEditing ? (
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              {localStorage.getItem("openrouter-api-key") ? (
+              {hasApiKey ? (
                 <>
                   <CheckCircle2 className="h-4 w-4 text-green-500" />
                   <span>API key is set and ready to use</span>
@@ -69,7 +104,7 @@ export const ApiKeySettings = () => {
               onClick={() => setIsEditing(true)}
             >
               <Pencil className="h-4 w-4 mr-2" />
-              {localStorage.getItem("openrouter-api-key") ? "Edit Key" : "Add Key"}
+              {hasApiKey ? "Edit Key" : "Add Key"}
             </Button>
           </div>
         ) : (
@@ -81,7 +116,11 @@ export const ApiKeySettings = () => {
               placeholder="Enter your OpenRouter API key"
             />
             <div className="flex space-x-2">
-              <Button onClick={handleUpdateApiKey} disabled={!newApiKey}>
+              <Button 
+                onClick={handleUpdateApiKey} 
+                disabled={!newApiKey || isLoading}
+              >
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Save Changes
               </Button>
               <Button 
@@ -90,6 +129,7 @@ export const ApiKeySettings = () => {
                   setIsEditing(false);
                   setNewApiKey("");
                 }}
+                disabled={isLoading}
               >
                 Cancel
               </Button>

@@ -1,11 +1,121 @@
 
 // OpenRouter client configuration
-export const getOpenRouterApiKey = (): string => {
-  return localStorage.getItem("openrouter-api-key") || "";
+import { supabase } from "@/integrations/supabase/client";
+
+// Cache for API key to avoid frequent database calls
+let cachedApiKey: string | null = null;
+let cachedModel: string | null = null;
+
+export const getOpenRouterApiKey = async (): Promise<string> => {
+  if (cachedApiKey) return cachedApiKey;
+  
+  // Try to get the API key from Supabase
+  try {
+    const { data, error } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'openrouter-api-key')
+      .single();
+      
+    if (error) throw error;
+    
+    if (data && data.value) {
+      cachedApiKey = data.value;
+      return data.value;
+    }
+  } catch (e) {
+    console.error("Error fetching API key from database:", e);
+  }
+  
+  // Fallback to localStorage if database fetch fails
+  const localKey = localStorage.getItem("openrouter-api-key") || "";
+  if (localKey) {
+    cachedApiKey = localKey;
+  }
+  
+  return cachedApiKey || "";
 };
 
-export const getOpenRouterModel = (): string => {
-  return localStorage.getItem("openrouter-model") || "anthropic/claude-3-opus";
+export const setOpenRouterApiKey = async (apiKey: string): Promise<boolean> => {
+  try {
+    // Update the database
+    const { error } = await supabase
+      .from('settings')
+      .upsert({ 
+        key: 'openrouter-api-key', 
+        value: apiKey,
+        updated_at: new Date().toISOString()
+      });
+      
+    if (error) throw error;
+    
+    // Update the cache
+    cachedApiKey = apiKey;
+    
+    // Also update localStorage as fallback
+    localStorage.setItem("openrouter-api-key", apiKey);
+    
+    return true;
+  } catch (e) {
+    console.error("Error setting API key in database:", e);
+    return false;
+  }
+};
+
+export const getOpenRouterModel = async (): Promise<string> => {
+  if (cachedModel) return cachedModel;
+  
+  // Try to get the model from Supabase
+  try {
+    const { data, error } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'openrouter-model')
+      .single();
+      
+    if (error) throw error;
+    
+    if (data && data.value) {
+      cachedModel = data.value;
+      return data.value;
+    }
+  } catch (e) {
+    console.error("Error fetching model from database:", e);
+  }
+  
+  // Fallback to localStorage
+  const localModel = localStorage.getItem("openrouter-model") || "anthropic/claude-3-opus";
+  if (localModel) {
+    cachedModel = localModel;
+  }
+  
+  return cachedModel || "anthropic/claude-3-opus";
+};
+
+export const setOpenRouterModel = async (model: string): Promise<boolean> => {
+  try {
+    // Update the database
+    const { error } = await supabase
+      .from('settings')
+      .upsert({ 
+        key: 'openrouter-model', 
+        value: model,
+        updated_at: new Date().toISOString()
+      });
+      
+    if (error) throw error;
+    
+    // Update the cache
+    cachedModel = model;
+    
+    // Also update localStorage as fallback
+    localStorage.setItem("openrouter-model", model);
+    
+    return true;
+  } catch (e) {
+    console.error("Error setting model in database:", e);
+    return false;
+  }
 };
 
 // Chat completion helper function
@@ -14,8 +124,8 @@ export const createChatCompletion = async (
   messages: {role: string, content: string}[]
 ): Promise<string> => {
   try {
-    const apiKey = getOpenRouterApiKey();
-    const model = getOpenRouterModel();
+    const apiKey = await getOpenRouterApiKey();
+    const model = await getOpenRouterModel();
     
     if (!apiKey) {
       throw new Error("OpenRouter API key not found. Please set it in the Settings page.");
@@ -57,7 +167,7 @@ export const createChatCompletion = async (
 
 // Function to fetch available OpenRouter models
 export const fetchOpenRouterModels = async () => {
-  const apiKey = getOpenRouterApiKey();
+  const apiKey = await getOpenRouterApiKey();
   
   if (!apiKey) {
     throw new Error("OpenRouter API key not found");
