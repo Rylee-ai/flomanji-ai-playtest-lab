@@ -25,7 +25,7 @@ import { AutomaCardForm } from "./forms/AutomaCardForm";
 import { PlayerCharacterForm } from "./forms/PlayerCharacterForm";
 
 export const cardFormSchema = z.object({
-  // Base fields for all cards
+  id: z.string().optional(),
   name: z.string().min(2, { message: "Card name must be at least 2 characters." }),
   type: z.enum(["treasure", "artifact", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified", "secret", "player-character"]),
   keywords: z.array(z.string()).optional(),
@@ -36,6 +36,7 @@ export const cardFormSchema = z.object({
   rules: z.array(z.string()).optional(),
   flavor: z.string().optional(),
   imagePrompt: z.string().optional(),
+  markdownContent: z.string().optional(),
 
   // Treasure & Artifact specific fields
   value: z.number().optional(),
@@ -133,7 +134,6 @@ export const cardFormSchema = z.object({
 
 export type CardFormValues = z.infer<typeof cardFormSchema>;
 
-// Define the CardFormProps interface
 export interface CardFormProps {
   open: boolean;
   onClose: () => void;
@@ -147,7 +147,6 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
   const isEditing = !!initialData;
   const type = form.watch("type");
   
-  // Set the form type based on activeTab when creating a new card
   useEffect(() => {
     if (!isEditing && activeTab) {
       form.setValue("type", activeTab as CardType);
