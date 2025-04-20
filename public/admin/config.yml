@@ -1,4 +1,3 @@
-
 # Decap CMS Configuration
 backend:
   name: git-gateway
@@ -139,3 +138,26 @@ collections:
       - { label: "Image Prompt", name: "imagePrompt", widget: "text" }
       - { label: "Content", name: "body", widget: "markdown" }
 
+  - name: "flomanjified"
+    label: "Flomanjified Cards"
+    folder: "content/cards/flomanjified"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Type", name: "type", widget: "hidden", default: "flomanjified" }
+      - { label: "Original Role", name: "originalRole", widget: "string", required: false }
+      - { label: "Chaos Action", name: "chaosAction", widget: "string" }
+      - { label: "Special Ability", name: "specialAbility", widget: "string", required: false }
+      - label: "Icons"
+        name: "icons"
+        widget: "list"
+        fields:
+          - { label: "Symbol", name: "symbol", widget: "string" }
+          - { label: "Meaning", name: "meaning", widget: "string" }
+      - { label: "Keywords", name: "keywords", widget: "list" }
+      - { label: "Rules", name: "rules", widget: "list" }
+      - { label: "Flavor Text", name: "flavor", widget: "text" }
+      - { label: "Image Prompt", name: "imagePrompt", widget: "text" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Content", name: "body", widget: "markdown" }
