@@ -46,11 +46,19 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 2,
-      onError: (error) => {
-        console.error("Query error:", error);
-      }
     },
   },
+});
+
+// Add a global error handler for query errors
+queryClient.setDefaultOptions({
+  queries: {
+    meta: {
+      onError: (error: Error) => {
+        console.error("Query error:", error);
+      }
+    }
+  }
 });
 
 const App = () => {
