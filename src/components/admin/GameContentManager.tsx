@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { CardForm, CardFormValues } from "./CardForm";
+import { CardForm } from "./CardForm";
 import { CardPreviewModal } from "./CardPreviewModal";
 import { TableWrapper } from "./tables/TableWrapper";
 import { useCardManagement } from "./hooks/useCardManagement";
