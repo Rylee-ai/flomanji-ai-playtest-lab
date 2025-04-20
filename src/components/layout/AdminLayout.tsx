@@ -2,7 +2,7 @@
 import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { BookOpen, BarChart2, PlayCircle, FileText, List, Settings, Bot } from "lucide-react";
-import { useMediaQuery } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const NAV_ITEMS = [
   { path: "/", label: "Dashboard", icon: <BarChart2 className="h-5 w-5" /> },
@@ -15,7 +15,7 @@ const NAV_ITEMS = [
 
 const AdminLayout = () => {
   const location = useLocation();
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useIsMobile() === false;
 
   return (
     <div className="flex h-screen bg-background">
