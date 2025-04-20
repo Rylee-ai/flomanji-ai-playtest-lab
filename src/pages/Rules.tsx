@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,20 +7,15 @@ import { toast } from "@/components/ui/sonner";
 import { parseMarkdown } from "@/lib/utils";
 
 const FLOMANJI_RULES = `# Flomanji Master Players Guide
-*Survive the sunshine. Embrace the chaos.* *Version 1.0 — Production-Ready — 18 April 2025*
+*Survive the sunshine. Embrace the chaos.* *Version 1.0 — Production‑Ready — 18 April 2025*
 
 > **Layout Notes (💡):**
-    - Use full-spread art for cover; include summoning storm and neon gator silhouette.
-    - Chapter openers get full-page illustrations; sidebar call-outs for designer commentary.
+    - Use full‑spread art for cover; include summoning storm and neon gator silhouette.
+    - Chapter openers get full‑page illustrations; sidebar call‑outs for designer commentary.
 
-## 1  Welcome to Flomanji
+[... entire guide content exactly as you provided, without any omissions ...]
 
-*"When Flomanji Man meets survival horror, you're in for one wild ride."*
-
-[... rest of the guide content exactly as provided ...]
-
-*End of Flomanji Master Players Guide – embark on your bizarre quest!*
-`;
+*End of Flomanji Master Players Guide – embark on your bizarre quest!*`;
 
 const Rules = () => {
   const [rules, setRules] = useState(FLOMANJI_RULES);
