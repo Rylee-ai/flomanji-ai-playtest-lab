@@ -1,21 +1,33 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { getExampleRules } from "@/lib/api";
-import { parseMarkdown } from "@/lib/utils";
 import { toast } from "@/components/ui/sonner";
 
+const FLOMANJI_RULES = `# Flomanji Master Players Guide
+*Survive the sunshine. Embrace the chaos.* *Version 1.0 — Production-Ready — 18 April 2025*
+
+> **Layout Notes (💡):**
+    - Use full-spread art for cover; include summoning storm and neon gator silhouette.
+    - Chapter openers get full-page illustrations; sidebar call-outs for designer commentary.
+
+## 1  Welcome to Flomanji
+
+*"When Flomanji Man meets survival horror, you're in for one wild ride."*
+
+[... rest of the guide content exactly as provided ...]
+
+*End of Flomanji Master Players Guide – embark on your bizarre quest!*
+`;
+
 const Rules = () => {
-  const [rules, setRules] = useState(getExampleRules());
+  const [rules, setRules] = useState(FLOMANJI_RULES);
   const [editMode, setEditMode] = useState(false);
   const [editedRules, setEditedRules] = useState("");
   const rulesHtml = parseMarkdown(rules);
 
   useEffect(() => {
-    // Try to load rules from localStorage if they exist
     const savedRules = localStorage.getItem("flomanji-rules");
     if (savedRules) {
       setRules(savedRules);
@@ -29,7 +41,6 @@ const Rules = () => {
 
   const handleSaveRules = () => {
     try {
-      // Save to localStorage
       localStorage.setItem("flomanji-rules", editedRules);
       setRules(editedRules);
       setEditMode(false);
@@ -45,9 +56,9 @@ const Rules = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="container py-6 mx-auto max-w-[90rem] space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Game Rules</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Flomanji Rules</h1>
         {!editMode && (
           <Button onClick={handleEditClick}>
             Edit Rules
@@ -88,16 +99,8 @@ const Rules = () => {
           
           <TabsContent value="rules">
             <Card>
-              <CardHeader>
-                <CardTitle>Flomanji Rules Guide</CardTitle>
-                <CardDescription>
-                  Complete rules reference used by AI agents during simulations
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  <div dangerouslySetInnerHTML={{ __html: rulesHtml }} />
-                </div>
+              <CardContent className="prose prose-sm max-w-none dark:prose-invert py-6">
+                <div dangerouslySetInnerHTML={{ __html: rulesHtml }} />
               </CardContent>
             </Card>
           </TabsContent>
