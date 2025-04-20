@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ApiKeySettings } from "@/components/settings/ApiKeySettings";
+import ApiKeySettings from "@/components/settings/ApiKeySettings";
 import { ModelSettings } from "@/components/settings/ModelSettings";
 import { AboutSection } from "@/components/settings/AboutSection";
 

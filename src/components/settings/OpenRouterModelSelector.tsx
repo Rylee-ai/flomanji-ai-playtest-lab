@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search } from "lucide-react";
+import { Search, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { fetchOpenRouterModels } from "@/lib/openrouter";
 
@@ -30,26 +30,40 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
   const [filteredModels, setFilteredModels] = useState<OpenRouterModel[]>([]);
   const [modelSearchTerm, setModelSearchTerm] = useState("");
   const [isLoadingModels, setIsLoadingModels] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadModels = async () => {
       try {
         setIsLoadingModels(true);
-        const data = await fetchOpenRouterModels();
-        const sortedModels = data.data.sort((a: OpenRouterModel, b: OpenRouterModel) => 
+        setFetchError(null);
+        
+        const data = await fetchOpenRouterModels().catch(error => {
+          console.error("Error in fetchOpenRouterModels:", error);
+          throw error;
+        });
+        
+        if (!data || !Array.isArray(data.data)) {
+          console.error("Invalid data format from OpenRouter API:", data);
+          throw new Error("Received invalid data format from OpenRouter API");
+        }
+        
+        const sortedModels = [...data.data].sort((a: OpenRouterModel, b: OpenRouterModel) => 
           a.id.localeCompare(b.id)
         );
         
         setOpenRouterModels(sortedModels);
         setFilteredModels(sortedModels);
-        setIsLoadingModels(false);
       } catch (error) {
         console.error("Error fetching OpenRouter models:", error);
+        setFetchError(`Failed to fetch models: ${error.message || "Unknown error"}`);
+        
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to fetch OpenRouter models"
+          description: "Failed to fetch OpenRouter models. Please check your API key and try again."
         });
+      } finally {
         setIsLoadingModels(false);
       }
     };
@@ -58,7 +72,7 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
   }, []);
 
   useEffect(() => {
-    if (modelSearchTerm) {
+    if (modelSearchTerm && openRouterModels.length > 0) {
       const filtered = openRouterModels.filter(model => 
         model.id.toLowerCase().includes(modelSearchTerm.toLowerCase()) || 
         model.name.toLowerCase().includes(modelSearchTerm.toLowerCase())
@@ -68,6 +82,21 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
       setFilteredModels(openRouterModels);
     }
   }, [modelSearchTerm, openRouterModels]);
+
+  // Safely handle model selection
+  const handleModelChange = (value: string) => {
+    try {
+      console.log("Model selected:", value);
+      onModelChange(value);
+    } catch (error) {
+      console.error("Error changing model:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update model selection. Please try again."
+      });
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -86,13 +115,25 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
       </div>
 
       {isLoadingModels ? (
-        <div className="py-4 text-center text-muted-foreground">Loading available models...</div>
+        <div className="py-4 text-center text-muted-foreground flex items-center justify-center">
+          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          <span>Loading available models...</span>
+        </div>
+      ) : fetchError ? (
+        <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 p-4 rounded-md">
+          <div className="flex items-center text-red-600 dark:text-red-400 mb-2">
+            <AlertCircle className="h-5 w-5 mr-2" />
+            <span className="font-medium">Error loading models</span>
+          </div>
+          <p className="text-sm text-red-700 dark:text-red-300">{fetchError}</p>
+          <p className="text-sm mt-2">Please check your API key in the settings above.</p>
+        </div>
       ) : openRouterModels.length === 0 ? (
         <div className="py-4 text-center text-muted-foreground">
-          No models found. Please check your configuration.
+          No models found. Please check your API key configuration.
         </div>
       ) : (
-        <Select value={selectedModel} onValueChange={onModelChange}>
+        <Select value={selectedModel} onValueChange={handleModelChange}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select a model" />
           </SelectTrigger>
@@ -116,14 +157,8 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
       )}
       
       <p className="text-xs text-muted-foreground">
-        Current model: <span className="font-mono">{selectedModel}</span>
+        Current model: <span className="font-mono">{selectedModel || "None selected"}</span>
       </p>
-      
-      {selectedModel === "google/gemini-2.5-pro-exp-03-25:free" && (
-        <div className="bg-amber-50 dark:bg-amber-950 p-3 rounded text-sm">
-          <p>You've selected Google Gemini 2.5 Pro Experimental (free). This is a good choice for testing.</p>
-        </div>
-      )}
     </div>
   );
 };
