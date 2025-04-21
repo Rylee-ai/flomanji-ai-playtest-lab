@@ -5,12 +5,9 @@ import { GameOverviewSection } from "./sections/GameOverviewSection";
 import { KeyFeaturesSection } from "./sections/KeyFeaturesSection";
 import { DesignPillarsSection } from "./sections/DesignPillarsSection";
 import { CallToActionSection } from "./sections/CallToActionSection";
-import { GameSpecificationsSection } from "./sections/GameSpecificationsSection";
 import { PreOrderSection } from "./sections/PreOrderSection";
 import { WaitlistSignupSection } from "./sections/WaitlistSignupSection";
 import { FooterSection } from "./sections/FooterSection";
-
-// Restoring the original 1-2-3 flow with the DesignPillarsSection as the third component
 
 const HomePage = () => {
   const waitlistRef = useRef<HTMLDivElement>(null);
@@ -22,7 +19,6 @@ const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
       <HeroSection scrollToWaitlist={scrollToWaitlist} />
-      {/* Added IDs for anchor link targets */}
       <section id="overview"><GameOverviewSection /></section>
       <section id="features"><KeyFeaturesSection /></section>
       <section id="design-pillars"><DesignPillarsSection /></section>
@@ -36,7 +32,6 @@ const HomePage = () => {
         </a>
       </section>
       <CallToActionSection scrollToWaitlist={scrollToWaitlist} />
-      <section id="faq"><GameSpecificationsSection /></section>
       <PreOrderSection />
       <WaitlistSignupSection ref={waitlistRef} />
       <FooterSection />
