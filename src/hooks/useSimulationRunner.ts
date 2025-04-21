@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { SimulationConfig } from "@/types";
 import { startSimulation, getExampleRules } from "@/lib/api";
@@ -110,14 +111,14 @@ export function useSimulationRunner() {
                 timestamp: result.timestamp,
                 missionId: config.missionId,
                 completed: result.missionOutcome === "success",
-                objectivesCompleted: result.keyEvents?.filter((e: any) => e.description.includes("objective")).map((e: any) => e.description) || [],
+                objectivesCompleted: result.gameState?.completedObjectives || [],
                 rounds: result.rounds,
                 characters: config.characters,
                 finalHeatLevel: config.startingHeat || 0,
-                keyEvents: result.keyEvents?.map((e: any) => ({
+                keyEvents: result.keyEvents?.map((e) => ({
                   round: e.round,
                   event: e.description,
-                  impact: e.description
+                  impact: e.impact
                 })) || []
               };
 

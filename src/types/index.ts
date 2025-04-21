@@ -69,6 +69,11 @@ export interface SimulationResult {
     heatPerRound: number;
     extractionRegion: string;
     objectives: any[];
+    missionType?: string;
+    secretTraitor?: boolean;
+    arcadeModule?: boolean;
+    nightmareDifficulty?: boolean;
+    competitiveMode?: boolean;
   };
   gameState: {
     currentRound: number;
@@ -88,15 +93,11 @@ export interface SimulationResult {
   };
   characters: any[];
   missionOutcome?: string; // Added to explicitly track final outcome
-}
-
-export interface SimulationSummary {
-  id: string;
-  timestamp: string;
-  scenario: string;
-  rounds: number;
-  result?: string;
-  notes?: string;
+  keyEvents?: Array<{
+    round?: number;
+    description: string;
+    impact?: string;
+  }>;
 }
 
 export interface StoredSimulation {

@@ -83,7 +83,7 @@ const SimulationSummaryPanel = ({ simulation }: SimulationSummaryPanelProps) => 
                   <span className="text-xs font-semibold block mb-1">Key Events:</span>
                   <ul className="text-xs space-y-1">
                     {simulation.keyEvents.slice(0, 3).map((event, index) => (
-                      <li key={index} className="text-muted-foreground">{event}</li>
+                      <li key={index} className="text-muted-foreground">{event.description}</li>
                     ))}
                     {simulation.keyEvents.length > 3 && (
                       <li className="text-xs text-muted-foreground">+ {simulation.keyEvents.length - 3} more events</li>

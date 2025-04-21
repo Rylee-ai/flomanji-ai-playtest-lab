@@ -266,7 +266,7 @@ const SimulationDetails = ({ simulation }: SimulationDetailsProps) => {
 const getOutcomeBadgeVariant = (outcome?: string) => {
   switch (outcome) {
     case "success": return "success";
-    case "partial": return "warning";
+    case "partial": return "secondary"; // Changed from "warning" to "secondary" as "warning" is not a valid variant
     case "failure": return "destructive";
     default: return "secondary";
   }
