@@ -43,6 +43,7 @@ import PressKit from "./pages/press-kit";
 import PrivacyPolicy from "./pages/privacy-policy";
 import TermsOfService from "./pages/terms-of-service";
 import Cookies from "./pages/cookies";
+import Gameplay from "./pages/gameplay";
 
 // Error boundary component
 const ErrorFallback = () => (
@@ -135,6 +136,7 @@ const App = () => {
                     } 
                   />
                   <Route path="/waitlist" element={<WaitlistSignup />} />
+                  <Route path="/gameplay" element={<Gameplay />} />
 
                   {/* New company pages */}
                   <Route path="/about" element={<About />} />
