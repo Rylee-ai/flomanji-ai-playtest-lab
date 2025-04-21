@@ -8,6 +8,11 @@ import { AgentRole } from '@/types';
 const AgentPreviewPanel = ({ configs }) => {
   const [activeAgentTab, setActiveAgentTab] = React.useState<AgentRole>("GM");
   
+  // Fixed type issue: explicitly cast the value to AgentRole
+  const handleTabChange = (value: string) => {
+    setActiveAgentTab(value as AgentRole);
+  };
+  
   const renderPreview = (role: AgentRole) => {
     const config = configs[role.toLowerCase()];
     if (!config) return null;
@@ -76,7 +81,7 @@ const AgentPreviewPanel = ({ configs }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs value={activeAgentTab} onValueChange={setActiveAgentTab}>
+        <Tabs value={activeAgentTab} onValueChange={handleTabChange}>
           <TabsList className="mb-4 grid w-full grid-cols-3">
             <TabsTrigger value="GM">Game Master</TabsTrigger>
             <TabsTrigger value="Player">Player</TabsTrigger>

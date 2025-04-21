@@ -14,6 +14,11 @@ const AgentConversationPanel = ({ configs }) => {
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
+  // Fixed type issue: explicitly cast the value to AgentRole
+  const handleAgentChange = (value: string) => {
+    setSelectedAgent(value as AgentRole);
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -61,7 +66,7 @@ const AgentConversationPanel = ({ configs }) => {
               Try out conversations with your configured agents
             </CardDescription>
           </div>
-          <Select value={selectedAgent} onValueChange={setSelectedAgent}>
+          <Select value={selectedAgent} onValueChange={handleAgentChange}>
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Select agent" />
             </SelectTrigger>

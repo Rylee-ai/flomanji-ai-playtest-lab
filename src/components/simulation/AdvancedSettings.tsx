@@ -53,32 +53,32 @@ const AdvancedSettings = ({ config, onConfigChange }: AdvancedSettingsProps) => 
           <div className="flex items-center space-x-2">
             <Switch
               id="secretTraitor"
-              checked={config.secretTraitor}
-              onCheckedChange={(checked) => onConfigChange("secretTraitor", checked)}
+              checked={config.secretTraitor || false}
+              onCheckedChange={(checked) => onConfigChange("secretTraitor" as keyof SimulationConfig, checked)}
             />
             <Label htmlFor="secretTraitor" className="cursor-pointer">Secret Traitor</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Switch
               id="arcadeModule"
-              checked={config.arcadeModule}
-              onCheckedChange={(checked) => onConfigChange("arcadeModule", checked)}
+              checked={config.arcadeModule || false}
+              onCheckedChange={(checked) => onConfigChange("arcadeModule" as keyof SimulationConfig, checked)}
             />
             <Label htmlFor="arcadeModule" className="cursor-pointer">Video Game Arcade</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Switch
               id="nightmareDifficulty"
-              checked={config.nightmareDifficulty}
-              onCheckedChange={(checked) => onConfigChange("nightmareDifficulty", checked)}
+              checked={config.nightmareDifficulty || false}
+              onCheckedChange={(checked) => onConfigChange("nightmareDifficulty" as keyof SimulationConfig, checked)}
             />
             <Label htmlFor="nightmareDifficulty" className="cursor-pointer">Nightmare Difficulty</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Switch
               id="competitiveMode"
-              checked={config.competitiveMode}
-              onCheckedChange={(checked) => onConfigChange("competitiveMode", checked)}
+              checked={config.competitiveMode || false}
+              onCheckedChange={(checked) => onConfigChange("competitiveMode" as keyof SimulationConfig, checked)}
             />
             <Label htmlFor="competitiveMode" className="cursor-pointer">Competitive Mode</Label>
           </div>

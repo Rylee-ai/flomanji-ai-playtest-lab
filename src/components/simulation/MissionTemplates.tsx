@@ -13,7 +13,7 @@ interface MissionTemplate {
   name: string;
   description: string;
   startingHeat: number;
-  missionType: SimulationConfig['missionType'];
+  missionType: string; // Changed from SimulationConfig['missionType'] to string
 }
 
 interface MissionTemplatesProps {

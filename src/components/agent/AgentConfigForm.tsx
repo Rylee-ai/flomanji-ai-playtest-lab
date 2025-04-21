@@ -82,6 +82,11 @@ const AgentConfigForm = ({
   
   const config = configs[activeAgentTab.toLowerCase()];
   
+  // Fixed type issue: explicitly cast the value to AgentRole
+  const handleTabChange = (value: string) => {
+    setActiveAgentTab(value as AgentRole);
+  };
+  
   return (
     <Card>
       <CardHeader>
@@ -91,7 +96,7 @@ const AgentConfigForm = ({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs value={activeAgentTab} onValueChange={setActiveAgentTab} className="w-full">
+        <Tabs value={activeAgentTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="mb-4 grid w-full grid-cols-3">
             <TabsTrigger value="GM">Game Master</TabsTrigger>
             <TabsTrigger value="Player">Player</TabsTrigger>
