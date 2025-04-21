@@ -18,14 +18,20 @@ export const HeroSection = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   
-  // Fixed image path - removed the "/public" prefix
-  const bgImageUrl = "/lovable-uploads/52fa03b2-c987-4f76-b147-53af093c109d.png";
+  // Updated path with the newly uploaded image
+  const bgImageUrl = "/lovable-uploads/fa04ed1d-8476-43c3-8002-651032803227.png";
   
   // Check if image loads properly
   useEffect(() => {
     const img = new Image();
-    img.onload = () => setImageLoaded(true);
-    img.onerror = () => setImageError(true);
+    img.onload = () => {
+      console.log("Background image loaded successfully");
+      setImageLoaded(true);
+    };
+    img.onerror = (e) => {
+      console.error("Background image failed to load:", bgImageUrl, e);
+      setImageError(true);
+    };
     img.src = bgImageUrl;
   }, [bgImageUrl]);
 
