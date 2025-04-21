@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ChevronLeft, Download, Clipboard } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 
 interface SimulationDetailsControlsProps {
@@ -12,16 +11,16 @@ interface SimulationDetailsControlsProps {
   showPrompts: boolean;
   onTogglePrompts: () => void;
   onExportData: () => void;
+  onBack?: () => void;
 }
 
 const SimulationDetailsControls = ({ 
   simulationId, 
   showPrompts, 
   onTogglePrompts, 
-  onExportData 
+  onExportData,
+  onBack
 }: SimulationDetailsControlsProps) => {
-  const navigate = useNavigate();
-
   const copyIdToClipboard = () => {
     navigator.clipboard.writeText(simulationId);
     toast({
@@ -32,10 +31,12 @@ const SimulationDetailsControls = ({
 
   return (
     <div className="flex items-center justify-between">
-      <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
-        <ChevronLeft className="mr-2 h-4 w-4" />
-        Back
-      </Button>
+      {onBack && (
+        <Button variant="outline" size="sm" onClick={onBack}>
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Back
+        </Button>
+      )}
       
       <div className="flex items-center gap-4">
         <div className="flex items-center space-x-2">

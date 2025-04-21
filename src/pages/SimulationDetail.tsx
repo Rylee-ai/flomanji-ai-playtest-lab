@@ -1,8 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
 import { getSimulationById } from "@/lib/storage";
 import { SimulationResult } from "@/types";
 import SimulationDetails from "@/components/simulation/SimulationDetails";
@@ -34,17 +32,6 @@ const SimulationDetail = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
-          <ChevronLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Simulation Details
-        </h1>
-        <div className="w-20" /> {/* Spacer */}
-      </div>
-
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-pulse">Loading simulation...</div>
@@ -54,7 +41,10 @@ const SimulationDetail = () => {
           {error}
         </div>
       ) : simulation ? (
-        <SimulationDetails simulation={simulation} />
+        <SimulationDetails 
+          simulation={simulation} 
+          onBack={() => navigate(-1)} 
+        />
       ) : (
         <div className="bg-amber-50 text-amber-800 p-4 rounded-lg">
           No simulation data found

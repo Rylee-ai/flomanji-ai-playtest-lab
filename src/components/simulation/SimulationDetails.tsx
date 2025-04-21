@@ -12,9 +12,10 @@ import SimulationDetailsControls from "./SimulationDetailsControls";
 
 interface SimulationDetailsProps {
   simulation: SimulationResult;
+  onBack?: () => void;
 }
 
-const SimulationDetails = ({ simulation }: SimulationDetailsProps) => {
+const SimulationDetails = ({ simulation, onBack }: SimulationDetailsProps) => {
   const [annotations, setAnnotations] = useState(simulation.annotations || "");
   const [showPrompts, setShowPrompts] = useState(false);
   const [activeTab, setActiveTab] = useState("log");
@@ -60,6 +61,7 @@ const SimulationDetails = ({ simulation }: SimulationDetailsProps) => {
         showPrompts={showPrompts}
         onTogglePrompts={() => setShowPrompts(!showPrompts)}
         onExportData={handleExportData}
+        onBack={onBack}
       />
       
       <SimulationSummaryPanel simulation={simulation} />
