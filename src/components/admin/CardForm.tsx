@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { CardType, GameCard } from "@/types/cards";
 import { useCardForm } from "./hooks/useCardForm";
@@ -5,10 +6,19 @@ import { z } from "zod";
 import { CardFormDialog } from "./CardFormDialog";
 import { CardFormBody } from "./CardFormBody";
 
+// Define mission subtypes as a subset of CardType for form validation
+export const missionSubtypes = [
+  "exploration", "escape", "escort", "collection", "boss", "solo"
+] as const;
+
 export const cardFormSchema = z.object({
   // Base fields for all cards
   name: z.string().min(2, { message: "Card name must be at least 2 characters." }),
-  type: z.enum(["treasure", "artifact", "hazard", "automa", "region", "npc", "mission", "gear", "chaos", "flomanjified", "secret", "player-character"]),
+  type: z.enum([
+    "treasure", "artifact", "hazard", "automa", "region", "npc", 
+    "mission", "gear", "chaos", "flomanjified", "secret", "player-character",
+    ...missionSubtypes
+  ]),
   keywords: z.array(z.string()).optional(),
   icons: z.array(z.object({ 
     symbol: z.string(),
@@ -176,7 +186,12 @@ export const CardForm = ({
   // Set the form type based on activeTab when creating a new card
   useEffect(() => {
     if (!isEditing && activeTab) {
-      form.setValue("type", activeTab as CardType);
+      // Handle mission subtypes - map them to 'mission' for the form
+      const formType = missionSubtypes.includes(activeTab as any) 
+        ? "mission" 
+        : activeTab as CardType;
+      
+      form.setValue("type", formType);
     }
   }, [activeTab, form, isEditing]);
 

@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
-import { CardFormValues } from "../CardForm";
+import { CardFormValues, missionSubtypes } from "../CardForm";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface BaseCardFormProps {
@@ -63,6 +63,13 @@ export const BaseCardForm = ({ form }: BaseCardFormProps) => {
                 <SelectItem value="automa">Automa</SelectItem>
                 <SelectItem value="player-character">Player Character</SelectItem>
                 <SelectItem value="mission">Mission</SelectItem>
+                {/* Mission subtypes */}
+                <SelectItem value="exploration">Mission: Exploration</SelectItem>
+                <SelectItem value="escape">Mission: Escape</SelectItem>
+                <SelectItem value="escort">Mission: Escort</SelectItem>
+                <SelectItem value="collection">Mission: Collection</SelectItem>
+                <SelectItem value="boss">Mission: Boss</SelectItem>
+                <SelectItem value="solo">Mission: Solo</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

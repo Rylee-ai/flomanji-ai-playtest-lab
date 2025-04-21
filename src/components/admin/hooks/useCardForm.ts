@@ -3,6 +3,23 @@ import { useForm } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
 import { GameCard, CardType } from "@/types/cards";
 import { getCardFormTypeDefaults } from "./getCardFormTypeDefaults";
+import { missionSubtypes } from "../CardForm";
+
+// Helper to map mission subtypes to "mission" for form consistency
+const normalizeCardType = (type: CardType): "treasure" | "artifact" | "automa" | "secret" | "hazard" | "gear" | "npc" | "region" | "chaos" | "mission" | "flomanjified" | "player-character" => {
+  // If type is a mission subtype, return "mission"
+  if (missionSubtypes.includes(type as any)) {
+    return "mission";
+  }
+  
+  // Handle artifact as treasure
+  if (type === "artifact") {
+    return "treasure";
+  }
+  
+  // Return as is for other valid form types
+  return type as any;
+};
 
 export const useCardForm = (initialData?: GameCard) => {
   console.log("Initial form data:", initialData); // Kept for debugging
@@ -10,7 +27,7 @@ export const useCardForm = (initialData?: GameCard) => {
   const form = useForm<CardFormValues>({
     defaultValues: initialData ? {
       name: initialData.name,
-      type: initialData.type === "artifact" ? "treasure" : initialData.type, // Handle artifact as treasure
+      type: normalizeCardType(initialData.type), // Normalize type for the form
       keywords: initialData.keywords || [],
       icons: initialData.icons || [],
       rules: initialData.rules || [],

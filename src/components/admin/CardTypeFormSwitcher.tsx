@@ -2,7 +2,7 @@
 import React from "react";
 import { CardType } from "@/types/cards";
 import { UseFormReturn } from "react-hook-form";
-import { CardFormValues } from "./CardForm";
+import { CardFormValues, missionSubtypes } from "./CardForm";
 import { TreasureCardForm } from "./forms/TreasureCardForm";
 import { HazardCardForm } from "./forms/HazardCardForm";
 import { RegionCardForm } from "./forms/RegionCardForm";
@@ -21,28 +21,31 @@ interface CardTypeFormSwitcherProps {
 }
 
 export const CardTypeFormSwitcher = ({ type, form }: CardTypeFormSwitcherProps) => {
-  switch (type) {
-    case "treasure":
+  // Check if the type is a mission subtype
+  const isMissionType = missionSubtypes.includes(type as any) || type === "mission";
+  
+  switch (true) {
+    case type === "treasure" || type === "artifact":
       return <TreasureCardForm form={form} />;
-    case "hazard":
+    case type === "hazard":
       return <HazardCardForm form={form} />;
-    case "region":
+    case type === "region":
       return <RegionCardForm form={form} />;
-    case "npc":
+    case type === "npc":
       return <NPCCardForm form={form} />;
-    case "mission":
+    case isMissionType:
       return <MissionCardForm form={form} />;
-    case "gear":
+    case type === "gear":
       return <GearCardForm form={form} />;
-    case "chaos":
+    case type === "chaos":
       return <ChaosCardForm form={form} />;
-    case "flomanjified":
+    case type === "flomanjified":
       return <FlomanjifiedCardForm form={form} />;
-    case "secret":
+    case type === "secret":
       return <SecretCardForm form={form} />;
-    case "automa":
+    case type === "automa":
       return <AutomaCardForm form={form} />;
-    case "player-character":
+    case type === "player-character":
       return <PlayerCharacterForm form={form} />;
     default:
       return null;
