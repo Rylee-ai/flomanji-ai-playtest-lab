@@ -1,6 +1,13 @@
-
 import { FlomanjiCharacter } from "@/types";
 import { ActionType, ActionValidationResult, GameState, PlayerAction, CharacterStatus } from "@/types/game-state";
+import {
+  validateMoveAction,
+  validateUseGearAction,
+  validateInteractAction,
+  validateTeamUpAction,
+  validateRestAction,
+  validateMissionAction,
+} from "./action-validations";
 
 /**
  * Core Rules Processor for Flomanji
@@ -43,20 +50,20 @@ export class FlomanjiRulesProcessor {
       return { valid: false, message: "No actions remaining this turn" };
     }
 
-    // Validate action by type
+    // Validate action by type using external validation methods
     switch (action.type) {
       case "move":
-        return this.validateMoveAction(action, character, gameState);
+        return validateMoveAction(action, character, gameState);
       case "use-gear":
-        return this.validateUseGearAction(action, character, gameState);
+        return validateUseGearAction(action, character, gameState);
       case "interact":
-        return this.validateInteractAction(action, character, gameState);
+        return validateInteractAction(action, character, gameState);
       case "team-up":
-        return this.validateTeamUpAction(action, character, gameState);
+        return validateTeamUpAction(action, character, gameState);
       case "rest":
-        return this.validateRestAction(action, character, gameState);
+        return validateRestAction(action, character, gameState);
       case "mission":
-        return this.validateMissionAction(action, character, gameState);
+        return validateMissionAction(action, character, gameState);
       default:
         return { valid: false, message: "Unknown action type" };
     }
@@ -179,50 +186,6 @@ export class FlomanjiRulesProcessor {
    */
   private cloneGameState(state: GameState): GameState {
     return JSON.parse(JSON.stringify(state));
-  }
-
-  // Individual action validation methods
-  private validateMoveAction(action: PlayerAction, character: any, gameState: GameState): ActionValidationResult {
-    // TODO: Implement move validation logic
-    return { valid: true };
-  }
-  
-  private validateUseGearAction(action: PlayerAction, character: any, gameState: GameState): ActionValidationResult {
-    // Check if character has the gear item
-    const hasGear = character.gear.some(g => g.id === action.targetId);
-    if (!hasGear) {
-      return { valid: false, message: "Character does not have this gear item" };
-    }
-    return { valid: true };
-  }
-  
-  private validateInteractAction(action: PlayerAction, character: any, gameState: GameState): ActionValidationResult {
-    // TODO: Implement interact validation logic
-    return { valid: true };
-  }
-  
-  private validateTeamUpAction(action: PlayerAction, character: any, gameState: GameState): ActionValidationResult {
-    // Validate team-up target exists and is in same region
-    const targetCharacter = gameState.characters.find(c => c.id === action.targetId);
-    if (!targetCharacter) {
-      return { valid: false, message: "Target character not found" };
-    }
-    
-    if (targetCharacter.position !== character.position) {
-      return { valid: false, message: "Target character must be in same region" };
-    }
-    
-    return { valid: true };
-  }
-  
-  private validateRestAction(action: PlayerAction, character: any, gameState: GameState): ActionValidationResult {
-    // Rest is always valid
-    return { valid: true };
-  }
-  
-  private validateMissionAction(action: PlayerAction, character: any, gameState: GameState): ActionValidationResult {
-    // TODO: Implement mission action validation logic
-    return { valid: true };
   }
 
   // Individual action processing methods
