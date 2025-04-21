@@ -9,7 +9,10 @@ import { Clock, Users, Info } from "lucide-react";
  */
 export const HeroSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const bgImageUrl = "/lovable-uploads/57bf73a6-ede1-453d-819f-d737edee0813.png";
+  const [imageError, setImageError] = useState(false);
+  
+  // Use an absolute URL to ensure the image is accessible
+  const bgImageUrl = "/flomanji-hero-bg.webp";
   
   // Check if image loads properly
   useEffect(() => {
@@ -17,24 +20,35 @@ export const HeroSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void
     img.onload = () => {
       console.log("Hero background image loaded successfully");
       setImageLoaded(true);
+      setImageError(false);
     };
     img.onerror = (e) => {
       console.error("Failed to load hero background image:", e);
+      setImageError(true);
+      setImageLoaded(false);
     };
     img.src = bgImageUrl;
+    
+    // Log the complete attempted URL for debugging
+    console.log("Attempting to load image from:", window.location.origin + bgImageUrl);
+    
+    return () => {
+      // Clean up
+      img.onload = null;
+      img.onerror = null;
+    };
   }, []);
 
   return (
     <section
-      className="relative bg-cover bg-center py-32"
+      className={`relative py-32 ${!imageLoaded ? 'bg-gradient-to-b from-amber-900 to-black' : ''}`}
       style={{
-        backgroundImage: `url('${bgImageUrl}')`,
+        backgroundImage: imageLoaded ? `url('${bgImageUrl}')` : 'none',
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      {/* Fallback color in case image doesn't load */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black to-amber-950/80"></div>
+      {/* Fallback color in case image doesn't load - already applied in className above */}
       
       {/* Strengthened overlay for max readability */}
       <div className="absolute inset-0 bg-black/75 backdrop-blur-[2px]"></div>
@@ -71,10 +85,10 @@ export const HeroSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void
           </div>
         </div>
         
-        {/* Debug info */}
-        {!imageLoaded && (
+        {/* Debug info - only show if there's an actual error */}
+        {imageError && (
           <div className="mt-4 p-2 bg-red-500/80 text-white rounded text-sm">
-            Image failed to load - check console for details
+            Image failed to load - using fallback styling. Please check if the image file is in the public folder.
           </div>
         )}
       </div>

@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { HeroSection } from "./sections/HeroSection";
 import { GameOverviewSection } from "./sections/GameOverviewSection";
@@ -16,6 +16,12 @@ const HomePage = () => {
   const waitlistRef = useRef<HTMLDivElement>(null);
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+
+  // Debug images on mount
+  useEffect(() => {
+    // Log available images in public directory
+    console.log("Public URL path:", import.meta.env.BASE_URL);
+  }, []);
 
   const scrollToWaitlist = () => {
     if (user) {
