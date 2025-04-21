@@ -4,7 +4,8 @@ import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessa
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { UseFormReturn, useFieldArray } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
 import { Plus, Minus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -114,14 +115,14 @@ export const MissionCardForm: React.FC<MissionCardFormProps> = ({ form }) => {
       <div>
         <h3 className="text-lg font-medium mb-2">Mission Objectives</h3>
         
-        {objectiveFields.map((field, index) => (
+        {objectiveFields.fields.map((field, index) => (
           <div key={field.id} className="border p-4 rounded-md mb-4">
             <div className="flex justify-between items-center mb-2">
               <h4 className="font-medium">Objective {index + 1}</h4>
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => removeObjective(index)}
+                onClick={() => objectiveFields.remove(index)}
               >
                 <Minus className="h-4 w-4" />
               </Button>
@@ -222,7 +223,7 @@ export const MissionCardForm: React.FC<MissionCardFormProps> = ({ form }) => {
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => appendObjective({
+          onClick={() => objectiveFields.append({
             description: "",
             required: false,
             reward: "",
@@ -240,14 +241,14 @@ export const MissionCardForm: React.FC<MissionCardFormProps> = ({ form }) => {
       <div>
         <h3 className="text-lg font-medium mb-2">Mission Challenges</h3>
         
-        {challengeFields.map((field, index) => (
+        {challengeFields.fields.map((field, index) => (
           <div key={field.id} className="border p-4 rounded-md mb-4">
             <div className="flex justify-between items-center mb-2">
               <h4 className="font-medium">Challenge {index + 1}</h4>
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => removeChallenge(index)}
+                onClick={() => challengeFields.remove(index)}
               >
                 <Minus className="h-4 w-4" />
               </Button>
@@ -346,7 +347,7 @@ export const MissionCardForm: React.FC<MissionCardFormProps> = ({ form }) => {
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => appendChallenge({
+          onClick={() => challengeFields.append({
             description: "",
             frequency: "once",
             heatEffect: 0,

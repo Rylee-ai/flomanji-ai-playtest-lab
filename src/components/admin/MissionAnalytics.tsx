@@ -29,7 +29,8 @@ export const MissionAnalytics: React.FC<MissionAnalyticsProps> = ({ missionId })
     ? (analyticsData ? [MISSION_CARDS.find(m => m.id === missionId)] : []) 
     : MISSION_CARDS.filter(m => getAllMissionAnalytics().some(a => a.missionId === m.id));
   
-  if (!analyticsData || analyticsData.length === 0) {
+  if (!analyticsData || (Array.isArray(analyticsData) && analyticsData.length === 0) || 
+      (!Array.isArray(analyticsData) && !analyticsData.runs.length)) {
     return (
       <Card>
         <CardHeader>
@@ -43,7 +44,7 @@ export const MissionAnalytics: React.FC<MissionAnalyticsProps> = ({ missionId })
   }
 
   // Handle single mission view
-  if (missionId) {
+  if (missionId && !Array.isArray(analyticsData)) {
     const data = analyticsData as MissionAnalyticsType;
     const mission = MISSION_CARDS.find(m => m.id === missionId);
     
@@ -167,83 +168,87 @@ export const MissionAnalytics: React.FC<MissionAnalyticsProps> = ({ missionId })
   }
 
   // Handle multiple missions overview
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Mission Analytics Overview</CardTitle>
-        <CardDescription>
-          Comparison of performance across all missions
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={analyticsData.map((data: MissionAnalyticsType) => {
-                const mission = MISSION_CARDS.find(m => m.id === data.missionId);
-                return {
-                  name: mission?.name || data.missionId,
-                  successRate: data.aggregateStats.successRate * 100,
-                  avgRounds: data.aggregateStats.averageCompletionRounds,
-                  runs: data.runs.length
-                };
-              })}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="successRate" name="Success Rate (%)" fill="#8884d8" />
-              <Bar dataKey="avgRounds" name="Avg. Rounds" fill="#82ca9d" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-          {missionsWithData.map(mission => mission && (
-            <Card key={mission.id} className="hover:bg-accent/50 transition-colors">
-              <CardHeader className="p-4">
-                <CardTitle className="text-lg">{mission.name}</CardTitle>
-                <CardDescription>
-                  {mission.keywords.join(", ")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                {analyticsData.map((data: MissionAnalyticsType) => {
-                  if (data.missionId === mission.id) {
-                    return (
-                      <div key={mission.id} className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Success Rate:</span>
-                          <span className="font-medium">{(data.aggregateStats.successRate * 100).toFixed(1)}%</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span>Avg. Rounds:</span>
-                          <span className="font-medium">{data.aggregateStats.averageCompletionRounds.toFixed(1)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span>Total Runs:</span>
-                          <span className="font-medium">{data.runs.length}</span>
-                        </div>
-                      </div>
-                    );
-                  }
-                  return null;
+  if (Array.isArray(analyticsData)) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Mission Analytics Overview</CardTitle>
+          <CardDescription>
+            Comparison of performance across all missions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={analyticsData.map((data: MissionAnalyticsType) => {
+                  const mission = MISSION_CARDS.find(m => m.id === data.missionId);
+                  return {
+                    name: mission?.name || data.missionId,
+                    successRate: data.aggregateStats.successRate * 100,
+                    avgRounds: data.aggregateStats.averageCompletionRounds,
+                    runs: data.runs.length
+                  };
                 })}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="successRate" name="Success Rate (%)" fill="#8884d8" />
+                <Bar dataKey="avgRounds" name="Avg. Rounds" fill="#82ca9d" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {missionsWithData.map(mission => mission && (
+              <Card key={mission.id} className="hover:bg-accent/50 transition-colors">
+                <CardHeader className="p-4">
+                  <CardTitle className="text-lg">{mission.name}</CardTitle>
+                  <CardDescription>
+                    {mission.keywords.join(", ")}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 pt-0">
+                  {analyticsData.map((data: MissionAnalyticsType) => {
+                    if (data.missionId === mission.id) {
+                      return (
+                        <div key={mission.id} className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span>Success Rate:</span>
+                            <span className="font-medium">{(data.aggregateStats.successRate * 100).toFixed(1)}%</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span>Avg. Rounds:</span>
+                            <span className="font-medium">{data.aggregateStats.averageCompletionRounds.toFixed(1)}</span>
+                          </div>
+                          <div className="flex justify-between text-sm">
+                            <span>Total Runs:</span>
+                            <span className="font-medium">{data.runs.length}</span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  return null;
 };
 
 export default MissionAnalytics;

@@ -65,7 +65,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
 
   const handleStartSimulation = () => {
     // Set mission ID in config
-    const simulationConfig = {
+    const simulationConfig: SimulationConfig = {
       ...config,
       missionId: selectedMission.id,
       characters: selectedCharacters

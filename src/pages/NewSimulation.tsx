@@ -25,17 +25,10 @@ const NewSimulation = () => {
         return;
       }
 
-      // Map character IDs to full character objects
-      const simulationConfig = {
-        ...config,
-        characters: config.characters 
-          ? config.characters.map(id => {
-              const char = PLAYER_CHARACTER_CARDS.find(char => char.id === id);
-              return char;
-            }).filter(Boolean)
-          : undefined
-      };
+      // Create a copy of the config to avoid modifying the original
+      const simulationConfig = { ...config };
       
+      // Run the simulation
       const result = await startSimulation(simulationConfig, rulesContent);
       
       // Record mission run if a mission ID was provided

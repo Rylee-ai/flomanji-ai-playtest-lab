@@ -1,3 +1,4 @@
+
 // Agent types
 export type AgentRole = 'GM' | 'Player' | 'Critic';
 
@@ -36,6 +37,7 @@ export interface FlomanjiCharacter {
   weirdness: number;
   luck: number;
   starterGear: CharacterGear[];
+  position?: string; // Added for game-state.ts
 }
 
 // Character performance metrics in simulation
@@ -76,7 +78,7 @@ export interface SimulationConfig {
   nightmareDifficulty?: boolean;
   competitiveMode?: boolean;
   missionId?: string;
-  characters?: string[]; // Changed from FlomanjiCharacter[] to string[] for character IDs
+  characters?: string[]; // Character IDs
 }
 
 export interface SimulationResult {
