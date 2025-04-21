@@ -1,3 +1,4 @@
+
 import { FlomanjiCharacter } from "@/types";
 
 // Let's assume we're at line 471 in the file, and need to fix a type issue with character status
@@ -6,15 +7,16 @@ import { FlomanjiCharacter } from "@/types";
 // Add this type definition to the file
 type CharacterStatus = "disabled" | "active" | "transformed" | "dead";
 
-// Fix the character initialization to use the correct type
+// Fix the character initialization to use the correct type and include all necessary properties
 export const initializeCharacterStates = (characters: FlomanjiCharacter[]) => {
   return characters.map(character => ({
     id: character.id,
+    name: character.name, // Include name for proper identification
     health: character.health,
     weirdness: character.weirdness,
     luck: character.luck,
     position: character.position || "start",
-    gear: [], // Will be populated with starting gear
+    gear: [...(character.starterGear || [])], // Make a copy of the starter gear array
     treasures: [],
     status: "active" as CharacterStatus // Explicitly typed as CharacterStatus
   }));

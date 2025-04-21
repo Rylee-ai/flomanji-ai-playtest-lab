@@ -105,15 +105,15 @@ const CharacterSelector = ({
                   </div>
                   <div>
                     <p className="text-xs font-medium">{character.ability.name}</p>
-                    <p className="text-xs truncate">{character.ability.description}</p>
+                    <p className="text-xs line-clamp-2">{character.ability.description}</p>
                   </div>
                 </div>
               </CardContent>
               <CardFooter className="pt-0">
                 <div className="flex justify-between items-center w-full text-xs">
                   <span>Health: {character.health}</span>
+                  <span>Weirdness: {character.weirdness}</span>
                   <span>Luck: {character.luck}</span>
-                  <span>Gear: {character.starterGear.length}</span>
                 </div>
               </CardFooter>
             </Card>
