@@ -143,24 +143,33 @@ export const HeroSection = ({
             </div>
 
             {/* Info/Stats */}
-            <div className="flex flex-row gap-x-10 text-sm md:text-base text-white/85 justify-center items-center animate-fade-in max-w-xs mx-auto">
-              <div className="flex items-center">
-                <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
-                  <Clock className="h-4 w-4 md:h-5 md:w-5 text-amber-300" />
+            <div className="w-full flex flex-row justify-center items-stretch gap-2 md:gap-8 mt-2 animate-fade-in max-w-md mx-auto">
+              <div className="flex flex-col items-center flex-1 min-w-0">
+                <div className="bg-amber-400/10 p-2 rounded-full mb-1">
+                  <Clock className="h-5 w-5 md:h-6 md:w-6 text-amber-300" />
                 </div>
-                <span>30-60 min</span>
+                <div className="text-xs md:text-base text-white/90 font-medium leading-tight">
+                  <div>30–60</div>
+                  <div className="text-[11px] md:text-xs text-white/60 font-normal mt-[-3px]">min</div>
+                </div>
               </div>
-              <div className="flex items-center">
-                <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
-                  <Users className="h-4 w-4 md:h-5 md:w-5 text-amber-300" />
+              <div className="flex flex-col items-center flex-1 min-w-0">
+                <div className="bg-amber-400/10 p-2 rounded-full mb-1">
+                  <Users className="h-5 w-5 md:h-6 md:w-6 text-amber-300" />
                 </div>
-                <span>2-6 players</span>
+                <div className="text-xs md:text-base text-white/90 font-medium leading-tight">
+                  <div>2–6</div>
+                  <div className="text-[11px] md:text-xs text-white/60 font-normal mt-[-3px]">players</div>
+                </div>
               </div>
-              <div className="flex items-center">
-                <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
-                  <Info className="h-4 w-4 md:h-5 md:w-5 text-amber-300" />
+              <div className="flex flex-col items-center flex-1 min-w-0">
+                <div className="bg-amber-400/10 p-2 rounded-full mb-1">
+                  <Info className="h-5 w-5 md:h-6 md:w-6 text-amber-300" />
                 </div>
-                <span>Ages 12+</span>
+                <div className="text-xs md:text-base text-white/90 font-medium leading-tight">
+                  <div>Ages</div>
+                  <div className="text-[11px] md:text-xs text-white/60 font-normal mt-[-3px]">12+</div>
+                </div>
               </div>
             </div>
           </div>
