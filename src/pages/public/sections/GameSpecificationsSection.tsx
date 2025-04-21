@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -7,10 +6,10 @@ import {
   ChevronsRight,     // Core Chaos Cards
   User,              // Character Types
   Box,               // Starting Gear
-  Tools,             // General Gear
+  Wrench,            // General Gear (replacing Tools)
   Triangle,          // Hazard Cards
   Calendar,          // Event Cards
-  Treasure,          // Treasure Cards
+  Gem,               // Treasure Cards (replacing Treasure)
   List,              // Mission Types
   Database           // Total Cards
 } from "lucide-react";
@@ -66,7 +65,7 @@ const CARD_BREAKDOWN = [
   {
     id: "gear",
     label: "GENERAL GEAR",
-    icon: <Tools className="h-5 w-5 text-muted-foreground" />,
+    icon: <Wrench className="h-5 w-5 text-muted-foreground" />,
     description: "Tools, weapons and items to aid survival in Flomanji.",
     count: GEAR_CARDS.length,
   },
@@ -87,7 +86,7 @@ const CARD_BREAKDOWN = [
   {
     id: "treasure",
     label: "TREASURE CARDS",
-    icon: <Treasure className="h-5 w-5 text-muted-foreground" />,
+    icon: <Gem className="h-5 w-5 text-muted-foreground" />,
     description: "Valuable artifacts with powerful effects and victory points.",
     count: TREASURE_CARDS.length,
   },
