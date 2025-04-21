@@ -6,33 +6,29 @@ import { ChevronRight, Sparkles, Zap, Map } from "lucide-react";
 import { Link } from "react-router-dom";
 
 /**
- * Edited for greater visual unity between "1-2-3" homepage sections.
- * - New: Progress line, animated section headers, improved layout for balance with subsequent sections.
+ * Updated GameOverviewSection to better utilize horizontal space by
+ * removing the large vertical progress line and making the step marker more compact.
  */
 export const GameOverviewSection = () => (
   <section
-    className="py-20 bg-gradient-to-b from-black to-gray-950 relative z-10 flex"
+    className="py-20 bg-gradient-to-b from-black to-gray-950 relative z-10"
     style={{ minHeight: 520 }}
     data-section="1"
   >
-    {/* Vertical connecting progress line - only on md+ */}
-    <div className="hidden md:block absolute left-12 top-36 bottom-0 w-1 z-0 bg-gradient-to-b from-amber-400 via-blue-400 to-green-400 rounded-full opacity-40"></div>
     <div className="container mx-auto px-4 max-w-6xl relative flex flex-col md:flex-row gap-12">
-      {/* Left header column for step marker */}
-      <div className="flex flex-col items-center w-full md:w-1/5 relative md:z-10 mb-4 md:mb-0">
-        <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-amber-500/20 blur-lg"></div>
-          <Badge
-            variant="outline"
-            className="relative z-10 h-12 w-12 text-2xl flex items-center justify-center p-0 font-bold border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-lg transition-transform animate-fade-in"
-          >
-            1
-          </Badge>
-        </div>
-        <div className="hidden md:block h-full flex-1 w-1 mt-4 bg-gradient-to-b from-amber-400 via-blue-400 to-green-400 rounded-lg opacity-40"></div>
+      {/* Step marker compacted and placed at top-left above intro text */}
+      <div className="md:w-1/12 flex md:flex-col items-center md:items-start mb-6 md:mb-0">
+        <Badge
+          variant="outline"
+          className="h-10 w-10 text-xl flex items-center justify-center p-0 font-bold border-amber-500/30 bg-amber-500/10 text-amber-400 shadow-lg animate-fade-in"
+        >
+          1
+        </Badge>
+        {/* Optional thin vertical line below for small visual hint */}
+        <div className="hidden md:block mt-2 w-px flex-1 bg-gradient-to-b from-amber-400 via-blue-400 to-green-400 rounded opacity-40"></div>
       </div>
-      {/* Section content */}
-      <div className="w-full md:w-4/5">
+      {/* Main content takes most of the space */}
+      <div className="md:w-11/12">
         <h2 className="text-3xl font-extrabold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-amber-200 to-amber-400 drop-shadow-md animate-fade-in">
           Game Overview
         </h2>
@@ -81,3 +77,4 @@ export const GameOverviewSection = () => (
     </div>
   </section>
 );
+
