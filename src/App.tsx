@@ -44,6 +44,7 @@ import PrivacyPolicy from "./pages/privacy-policy";
 import TermsOfService from "./pages/terms-of-service";
 import Cookies from "./pages/cookies";
 import Gameplay from "./pages/gameplay";
+import FAQPage from "./pages/faq";
 
 // Error boundary component
 const ErrorFallback = () => (
@@ -127,16 +128,10 @@ const App = () => {
                 {/* Public routes */}
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<HomePage />} />
-                  <Route 
-                    path="/auth" 
-                    element={
-                      <AuthGuard requireAuth={false}>
-                        <AuthPage />
-                      </AuthGuard>
-                    } 
-                  />
+                  <Route path="/auth" element={<AuthGuard requireAuth={false}><AuthPage /></AuthGuard>} />
                   <Route path="/waitlist" element={<WaitlistSignup />} />
                   <Route path="/gameplay" element={<Gameplay />} />
+                  <Route path="/faq" element={<FAQPage />} />
 
                   {/* New company pages */}
                   <Route path="/about" element={<About />} />
@@ -187,7 +182,7 @@ const App = () => {
                 {/* Redirect from index.html to base path */}
                 <Route path="/index.html" element={<Navigate to="/" replace />} />
                 
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                {/* Catch-all route */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
