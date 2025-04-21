@@ -1,4 +1,3 @@
-
 import { SimulationConfig, AgentMessage, SimulationResult } from "@/types";
 import { simulateRandomId } from "@/lib/utils";
 import { createChatCompletion } from "@/lib/openrouterChat";
@@ -171,12 +170,12 @@ export const startSimulation = async (
       }
     });
 
-    // Simulation loop
+    // Simulation loop for each round
     for (let round = 0; round < rounds; round++) {
       simulationMeta.gameState.currentRound = round + 1;
       console.log(`Starting round ${round + 1}`);
       
-      // Potentially increase heat at start of round based on config
+      // Handle heat increase at start of round
       if (heatPerRound > 0 && round > 0) {
         simulationMeta.gameState.heat += heatPerRound;
         
@@ -233,7 +232,8 @@ export const startSimulation = async (
         });
       }
       
-      // Each player takes their turn in this round
+      // Modified player turn loop - All players take their actions before the GM responds
+      // First, gather all player actions for this round
       for (let playerIdx = 0; playerIdx < actualPlayerCount; playerIdx++) {
         console.log(`Processing player ${playerIdx + 1}'s turn`);
         
@@ -370,131 +370,91 @@ export const startSimulation = async (
             gameState: {...simulationMeta.gameState}
           }
         });
-
-        // Format messages properly for the GM without role repetition
-        const gmMessages = conversationLog.map(entry => {
-          // Remove any role prefixes that might already be in the content
-          const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
-          
-          return {
-            role: entry.role === 'GM' ? 'assistant' : 'user',
-            content: entry.role === 'GM'
-              ? `GM: ${cleanContent}`
-              : `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
-          };
-        });
+      }
+      
+      // After all players have acted, get GM's collective response
+      const gmActionSummaryPrompt = `All players have acted this round. Provide a detailed response to all player actions, resolving their outcomes and explaining the current state of the mission. Include any changes to Heat, health, or objectives.`;
+      
+      // Format messages for GM response
+      const gmResponseMessages = conversationLog.map(entry => {
+        // Remove any role prefixes that might already be in the content
+        const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
         
-        // Add roll information for GM if a roll was made
-        let gmPrompt = `Respond to Player ${playerIdx + 1}'s action.`;
-        
-        if (rollResult) {
-          gmPrompt += ` The player rolled for ${statName}: ${rollResult.value} + ${statValue} = ${rollResult.value + statValue}, which is a ${rollResult.result}.`;
-          
-          // If hazard was involved, update heat based on result
-          if (hazard && simulationMeta.gameState.activeHazards.length > 0) {
-            if (rollResult.result === "failure") {
-              simulationMeta.gameState.heat += 2;
-              gmPrompt += ` This increases Heat by 2 to ${simulationMeta.gameState.heat}.`;
-              
-              // Check for potential damage or weirdness increase
-              const playerInventory = simulationMeta.gameState.playerInventories[playerIdx];
-              if (playerInventory) {
-                playerInventory.health -= 1;
-                gmPrompt += ` The player takes 1 damage (health now ${playerInventory.health}).`;
-              }
-            } else if (rollResult.result === "partial success") {
-              simulationMeta.gameState.heat += 1;
-              gmPrompt += ` This increases Heat by 1 to ${simulationMeta.gameState.heat}.`;
-            }
-            
-            // Check if the hazard is resolved
-            if (rollResult.result === "success") {
-              simulationMeta.gameState.activeHazards = 
-                simulationMeta.gameState.activeHazards.filter(h => h !== hazard.name);
-              gmPrompt += ` The hazard "${hazard.name}" is fully resolved.`;
-              
-              // Chance to find treasure after resolving hazard
-              if (Math.random() > 0.6) {
-                const treasure = drawRandomCard(TREASURE_CARDS);
-                if (treasure) {
-                  gmPrompt += ` The player finds "${treasure.name}" after resolving the hazard!`;
-                  const playerInventory = simulationMeta.gameState.playerInventories[playerIdx];
-                  if (playerInventory) {
-                    playerInventory.treasures.push(treasure.name);
-                  }
-                }
-              }
-            }
-          }
+        return {
+          role: entry.role === 'GM' ? 'assistant' : 'user',
+          content: entry.role === 'GM'
+            ? `GM: ${cleanContent}`
+            : `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
+        };
+      });
+      
+      // Get GM's collective response to all player actions
+      const gmCollectiveResponse = await createChatCompletion(
+        gmSystemPrompt,
+        [...gmResponseMessages, { role: "user", content: gmActionSummaryPrompt }]
+      );
+      
+      // Remove role prefix if it exists in the response
+      const cleanGmResponse = gmCollectiveResponse.replace(/^GM: /g, '');
+      
+      // Add GM response to conversation log
+      conversationLog.push({
+        role: 'GM',
+        content: cleanGmResponse,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          roundNumber: round + 1,
+          phase: "gm-response",
+          heat: simulationMeta.gameState.heat,
+          gameState: {...simulationMeta.gameState}
         }
-
-        // Get GM's response
-        const gmResponse = await createChatCompletion(
-          gmSystemPrompt,
-          [...gmMessages, { role: "user", content: gmPrompt }]
-        );
-
-        // Remove role prefix if it exists in the response
-        const cleanGmResponse = gmResponse.replace(/^GM: /g, '');
-
+      });
+      
+      // Check for game end conditions
+      if (simulationMeta.gameState.heat >= 10) {
         conversationLog.push({
           role: 'GM',
-          content: cleanGmResponse,
+          content: `[Game Over] Heat has reached ${simulationMeta.gameState.heat}, exceeding the maximum threshold of 10. The mission has failed.`,
           timestamp: new Date().toISOString(),
           metadata: {
             roundNumber: round + 1,
-            phase: "gm-response",
+            phase: "game-over",
+            reason: "heat-maximum",
+            outcome: "failure",
             heat: simulationMeta.gameState.heat,
             gameState: {...simulationMeta.gameState}
           }
         });
         
-        // Check for game end conditions
-        if (simulationMeta.gameState.heat >= 10) {
-          conversationLog.push({
-            role: 'GM',
-            content: `[Game Over] Heat has reached ${simulationMeta.gameState.heat}, exceeding the maximum threshold of 10. The mission has failed.`,
-            timestamp: new Date().toISOString(),
-            metadata: {
-              roundNumber: round + 1,
-              phase: "game-over",
-              reason: "heat-maximum",
-              outcome: "failure",
-              heat: simulationMeta.gameState.heat,
-              gameState: {...simulationMeta.gameState}
-            }
-          });
-          
-          break; // Exit the player loop
+        break; // Exit the player loop
+      }
+      
+      // Check if all players have reached high weirdness
+      let allPlayersTransformed = true;
+      for (let i = 0; i < actualPlayerCount; i++) {
+        const playerInventory = simulationMeta.gameState.playerInventories[i];
+        if (playerInventory && playerInventory.weirdness < 10) {
+          allPlayersTransformed = false;
+          break;
         }
-        
-        // Check if all players have reached high weirdness
-        let allPlayersTransformed = true;
-        for (let i = 0; i < actualPlayerCount; i++) {
-          const playerInventory = simulationMeta.gameState.playerInventories[i];
-          if (playerInventory && playerInventory.weirdness < 10) {
-            allPlayersTransformed = false;
-            break;
+      }
+      
+      if (allPlayersTransformed) {
+        conversationLog.push({
+          role: 'GM',
+          content: `[Game Over] All players have reached maximum Weirdness and have been transformed. The mission has failed.`,
+          timestamp: new Date().toISOString(),
+          metadata: {
+            roundNumber: round + 1,
+            phase: "game-over",
+            reason: "all-players-transformed",
+            outcome: "failure",
+            heat: simulationMeta.gameState.heat,
+            gameState: {...simulationMeta.gameState}
           }
-        }
+        });
         
-        if (allPlayersTransformed) {
-          conversationLog.push({
-            role: 'GM',
-            content: `[Game Over] All players have reached maximum Weirdness and have been transformed. The mission has failed.`,
-            timestamp: new Date().toISOString(),
-            metadata: {
-              roundNumber: round + 1,
-              phase: "game-over",
-              reason: "all-players-transformed",
-              outcome: "failure",
-              heat: simulationMeta.gameState.heat,
-              gameState: {...simulationMeta.gameState}
-            }
-          });
-          
-          break; // Exit the player loop
-        }
+        break; // Exit the player loop
       }
       
       // Check if game ended during this round

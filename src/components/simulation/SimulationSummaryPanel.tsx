@@ -14,6 +14,67 @@ const SimulationSummaryPanel = ({ simulation }: SimulationSummaryPanelProps) => 
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
   };
 
+  // Function to determine mission outcome with proper fallbacks
+  const getMissionOutcome = () => {
+    // Check if we have an explicit outcome first
+    if (simulation.missionOutcome && simulation.missionOutcome !== "unknown") {
+      return simulation.missionOutcome;
+    }
+    
+    // Check game-over metadata in the log
+    const gameOverMessage = simulation.log?.find(msg => 
+      msg.metadata?.phase === "game-over" && msg.metadata?.outcome
+    );
+    
+    if (gameOverMessage?.metadata?.outcome) {
+      return gameOverMessage.metadata.outcome;
+    }
+    
+    // Check for key phrases in the log content
+    const heatFailureMessage = simulation.log?.find(msg => 
+      msg.content?.toLowerCase().includes("heat has reached") ||
+      msg.content?.toLowerCase().includes("maximum heat") ||
+      msg.content?.toLowerCase().includes("heat level reached maximum")
+    );
+    
+    if (heatFailureMessage) {
+      return "failure";
+    }
+    
+    // Default fallback
+    return simulation.missionOutcome || "unknown";
+  };
+
+  // Get reason for game ending
+  const getGameOverReason = () => {
+    // Check for explicit reason
+    const gameOverMessage = simulation.log?.find(msg => 
+      msg.metadata?.phase === "game-over" && msg.metadata?.reason
+    );
+    
+    if (gameOverMessage?.metadata?.reason) {
+      return gameOverMessage.metadata.reason === "heat-maximum" 
+        ? "Heat level reached maximum" 
+        : gameOverMessage.metadata.reason;
+    }
+    
+    // Check for heat in content
+    const heatFailureMessage = simulation.log?.find(msg => 
+      msg.content?.toLowerCase().includes("heat has reached") ||
+      msg.content?.toLowerCase().includes("maximum heat") ||
+      msg.content?.toLowerCase().includes("heat level reached maximum")
+    );
+    
+    if (heatFailureMessage) {
+      return "Heat level reached maximum";
+    }
+    
+    return "Unknown reason";
+  };
+
+  const missionOutcome = getMissionOutcome();
+  const gameOverReason = missionOutcome !== "success" ? getGameOverReason() : "";
+
   return (
     <Card className="mb-6">
       <CardHeader className="pb-2">
@@ -74,10 +135,15 @@ const SimulationSummaryPanel = ({ simulation }: SimulationSummaryPanelProps) => 
             <h4 className="text-sm font-semibold mb-2">Mission Outcome</h4>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Badge variant={simulation.missionOutcome?.toLowerCase().includes("success") ? "success" : "destructive"}>
-                  {simulation.missionOutcome || "Unknown"}
+                <Badge variant={missionOutcome.toLowerCase().includes("success") ? "success" : "destructive"}>
+                  {missionOutcome.charAt(0).toUpperCase() + missionOutcome.slice(1)}
                 </Badge>
               </div>
+              {gameOverReason && (
+                <div className="text-sm text-muted-foreground mt-1">
+                  Reason: {gameOverReason}
+                </div>
+              )}
               {simulation.keyEvents && simulation.keyEvents.length > 0 && (
                 <div className="mt-2">
                   <span className="text-xs font-semibold block mb-1">Key Events:</span>
