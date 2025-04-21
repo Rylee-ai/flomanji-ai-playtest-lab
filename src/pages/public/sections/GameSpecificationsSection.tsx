@@ -5,7 +5,7 @@ import { REGION_CARDS } from "@/lib/cards/region-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
-import { Square, Card, SquareCheck, SquareX, RectangleVertical } from "lucide-react";
+import { Square, Car, SquareCheck, SquareX, RectangleVertical } from "lucide-react";
 
 const cardBg = "/lovable-uploads/b36d25ce-1de9-4d8a-bea8-c9b40cfee954.png";
 
@@ -19,7 +19,7 @@ export const GameSpecificationsSection = () => {
       description: "Unique locations across Flomanji with distinct challenges and effects.",
     },
     {
-      icon: <Card size={18} className="opacity-70" />,
+      icon: <Car size={18} className="opacity-70" />,
       category: "Flomanjified Roles",
       count: FLOMANJIFIED_CARDS.length ?? 4,
       description: "Chaotic roles for eliminated players to continue the mayhem.",
@@ -59,7 +59,7 @@ export const GameSpecificationsSection = () => {
         <h3 className="text-xl font-bold mb-8">Card Breakdown</h3>
         {/* Simulated card grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-7 mb-10">
-          {breakdown.map((data, i) => (
+          {breakdown.map((data) => (
             <CardCategoryShowcase
               key={data.category}
               bgImage={cardBg}
@@ -77,3 +77,4 @@ export const GameSpecificationsSection = () => {
     </section>
   );
 };
+
