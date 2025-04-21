@@ -1,6 +1,5 @@
 
 import React from "react";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Rocket, BrainCircuit } from "lucide-react";
 import { SectionBadge } from "@/components/sections/SectionBadge";
@@ -14,9 +13,12 @@ export const DesignPillarsSection = () => {
     >
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="grid grid-cols-12 gap-6">
-          {/* Left side with badge */}
+          {/* Left side with badge and connecting line */}
           <div className="col-span-12 md:col-span-1 flex flex-col items-center">
             <SectionBadge number={3} color="emerald" />
+            
+            {/* Vertical connecting line */}
+            <div className="h-full w-px bg-gradient-to-b from-emerald-400 via-blue-400 to-blue-400 mt-2 opacity-30"></div>
           </div>
           
           {/* Content area */}
