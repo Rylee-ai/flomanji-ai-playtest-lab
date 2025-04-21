@@ -1,35 +1,122 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { SimulationResult, AgentMessage } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ChevronDown, ChevronUp, HelpCircle } from "lucide-react";
+
+/**
+ * Helper for pretty-printing config
+ */
+function formatConfig(config?: SimulationResult["config"]) {
+  if (!config) return null;
+  const entries = Object.entries(config)
+    .filter(([k, v]) => typeof v !== "undefined")
+    .map(([k, v]) => {
+      if (Array.isArray(v)) return [k, v.map(e => typeof e === "object" && e ? e.description || JSON.stringify(e) : String(e)).join("; ")]
+      if (typeof v === "object" && v !== null)
+        return [k, Object.entries(v).map(([k2, v2]) => `${k2}: ${v2}`).join(", ")]
+      return [k, String(v)];
+    });
+  return (
+    <ul className="text-sm md:text-base grid grid-cols-1 md:grid-cols-2 gap-2">
+      {entries.map(([k, v]) => (
+        <li key={k}><b className="capitalize">{k}:</b> {v as string}</li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * Formats a date string to local string
+ */
+const formatDate = (dateStr: string) => {
+  try {
+    const date = new Date(dateStr);
+    return date.toLocaleString();
+  } catch (e) {
+    return dateStr;
+  }
+};
+
+// Attempt to display (if present) the agent/system prompt that generated this message
+function AgentPromptDisplay({ prompt }: { prompt: string }) {
+  return (
+    <div className="prose prose-xs max-w-none bg-yellow-50 border border-yellow-200 rounded p-2 mt-2">
+      <b>Agent Prompt:</b> <pre className="whitespace-pre-wrap break-words">{prompt}</pre>
+    </div>
+  );
+}
 
 interface SimulationDetailsProps {
   simulation: SimulationResult;
 }
 
 const SimulationDetails: React.FC<SimulationDetailsProps> = ({ simulation }) => {
+  // UI debug toggle to show/hide debug info
+  const [showDebugPrompts, setShowDebugPrompts] = useState(false);
+
   if (!simulation) return null;
 
-  const formatDate = (dateStr: string) => {
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleString();
-    } catch (e) {
-      return dateStr;
+  // Try to expose debug prompts per message if available (from metadata.debugPrompt, or placeholder text otherwise)
+  const extractPrompt = (message: AgentMessage) =>
+    (message as any)?.metadata?.debugPrompt || (message as any)?.prompt || null;
+
+  // Action detail summary for each log entry
+  const actionDetails = (message: AgentMessage) => {
+    const md = message.metadata || {};
+    const lines: string[] = [];
+    if (md.phase) lines.push(`Phase: ${md.phase}`);
+    if (md.roundNumber) lines.push(`Round: ${md.roundNumber}`);
+    if (md.playerNumber) lines.push(`Player #: ${md.playerNumber}`);
+    if (md.playerName) lines.push(`Character: ${md.playerName}`);
+    if (md.roll) lines.push(`Dice Roll: [${md.roll.stat}] = ${md.roll.value} + ${md.roll.modifier} = ${md.roll.total} (${md.roll.result})`);
+    if (md.hazard) lines.push(`Hazard: ${md.hazard}`);
+    if (md.inventory) {
+      lines.push(
+        `Inventory - Health: ${md.inventory.health}, Weirdness: ${md.inventory.weirdness}, Luck: ${md.inventory.luck}, Gear: ${md.inventory.gear?.join(", ") || "None"}, Treasures: ${md.inventory.treasures?.join(", ") || "None"}`
+      );
     }
+    if (typeof md.heat === "number") lines.push(`Heat: ${md.heat}`);
+    if (md.reason) lines.push(`Reason: ${md.reason}`);
+    return lines.map((l, idx) => <div className="text-xs text-slate-600" key={idx}>{l}</div>);
   };
 
+  // Show agent roles and log action metadata more prominently
+  const renderMessageHeader = (message: AgentMessage) => (
+    <div className="flex justify-between items-start mb-2">
+      <div className="flex items-center gap-2">
+        <Badge variant="outline">
+          {message.role}
+          {message.role === "Player" && message.playerIndex !== undefined && ` ${message.playerIndex + 1}`}
+        </Badge>
+        {(message.metadata?.phase || message.metadata?.roundNumber) && (
+          <span className="flex gap-1">
+            {message.metadata?.phase && (
+              <Badge variant="secondary">
+                {message.metadata.phase}
+              </Badge>
+            )}
+            {message.metadata?.roundNumber && (
+              <Badge variant="outline" className="bg-slate-50">
+                Round {message.metadata.roundNumber}
+              </Badge>
+            )}
+          </span>
+        )}
+      </div>
+      <span className="text-xs text-gray-500">{formatDate(message.timestamp)}</span>
+    </div>
+  );
+
+  // Formats message content (simple markdown/HTML)
   const renderMessageContent = (message: AgentMessage) => {
-    // Basic markdown-like formatting for message content
     const formatted = message.content
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
       .replace(/\n/g, "<br />");
-
     return <div dangerouslySetInnerHTML={{ __html: formatted }} />;
   };
 
@@ -54,6 +141,41 @@ const SimulationDetails: React.FC<SimulationDetailsProps> = ({ simulation }) => 
 
   return (
     <div className="space-y-6">
+      {/* Settings Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Simulation Run Settings
+          </CardTitle>
+          <CardDescription>
+            <span>
+              Created: {formatDate(simulation.timestamp)}
+            </span>
+            <div className="mt-2">
+              <Button
+                size="sm"
+                variant={showDebugPrompts ? "default" : "outline"}
+                className="ml-2"
+                onClick={() => setShowDebugPrompts(v => !v)}
+              >
+                <HelpCircle className="w-4 h-4 mr-2" />
+                {showDebugPrompts ? "Hide Debug Prompts" : "Show Debug Prompts"}
+              </Button>
+            </div>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <strong>Scenario:</strong> {simulation.scenario}
+            <Separator className="my-3" />
+            <div className="mb-1">
+              <b>Full Settings Summary:</b>
+            </div>
+            {formatConfig(simulation.config)}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Simulation Summary Card */}
       <Card>
         <CardHeader>
@@ -221,7 +343,7 @@ const SimulationDetails: React.FC<SimulationDetailsProps> = ({ simulation }) => 
         <CardHeader>
           <CardTitle>Simulation Log</CardTitle>
           <CardDescription>
-            Full transcript of the game session
+            Full transcript of the game session, with role and action details.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -229,7 +351,7 @@ const SimulationDetails: React.FC<SimulationDetailsProps> = ({ simulation }) => 
             {simulation.log.map((message, index) => (
               <div
                 key={index}
-                className={`p-4 rounded-lg ${
+                className={`p-4 rounded-lg border border-slate-200 ${
                   message.role === "GM"
                     ? "bg-slate-100"
                     : message.role === "Player"
@@ -237,38 +359,28 @@ const SimulationDetails: React.FC<SimulationDetailsProps> = ({ simulation }) => 
                     : "bg-amber-50"
                 }`}
               >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex items-center gap-2">
-                    <Badge>
-                      {message.role}
-                      {message.role === "Player" && message.playerIndex !== undefined && ` ${message.playerIndex + 1}`}
-                    </Badge>
-                    {message.metadata?.phase && (
-                      <Badge variant="outline">
-                        {message.metadata.phase}
-                      </Badge>
-                    )}
-                    {message.metadata?.roundNumber && (
-                      <Badge variant="outline" className="bg-slate-50">
-                        Round {message.metadata.roundNumber}
-                      </Badge>
-                    )}
-                    {renderRollBadge(message)}
-                  </div>
-                  <span className="text-xs text-gray-500">
-                    {formatDate(message.timestamp)}
-                  </span>
-                </div>
-                <div className="prose prose-sm max-w-none">
+                {renderMessageHeader(message)}
+                {actionDetails(message)}
+                <div className="prose prose-sm max-w-none mt-2">
                   {renderMessageContent(message)}
                 </div>
-                
-                {/* Show inventory for player actions */}
+                {/* Inventory for player messages */}
                 {message.role === "Player" && message.metadata?.inventory && (
-                  <div className="mt-2 text-xs bg-white p-2 rounded border">
+                  <div className="mt-2 text-xs bg-white p-2 rounded border border-slate-100">
                     <strong>Inventory:</strong> H:{message.metadata.inventory.health} W:{message.metadata.inventory.weirdness} L:{message.metadata.inventory.luck} | 
-                    Gear: {message.metadata.inventory.gear.join(", ")} | 
-                    Treasures: {message.metadata.inventory.treasures.join(", ")}
+                    Gear: {(message.metadata.inventory.gear || []).join(", ") || "None"} | 
+                    Treasures: {(message.metadata.inventory.treasures || []).join(", ") || "None"}
+                  </div>
+                )}
+                {/* Show agent prompt if debug is enabled */}
+                {showDebugPrompts && extractPrompt(message) && (
+                  <AgentPromptDisplay prompt={extractPrompt(message)} />
+                )}
+                {/* Fallback/help if no agent prompt is present */}
+                {showDebugPrompts && !extractPrompt(message) && (
+                  <div className="prose prose-xs max-w-none bg-yellow-50 border border-yellow-200 rounded p-2 mt-2 text-sm">
+                    <b>No agent prompt recorded for this message.</b>
+                    <span className="block opacity-70">(To surface prompts in the future, update the simulation code to log <code>prompt</code> or <code>metadata.debugPrompt</code> into each message.)</span>
                   </div>
                 )}
               </div>
