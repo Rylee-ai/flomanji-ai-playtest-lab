@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,9 @@ import { getAllMissionAnalytics } from "@/lib/mission-analytics";
 import { applyMissionScaling, validatePlayerCountForMission } from "@/lib/simulation/mission-validator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
+import MissionSelectionGrid from "./MissionSelectionGrid";
+import ConfigWarningsAlert from "./ConfigWarningsAlert";
+import SimulationConfigTabPane from "./SimulationConfigTabPane";
 
 interface SimulationSetupProps {
   onStartSimulation: (config: SimulationConfig) => void;
@@ -34,13 +36,10 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
     missionType: "exploration"
   });
   
-  // Validation state
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  // Apply mission settings when a mission is selected
   useEffect(() => {
     if (selectedMission) {
-      // Apply mission scaling and configuration
       const scaledConfig = applyMissionScaling({
         ...config,
         scenarioPrompt: selectedMission.hook,
@@ -48,21 +47,17 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
       
       setConfig(scaledConfig);
       
-      // Validate the scaled configuration
       validateConfiguration(scaledConfig);
     }
   }, [selectedMission]);
   
-  // Validate configuration whenever it changes
   useEffect(() => {
     validateConfiguration(config);
   }, [config.players, config.missionType]);
   
-  // Validate that the current configuration is valid
   const validateConfiguration = (configToValidate: SimulationConfig) => {
     const errors: string[] = [];
     
-    // Validate player count for mission
     if (selectedMission) {
       const playerValidation = validatePlayerCountForMission(
         configToValidate.players || 2, 
@@ -74,12 +69,10 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
       }
     }
     
-    // Check character count matches player count
     if (selectedCharacters.length > (configToValidate.players || 2)) {
       errors.push(`Too many characters selected. Please select at most ${configToValidate.players} characters.`);
     }
     
-    // Update validation errors
     setValidationErrors(errors);
   };
 
@@ -129,7 +122,6 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
     if (config.players === 1) {
       setSelectedCharacters([characterId]);
     } else {
-      // Don't exceed the player count
       if (selectedCharacters.length < (config.players || 2)) {
         setSelectedCharacters(prev => [...prev, characterId]);
       } else {
@@ -159,7 +151,6 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
       extractionRegion: selectedMission.extractionRegion
     };
 
-    // Validation before starting
     if (!selectedMission) {
       toast.error("Please select a mission");
       return;
@@ -178,9 +169,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
       simulationConfig.players = selectedCharacters.length;
     }
     
-    // Check for validation errors
     if (validationErrors.length > 0) {
-      // Show a warning but allow to proceed
       toast.warning("There are configuration warnings. Check your setup before proceeding.");
     }
 
@@ -191,115 +180,33 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {MISSION_CARDS.map((mission) => {
-          const analytics = missionAnalytics.find(a => a.missionId === mission.id);
-          
-          return (
-            <Card 
-              key={mission.id}
-              className={`cursor-pointer hover:bg-accent/50 transition-colors ${
-                selectedMission?.id === mission.id ? "ring-2 ring-primary" : ""
-              }`}
-              onClick={() => setSelectedMission(mission)}
-            >
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg">{mission.name}</CardTitle>
-                    <CardDescription>{mission.keywords.join(", ")}</CardDescription>
-                  </div>
-                  <div className="flex gap-1">
-                    {mission.icons?.slice(0, 2).map((icon, i) => (
-                      <span key={i} title={icon.meaning}>{icon.symbol}</span>
-                    ))}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pb-2">
-                <p className="text-sm line-clamp-2">{mission.hook}</p>
-              </CardContent>
-              <CardFooter className="pt-0 flex justify-between">
-                <div className="text-xs">Heat: {mission.startingHeat}</div>
-                <div className="text-xs">
-                  Difficulty: {mission.difficultyRating ? `${mission.difficultyRating}/10` : 'N/A'}
-                </div>
-                {analytics && (
-                  <div className="text-xs">
-                    Success: {(analytics.aggregateStats.successRate * 100).toFixed(0)}%
-                  </div>
-                )}
-              </CardFooter>
-            </Card>
-          );
-        })}
-      </div>
-      
+      <MissionSelectionGrid
+        missions={MISSION_CARDS}
+        selectedMission={selectedMission}
+        onMissionSelect={setSelectedMission}
+        missionAnalytics={getAllMissionAnalytics()}
+      />
+
       {selectedMission && (
         <>
           <MissionRulesDisplay mission={selectedMission} />
-          
-          {validationErrors.length > 0 && (
-            <Alert variant="warning">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Configuration Warnings</AlertTitle>
-              <AlertDescription>
-                <ul className="list-disc pl-5 mt-2">
-                  {validationErrors.map((error, index) => (
-                    <li key={index}>{error}</li>
-                  ))}
-                </ul>
-              </AlertDescription>
-            </Alert>
-          )}
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Simulation Configuration</CardTitle>
-              <CardDescription>
-                Set up the parameters for your AI-powered playtest session
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="mission">Mission Settings</TabsTrigger>
-                  <TabsTrigger value="characters">Character Assignment</TabsTrigger>
-                  <TabsTrigger value="advanced">Advanced Settings</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="mission">
-                  <BasicSettings 
-                    config={config}
-                    onConfigChange={handleInputChange}
-                    onPlayerCountChange={handlePlayerCountChange}
-                    selectedMission={selectedMission}
-                  />
-                </TabsContent>
-                
-                <TabsContent value="characters">
-                  <CharacterSelector
-                    selectedCharacters={selectedCharacters}
-                    onCharacterSelect={handleCharacterSelect}
-                    onCharacterDeselect={handleCharacterDeselect}
-                    maxCharacters={config.players || 6}
-                  />
-                </TabsContent>
-                
-                <TabsContent value="advanced">
-                  <AdvancedSettings 
-                    config={config}
-                    onConfigChange={handleInputChange}
-                  />
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={handleStartSimulation} disabled={isLoading}>
-                {isLoading ? "Running Simulation..." : "Start Simulation"}
-              </Button>
-            </CardFooter>
-          </Card>
+
+          <ConfigWarningsAlert validationErrors={validationErrors} />
+
+          <SimulationConfigTabPane
+            config={config}
+            onConfigChange={handleInputChange}
+            onPlayerCountChange={handlePlayerCountChange}
+            selectedMission={selectedMission}
+            selectedCharacters={selectedCharacters}
+            onCharacterSelect={handleCharacterSelect}
+            onCharacterDeselect={handleCharacterDeselect}
+            isLoading={isLoading}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            maxCharacters={config.players || 6}
+            handleStartSimulation={handleStartSimulation}
+          />
         </>
       )}
     </div>
