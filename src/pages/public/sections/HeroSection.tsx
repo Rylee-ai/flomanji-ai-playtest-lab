@@ -5,11 +5,11 @@ import { Clock, Users, Info } from "lucide-react";
 
 /**
  * Flomanji "HeroSection" (Award-Grade Visual and Usability)
+ * - Responsive 16:9 layout enforced via Tailwind aspect ratio utility
  * - Dramatic, clear bottom-aligned Gator & Sunset background
- * - Enhanced text contrast & pop with blur/glassmorphism, drop-shadows, and subtle glow
- * - Responsive 16:9 aspect ratio across all devices
- * - Animated ambient effects for energy
- * - Fully accessible and responsive professional hero layout
+ * - Enhanced text contrast & pop with blur/glassmorphism and subtle glow
+ * - Balanced and harmonious internal spacing
+ * - Responsive + accessible
  */
 export const HeroSection = ({
   scrollToWaitlist,
@@ -19,18 +19,13 @@ export const HeroSection = ({
   const [imageLoaded, setImageLoaded] = React.useState(false);
   const [imageError, setImageError] = React.useState(false);
 
-  // User's latest uploaded image
-  const bgImageUrl = "/lovable-uploads/fa04ed1d-8476-43c3-8002-651032803227.png";
+  // Use the user's newly uploaded image
+  const bgImageUrl = "/lovable-uploads/438e7f2b-2452-4522-a683-5e1713c49f5c.png";
 
-  // Preload image and listen for load/failure
   React.useEffect(() => {
     const img = new window.Image();
-    img.onload = () => {
-      setImageLoaded(true);
-    };
-    img.onerror = (e) => {
-      setImageError(true);
-    };
+    img.onload = () => setImageLoaded(true);
+    img.onerror = () => setImageError(true);
     img.src = bgImageUrl;
   }, [bgImageUrl]);
 
@@ -39,11 +34,11 @@ export const HeroSection = ({
       className="relative w-full flex justify-center items-center overflow-hidden bg-black"
       aria-label="Flomanji - Gator sunset hero background"
     >
-      {/* Maintain a strict 16:9 aspect ratio on all screens */}
+      {/* 16:9 aspect ratio - always enforced with aspect-[16/9], fills width on all screens */}
       <div className="relative w-full aspect-[16/9] flex items-center justify-center overflow-hidden">
-        {/* Background image (fills container) */}
+        {/* Background image */}
         <div
-          className="absolute inset-0 z-0 transition-opacity duration-500"
+          className="absolute inset-0 z-0 transition-opacity duration-700"
           style={{
             backgroundImage: imageLoaded ? `url('${bgImageUrl}')` : "none",
             backgroundPosition: "center bottom",
@@ -54,19 +49,18 @@ export const HeroSection = ({
           aria-hidden="true"
         />
 
-        {/* Gradient overlay for readability */}
+        {/* Gradient overlay for better readability */}
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background:
-              "linear-gradient(to top, rgba(10,10,20,0.86) 8%, rgba(10,10,20,0.60) 45%, rgba(10,10,20,0.13) 90%, rgba(0,0,0,0.00) 100%)",
+              "linear-gradient(to top, rgba(10,10,20,0.87) 8%, rgba(10,10,20,0.60) 45%, rgba(10,10,20,0.13) 85%, rgba(0,0,0,0.00) 100%)",
           }}
           aria-hidden="true"
         />
-
         {/* Subtle orange glow */}
         <div
-          className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[16vw] max-w-4xl rounded-full blur-3xl opacity-60 animate-pulse z-20"
+          className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[16vw] max-w-4xl rounded-full blur-3xl opacity-60 pulse z-20"
           style={{
             background:
               "radial-gradient(ellipse at center, rgba(252,174,38,0.37) 0%, rgba(252,174,38,0.09) 70%, rgba(252,174,38,0) 100%)",
@@ -84,48 +78,53 @@ export const HeroSection = ({
           aria-hidden="true"
         />
 
-        {/* Dark veil for text contrast */}
+        {/* Slight veil for text contrast */}
         <div
-          className="absolute inset-0 bg-black/[0.15] md:bg-black/[0.19] pointer-events-none z-30"
+          className="absolute inset-0 bg-black/[0.14] md:bg-black/[0.18] pointer-events-none z-30"
           aria-hidden="true"
         />
 
-        {/* Debug message for image loading issues */}
+        {/* Debug for image error */}
         {imageError && (
           <div className="absolute top-4 left-4 bg-red-500 text-white p-2 z-50 rounded text-sm">
             Background image failed to load. Path: {bgImageUrl}
           </div>
         )}
 
-        {/* Main hero content */}
+        {/* Main Hero Content */}
         <div className="relative z-40 container mx-auto px-4 md:px-8 max-w-6xl flex flex-col items-center justify-center h-full">
           <div
             className="
-              bg-black/60 shadow-[0_2px_48px_0_rgba(0,0,0,0.4)]
+              bg-black/65 
+              shadow-[0_2px_44px_0_rgba(0,0,0,0.33)]
               backdrop-blur-2xl border border-white/10 rounded-2xl
-              p-7 md:p-12
               flex flex-col items-center
+              w-full max-w-3xl
+              pb-10 pt-9 px-4 md:pb-14 md:pt-16 md:px-12
               animate-fade-in
             "
             style={{
               boxShadow:
-                "0 6px 32px 0 rgba(252,174,38,0.15), 0 4px 40px 0 rgba(0,0,0,0.55)",
+                "0 6px 32px 0 rgba(252,174,38,0.09), 0 4px 40px 0 rgba(0,0,0,0.48)",
             }}
           >
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 leading-tight drop-shadow-[0_2px_10px_rgba(249,220,94,0.30)] text-center">
-              <span className="block text-white animate-[fade-in_0.57s_ease-in] drop-shadow-[0_2px_10px_rgba(255,255,255,0.20)]">
+            {/* Logo / Title */}
+            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-3 md:mb-6 leading-tight drop-shadow-[0_2px_10px_rgba(249,220,94,0.21)] text-center">
+              <span className="block text-white animate-[fade-in_0.67s_ease-in] drop-shadow-[0_2px_10px_rgba(255,255,255,0.17)]">
                 FLOMANJI:
               </span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-500 drop-shadow-[0_2px_9px_rgba(252,174,38,0.38)] animate-[fade-in_1.2s_ease-in]">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-500 drop-shadow-[0_2px_8.5px_rgba(252,174,38,0.30)] animate-[fade-in_1.15s_ease-in]">
                 Can You Escape Paradise?
               </span>
             </h1>
 
-            <p className="text-center text-xl md:text-2xl max-w-3xl mb-10 text-white/90 font-medium drop-shadow-[0_2px_12px_rgba(0,0,0,0.36)] leading-relaxed animate-fade-in">
+            {/* Subheading */}
+            <p className="text-center text-lg md:text-2xl max-w-2xl mb-7 md:mb-10 text-white/95 font-medium drop-shadow-[0_2px_9px_rgba(0,0,0,0.30)] leading-relaxed animate-fade-in">
               A deck-building survival adventure where paradise and chaos collide in an unforgettable journey of strategy and suspense.
             </p>
-
-            <div className="flex flex-wrap justify-center gap-6 mb-10">
+            
+            {/* CTA Button */}
+            <div className="w-full flex justify-center mb-7 md:mb-10">
               <Button
                 size="lg"
                 onClick={scrollToWaitlist}
@@ -143,21 +142,22 @@ export const HeroSection = ({
               </Button>
             </div>
 
-            <div className="flex flex-wrap gap-6 md:gap-10 text-base md:text-lg text-white/85 justify-center animate-fade-in">
+            {/* Info/Stats */}
+            <div className="flex flex-wrap gap-x-8 gap-y-5 md:gap-x-12 md:gap-y-8 text-base md:text-lg text-white/85 justify-center animate-fade-in">
               <div className="flex items-center">
-                <div className="bg-amber-400/10 p-2 rounded-full mr-3">
+                <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
                   <Clock className="h-5 w-5 text-amber-300" />
                 </div>
                 <span>30-60 min</span>
               </div>
               <div className="flex items-center">
-                <div className="bg-amber-400/10 p-2 rounded-full mr-3">
+                <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
                   <Users className="h-5 w-5 text-amber-300" />
                 </div>
                 <span>2-6 players</span>
               </div>
               <div className="flex items-center">
-                <div className="bg-amber-400/10 p-2 rounded-full mr-3">
+                <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
                   <Info className="h-5 w-5 text-amber-300" />
                 </div>
                 <span>Ages 12+</span>
