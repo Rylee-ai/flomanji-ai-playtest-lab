@@ -45,6 +45,11 @@ export const getSimulationById = (id: string): SimulationResult | null => {
   }
 };
 
+// Get a specific simulation result - This was the missing function
+export const getSimulationResult = (id: string): SimulationResult | null => {
+  return getSimulationById(id);
+};
+
 // Update annotations for a simulation
 export const updateSimulationAnnotations = (id: string, annotations: string): boolean => {
   try {

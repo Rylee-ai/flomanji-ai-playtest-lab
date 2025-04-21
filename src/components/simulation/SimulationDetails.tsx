@@ -133,7 +133,7 @@ const SimulationDetails: React.FC<SimulationDetailsProps> = ({ simulation }) => 
               <ul className="space-y-2">
                 {simulation.config.objectives.map((objective, index) => (
                   <li key={index} className="flex items-start gap-2">
-                    <Badge variant={simulation.gameState?.completedObjectives.includes(objective.id) ? "success" : (objective.required ? "destructive" : "outline")}>
+                    <Badge variant={simulation.gameState?.completedObjectives.includes(objective.id) ? "default" : (objective.required ? "destructive" : "outline")}>
                       {simulation.gameState?.completedObjectives.includes(objective.id) ? "Completed" : (objective.required ? "Required" : "Optional")}
                     </Badge>
                     <span>{objective.description}</span>
@@ -201,8 +201,8 @@ const SimulationDetails: React.FC<SimulationDetailsProps> = ({ simulation }) => 
                       <TableCell>{roll.value}</TableCell>
                       <TableCell>
                         <Badge variant={
-                          roll.result === "success" ? "success" : 
-                          roll.result === "partial success" ? "warning" : "destructive"
+                          roll.result === "success" ? "default" : 
+                          roll.result === "partial success" ? "secondary" : "destructive"
                         }>
                           {roll.result}
                         </Badge>

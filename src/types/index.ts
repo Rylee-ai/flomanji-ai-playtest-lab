@@ -1,3 +1,4 @@
+
 import { MissionSheet } from "./cards/mission";
 
 export interface SimulationConfig {
@@ -13,6 +14,11 @@ export interface SimulationConfig {
   startingHeat?: number;
   heatPerRound?: number;
   objectives?: any[];
+  missionType?: string;
+  secretTraitor?: boolean;
+  arcadeModule?: boolean;
+  nightmareDifficulty?: boolean;
+  competitiveMode?: boolean;
 }
 
 export interface AgentMessage {
@@ -38,6 +44,7 @@ export interface AgentMessage {
     completedObjectives?: string[];
     inventory?: any;
     gameState?: any;
+    reason?: string; // Added missing property
   };
 }
 
@@ -79,6 +86,8 @@ export interface SimulationResult {
     rolls: {player: number, type: string, value: number, stat: string, result: string}[];
   };
   characters?: FlomanjiCharacter[];
+  missionOutcome?: string; // Added missing property
+  keyEvents?: string[]; // Added missing property
 }
 
 export interface SimulationSummary {
