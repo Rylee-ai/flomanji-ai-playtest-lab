@@ -25,7 +25,16 @@ const HomePage = () => {
       {/* Added IDs for anchor link targets */}
       <section id="overview"><GameOverviewSection /></section>
       <section id="features"><KeyFeaturesSection /></section>
-      <section id="gameplay"><DesignPillarsSection /></section>
+      <section id="gameplay">
+        {/* Replaced DesignPillarsSection with a link to /gameplay page for Gameplay section */}
+        <a
+          href="/gameplay"
+          className="block text-amber-400 hover:underline hover-scale transition cursor-pointer text-lg py-4 text-center"
+          aria-label="Go to the Gameplay page"
+        >
+          Explore Gameplay Details &rarr;
+        </a>
+      </section>
       <CallToActionSection scrollToWaitlist={scrollToWaitlist} />
       <section id="faq"><GameSpecificationsSection /></section>
       <PreOrderSection />
