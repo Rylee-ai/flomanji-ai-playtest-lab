@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export const PreOrderSection = () => (
   <section className="py-16 bg-black text-center">
@@ -14,12 +15,11 @@ export const PreOrderSection = () => (
           <span className="text-gray-400 ml-2">USD</span>
         </div>
         <p className="text-gray-400 text-sm mb-6">Base game with all core components</p>
-        <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black">
-          Pre-Order Now
+        <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black" asChild>
+          <Link to="/waitlist">Pre-Order Now</Link>
         </Button>
         <p className="mt-3 text-xs text-gray-500">Ships Q2 2025 • Limited quantities available</p>
       </div>
     </div>
   </section>
 );
-

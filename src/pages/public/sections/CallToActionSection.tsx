@@ -3,6 +3,7 @@ import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const CallToActionSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void }) => (
   <section className="py-16 bg-black text-center">
