@@ -1,77 +1,26 @@
-
 import React from "react";
 
 interface CardCategoryShowcaseProps {
-  bgImage: string;
   icon: React.ReactNode;
   category: string;
-  count: number;
+  count: number | string;
   description: string;
-  exampleName?: string;
-  exampleText?: string;
-  exampleIcons?: string[];
-  exampleKeywords?: string[];
   className?: string;
 }
 
 export const CardCategoryShowcase: React.FC<CardCategoryShowcaseProps> = ({
-  bgImage,
   icon,
   category,
   count,
   description,
-  exampleName,
-  exampleText,
-  exampleIcons,
-  exampleKeywords,
   className = "",
 }) => (
-  <div className={`rounded-2xl border-2 border-[#393A3F] bg-[#191A1E] shadow-lg flex flex-col p-0 transition-all min-h-[450px] aspect-card ${className}`}>
-    {/* Card Face */}
-    <div className="relative rounded-t-2xl overflow-hidden" style={{ height: "260px", background: "#191A1E" }}>
-      <img
-        src={bgImage}
-        alt="Flomanji card art"
-        className="absolute inset-0 w-full h-full object-cover object-center"
-        style={{ opacity: 0.36, filter: "brightness(0.92)" }}
-        draggable={false}
-      />
-      
-      {/* Example Card Content */}
-      {exampleName && (
-        <div className="absolute inset-0 flex flex-col p-5 z-10">
-          {/* Card Icons */}
-          {exampleIcons && exampleIcons.length > 0 && (
-            <div className="flex gap-2 mb-2">
-              {exampleIcons.map((emoji, i) => (
-                <span key={i} className="text-xl">{emoji}</span>
-              ))}
-            </div>
-          )}
-          
-          {/* Card Name */}
-          <h4 className="text-xl font-bold text-white mb-1">{exampleName}</h4>
-          
-          {/* Card Keywords */}
-          {exampleKeywords && exampleKeywords.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
-              {exampleKeywords.map((keyword, i) => (
-                <span key={i} className="text-xs bg-[#292A30] py-1 px-2 rounded text-gray-300">{keyword}</span>
-              ))}
-            </div>
-          )}
-          
-          {/* Card Text */}
-          {exampleText && (
-            <p className="text-sm text-gray-300 leading-tight">{exampleText}</p>
-          )}
-        </div>
-      )}
-      
-      {/* Optional overlay for visual enhancement */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#191A1E] opacity-30"></div>
+  <div className={`rounded-2xl border-2 border-[#393A3F] bg-[#191A1E] shadow-lg flex flex-col p-0 transition-all min-h-[340px] aspect-card ${className}`}>
+    {/* Card Face Placeholder */}
+    <div className="relative rounded-t-2xl bg-[#242429] h-[175px] flex items-center justify-center">
+      {/* Empty placeholder for future card art */}
+      {/* This area intentionally left blank, matching reference screenshot */}
     </div>
-    
     {/* Info Footer */}
     <div className="flex flex-col justify-between px-5 pt-5 pb-6 h-full">
       <div className="flex items-center gap-2 text-gray-100">

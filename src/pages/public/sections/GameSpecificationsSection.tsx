@@ -5,55 +5,101 @@ import { REGION_CARDS } from "@/lib/cards/region-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
-import { Square, Car, SquareCheck, SquareX, RectangleVertical } from "lucide-react";
+import { GEAR_CARDS } from "@/lib/cards/gear-cards";
+import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
+import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
+import { NPC_CARDS } from "@/lib/cards/npc-cards";
+import { MISSION_CARDS } from "@/lib/cards/mission-cards";
 
-const cardBg = "/lovable-uploads/b36d25ce-1de9-4d8a-bea8-c9b40cfee954.png";
+// Only use icons from the allowed set
+import {
+  MapPin,
+  User,
+  ChevronRight,
+  Gear,
+  AlertTriangle,
+  Calendar,
+  Treasure,
+  List,
+  Card as CardIcon
+} from "lucide-react";
+
+const CATEGORIES = [
+  {
+    icon: <MapPin size={18} className="opacity-70" />,
+    category: "Region Cards",
+    count: REGION_CARDS.length,
+    description: "Unique locations across Flomanji with distinct challenges and effects."
+  },
+  {
+    icon: <User size={18} className="opacity-70" />,
+    category: "Flomanjified Roles",
+    count: FLOMANJIFIED_CARDS.length,
+    description: "Chaotic roles for eliminated players to continue the mayhem."
+  },
+  {
+    icon: <ChevronRight size={18} className="opacity-70" />,
+    category: "Core Chaos Cards",
+    count: CHAOS_CARDS.length,
+    description: "Global events that increase Heat and challenge all players."
+  },
+  {
+    icon: <List size={18} className="opacity-70" />,
+    category: "Character Types",
+    count: PLAYER_CHARACTER_CARDS.length,
+    description: "Unique archetypes with special abilities and starting stats."
+  },
+  {
+    icon: <Gear size={18} className="opacity-70" />,
+    category: "Starting Gear",
+    count: 25, // Update to your actual count if available
+    description: "Essential equipment to begin your escape from paradise."
+  },
+  {
+    icon: <Gear size={18} className="opacity-70" />,
+    category: "General Gear",
+    count: GEAR_CARDS.length,
+    description: "Tools, weapons and items to aid survival in Flomanji."
+  },
+  {
+    icon: <AlertTriangle size={18} className="opacity-70" />,
+    category: "Hazard Cards",
+    count: HAZARD_CARDS.length,
+    description: "Dangerous threats that test your survival skills."
+  },
+  {
+    icon: <Calendar size={18} className="opacity-70" />,
+    category: "Event Cards",
+    count: 30, // Update to your actual count if available
+    description: "Unexpected occurrences that shift the game dynamics."
+  },
+  {
+    icon: <Treasure size={18} className="opacity-70" />,
+    category: "Treasure Cards",
+    count: TREASURE_CARDS.length,
+    description: "Valuable artifacts with powerful effects and victory points."
+  },
+  {
+    icon: <User size={18} className="opacity-70" />,
+    category: "NPC Cards",
+    count: NPC_CARDS.length,
+    description: "Characters that help, hinder, or add bizarre twists to your journey."
+  },
+  {
+    icon: <CardIcon size={18} className="opacity-70" />,
+    category: "Mission Types",
+    count: MISSION_CARDS.length,
+    description: "Core adventure scenarios with unique objectives and gameplay."
+  },
+  {
+    icon: <List size={18} className="opacity-70" />,
+    category: "Total Cards",
+    count: 271, // Sum of totals as seen in the screenshot; update if needed
+    description: "A massive, modular deck for endless adventure possibilities."
+  },
+];
 
 export const GameSpecificationsSection = () => {
-  // Create example cards from the actual card library
-  const showcaseCards = [
-    {
-      icon: <RectangleVertical size={18} className="opacity-70" />,
-      category: "Region Cards",
-      count: REGION_CARDS.length ?? 38,
-      description: "Unique locations across Flomanji with distinct challenges and effects.",
-      exampleName: "Mystic Springs",
-      exampleText: "Weirdness +1 when entering. Any Survivor here must test Weirdness DC 10 at end of turn → Failure: gain Haunted condition.",
-      exampleIcons: ["🌋", "🔮"],
-      exampleKeywords: ["Weird", "Water Source"]
-    },
-    {
-      icon: <Car size={18} className="opacity-70" />,
-      category: "Flomanjified Roles",
-      count: FLOMANJIFIED_CARDS.length ?? 4,
-      description: "Chaotic roles for eliminated players to continue the mayhem.",
-      exampleName: "Swamp Zombie",
-      exampleText: "Choose a non-Flomanjified Survivor in your tile. They test Grit DC 9 → Failure: take 1 Damage.",
-      exampleIcons: ["💀", "🐊"],
-      exampleKeywords: ["Creature", "Undead"]
-    },
-    {
-      icon: <SquareCheck size={18} className="opacity-70" />,
-      category: "Core Chaos Cards",
-      count: CHAOS_CARDS.length ?? 15,
-      description: "Global events that increase Heat and challenge all players.",
-      exampleName: "Sudden Downpour",
-      exampleText: "Heat +2. All Survivors in Swamp or Coastal regions must test Grit DC 8 → Failure: lose 1 Action.",
-      exampleIcons: ["☔", "⚠️"],
-      exampleKeywords: ["Weather", "Hazard"]
-    },
-    {
-      icon: <Square size={18} className="opacity-70" />,
-      category: "Character Types",
-      count: PLAYER_CHARACTER_CARDS.length ?? 5,
-      description: "Unique archetypes with special abilities and starting stats.",
-      exampleName: "The Tourist",
-      exampleText: "Special: Once per game, may reroll any Luck check. Starts with +1 Luck and 'Disposable Camera' Gear.",
-      exampleIcons: ["👨‍👩‍👧", "🍀"],
-      exampleKeywords: ["Survivalist", "Lucky"]
-    },
-  ];
-
   return (
     <section className="py-16 bg-gray-950">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -74,18 +120,13 @@ export const GameSpecificationsSection = () => {
         </div>
         <h3 className="text-xl font-bold mb-8">Card Breakdown</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-7 mb-10">
-          {showcaseCards.map((card) => (
+          {CATEGORIES.map((card) => (
             <CardCategoryShowcase
               key={card.category}
-              bgImage={cardBg}
               icon={card.icon}
               category={card.category}
               count={card.count}
               description={card.description}
-              exampleName={card.exampleName}
-              exampleText={card.exampleText}
-              exampleIcons={card.exampleIcons}
-              exampleKeywords={card.exampleKeywords}
             />
           ))}
         </div>
@@ -96,3 +137,4 @@ export const GameSpecificationsSection = () => {
     </section>
   );
 };
+
