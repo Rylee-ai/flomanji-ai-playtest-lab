@@ -10,7 +10,7 @@ import { PreOrderSection } from "./sections/PreOrderSection";
 import { WaitlistSignupSection } from "./sections/WaitlistSignupSection";
 import { FooterSection } from "./sections/FooterSection";
 
-// This page now only coordinates rendering the various homepage sections, passing refs as needed for scrolling.
+// Restoring the original 1-2-3 flow with the DesignPillarsSection as the third component
 
 const HomePage = () => {
   const waitlistRef = useRef<HTMLDivElement>(null);
@@ -25,8 +25,8 @@ const HomePage = () => {
       {/* Added IDs for anchor link targets */}
       <section id="overview"><GameOverviewSection /></section>
       <section id="features"><KeyFeaturesSection /></section>
+      <section id="design-pillars"><DesignPillarsSection /></section>
       <section id="gameplay">
-        {/* Replaced DesignPillarsSection with a link to /gameplay page for Gameplay section */}
         <a
           href="/gameplay"
           className="block text-amber-400 hover:underline hover-scale transition cursor-pointer text-lg py-4 text-center"
