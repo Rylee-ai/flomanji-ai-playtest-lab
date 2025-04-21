@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { HeroSection } from "./sections/HeroSection";
 import { GameOverviewSection } from "./sections/GameOverviewSection";
 import { KeyFeaturesSection } from "./sections/KeyFeaturesSection";
@@ -12,6 +12,12 @@ import { FooterSection } from "./sections/FooterSection";
 const HomePage = () => {
   // Add debugging to confirm correct rendering
   console.log("HomePage rendering");
+  
+  useEffect(() => {
+    // Additional debug logs to verify rendering and component loading
+    console.log("HomePage mounted");
+    console.log("Card component status:", typeof Card !== 'undefined' ? 'loaded' : 'not loaded');
+  }, []);
   
   const waitlistRef = useRef<HTMLDivElement>(null);
 
