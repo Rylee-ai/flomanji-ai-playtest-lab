@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +11,9 @@ import AdvancedSettings from "./AdvancedSettings";
 import { SimulationConfig } from "@/types";
 import { toast } from "sonner";
 import { getAllMissionAnalytics } from "@/lib/mission-analytics";
+import { applyMissionScaling, validatePlayerCountForMission } from "@/lib/simulation/mission-validator";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 interface SimulationSetupProps {
   onStartSimulation: (config: SimulationConfig) => void;
@@ -29,23 +33,55 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
     startingHeat: selectedMission?.startingHeat || 2,
     missionType: "exploration"
   });
+  
+  // Validation state
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  React.useEffect(() => {
+  // Apply mission settings when a mission is selected
+  useEffect(() => {
     if (selectedMission) {
-      setConfig(prev => {
-        let baseType = prev.missionType === "solo" && prev.players === 1 ? "solo" : (selectedMission.type !== "mission" ? "exploration" : prev.missionType);
-        if (prev.players === 1) baseType = "solo";
-        if (prev.players > 1 && prev.missionType === "solo") baseType = "exploration";
-        return ({
-          ...prev,
-          scenarioPrompt: selectedMission.hook,
-          startingHeat: selectedMission.startingHeat,
-          rounds: selectedMission.estimatedDuration || 5,
-          missionType: baseType
-        });
-      });
+      // Apply mission scaling and configuration
+      const scaledConfig = applyMissionScaling({
+        ...config,
+        scenarioPrompt: selectedMission.hook,
+      }, selectedMission);
+      
+      setConfig(scaledConfig);
+      
+      // Validate the scaled configuration
+      validateConfiguration(scaledConfig);
     }
   }, [selectedMission]);
+  
+  // Validate configuration whenever it changes
+  useEffect(() => {
+    validateConfiguration(config);
+  }, [config.players, config.missionType]);
+  
+  // Validate that the current configuration is valid
+  const validateConfiguration = (configToValidate: SimulationConfig) => {
+    const errors: string[] = [];
+    
+    // Validate player count for mission
+    if (selectedMission) {
+      const playerValidation = validatePlayerCountForMission(
+        configToValidate.players || 2, 
+        selectedMission
+      );
+      
+      if (!playerValidation.valid && playerValidation.message) {
+        errors.push(playerValidation.message);
+      }
+    }
+    
+    // Check character count matches player count
+    if (selectedCharacters.length > (configToValidate.players || 2)) {
+      errors.push(`Too many characters selected. Please select at most ${configToValidate.players} characters.`);
+    }
+    
+    // Update validation errors
+    setValidationErrors(errors);
+  };
 
   const handleInputChange = (field: keyof SimulationConfig, value: any) => {
     if (field === "players") {
@@ -93,7 +129,12 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
     if (config.players === 1) {
       setSelectedCharacters([characterId]);
     } else {
-      setSelectedCharacters(prev => [...prev, characterId]);
+      // Don't exceed the player count
+      if (selectedCharacters.length < (config.players || 2)) {
+        setSelectedCharacters(prev => [...prev, characterId]);
+      } else {
+        toast.error(`Maximum ${config.players} characters allowed`);
+      }
     }
   };
 
@@ -114,19 +155,33 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
       ...config,
       missionId: selectedMission.id,
       characters: selectedCharacters,
-      missionType: config.players === 1 ? "solo" : config.missionType
+      missionType: config.players === 1 ? "solo" : config.missionType,
+      extractionRegion: selectedMission.extractionRegion
     };
 
+    // Validation before starting
     if (!selectedMission) {
       toast.error("Please select a mission");
       return;
     }
+    
     if (selectedCharacters.length === 0) {
       toast.error("Please select at least one character");
       return;
     }
+    
     if (selectedCharacters.length !== config.players) {
+      if (selectedCharacters.length < config.players) {
+        toast.error(`Please select ${config.players} characters`);
+        return;
+      }
       simulationConfig.players = selectedCharacters.length;
+    }
+    
+    // Check for validation errors
+    if (validationErrors.length > 0) {
+      // Show a warning but allow to proceed
+      toast.warning("There are configuration warnings. Check your setup before proceeding.");
     }
 
     onStartSimulation(simulationConfig);
@@ -184,6 +239,20 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
         <>
           <MissionRulesDisplay mission={selectedMission} />
           
+          {validationErrors.length > 0 && (
+            <Alert variant="warning">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Configuration Warnings</AlertTitle>
+              <AlertDescription>
+                <ul className="list-disc pl-5 mt-2">
+                  {validationErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <Card>
             <CardHeader>
               <CardTitle>Simulation Configuration</CardTitle>
@@ -204,6 +273,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
                     config={config}
                     onConfigChange={handleInputChange}
                     onPlayerCountChange={handlePlayerCountChange}
+                    selectedMission={selectedMission}
                   />
                 </TabsContent>
                 

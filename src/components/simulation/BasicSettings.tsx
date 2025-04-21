@@ -1,15 +1,20 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SimulationConfig } from "@/types";
+import { Badge } from "@/components/ui/badge";
+import { validatePlayerCountForMission, getMissionScaling } from "@/lib/simulation/mission-validator";
+import { Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface BasicSettingsProps {
   config: SimulationConfig;
   onConfigChange: (field: keyof SimulationConfig, value: any) => void;
   onPlayerCountChange: (value: number) => void;
+  selectedMission?: any; // Using any here to avoid circular dependencies
 }
 
 const MISSION_TYPE_LABELS: Record<string, string> = {
@@ -21,13 +26,28 @@ const MISSION_TYPE_LABELS: Record<string, string> = {
   solo: "Solo Automa"
 };
 
-const BasicSettings = ({ config, onConfigChange, onPlayerCountChange }: BasicSettingsProps) => {
+const BasicSettings = ({ 
+  config, 
+  onConfigChange, 
+  onPlayerCountChange,
+  selectedMission 
+}: BasicSettingsProps) => {
   // If players is 1, lock missionType to "solo"
   const isSoloMode = config.players === 1;
   const safeMissionType = isSoloMode ? "solo" : (config.missionType !== "solo" ? config.missionType : "exploration");
+  
+  // Get mission validation if available
+  const playerCountValidation = selectedMission 
+    ? validatePlayerCountForMission(config.players || 2, selectedMission) 
+    : { valid: true };
+  
+  // Get mission scaling if available
+  const scalingInfo = selectedMission 
+    ? getMissionScaling(config.players || 2, selectedMission) 
+    : "";
 
   // Sync the displayed type label (for slider, select, etc.)
-  React.useEffect(() => {
+  useEffect(() => {
     if (isSoloMode && config.missionType !== "solo") {
       onConfigChange("missionType", "solo");
     }
@@ -71,7 +91,24 @@ const BasicSettings = ({ config, onConfigChange, onPlayerCountChange }: BasicSet
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="players">Number of Players: {config.players}</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="players">Number of Players: {config.players}</Label>
+            {!playerCountValidation.valid && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger className="ml-2">
+                    <Badge variant="outline" className="text-amber-500 border-amber-500">
+                      <Info className="h-3 w-3 mr-1" /> Warning
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{playerCountValidation.message}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
+          
           <Slider
             id="players"
             defaultValue={[config.players]}
@@ -82,9 +119,16 @@ const BasicSettings = ({ config, onConfigChange, onPlayerCountChange }: BasicSet
             onValueChange={(value) => onPlayerCountChange(value[0])}
             disabled={config.missionType === "solo"}
           />
-          <p className="text-sm text-muted-foreground">
-            How many AI player characters to simulate (1-6). If selecting 1, solo Automa is enabled.
-          </p>
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <p>
+              How many AI player characters to simulate (1-6). If selecting 1, solo Automa is enabled.
+            </p>
+            {scalingInfo && (
+              <Badge variant="outline" className="ml-2">
+                {scalingInfo}
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
 

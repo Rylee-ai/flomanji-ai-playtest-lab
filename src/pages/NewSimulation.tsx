@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import SimulationSetup from "@/components/simulation/SimulationSetup";
 import { recordMissionRun } from "@/lib/mission-analytics";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
+import { MISSION_CARDS } from "@/lib/cards/mission-cards";
 
 const NewSimulation = () => {
   const navigate = useNavigate();
@@ -54,8 +55,20 @@ const NewSimulation = () => {
           }
         });
 
-        // Build simulation config with actual character data for game state use
-        const simulationConfig = { ...config, fullCharacters };
+        // Find the selected mission to get objectives and extraction region
+        const selectedMission = config.missionId 
+          ? MISSION_CARDS.find(m => m.id === config.missionId)
+          : null;
+        
+        // Build simulation config with full mission and character data
+        const simulationConfig = { 
+          ...config, 
+          fullCharacters,
+          // Make sure extraction region is set
+          extractionRegion: config.extractionRegion || selectedMission?.extractionRegion || "exit",
+          // Include mission objectives for game state
+          objectives: selectedMission?.objectives || []
+        };
 
         // Run the simulation
         const result = await startSimulation(simulationConfig, rulesContent);
@@ -87,30 +100,8 @@ const NewSimulation = () => {
         toast.success("Simulation completed successfully");
         navigate(`/simulations/${result.id}`);
       } else {
-        // If no characters were selected, use default simulation logic (should never trigger now)
-        const result = await startSimulation(config, rulesContent);
-        if (config.missionId) {
-          const runData = {
-            id: result.id,
-            timestamp: result.timestamp,
-            missionId: config.missionId,
-            completed: result.missionOutcome === 'success',
-            objectivesCompleted: result.keyEvents?.filter(e => e.description.includes('objective')).map(e => e.description) || [],
-            rounds: result.rounds,
-            characters: config.characters || [],
-            finalHeatLevel: config.startingHeat || 0,
-            keyEvents: result.keyEvents?.map(e => ({
-              round: e.round,
-              event: e.description,
-              impact: e.description
-            })) || []
-          };
-
-          recordMissionRun(runData);
-        }
+        toast.error("No characters selected");
         setIsLoading(false);
-        toast.success("Simulation completed successfully");
-        navigate(`/simulations/${result.id}`);
       }
     } catch (error) {
       console.error("Simulation failed:", error);
