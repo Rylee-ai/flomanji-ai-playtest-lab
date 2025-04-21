@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -35,6 +34,15 @@ import NotFound from "./pages/NotFound";
 
 import { Suspense, useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
+
+// New company pages
+import About from "./pages/about";
+import Team from "./pages/team";
+import Contact from "./pages/contact";
+import PressKit from "./pages/press-kit";
+import PrivacyPolicy from "./pages/privacy-policy";
+import TermsOfService from "./pages/terms-of-service";
+import Cookies from "./pages/cookies";
 
 // Error boundary component
 const ErrorFallback = () => (
@@ -127,6 +135,17 @@ const App = () => {
                     } 
                   />
                   <Route path="/waitlist" element={<WaitlistSignup />} />
+
+                  {/* New company pages */}
+                  <Route path="/about" element={<About />} />
+                  <Route path="/team" element={<Team />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/press-kit" element={<PressKit />} />
+
+                  {/* New legal pages */}
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="/cookies" element={<Cookies />} />
                 </Route>
 
                 {/* Admin routes */}

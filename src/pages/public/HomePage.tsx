@@ -22,11 +22,12 @@ const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
       <HeroSection scrollToWaitlist={scrollToWaitlist} />
-      <GameOverviewSection />
-      <KeyFeaturesSection />
-      <DesignPillarsSection />
+      {/* Added IDs for anchor link targets */}
+      <section id="overview"><GameOverviewSection /></section>
+      <section id="features"><KeyFeaturesSection /></section>
+      <section id="gameplay"><DesignPillarsSection /></section>
       <CallToActionSection scrollToWaitlist={scrollToWaitlist} />
-      <GameSpecificationsSection />
+      <section id="faq"><GameSpecificationsSection /></section>
       <PreOrderSection />
       <WaitlistSignupSection ref={waitlistRef} />
       <FooterSection />
