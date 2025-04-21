@@ -1,35 +1,26 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Sparkles, Rocket, BrainCircuit } from "lucide-react";
+import { SectionBadge } from "@/components/sections/SectionBadge";
 
 export const DesignPillarsSection = () => {
   return (
     <section 
       className="py-20 bg-gradient-to-b from-black to-gray-950 relative"
-      style={{ minHeight: 520 }}
+      style={{ minHeight: 500 }}
       data-section="3"
     >
-      {/* Vertical connecting line */}
-      <div className="container mx-auto px-4 max-w-6xl relative">
-        <div className="absolute left-0 md:left-16 top-0 bottom-0 w-px bg-gradient-to-b from-green-400 via-emerald-400 to-emerald-400 opacity-30" />
-        
-        <div className="flex flex-col md:flex-row gap-12">
-          {/* Left header: step marker */}
-          <div className="flex flex-col items-center w-full md:w-32 relative">
-            <div className="relative group animate-fade-in">
-              <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-lg group-hover:bg-emerald-500/30 transition-colors" />
-              <Badge
-                variant="outline"
-                className="relative z-10 h-12 w-12 text-2xl flex items-center justify-center p-0 font-bold border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-lg group-hover:scale-110 transition-transform"
-              >
-                3
-              </Badge>
-            </div>
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="grid grid-cols-12 gap-6">
+          {/* Left side with badge */}
+          <div className="col-span-12 md:col-span-1 flex flex-col items-center">
+            <SectionBadge number={3} color="emerald" />
           </div>
-
-          {/* Section content */}
-          <div className="flex-1">
+          
+          {/* Content area */}
+          <div className="col-span-12 md:col-span-11">
             <h2 className="text-3xl font-extrabold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-emerald-200 to-emerald-400 drop-shadow-md animate-fade-in">
               Design Pillars
             </h2>
