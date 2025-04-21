@@ -178,21 +178,20 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
 
   const missionAnalytics = getAllMissionAnalytics();
 
+  const isDisabled = isLoading;
+
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${isDisabled ? "pointer-events-none opacity-60" : ""}`}>
       <MissionSelectionGrid
         missions={MISSION_CARDS}
         selectedMission={selectedMission}
         onMissionSelect={setSelectedMission}
         missionAnalytics={getAllMissionAnalytics()}
       />
-
       {selectedMission && (
         <>
           <MissionRulesDisplay mission={selectedMission} />
-
           <ConfigWarningsAlert validationErrors={validationErrors} />
-
           <SimulationConfigTabPane
             config={config}
             onConfigChange={handleInputChange}

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { startSimulation, getExampleRules } from "@/lib/api";
@@ -8,14 +7,21 @@ import SimulationSetup from "@/components/simulation/SimulationSetup";
 import { recordMissionRun } from "@/lib/mission-analytics";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 import { MISSION_CARDS } from "@/lib/cards/mission-cards";
+import SimulationProgress from "@/components/simulation/SimulationProgress";
 
 const NewSimulation = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
+  // Track latest simulation ID and status
+  const [latestSimulationId, setLatestSimulationId] = useState<string | null>(null);
+  const [isFinished, setIsFinished] = useState(false);
+
   const runSimulation = async (config: SimulationConfig) => {
     try {
       setIsLoading(true);
+      setIsFinished(false);
+      setLatestSimulationId(null);
 
       const savedRules = localStorage.getItem("flomanji-rules");
       const rulesContent = savedRules || getExampleRules();
@@ -23,6 +29,7 @@ const NewSimulation = () => {
       if (!localStorage.getItem("openrouter-api-key")) {
         toast.error("Please set your OpenRouter API key in Settings first");
         setIsLoading(false);
+        setIsFinished(false);
         return;
       }
 
@@ -96,9 +103,13 @@ const NewSimulation = () => {
         }
 
         setIsLoading(false);
+        setIsFinished(true);
+        setLatestSimulationId(result.id);
 
         toast.success("Simulation completed successfully");
-        navigate(`/simulations/${result.id}`);
+
+        // Instead of navigating immediately, show progress panel for user to click "view results"
+        // navigate(`/simulations/${result.id}`);
       } else {
         toast.error("No characters selected");
         setIsLoading(false);
@@ -107,6 +118,13 @@ const NewSimulation = () => {
       console.error("Simulation failed:", error);
       toast.error(`Simulation failed: ${error}`);
       setIsLoading(false);
+      setIsFinished(false);
+    }
+  };
+
+  const handleGoToResults = () => {
+    if (latestSimulationId) {
+      navigate(`/simulations/${latestSimulationId}`);
     }
   };
 
@@ -115,7 +133,15 @@ const NewSimulation = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">New Simulation</h1>
       </div>
-      
+
+      {/* Simulation progress + user can click through to results */}
+      <SimulationProgress 
+        isRunning={isLoading}
+        finished={isFinished}
+        simulationId={latestSimulationId ?? undefined}
+        onGoToResults={handleGoToResults}
+      />
+
       <SimulationSetup 
         onStartSimulation={runSimulation}
         isLoading={isLoading}
