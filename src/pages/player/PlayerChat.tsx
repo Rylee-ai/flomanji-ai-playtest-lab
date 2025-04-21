@@ -22,10 +22,84 @@ const PlayerChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
+  // Conversation context tracking to avoid repetitive responses
+  const [conversationContext, setConversationContext] = useState<Set<string>>(new Set());
+  
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Helper function to generate appropriate AI responses based on user input
+  const generateAIResponse = (userMessage: string): string => {
+    // Track the type of query to avoid repetition
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // General game explanation request
+    if (lowerMessage.includes("how to play") || lowerMessage.includes("explain") || 
+        lowerMessage.includes("tell me about") || 
+        (lowerMessage.includes("great") && lowerMessage.includes("do that"))) {
+      
+      // Check if we've already explained the basics
+      if (conversationContext.has("basics_explained")) {
+        // If requested to go deeper after initial explanation
+        return `Let's dive deeper into Flomanji gameplay:
+
+1. **Heat Management**: Heat represents the mounting danger in the game. It increases when you encounter hazards or spend too much time in dangerous regions. At Heat 9, all players gain +1 Weirdness each round, and at Heat 10, you lose the game!
+
+2. **Character Abilities**: Each character has unique abilities tied to their role. For example, the Scientist can analyze weird phenomena, while the Athlete excels at physical challenges.
+
+3. **Stat Checks**: When facing challenges, you'll roll 2d6 and add your relevant stat:
+   - Brawn: Physical strength and endurance
+   - Moxie: Speed, reflexes, and determination
+   - Charm: Social influence and persuasion
+   - Grit: Mental fortitude and resolve
+   - Weird Sense: Perception of the supernatural
+
+4. **Action Economy**: On your turn, you have 2 actions from:
+   - Move: Travel to adjacent regions
+   - Use Gear: Employ items from your inventory
+   - Interact: Engage with NPCs or objects
+   - Team-Up: Help another player
+   - Rest: Recover 1 Health or clear 1 Weirdness
+   - Mission: Progress toward objectives
+
+Would you like to know about specific mechanics like combat, region exploration, or treasure cards?`;
+      } else {
+        // First time explaining the basics
+        setConversationContext(prev => new Set([...prev, "basics_explained"]));
+        return `Flomanji is a semi-cooperative survival horror card-and-dice adventure game set in a heightened version of 1987 Florida. Here's how to play:
+
+1. **Core Objective**: Work together to complete mission objectives while managing rising Heat (danger level) and avoiding Weirdness (supernatural corruption).
+
+2. **Characters**: Each player controls a character with unique stats (Brawn, Moxie, Charm, Grit, Weird Sense) and special abilities.
+
+3. **Gameplay Loop**:
+   - Take turns performing 2 actions per round
+   - Draw and resolve cards when exploring or facing hazards
+   - Roll dice (2d6 + relevant stat) for skill checks
+   - Manage resources (Health, Luck, Weirdness, Gear)
+
+4. **Key Mechanics**:
+   - Heat increases with time and hazards (lose at Heat 10)
+   - Weirdness builds from exposure to supernatural elements
+   - Collecting gear and treasures improves your chances
+   - Characters can use Luck points to reroll dice
+
+Would you like me to explain any specific aspect in more detail?`;
+      }
+    }
+    
+    // Default response if no specific pattern is matched
+    return `I understand you're asking about "${userMessage}". As your Game Master, I'll help guide you through Flomanji.
+
+Based on your question, I'd recommend focusing on:
+1. Understanding the four main response options to hazards: Fight (Brawn), Flee (Moxie), Negotiate (Charm), or Outsmart (Weird Sense).
+2. Managing your Heat level - each region and encounter potentially raises it.
+3. Using your character's unique abilities and starter gear effectively.
+
+Is there a specific aspect of gameplay you'd like to explore further?`;
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,10 +119,12 @@ const PlayerChat = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Mock response - in production, this would be a real API call
+      // Generate contextually appropriate response
+      const responseContent = generateAIResponse(userMessage);
+      
       const aiResponse = {
         role: 'ai' as const,
-        content: `I understand you're asking about "${userMessage}". As a Game Master, I'll help guide you through the Flomanji experience. We're still in development phase, but I'd be happy to explain the core concepts of heat management, objectives, and character abilities.`
+        content: responseContent
       };
       
       setMessages(prev => [...prev, aiResponse]);
