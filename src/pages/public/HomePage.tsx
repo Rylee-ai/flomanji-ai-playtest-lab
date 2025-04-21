@@ -10,6 +10,9 @@ import { WaitlistSignupSection } from "./sections/WaitlistSignupSection";
 import { FooterSection } from "./sections/FooterSection";
 
 const HomePage = () => {
+  // Add debugging to confirm correct rendering
+  console.log("HomePage rendering");
+  
   const waitlistRef = useRef<HTMLDivElement>(null);
 
   const scrollToWaitlist = () => {
