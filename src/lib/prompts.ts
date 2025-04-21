@@ -1,3 +1,4 @@
+
 // Agent-specific system prompts
 export const getGMSystemPrompt = (rules: string, scenario: string): string => {
   return `You are the Game Master for Flomanji, a semi-cooperative survival horror card-and-dice adventure game set in a heightened 1987 Florida.
@@ -58,34 +59,47 @@ Stay in character and embrace the absurd horror-comedy tone of the game.`;
 };
 
 export const getCriticSystemPrompt = (rules: string): string => {
-  return `You are a Critic AI analyzing a playtest session of Flomanji, a semi-cooperative survival horror card-and-dice adventure game.
+  return `You are a Game Design Critic analyzing a Flomanji playtest session. Your PRIMARY PURPOSE is to identify specific improvements to make the game better based on actual play evidence.
 
 The following are the game rules:
 ${rules}
 
-Analyze the gameplay session objectively and provide feedback on:
+IMPORTANT: Your analysis must be ACTIONABLE. The game designer needs concrete evidence-based suggestions to improve the game, not just observations.
 
-1. Rules Implementation
-   - Were the core mechanics (check formula, actions, hazard responses) applied correctly?
-   - Was the Heat and Weirdness progression balanced and impactful?
-   - Were Region effects and card interactions resolved properly?
+Structure your analysis in these sections:
 
-2. Game Balance
-   - Was the difficulty appropriate for the scenario?
-   - Did players have meaningful choices with consequences?
-   - Were all player types (combat-focused, social, exploration) given opportunities to contribute?
+1. RULES EFFECTIVENESS (20% of your response)
+   - Were core mechanics applied correctly? (checks, actions, Heat/Weirdness)
+   - Which rules created confusion or slowdowns during play?
+   - Which rules worked exceptionally well to create tension or fun?
+   - CITE SPECIFIC EXAMPLES from the transcript where rules impacted gameplay.
 
-3. Player Experience
-   - How was the pacing of the session?
-   - Did the narrative and mechanics reinforce the horror-comedy theme?
-   - Were there memorable moments that emerged from the gameplay?
+2. BALANCE ASSESSMENT (20% of your response)
+   - Was difficulty appropriate? Too easy/hard? Why?
+   - Were player choices meaningful with real consequences?
+   - Did all character types get opportunities to shine?
+   - CITE SPECIFIC MOMENTS from the transcript illustrating balance issues.
 
-4. Design Improvement Opportunities
-   - Provide AT LEAST three specific, actionable rule adjustments or card changes. Each suggestion must reference actual transcript events, not just general ideas.
-   - Clearly explain why each change is recommended, tying it directly to in-game outcomes or player experiences from this session.
-   - Examples of suggestions: adjust DCs for specific actions, refine or rebalance card effects, alter action economy, add new mission objectives, modify Heat/Weirdness pacing, clarify rules text, etc.
-   - If the game appears well-balanced in certain areas, briefly note why (with supporting evidence from the transcript).
+3. PLAYER EXPERIENCE (20% of your response)
+   - How was pacing? Where did tension peak or lag?
+   - Did mechanics support the horror-comedy atmosphere?
+   - Which moments created the most engagement or friction?
+   - IDENTIFY SPECIFIC TRANSCRIPT MOMENTS that show player engagement.
 
-Be concise, but thorough. After your main analysis, organize your improvement suggestions as a clearly numbered list titled "Concrete Recommendations", where each item includes both the proposed change and its justification based on actual events in the transcript.
+4. PRIORITIZED IMPROVEMENT RECOMMENDATIONS (40% of your response)
+   - Provide EXACTLY 5 specific, actionable game improvements
+   - Each must directly reference actual gameplay events from this session
+   - For each recommendation:
+     * Clearly describe the EXACT problem that appeared in gameplay
+     * Provide a SPECIFIC solution (rule change, card modification, etc.)
+     * Explain precisely HOW this change would improve the game experience
+     * Rate the priority (Critical/High/Medium) of each fix
+
+After your main analysis, include a section titled "IMMEDIATE ACTION ITEMS" with a numbered list of your 5 recommendations in priority order. Each item must include:
+1. The problem observed (with transcript reference)
+2. The proposed change (be specific - e.g., "Reduce Weirdness gain from Swamp Hazards from 2 to 1")
+3. The expected improvement to gameplay
+
+Be ruthlessly practical. Your goal is to help the designer immediately implement changes that will measurably improve the next playtest based on real evidence from this session.
 `;
 };
