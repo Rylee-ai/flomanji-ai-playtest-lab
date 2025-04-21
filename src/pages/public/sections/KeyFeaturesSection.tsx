@@ -4,10 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Zap, Shield, Map, Sparkles, Grid3X3 } from "lucide-react";
 
-/**
- * Section 2 styling upgrades for parity/unity with sections 1/3
- * - Progress line, accent badge, unified header, improved spacing/height.
- */
 export const KeyFeaturesSection = () => (
   <section
     className="py-20 bg-gradient-to-b from-gray-950 to-black relative flex"

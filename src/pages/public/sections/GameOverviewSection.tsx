@@ -5,11 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronRight, Sparkles, Zap, Map } from "lucide-react";
 import { Link } from "react-router-dom";
 
-/**
- * Polished for full visual unity with Key Features and Design Pillars (steps 2/3).
- * - Step marker, progress line, and grid alignment unified.
- * - Header spacing, card layout, and proportions match adjacent sections.
- */
 export const GameOverviewSection = () => (
   <section
     className="py-20 bg-gradient-to-b from-black to-gray-950 relative flex"
