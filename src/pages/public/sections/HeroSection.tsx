@@ -16,25 +16,31 @@ export const HeroSection = ({
   scrollToWaitlist: () => void;
 }) => (
   <section
-    className="relative min-h-[75vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden"
+    className="relative min-h-[75vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden bg-black"
     style={{
-      backgroundImage: `
-        linear-gradient(to top, rgba(10,10,20,0.86) 8%, rgba(10,10,20,0.60) 45%, rgba(10,10,20,0.13) 90%, rgba(0,0,0,0.00) 100%),
-        url('/lovable-uploads/52fa03b2-c987-4f76-b147-53af093c109d.png')
-      `,
+      backgroundImage: "url('/lovable-uploads/52fa03b2-c987-4f76-b147-53af093c109d.png')",
       backgroundPosition: "center bottom",
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
     }}
     aria-label="Flomanji - Gator sunset hero background"
   >
+    {/* Apply a gradient overlay for text readability */}
+    <div 
+      className="absolute inset-0 z-0"
+      style={{
+        background: "linear-gradient(to top, rgba(10,10,20,0.86) 8%, rgba(10,10,20,0.60) 45%, rgba(10,10,20,0.13) 90%, rgba(0,0,0,0.00) 100%)",
+      }}
+      aria-hidden="true"
+    />
+
     {/* Ambient animated orange glow (subtle, loops) */}
     <div
       className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[16vw] max-w-4xl rounded-full blur-3xl opacity-60 animate-pulse"
       style={{
         background: "radial-gradient(ellipse at center, rgba(252,174,38,0.37) 0%, rgba(252,174,38,0.09) 70%, rgba(252,174,38,0) 100%)"
       }}
-      aria-hidden
+      aria-hidden="true"
     />
     {/* Extra orange sunset reflection shimmer */}
     <div
@@ -42,16 +48,16 @@ export const HeroSection = ({
       style={{
         background: "radial-gradient(ellipse at center, rgba(251,191,36,0.29) 0%, rgba(251,191,36,0.03) 80%)"
       }}
-      aria-hidden
+      aria-hidden="true"
     />
 
     {/* Dim overall dark veil for text contrast (gentler, topmost) */}
-    <div className="absolute inset-0 bg-black/[0.15] md:bg-black/[0.19] pointer-events-none"
-         aria-hidden
+    <div className="absolute inset-0 bg-black/[0.15] md:bg-black/[0.19] pointer-events-none z-10"
+         aria-hidden="true"
     />
 
     {/* Main content */}
-    <div className="relative z-10 container mx-auto px-4 md:px-8 max-w-6xl">
+    <div className="relative z-20 container mx-auto px-4 md:px-8 max-w-6xl">
       <div
         className="
           bg-black/60 shadow-[0_2px_48px_0_rgba(0,0,0,0.4)]
