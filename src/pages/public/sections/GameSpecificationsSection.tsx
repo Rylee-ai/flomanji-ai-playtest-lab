@@ -5,7 +5,7 @@ import { REGION_CARDS } from "@/lib/cards/region-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
-import { square, card, squareCheck, squareX, rectangleVertical } from "lucide-react";
+import { Square, Card, SquareCheck, SquareX, RectangleVertical } from "lucide-react";
 
 const cardBg = "/lovable-uploads/b36d25ce-1de9-4d8a-bea8-c9b40cfee954.png";
 
@@ -13,25 +13,25 @@ export const GameSpecificationsSection = () => {
   // Prepare info for each category of card
   const breakdown = [
     {
-      icon: <rectangleVertical size={18} className="opacity-70" />,
+      icon: <RectangleVertical size={18} className="opacity-70" />,
       category: "Region Cards",
       count: REGION_CARDS.length ?? 38,
       description: "Unique locations across Flomanji with distinct challenges and effects.",
     },
     {
-      icon: <card size={18} className="opacity-70" />,
+      icon: <Card size={18} className="opacity-70" />,
       category: "Flomanjified Roles",
       count: FLOMANJIFIED_CARDS.length ?? 4,
       description: "Chaotic roles for eliminated players to continue the mayhem.",
     },
     {
-      icon: <squareCheck size={18} className="opacity-70" />,
+      icon: <SquareCheck size={18} className="opacity-70" />,
       category: "Core Chaos Cards",
       count: CHAOS_CARDS.length ?? 15,
       description: "Global events that increase Heat and challenge all players.",
     },
     {
-      icon: <square size={18} className="opacity-70" />,
+      icon: <Square size={18} className="opacity-70" />,
       category: "Character Types",
       count: PLAYER_CHARACTER_CARDS.length ?? 5,
       description: "Unique archetypes with special abilities and starting stats.",
