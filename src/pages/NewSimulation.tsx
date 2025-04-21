@@ -15,7 +15,7 @@ const NewSimulation = () => {
   const runSimulation = async (config: SimulationConfig) => {
     try {
       setIsLoading(true);
-      
+
       const savedRules = localStorage.getItem("flomanji-rules");
       const rulesContent = savedRules || getExampleRules();
 
@@ -25,35 +25,43 @@ const NewSimulation = () => {
         return;
       }
 
-      // Ensure we're using consistent character data from PLAYER_CHARACTER_CARDS
+      // Ensure consistent character data from PLAYER_CHARACTER_CARDS
       if (config.characters && config.characters.length > 0) {
-        // Map selected character IDs to full character objects
-        const selectedCharacterCards = config.characters.map(id => 
+        // Grab the actual character cards
+        const selectedCharacterCards = config.characters.map(id =>
           PLAYER_CHARACTER_CARDS.find(card => card.id === id)
         ).filter(Boolean);
-        
-        // Create proper FlomanjiCharacters from PlayerCharacterCards
-        const fullCharacters = selectedCharacterCards.map(card => ({
-          id: card.id,
-          name: card.name,
-          role: card.role,
-          stats: card.stats,
-          ability: card.ability,
-          health: card.health,
-          weirdness: card.weirdness,
-          luck: card.luck,
-          starterGear: card.starterGear,
-        }));
-        
-        // Update config with complete character information
+
+        // -- Flomanji Rulebook Character Setup: Health, Luck, Gear -----------------------
+        //  Health: Use the value defined on card (usually 5), no more than max allowed.
+        //  Luck: Sum stats, halve and round up. All stats available since these are player cards.
+        //  Gear: Use starterGear as copy (no mutation).
+        //  Weirdness: Start at 0, per rulebook.
+        // ------------------------------------------------------------------------------
+        const fullCharacters = selectedCharacterCards.map(card => {
+          const statTotal = Object.values(card.stats).reduce((sum, stat) => sum + Number(stat), 0);
+          return {
+            id: card.id,
+            name: card.name,
+            role: card.role,
+            stats: card.stats,
+            ability: card.ability,
+            health: card.health,
+            weirdness: 0,
+            // Luck is half total stats, rounded up (Players Guide §2.6)
+            luck: Math.ceil(statTotal / 2),
+            starterGear: [...(card.starterGear || [])]
+          }
+        });
+
+        // Build simulation config with actual character data for game state use
         const simulationConfig = { ...config, fullCharacters };
-        
-        // Run the simulation with complete character data
+
+        // Run the simulation
         const result = await startSimulation(simulationConfig, rulesContent);
-        
-        // Record mission run if a mission ID was provided
+
+        // Record mission run if applicable; per MissionRunData, use character IDs only
         if (config.missionId) {
-          // Create minimal run data from simulation result
           const runData = {
             id: result.id,
             timestamp: result.timestamp,
@@ -61,29 +69,27 @@ const NewSimulation = () => {
             completed: result.missionOutcome === 'success',
             objectivesCompleted: result.keyEvents?.filter(e => e.description.includes('objective')).map(e => e.description) || [],
             rounds: result.rounds,
-            characters: fullCharacters,
-            finalHeatLevel: config.startingHeat || 0, // This is an approximation since we don't track heat in the result yet
+            // Only IDs for analytics, NOT full objects
+            characters: config.characters,
+            finalHeatLevel: config.startingHeat || 0,
             keyEvents: result.keyEvents?.map(e => ({
               round: e.round,
               event: e.description,
               impact: e.description
             })) || []
           };
-          
-          // Record the run
+
           recordMissionRun(runData);
         }
-        
+
         setIsLoading(false);
-        
+
         toast.success("Simulation completed successfully");
         navigate(`/simulations/${result.id}`);
       } else {
-        // If no characters were selected, use the standard simulation approach
+        // If no characters were selected, use default simulation logic (should never trigger now)
         const result = await startSimulation(config, rulesContent);
-        
         if (config.missionId) {
-          // Similar run data collection as above
           const runData = {
             id: result.id,
             timestamp: result.timestamp,
@@ -99,10 +105,9 @@ const NewSimulation = () => {
               impact: e.description
             })) || []
           };
-          
+
           recordMissionRun(runData);
         }
-        
         setIsLoading(false);
         toast.success("Simulation completed successfully");
         navigate(`/simulations/${result.id}`);

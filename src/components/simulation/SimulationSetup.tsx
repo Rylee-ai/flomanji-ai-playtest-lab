@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,6 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
     missionType: "exploration"
   });
 
-  // Update config when mission changes
   React.useEffect(() => {
     if (selectedMission) {
       setConfig(prev => ({
@@ -57,47 +55,41 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
 
   const handlePlayerCountChange = (value: number) => {
     handleInputChange("players", value);
-    // Trim excess characters if player count decreases
     if (selectedCharacters.length > value) {
       setSelectedCharacters(prev => prev.slice(0, value));
     }
   };
 
   const handleStartSimulation = () => {
-    // Set mission ID in config
+    const playersSelected = selectedCharacters.length;
     const simulationConfig: SimulationConfig = {
       ...config,
       missionId: selectedMission.id,
-      characters: selectedCharacters
+      characters: selectedCharacters,
+      missionType: playersSelected === 1 ? "solo" : config.missionType
     };
-    
-    // Validate config
+
     if (!selectedMission) {
       toast.error("Please select a mission");
       return;
     }
-    
     if (selectedCharacters.length === 0) {
       toast.error("Please select at least one character");
       return;
     }
-    
-    // Adjust player count to match character count
     if (selectedCharacters.length !== config.players) {
       simulationConfig.players = selectedCharacters.length;
     }
-    
+
     onStartSimulation(simulationConfig);
   };
 
-  // Get analytics data for missions
   const missionAnalytics = getAllMissionAnalytics();
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {MISSION_CARDS.map((mission) => {
-          // Find analytics for this mission
           const analytics = missionAnalytics.find(a => a.missionId === mission.id);
           
           return (
@@ -172,7 +164,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
                     selectedCharacters={selectedCharacters}
                     onCharacterSelect={handleCharacterSelect}
                     onCharacterDeselect={handleCharacterDeselect}
-                    maxCharacters={config.players || 4}
+                    maxCharacters={config.players || 6}
                   />
                 </TabsContent>
                 

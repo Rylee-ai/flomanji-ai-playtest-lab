@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,12 +50,12 @@ const BasicSettings = ({ config, onConfigChange, onPlayerCountChange }: BasicSet
             id="players"
             defaultValue={[config.players]}
             min={1}
-            max={4}
+            max={6}
             step={1}
             onValueChange={(value) => onPlayerCountChange(value[0])}
           />
           <p className="text-sm text-muted-foreground">
-            How many AI player characters to simulate (1-4).
+            How many AI player characters to simulate (1-6). If selecting 1, solo Automa is enabled.
           </p>
         </div>
       </div>

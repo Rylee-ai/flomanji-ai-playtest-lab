@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Check, Info } from "lucide-react";
 import {
@@ -31,7 +30,7 @@ const CharacterSelector = ({
   selectedCharacters,
   onCharacterSelect,
   onCharacterDeselect,
-  maxCharacters = 4,
+  maxCharacters = 6,
 }: CharacterSelectorProps) => {
   const handleCharacterToggle = (characterId: string) => {
     if (selectedCharacters.includes(characterId)) {
