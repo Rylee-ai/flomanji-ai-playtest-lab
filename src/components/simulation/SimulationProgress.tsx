@@ -2,7 +2,7 @@
 import React from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { LogOut, RefreshCw } from "lucide-react";
+import { LogOut, RefreshCw, AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface SimulationProgressProps {
@@ -40,7 +40,7 @@ const SimulationProgress: React.FC<SimulationProgressProps> = ({
       {error && (
         <Alert variant="destructive" className="max-w-xl">
           <AlertTitle className="flex items-center gap-2">
-            Simulation Error
+            <AlertCircle className="h-5 w-5" /> Simulation Error
           </AlertTitle>
           <AlertDescription className="mt-2">
             <p className="text-sm mb-3">{error}</p>

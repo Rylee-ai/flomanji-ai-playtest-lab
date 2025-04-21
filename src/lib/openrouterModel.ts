@@ -2,12 +2,15 @@
 import { supabase } from "@/integrations/supabase/client";
 
 let cachedModel: string | null = null;
-const defaultModel = "anthropic/claude-3-opus";
+const defaultModel = "google/gemini-pro";
 export const FALLBACK_MODELS = [
-  "anthropic/claude-3-opus",
-  "anthropic/claude-3-sonnet",
+  "google/gemini-pro",
   "anthropic/claude-3-haiku",
-  "openai/gpt-4-turbo"
+  "anthropic/claude-3-sonnet",
+  "anthropic/claude-3-opus",
+  "openai/gpt-4-turbo",
+  "meta-llama/llama-3-8b-instruct",
+  "mistralai/mistral-7b-instruct"
 ];
 
 export const getOpenRouterModel = async (): Promise<string> => {

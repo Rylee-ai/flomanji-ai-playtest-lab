@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { SimulationConfig } from "@/types";
 import { startSimulation, getExampleRules } from "@/lib/api";
