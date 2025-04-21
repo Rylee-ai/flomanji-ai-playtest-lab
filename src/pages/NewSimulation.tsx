@@ -29,8 +29,10 @@ const NewSimulation = () => {
       const simulationConfig = {
         ...config,
         characters: config.characters 
-          ? config.characters.map(id => PLAYER_CHARACTER_CARDS.find(char => char.id === id))
-              .filter(Boolean)
+          ? config.characters.map(id => {
+              const char = PLAYER_CHARACTER_CARDS.find(char => char.id === id);
+              return char;
+            }).filter(Boolean)
           : undefined
       };
       

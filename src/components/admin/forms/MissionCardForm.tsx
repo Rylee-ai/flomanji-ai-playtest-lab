@@ -4,7 +4,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessa
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { CardFormValues } from "../CardForm";
 import { Plus, Minus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
@@ -16,14 +16,22 @@ interface MissionCardFormProps {
 }
 
 export const MissionCardForm: React.FC<MissionCardFormProps> = ({ form }) => {
-  const { fields: objectiveFields, append: appendObjective, remove: removeObjective } = 
-    form.useFieldArray({ name: "objectives" });
+  const { control } = form;
   
-  const { fields: challengeFields, append: appendChallenge, remove: removeChallenge } = 
-    form.useFieldArray({ name: "challenges" });
+  const objectiveFields = useFieldArray({
+    control,
+    name: "objectives"
+  });
   
-  const { fields: phaseFields, append: appendPhase, remove: removePhase } = 
-    form.useFieldArray({ name: "phases" });
+  const challengeFields = useFieldArray({
+    control,
+    name: "challenges"
+  });
+  
+  const phaseFields = useFieldArray({
+    control,
+    name: "phases"
+  });
 
   return (
     <div className="space-y-4">

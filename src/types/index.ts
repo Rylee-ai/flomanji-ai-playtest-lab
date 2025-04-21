@@ -1,4 +1,3 @@
-
 // Agent types
 export type AgentRole = 'GM' | 'Player' | 'Critic';
 
@@ -76,7 +75,8 @@ export interface SimulationConfig {
   arcadeModule?: boolean;
   nightmareDifficulty?: boolean;
   competitiveMode?: boolean;
-  characters?: FlomanjiCharacter[];
+  missionId?: string;
+  characters?: string[]; // Changed from FlomanjiCharacter[] to string[] for character IDs
 }
 
 export interface SimulationResult {
