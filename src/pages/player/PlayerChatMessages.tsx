@@ -1,10 +1,17 @@
 
 import React, { useRef, useEffect } from "react";
 import PlayerMessageBubble from "./PlayerMessageBubble";
-import { PlayerMessage } from "@/types";
+
+interface Message {
+  id: string;
+  conversationId: string;
+  role: "ai" | "human";
+  content: string;
+  timestamp: string;
+}
 
 interface PlayerChatMessagesProps {
-  messages: PlayerMessage[];
+  messages: Message[];
   isLoading: boolean;
 }
 

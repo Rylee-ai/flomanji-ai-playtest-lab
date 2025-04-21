@@ -5,7 +5,7 @@
 export interface PlayerMessage {
   id: string;
   conversationId: string;
-  role: "human" | "ai" | "system";
+  role: "human" | "ai";
   content: string;
   timestamp: string;
 }

@@ -5,7 +5,7 @@ import { parseMarkdown } from "@/lib/utils";
 interface PlayerMessageBubbleProps {
   content: string;
   timestamp: string;
-  role: "ai" | "human" | "system";
+  role: "ai" | "human";
 }
 
 const PlayerMessageBubble: React.FC<PlayerMessageBubbleProps> = ({ content, timestamp, role }) => (
@@ -17,7 +17,7 @@ const PlayerMessageBubble: React.FC<PlayerMessageBubbleProps> = ({ content, time
           : "bg-muted rounded-tl-none dark:bg-slate-800"
       }`}
     >
-      {role === "ai" || role === "system" ? (
+      {role === "ai" ? (
         <div
           className="prose prose-sm dark:prose-invert max-w-none"
           dangerouslySetInnerHTML={{ __html: parseMarkdown(content) }}
