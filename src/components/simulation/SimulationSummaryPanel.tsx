@@ -78,31 +78,31 @@ const SimulationSummaryPanel = ({ simulation }: SimulationSummaryPanelProps) => 
   return (
     <Card className="mb-6">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl">{simulation.scenario}</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-xl text-gray-200">{simulation.scenario}</CardTitle>
+        <CardDescription className="text-gray-400">
           Run on {formatDate(simulation.timestamp)} • {simulation.rounds} rounds
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <h4 className="text-sm font-semibold mb-2">Mission Details</h4>
+            <h4 className="text-sm font-semibold mb-2 text-gray-300">Mission Details</h4>
             <div className="space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Type:</span>
-                <span>{simulation.config?.missionType || "Standard"}</span>
+                <span className="text-gray-500">Type:</span>
+                <span className="text-gray-200">{simulation.config?.missionType || "Standard"}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Region:</span>
-                <span>{simulation.config?.extractionRegion || "Unknown"}</span>
+                <span className="text-gray-500">Region:</span>
+                <span className="text-gray-200">{simulation.config?.extractionRegion || "Unknown"}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Heat Level:</span>
-                <span>Start: {simulation.config?.startingHeat || 0}, Per Round: +{simulation.config?.heatPerRound || 1}</span>
+                <span className="text-gray-500">Heat Level:</span>
+                <span className="text-gray-200">Start: {simulation.config?.startingHeat || 0}, Per Round: +{simulation.config?.heatPerRound || 1}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Difficulty:</span>
-                <span>
+                <span className="text-gray-500">Difficulty:</span>
+                <span className="text-gray-200">
                   {simulation.config?.nightmareDifficulty ? "Nightmare" : "Standard"}
                   {simulation.config?.arcadeModule ? " (Arcade Mode)" : ""}
                   {simulation.config?.competitiveMode ? " (Competitive)" : ""}
@@ -113,26 +113,26 @@ const SimulationSummaryPanel = ({ simulation }: SimulationSummaryPanelProps) => 
           </div>
           
           <div>
-            <h4 className="text-sm font-semibold mb-2">Players ({simulation.characters?.length || 0})</h4>
+            <h4 className="text-sm font-semibold mb-2 text-gray-300">Players ({simulation.characters?.length || 0})</h4>
             <div className="space-y-1">
               {simulation.characters ? (
                 simulation.characters.map((character: FlomanjiCharacter, index: number) => (
                   <div key={index} className="flex items-center gap-2 text-sm">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs text-gray-400">
                       P{index + 1}
                     </Badge>
-                    <span>{character.name}</span>
-                    <span className="text-xs text-muted-foreground">({character.role})</span>
+                    <span className="text-gray-200">{character.name}</span>
+                    <span className="text-xs text-gray-500">({character.role})</span>
                   </div>
                 ))
               ) : (
-                <span className="text-sm text-muted-foreground">No character information available</span>
+                <span className="text-sm text-gray-500">No character information available</span>
               )}
             </div>
           </div>
           
           <div>
-            <h4 className="text-sm font-semibold mb-2">Mission Outcome</h4>
+            <h4 className="text-sm font-semibold mb-2 text-gray-300">Mission Outcome</h4>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Badge variant={missionOutcome.toLowerCase().includes("success") ? "success" : "destructive"}>
@@ -140,19 +140,19 @@ const SimulationSummaryPanel = ({ simulation }: SimulationSummaryPanelProps) => 
                 </Badge>
               </div>
               {gameOverReason && (
-                <div className="text-sm text-muted-foreground mt-1">
+                <div className="text-sm text-gray-400 mt-1">
                   Reason: {gameOverReason}
                 </div>
               )}
               {simulation.keyEvents && simulation.keyEvents.length > 0 && (
                 <div className="mt-2">
-                  <span className="text-xs font-semibold block mb-1">Key Events:</span>
+                  <span className="text-xs font-semibold block mb-1 text-gray-300">Key Events:</span>
                   <ul className="text-xs space-y-1">
                     {simulation.keyEvents.slice(0, 3).map((event, index) => (
-                      <li key={index} className="text-muted-foreground">{event}</li>
+                      <li key={index} className="text-gray-500">{event}</li>
                     ))}
                     {simulation.keyEvents.length > 3 && (
-                      <li className="text-xs text-muted-foreground">+ {simulation.keyEvents.length - 3} more events</li>
+                      <li className="text-xs text-gray-500">+ {simulation.keyEvents.length - 3} more events</li>
                     )}
                   </ul>
                 </div>

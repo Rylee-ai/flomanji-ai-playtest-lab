@@ -66,24 +66,24 @@ const SimulationDetails = ({ simulation }: SimulationDetailsProps) => {
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid grid-cols-2 md:w-[400px]">
-          <TabsTrigger value="log">Simulation Log</TabsTrigger>
-          <TabsTrigger value="annotations">Notes & Annotations</TabsTrigger>
+          <TabsTrigger value="log" className="text-gray-300 data-[state=active]:text-white">Simulation Log</TabsTrigger>
+          <TabsTrigger value="annotations" className="text-gray-300 data-[state=active]:text-white">Notes & Annotations</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="log" className="p-4 border rounded-md mt-2">
+        <TabsContent value="log" className="p-4 border rounded-md mt-2 border-gray-800">
           <SimulationLogDisplay messages={simulation.log} showPrompts={showPrompts} />
         </TabsContent>
         
-        <TabsContent value="annotations" className="p-4 border rounded-md mt-2">
+        <TabsContent value="annotations" className="p-4 border rounded-md mt-2 border-gray-800">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Notes & Annotations</h3>
+            <h3 className="text-lg font-semibold text-gray-300">Notes & Annotations</h3>
             <Textarea
               value={annotations}
               onChange={(e) => setAnnotations(e.target.value)}
               placeholder="Add your notes about this simulation run..."
-              className="min-h-[200px]"
+              className="min-h-[200px] bg-gray-900 text-gray-300 border-gray-800"
             />
-            <Button onClick={handleSaveAnnotations}>Save Notes</Button>
+            <Button onClick={handleSaveAnnotations} variant="outline" className="text-gray-300 hover:text-white hover:border-white">Save Notes</Button>
           </div>
         </TabsContent>
       </Tabs>
