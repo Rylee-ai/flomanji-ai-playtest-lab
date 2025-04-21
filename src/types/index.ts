@@ -31,5 +31,7 @@ export * from './cards/region';
 export * from './cards/gear';
 export * from './cards/player-character';
 export * from './cards/hazard';
+
 // Export TreasureCard from its specific file to avoid duplicate exports
-export { TreasureCard } from './cards/treasure';
+// Using "export type" syntax as required by isolatedModules
+export type { TreasureCard } from './cards/treasure';
