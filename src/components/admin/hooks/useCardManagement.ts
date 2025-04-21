@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CardType, GameCard } from "@/types/cards";
 import { toast } from "sonner";
@@ -43,7 +42,9 @@ export const useCardManagement = () => {
   };
 
   const handleEditCard = (card: GameCard) => {
+    console.log("Editing card:", card); // Added for debugging
     setEditingCard(card);
+    setActiveTab(card.type as CardType);
     setIsFormOpen(true);
   };
 

@@ -10,8 +10,11 @@ import { ChaosCard } from "@/types/cards/chaos";
 import { FlomanjifiedRoleCard } from "@/types/cards/flomanjified";
 import { SecretObjectiveCard, AutomaCard } from "@/types/cards";
 import { PlayerCharacterCard } from "@/types/cards/player-character";
+import { MissionSheet } from "@/types/cards/mission";
 
 export const useCardForm = (initialData?: GameCard) => {
+  console.log("Initial form data:", initialData); // Added for debugging
+  
   const form = useForm<CardFormValues>({
     defaultValues: initialData ? {
       name: initialData.name,
@@ -97,6 +100,8 @@ export const useCardForm = (initialData?: GameCard) => {
 };
 
 const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
+  console.log("Getting type-specific data for:", card.type); // Added for debugging
+  
   switch (card.type) {
     case "treasure":
     case "artifact": {
@@ -213,6 +218,38 @@ const getTypeSpecificData = (card: GameCard): Partial<CardFormValues> => {
         weirdness: playerCharCard.weirdness || 0,
         luck: playerCharCard.luck || 5,
         starterGear: playerCharCard.starterGear || []
+      };
+    }
+    case "mission": {
+      const missionCard = card as MissionSheet;
+      return {
+        hook: missionCard.hook || "",
+        mapLayout: missionCard.mapLayout || "",
+        startingHeat: missionCard.startingHeat || 0,
+        extractionRegion: missionCard.extractionRegion || "",
+        specialRules: missionCard.specialRules || [],
+        objectives: missionCard.objectives?.map(objective => ({
+          description: objective.description || "",
+          required: objective.required || false,
+          reward: objective.reward || "",
+          difficultyLevel: objective.difficultyLevel || 1,
+          completionCheck: objective.completionCheck || "",
+          regionId: objective.regionId || ""
+        })) || [],
+        challenges: missionCard.challenges?.map(challenge => ({
+          description: challenge.description || "",
+          frequency: challenge.frequency || "once",
+          trigger: challenge.trigger || "",
+          heatEffect: challenge.heatEffect || 0,
+          weirdnessEffect: challenge.weirdnessEffect || 0
+        })) || [],
+        scaling: {
+          small: missionCard.scaling?.small || "",
+          large: missionCard.scaling?.large || ""
+        },
+        recommendedPlayerCount: missionCard.recommendedPlayerCount || [],
+        estimatedDuration: missionCard.estimatedDuration || 0,
+        difficultyRating: missionCard.difficultyRating || 0
       };
     }
     default:
