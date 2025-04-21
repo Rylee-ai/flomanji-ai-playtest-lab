@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,7 +26,7 @@ const AgentBubble: React.FC<{ message: AgentMessage }> = ({ message }) => {
           <span className="text-xs opacity-70">{formatDate(message.timestamp)}</span>
         )}
       </div>
-      <p className="whitespace-pre-line">{message.message}</p>
+      <p className="whitespace-pre-line">{message.content}</p>
     </div>
   );
 };

@@ -272,7 +272,7 @@ When you venture into Flomanji's wilds, threats lurk everywhere. This chapter un
 **6.1  Hazard Card Anatomy**
 Every Hazard card shares a standard template:
 
-    ───────────────────────��─────────────
+    ────────────────────��──��─────────────
     CARD NAME    (Creature/Weather/Trap…)
     Type: Hazard · [Biome Icons]
     ─────────────────────────────────────
@@ -537,7 +537,7 @@ export const startSimulation = async (
   const timestamp = new Date().toISOString();
   
   // Initialize conversation log
-  const conversationLog = [];
+  const conversationLog: AgentMessage[] = [];
   
   // Prepare system prompts
   const gmSystemPrompt = getGMSystemPrompt(rulesContent, scenarioPrompt);
@@ -554,7 +554,7 @@ export const startSimulation = async (
     
     conversationLog.push({
       role: 'GM',
-      message: gmIntroMessage,
+      content: gmIntroMessage,
       timestamp: new Date().toISOString()
     });
     
@@ -564,7 +564,7 @@ export const startSimulation = async (
         // Convert the conversation log to messages format for this player
         const playerMessages = conversationLog.map(entry => ({
           role: entry.role === 'Player' ? 'assistant' : 'user',
-          content: `${entry.role}: ${entry.message}`
+          content: `${entry.role}: ${entry.content}`
         }));
         
         // Get player's action
@@ -575,14 +575,14 @@ export const startSimulation = async (
         
         conversationLog.push({
           role: 'Player',
-          message: playerResponse,
+          content: playerResponse,
           timestamp: new Date().toISOString()
         });
         
         // GM responds to this player
         const gmMessages = conversationLog.map(entry => ({
           role: entry.role === 'GM' ? 'assistant' : 'user',
-          content: `${entry.role}: ${entry.message}`
+          content: `${entry.role}: ${entry.content}`
         }));
         
         const gmResponse = await createChatCompletion(
@@ -592,7 +592,7 @@ export const startSimulation = async (
         
         conversationLog.push({
           role: 'GM',
-          message: gmResponse,
+          content: gmResponse,
           timestamp: new Date().toISOString()
         });
       }
@@ -603,7 +603,7 @@ export const startSimulation = async (
     if (enableCritic) {
       const criticSystemPrompt = getCriticSystemPrompt(rulesContent);
       const fullTranscript = conversationLog.map(entry => 
-        `${entry.role}: ${entry.message}`
+        `${entry.role}: ${entry.content}`
       ).join("\n\n");
       
       criticFeedback = await createChatCompletion(

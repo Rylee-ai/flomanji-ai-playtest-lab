@@ -6,7 +6,6 @@ export interface SimulationConfig {
   players?: number;
   enableCritic?: boolean;
   outputMode?: 'full' | 'summary' | 'narrative-only' | 'minimal';
-  // Missing properties from errors
   missionId?: string;
   missionType?: 'exploration' | 'escape' | 'escort' | 'collection' | 'boss' | 'solo';
   characters?: string[];
@@ -24,14 +23,9 @@ export interface SimulationResult {
   timestamp: string;
   scenario: string;
   rounds: number;
-  log: Array<{
-    role: string;
-    message: string;
-    timestamp: string;
-  }>;
+  log: AgentMessage[];
   criticFeedback?: string;
   annotations?: string;
-  // Additional properties from errors
   missionOutcome?: 'success' | 'partial' | 'failure';
   keyEvents?: Array<{
     round: number;
@@ -64,12 +58,17 @@ export interface CharacterStats {
   weirdSense: number;
 }
 
+export interface CharacterAbility {
+  name: string;
+  description: string;
+}
+
 export interface FlomanjiCharacter {
   id: string;
   name: string;
   role?: string;
   stats: CharacterStats;
-  ability?: string;
+  ability: CharacterAbility; // Changed from string to object
   health: number;
   weirdness: number;
   luck: number;
@@ -85,10 +84,12 @@ export interface SimulationSummary {
   rounds: number;
   missionType?: string;
   missionOutcome?: string;
+  result?: string; // Added missing property
+  notes?: string;  // Added missing property
 }
 
 export interface AgentMessage {
   role: string;
-  content: string;
+  content: string; // This is the standard property name
   timestamp?: string;
 }

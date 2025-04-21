@@ -1,5 +1,5 @@
 
-import { FlomanjiCharacter, CharacterStats } from "@/types";
+import { FlomanjiCharacter, CharacterStats, CharacterAbility } from "@/types";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 
 // Convert PlayerCharacterCards to FlomanjiCharacters
@@ -8,7 +8,7 @@ export const PREDEFINED_CHARACTERS: FlomanjiCharacter[] = PLAYER_CHARACTER_CARDS
   name: card.name,
   role: card.role,
   stats: card.stats,
-  ability: card.ability,
+  ability: card.ability as CharacterAbility,
   health: card.health,
   weirdness: card.weirdness,
   luck: card.luck,
