@@ -143,7 +143,7 @@ export const HeroSection = ({
             </div>
 
             {/* Info/Stats */}
-            <div className="flex flex-wrap gap-x-8 gap-y-5 md:gap-x-12 md:gap-y-8 text-sm md:text-base text-white/85 justify-center animate-fade-in max-w-xs mx-auto">
+            <div className="flex flex-row gap-x-10 text-sm md:text-base text-white/85 justify-center items-center animate-fade-in max-w-xs mx-auto">
               <div className="flex items-center">
                 <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
                   <Clock className="h-4 w-4 md:h-5 md:w-5 text-amber-300" />
