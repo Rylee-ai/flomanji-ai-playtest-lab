@@ -68,7 +68,7 @@ export const MISSION_CARDS: MissionSheet[] = [
       large: "4-6 players: +2 starting Heat; 3 Antidote Crates required"
     },
     recommendedPlayerCount: [2, 3, 4, 5, 6],
-    estimatedDuration: 6,
+    estimatedDuration: 8, // Increased from 6 to 8 for testing
     difficultyRating: 6
   },
   {
@@ -138,7 +138,7 @@ export const MISSION_CARDS: MissionSheet[] = [
       large: "4-6 players: Start Heat +3; 3 Pickers; heat tick +2 per End Phase"
     },
     recommendedPlayerCount: [2, 3, 4, 5, 6],
-    estimatedDuration: 5,
+    estimatedDuration: 8, // Increased from 5 to 8 for testing
     difficultyRating: 7
   },
   {
@@ -206,7 +206,7 @@ export const MISSION_CARDS: MissionSheet[] = [
       large: "4-6 players: Heat ticks +2; teens required = 4"
     },
     recommendedPlayerCount: [2, 3, 4, 5, 6],
-    estimatedDuration: 6,
+    estimatedDuration: 9, // Increased from 6 to 9 for testing
     difficultyRating: 6
   },
   {
@@ -274,7 +274,7 @@ export const MISSION_CARDS: MissionSheet[] = [
       large: "4-6 players: Heat ticks +2; add one extra gate repair task"
     },
     recommendedPlayerCount: [2, 3, 4, 5, 6],
-    estimatedDuration: 5,
+    estimatedDuration: 8, // Increased from 5 to 8 for testing
     difficultyRating: 5
   },
   {
@@ -343,7 +343,7 @@ export const MISSION_CARDS: MissionSheet[] = [
       large: "4-6 players: Start Heat +5; three Relics required; storm wind +2 Heat per Chaos"
     },
     recommendedPlayerCount: [2, 3, 4, 5, 6],
-    estimatedDuration: 6,
+    estimatedDuration: 10, // Increased from 6 to 10 for testing
     difficultyRating: 8
   }
 ];

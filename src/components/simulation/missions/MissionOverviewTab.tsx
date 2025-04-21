@@ -46,7 +46,12 @@ const MissionOverviewTab: React.FC<MissionOverviewTabProps> = ({ mission }) => (
       </div>
       <div>
         <h3 className="font-medium mb-1">Est. Duration</h3>
-        <p>{mission.estimatedDuration ? `${mission.estimatedDuration} rounds` : 'Unknown'}</p>
+        <div className="flex items-center gap-1">
+          <p>{mission.estimatedDuration ? `${mission.estimatedDuration} rounds` : 'Unknown'}</p>
+          {mission.estimatedDuration && mission.estimatedDuration < 8 && (
+            <Badge variant="outline" className="text-xs">Testing</Badge>
+          )}
+        </div>
       </div>
       <div>
         <h3 className="font-medium mb-1">Players</h3>

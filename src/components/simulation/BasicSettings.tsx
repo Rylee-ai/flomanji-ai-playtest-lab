@@ -36,12 +36,12 @@ const BasicSettings = ({ config, onConfigChange, onPlayerCountChange }: BasicSet
             id="rounds"
             defaultValue={[config.rounds]}
             min={1}
-            max={10}
+            max={15}
             step={1}
             onValueChange={(value) => onConfigChange("rounds", value[0])}
           />
           <p className="text-sm text-muted-foreground">
-            How many interaction rounds to simulate (1-10).
+            How many interaction rounds to simulate (1-15). Higher values provide more testing data.
           </p>
         </div>
 
