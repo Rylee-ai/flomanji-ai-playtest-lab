@@ -1,7 +1,8 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
-import { UserProfile } from "@/types";
+import { UserProfile, UserRole } from "@/types";
 import { toast } from "@/components/ui/use-toast";
 
 interface AuthContextType {
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // We need to create this table first - for now let's mock the profile data
       // In a real implementation, this would query the profiles table
-      let role = 'player'; // Default role
+      let role: UserRole = 'player'; // Default role with proper type annotation
       
       // Set admin privileges for specific email
       const userEmail = user?.email?.toLowerCase();
