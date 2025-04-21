@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Settings2, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { OpenRouterModelSelector } from "./OpenRouterModelSelector";
-import { getOpenRouterModel, setOpenRouterModel, getOpenRouterApiKey } from "@/lib/openrouter";
+import { getOpenRouterModel, setOpenRouterModel, getOpenRouterApiKey } from "@/lib/openrouterModel";
+import { getOpenRouterApiKey as fetchApiKeyOnly } from "@/lib/openrouterApiKey";
 
 export const ModelSettings = () => {
   const [selectedModel, setSelectedModel] = useState("");
@@ -19,7 +19,7 @@ export const ModelSettings = () => {
         setError(null);
         
         // First check if the API key exists
-        const apiKey = await getOpenRouterApiKey().catch(e => {
+        const apiKey = await fetchApiKeyOnly().catch(e => {
           console.error("Error getting API key:", e);
           return "";
         });

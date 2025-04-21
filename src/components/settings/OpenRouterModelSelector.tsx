@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { fetchOpenRouterModels } from "@/lib/openrouter";
+import { fetchOpenRouterModels } from "@/lib/openrouterModels";
 
 export interface OpenRouterModel {
   id: string;
@@ -83,7 +82,6 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
     }
   }, [modelSearchTerm, openRouterModels]);
 
-  // Safely handle model selection
   const handleModelChange = (value: string) => {
     try {
       console.log("Model selected:", value);

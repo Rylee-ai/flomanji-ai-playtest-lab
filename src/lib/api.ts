@@ -1,7 +1,7 @@
-
 import { SimulationConfig, SimulationResult } from "@/types";
 import { simulateRandomId } from "@/lib/utils";
-import { createChatCompletion } from "@/lib/openrouter";
+import { createChatCompletion } from "@/lib/openrouterChat";
+import { getExampleRules } from "./api";
 import { getGMSystemPrompt, getPlayerSystemPrompt, getCriticSystemPrompt } from "@/lib/prompts";
 import { saveSimulationResult, getSimulationSummaries, getSimulationById, updateSimulationAnnotations } from "@/lib/storage";
 
@@ -196,7 +196,7 @@ Below is the complete list of Region cards (see next page for full card text). U
 **Urban (6):** Ghost Mall · Abandoned Gas Station · Police Roadblock · Industrial Canal · Rooftop Helipad · Tourist Strip
 **Highway (5):** Mile‑Long Bridge · Rusted Traffic Jam · Rest‑Stop Diner · Decommissioned Tollbooth · Overturned Tanker Site
 **Forest (5):** Pine Barrens · Fire Tower Lookout · Lumber Mill Clearing · Hidden Bunker Entrance · Wolf Creek Campground
-**Exposed (4):** Sweltering Salt Flats · Sun‑baked Citrus Grove · Bleached Parking Lot · Flooded Farmland
+**Exposed (4):** Sweltering Salt Flats · Sun‑baked Citrus Grove �� Bleached Parking Lot · Flooded Farmland
 **Underground (4):** Toxic Sewer Junction · Cave of Echoes · Abandoned Subway Tunnel · Buried Research Vault
 Flip, explore, survive—and let no Region be safe.
 
@@ -273,7 +273,7 @@ When you venture into Flomanji's wilds, threats lurk everywhere. This chapter un
 **6.1  Hazard Card Anatomy**
 Every Hazard card shares a standard template:
 
-    ─────────────────────────────────────
+    ───────────────────────��─────────────
     CARD NAME    (Creature/Weather/Trap…)
     Type: Hazard · [Biome Icons]
     ─────────────────────────────────────

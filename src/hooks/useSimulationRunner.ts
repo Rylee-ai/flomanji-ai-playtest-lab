@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 import { SimulationConfig } from "@/types";
 import { startSimulation, getExampleRules } from "@/lib/api";
@@ -6,7 +5,7 @@ import { toast } from "sonner";
 import { recordMissionRun } from "@/lib/mission-analytics";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 import { MISSION_CARDS } from "@/lib/cards/mission-cards";
-import { clearOpenRouterCache } from "@/lib/openrouter";
+import { clearOpenRouterCache } from "@/lib/openrouterCache";
 
 /**
  * Hook for running a simulation and tracking its state/results.

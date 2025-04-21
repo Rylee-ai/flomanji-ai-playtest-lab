@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Key } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { getOpenRouterApiKey, setOpenRouterApiKey } from "@/lib/openrouter";
+import { getOpenRouterApiKey, setOpenRouterApiKey } from "@/lib/openrouterApiKey";
 
 export const ApiKeySettings = () => {
   const [apiKey, setApiKey] = useState("");
