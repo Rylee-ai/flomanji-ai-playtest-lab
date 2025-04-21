@@ -125,12 +125,6 @@ const AuthPage = () => {
                   Thank you for signing up! To complete your registration, please check your email and click the confirmation link to activate your account.
                 </p>
                 <Button
-                  className="w-full mb-3"
-                  onClick={() => navigate("/welcome")}
-                >
-                  Proceed to Welcome Page
-                </Button>
-                <Button
                   variant="outline"
                   className="w-full"
                   onClick={() => {
