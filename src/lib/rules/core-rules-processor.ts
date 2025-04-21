@@ -1,4 +1,3 @@
-
 import { FlomanjiCharacter } from "@/types";
 import { ActionType, ActionValidationResult, GameState, PlayerAction, CharacterStatus } from "@/types/game-state";
 import {
@@ -17,6 +16,7 @@ import {
   processRestAction,
   processMissionAction
 } from "./action-processors";
+import { checkWinLossConditions } from "./win-loss-conditions";
 
 /**
  * Core Rules Processor for Flomanji
@@ -237,57 +237,7 @@ export class FlomanjiRulesProcessor {
    * @returns Updated game state with game over flags if applicable
    */
   private checkWinLossConditions(gameState: GameState): GameState {
-    const newState = this.cloneGameState(gameState);
-    
-    // Check if all characters are disabled/transformed
-    const activeCharacters = newState.characters.filter(c => c.status === "active");
-    if (activeCharacters.length === 0) {
-      newState.gameOver = true;
-      newState.missionOutcome = "failure";
-      newState.gameOverReason = "All characters incapacitated";
-      return newState;
-    }
-    
-    // Check if maximum rounds have been reached
-    if (newState.currentTurn.turnNumber > newState.maxRounds) {
-      newState.gameOver = true;
-      newState.missionOutcome = "failure";
-      newState.gameOverReason = "Maximum rounds reached";
-      return newState;
-    }
-    
-    // Check mission objectives
-    const allRequiredCompleted = newState.objectives
-      .filter(obj => obj.required)
-      .every(obj => newState.completedObjectives.includes(obj.id));
-      
-    const anyOptionalCompleted = newState.objectives
-      .filter(obj => !obj.required)
-      .some(obj => newState.completedObjectives.includes(obj.id));
-    
-    // Full success: all required objectives completed
-    if (allRequiredCompleted) {
-      if (newState.missionType === "escape" && 
-          activeCharacters.some(c => c.position === newState.extractionRegion)) {
-        newState.gameOver = true;
-        newState.missionOutcome = "success";
-        newState.gameOverReason = "Objectives completed and reached extraction";
-      } else if (newState.missionType !== "escape") {
-        newState.gameOver = true;
-        newState.missionOutcome = "success";
-        newState.gameOverReason = "All required objectives completed";
-      }
-    } 
-    // Partial success: some optional objectives completed
-    else if (anyOptionalCompleted) {
-      if (newState.missionType === "escape" && 
-          activeCharacters.some(c => c.position === newState.extractionRegion)) {
-        newState.gameOver = true;
-        newState.missionOutcome = "partial";
-        newState.gameOverReason = "Reached extraction with partial objectives";
-      }
-    }
-    
-    return newState;
+    // Use the externalized win/loss checker
+    return checkWinLossConditions(gameState);
   }
 }
