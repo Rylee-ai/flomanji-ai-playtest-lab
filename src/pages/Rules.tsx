@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { toast } from "@/components/ui/sonner";
 import RulesViewer from "@/components/rules/RulesViewer";
 import RulesEditor from "@/components/rules/RulesEditor";
 import RulesUsage from "@/components/rules/RulesUsage";
+import RulesQuickReference from "@/components/rules/RulesQuickReference";
 import { getExampleRules } from "@/lib/api";
 
 const Rules = () => {
@@ -79,6 +79,7 @@ const Rules = () => {
           <TabsList>
             <TabsTrigger value="rules">Rules Content</TabsTrigger>
             <TabsTrigger value="usage">AI Usage</TabsTrigger>
+            <TabsTrigger value="reference">Quick Reference</TabsTrigger>
           </TabsList>
           
           <TabsContent value="rules">
@@ -101,6 +102,10 @@ const Rules = () => {
                 <RulesUsage />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="reference">
+            <RulesQuickReference />
           </TabsContent>
         </Tabs>
       )}
