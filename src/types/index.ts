@@ -1,21 +1,28 @@
+
 export interface FlomanjiCharacter {
+  id: string;
   name: string;
   role: string;
-  stats: {
-    brawn: number;
-    moxie: number;
-    charm: number;
-    grit: number;
-    weirdSense: number;
-  };
-  ability: {
-    name: string;
-    description: string;
-  };
+  stats: CharacterStats;
+  ability: CharacterAbility;
   health: number;
   weirdness: number;
   luck: number;
+  position?: string;
   starterGear?: string[];
+}
+
+export interface CharacterStats {
+  brawn: number;
+  moxie: number;
+  charm: number;
+  grit: number;
+  weirdSense: number;
+}
+
+export interface CharacterAbility {
+  name: string;
+  description: string;
 }
 
 export interface PlayerMessage {
@@ -33,10 +40,64 @@ export interface SimulationResult {
   keyEvents?: string[];
   timestamp: string;
   log: AgentMessage[];
+  rounds: number;
+  missionOutcome?: string;
+  config?: SimulationConfig;
+  characters?: FlomanjiCharacter[];
+  annotations?: string;
 }
 
 export interface AgentMessage {
   role: string;
   content: string;
   timestamp?: string;
+  metadata?: Record<string, any>;
+  playerIndex?: number;
+}
+
+export interface SimulationConfig {
+  scenarioPrompt?: string;
+  rounds?: number;
+  players?: number;
+  enableCritic?: boolean;
+  outputMode?: "full" | "summary";
+  startingHeat?: number;
+  heatPerRound?: number;
+  missionId?: string;
+  missionType?: string;
+  characters?: string[];
+  fullCharacters?: FlomanjiCharacter[];
+  extractionRegion?: string;
+  objectives?: any[];
+  nightmareDifficulty?: boolean;
+  arcadeModule?: boolean;
+  competitiveMode?: boolean;
+  secretTraitor?: boolean;
+}
+
+// Agent system types
+export type AgentRole = "GM" | "Player" | "Critic";
+
+export interface AgentConfig {
+  systemPrompt: string;
+  temperature: number;
+  verbose: boolean;
+  personality?: string;
+  skillLevel?: string;
+  meta?: boolean;
+  focus?: string;
+  detail?: string;
+  suggestions?: boolean;
+}
+
+// Auth related types
+export type UserRole = 'admin' | 'player' | 'moderator' | 'guest';
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  role: UserRole;
+  firstName: string;
+  lastName: string;
+  createdAt: string;
 }
