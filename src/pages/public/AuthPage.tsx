@@ -17,16 +17,16 @@ const AuthPage = () => {
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const from = location.state?.from?.pathname || "/";
-  
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
       const { error } = await signIn(email, password);
-      
+
       if (!error) {
         toast({
           title: "Welcome back!",
@@ -37,15 +37,15 @@ const AuthPage = () => {
       setIsLoading(false);
     }
   };
-  
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setSignupSuccess(false);
-    
+
     try {
       const { error } = await signUp(email, password);
-      
+
       if (!error) {
         setSignupSuccess(true);
       }
@@ -57,12 +57,12 @@ const AuthPage = () => {
   return (
     <div className="container max-w-md mx-auto py-12">
       <Card className="border-2">
-        <Tabs defaultValue="signin" defaultChecked={signupSuccess ? "signup" : "signin"} >
+        <Tabs defaultValue={signupSuccess ? "signup" : "signin"}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="signin">
             <form onSubmit={handleSignIn}>
               <CardHeader>
@@ -86,8 +86,8 @@ const AuthPage = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="signin-password">Password</Label>
-                    <Button 
-                      variant="link" 
+                    <Button
+                      variant="link"
                       className="p-0 h-auto text-xs text-muted-foreground"
                       type="button"
                       onClick={() => {
@@ -116,21 +116,28 @@ const AuthPage = () => {
               </CardFooter>
             </form>
           </TabsContent>
-          
+
           <TabsContent value="signup">
             {signupSuccess ? (
-              <div className="p-8 text-center">
-                <h2 className="text-2xl font-semibold mb-4">Account Created</h2>
-                <p className="mb-4 text-gray-300">
-                  Thank you for signing up! Please check your email to finalize your account setup.
+              <div className="p-8 text-center flex flex-col items-center">
+                <h2 className="text-2xl font-semibold mb-4">Account Created!</h2>
+                <p className="mb-6 text-gray-300">
+                  Thank you for signing up! To complete your registration, please check your email and click the confirmation link to activate your account.
                 </p>
-                <Button 
+                <Button
+                  className="w-full mb-3"
+                  onClick={() => navigate("/welcome")}
+                >
+                  Proceed to Welcome Page
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
                   onClick={() => {
                     setSignupSuccess(false);
                     setEmail("");
                     setPassword("");
-                  }} 
-                  className="w-full"
+                  }}
                 >
                   Back to Sign Up Form
                 </Button>
