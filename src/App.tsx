@@ -31,7 +31,6 @@ import HomePage from "./pages/public/HomePage";
 import AuthPage from "./pages/public/AuthPage";
 import WaitlistSignup from "./pages/public/WaitlistSignup";
 import NotFound from "./pages/NotFound";
-import FAQPage from "./pages/public/FAQPage";
 
 import { Suspense, useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
@@ -138,7 +137,6 @@ const App = () => {
                   />
                   <Route path="/waitlist" element={<WaitlistSignup />} />
                   <Route path="/gameplay" element={<Gameplay />} />
-                  <Route path="/faq" element={<FAQPage />} />
 
                   {/* New company pages */}
                   <Route path="/about" element={<About />} />

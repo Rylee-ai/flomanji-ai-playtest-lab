@@ -1,24 +1,18 @@
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { HeroSection } from "./sections/HeroSection";
 import { GameOverviewSection } from "./sections/GameOverviewSection";
 import { KeyFeaturesSection } from "./sections/KeyFeaturesSection";
 import { DesignPillarsSection } from "./sections/DesignPillarsSection";
 import { CallToActionSection } from "./sections/CallToActionSection";
+import { GameSpecificationsSection } from "./sections/GameSpecificationsSection";
 import { PreOrderSection } from "./sections/PreOrderSection";
 import { WaitlistSignupSection } from "./sections/WaitlistSignupSection";
 import { FooterSection } from "./sections/FooterSection";
 
+// Restoring the original 1-2-3 flow with the DesignPillarsSection as the third component
+
 const HomePage = () => {
-  // Add debugging to confirm correct rendering
-  console.log("HomePage rendering");
-  
-  useEffect(() => {
-    // Additional debug logs to verify rendering and component loading
-    console.log("HomePage mounted");
-    console.log("Card component status:", typeof Card !== 'undefined' ? 'loaded' : 'not loaded');
-  }, []);
-  
   const waitlistRef = useRef<HTMLDivElement>(null);
 
   const scrollToWaitlist = () => {
@@ -28,6 +22,7 @@ const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
       <HeroSection scrollToWaitlist={scrollToWaitlist} />
+      {/* Added IDs for anchor link targets */}
       <section id="overview"><GameOverviewSection /></section>
       <section id="features"><KeyFeaturesSection /></section>
       <section id="design-pillars"><DesignPillarsSection /></section>
@@ -41,6 +36,7 @@ const HomePage = () => {
         </a>
       </section>
       <CallToActionSection scrollToWaitlist={scrollToWaitlist} />
+      <section id="faq"><GameSpecificationsSection /></section>
       <PreOrderSection />
       <WaitlistSignupSection ref={waitlistRef} />
       <FooterSection />
