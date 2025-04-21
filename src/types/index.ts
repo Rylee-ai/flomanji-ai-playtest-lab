@@ -1,4 +1,3 @@
-
 import { MissionSheet } from "./cards/mission";
 
 export interface SimulationConfig {
@@ -54,28 +53,24 @@ export interface SimulationResult {
   timestamp: string;
   scenario: string;
   rounds: number;
+  expectedRounds?: number; // Added to track the originally requested number of rounds
   playerCount: number;
   log: AgentMessage[];
   criticFeedback: string;
   annotations: string;
-  config?: {
+  config: {
     scenario: string;
     rounds: number;
     playerCount: number;
-    characters: FlomanjiCharacter[];
+    characters: any[];
     enableCritic: boolean;
     outputMode: string;
     startingHeat: number;
     heatPerRound: number;
     extractionRegion: string;
     objectives: any[];
-    missionType?: string;
-    secretTraitor?: boolean;
-    arcadeModule?: boolean;
-    nightmareDifficulty?: boolean;
-    competitiveMode?: boolean;
   };
-  gameState?: {
+  gameState: {
     currentRound: number;
     heat: number;
     completedObjectives: string[];
@@ -89,11 +84,10 @@ export interface SimulationResult {
     regions: string[];
     currentRegion: string;
     activeHazards: string[];
-    rolls: {player: number, type: string, value: number, stat: string, result: string}[];
+    rolls: any[];
   };
-  characters?: FlomanjiCharacter[];
-  missionOutcome?: string;
-  keyEvents?: string[];
+  characters: any[];
+  missionOutcome?: string; // Added to explicitly track final outcome
 }
 
 export interface SimulationSummary {

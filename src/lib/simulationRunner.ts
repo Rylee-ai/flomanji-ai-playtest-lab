@@ -1,4 +1,3 @@
-
 import { SimulationConfig, AgentMessage, SimulationResult } from "@/types";
 import { simulateRandomId } from "@/lib/utils";
 import { createChatCompletion } from "@/lib/openrouterChat";
@@ -171,10 +170,14 @@ export const startSimulation = async (
       }
     });
 
+    // Track if game was ended early
+    let gameEndedEarly = false;
+    let gameEndReason = "";
+
     // Simulation loop
     for (let round = 0; round < rounds; round++) {
       simulationMeta.gameState.currentRound = round + 1;
-      console.log(`Starting round ${round + 1}`);
+      console.log(`Starting round ${round + 1} of ${rounds}`);
       
       // Potentially increase heat at start of round based on config
       if (heatPerRound > 0 && round > 0) {
@@ -235,7 +238,7 @@ export const startSimulation = async (
       
       // Each player takes their turn in this round
       for (let playerIdx = 0; playerIdx < actualPlayerCount; playerIdx++) {
-        console.log(`Processing player ${playerIdx + 1}'s turn`);
+        console.log(`Processing player ${playerIdx + 1}'s turn in round ${round + 1}`);
         
         // Format messages properly for the player without role repetition
         const playerMessages = conversationLog.map(entry => {
@@ -451,6 +454,9 @@ export const startSimulation = async (
         
         // Check for game end conditions
         if (simulationMeta.gameState.heat >= 10) {
+          gameEndedEarly = true;
+          gameEndReason = "heat-maximum";
+          
           conversationLog.push({
             role: 'GM',
             content: `[Game Over] Heat has reached ${simulationMeta.gameState.heat}, exceeding the maximum threshold of 10. The mission has failed.`,
@@ -479,6 +485,9 @@ export const startSimulation = async (
         }
         
         if (allPlayersTransformed) {
+          gameEndedEarly = true;
+          gameEndReason = "all-players-transformed";
+          
           conversationLog.push({
             role: 'GM',
             content: `[Game Over] All players have reached maximum Weirdness and have been transformed. The mission has failed.`,
@@ -498,7 +507,8 @@ export const startSimulation = async (
       }
       
       // Check if game ended during this round
-      if (conversationLog.some(entry => entry.metadata?.phase === "game-over")) {
+      if (gameEndedEarly) {
+        console.log(`Game ended early in round ${round + 1}. Reason: ${gameEndReason}`);
         break; // Exit the round loop
       }
       
@@ -533,6 +543,86 @@ export const startSimulation = async (
           gameState: {...simulationMeta.gameState}
         }
       });
+    }
+
+    // If we didn't reach the target number of rounds, add a note about early termination
+    if (!gameEndedEarly && simulationMeta.gameState.currentRound < rounds) {
+      conversationLog.push({
+        role: 'GM',
+        content: `[System Note] Simulation ended after ${simulationMeta.gameState.currentRound} rounds instead of the planned ${rounds} rounds. This may indicate an unexpected interruption in the simulation flow.`,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          roundNumber: simulationMeta.gameState.currentRound,
+          phase: "system-note",
+          heat: simulationMeta.gameState.heat,
+          gameState: {...simulationMeta.gameState}
+        }
+      });
+    }
+
+    // Final mission outcome determination if game didn't end early
+    if (!gameEndedEarly) {
+      // Determine mission success/failure based on objectives and heat
+      const requiredObjectives = config.objectives?.filter(o => o.required) || [];
+      const completedRequiredCount = simulationMeta.gameState.completedObjectives.length;
+      
+      if (requiredObjectives.length > 0 && completedRequiredCount >= requiredObjectives.length) {
+        // All required objectives completed
+        conversationLog.push({
+          role: 'GM',
+          content: `[Mission Complete] The team has successfully completed all required objectives with a final Heat level of ${simulationMeta.gameState.heat}.`,
+          timestamp: new Date().toISOString(),
+          metadata: {
+            roundNumber: simulationMeta.gameState.currentRound,
+            phase: "mission-complete",
+            outcome: "success",
+            heat: simulationMeta.gameState.heat,
+            gameState: {...simulationMeta.gameState}
+          }
+        });
+      } else if (simulationMeta.gameState.heat >= 8) {
+        // High heat but not quite game over
+        conversationLog.push({
+          role: 'GM',
+          content: `[Mission Complete] The team has escaped with high Heat (${simulationMeta.gameState.heat}), only narrowly avoiding disaster. This is considered a partial success.`,
+          timestamp: new Date().toISOString(),
+          metadata: {
+            roundNumber: simulationMeta.gameState.currentRound,
+            phase: "mission-complete",
+            outcome: "partial",
+            heat: simulationMeta.gameState.heat,
+            gameState: {...simulationMeta.gameState}
+          }
+        });
+      } else if (requiredObjectives.length > 0 && completedRequiredCount < requiredObjectives.length) {
+        // Failed to complete all required objectives
+        conversationLog.push({
+          role: 'GM',
+          content: `[Mission Complete] The team failed to complete all required objectives, completing only ${completedRequiredCount} of ${requiredObjectives.length} required tasks.`,
+          timestamp: new Date().toISOString(),
+          metadata: {
+            roundNumber: simulationMeta.gameState.currentRound,
+            phase: "mission-complete",
+            outcome: "failure",
+            heat: simulationMeta.gameState.heat,
+            gameState: {...simulationMeta.gameState}
+          }
+        });
+      } else {
+        // Default success case
+        conversationLog.push({
+          role: 'GM',
+          content: `[Mission Complete] The team has completed the mission with a final Heat level of ${simulationMeta.gameState.heat}.`,
+          timestamp: new Date().toISOString(),
+          metadata: {
+            roundNumber: simulationMeta.gameState.currentRound,
+            phase: "mission-complete",
+            outcome: "success",
+            heat: simulationMeta.gameState.heat,
+            gameState: {...simulationMeta.gameState}
+          }
+        });
+      }
     }
 
     // Generate critic feedback if enabled
@@ -570,19 +660,31 @@ export const startSimulation = async (
       );
     }
 
+    // Determine final mission outcome for result
+    let missionOutcome = "unknown";
+    const lastPhaseEvent = conversationLog
+      .filter(entry => entry.metadata?.phase === "game-over" || entry.metadata?.phase === "mission-complete")
+      .pop();
+      
+    if (lastPhaseEvent && lastPhaseEvent.metadata) {
+      missionOutcome = lastPhaseEvent.metadata.outcome as string || "unknown";
+    }
+
     // Create the simulation result with all metadata
     const result: SimulationResult = {
       id: simulationId,
       timestamp,
       scenario: scenarioPrompt,
-      rounds,
+      rounds: simulationMeta.gameState.currentRound, // Use actual rounds completed
+      expectedRounds: rounds, // Store the expected rounds
       playerCount: actualPlayerCount,
       log: conversationLog,
       criticFeedback,
       annotations: "",
       config: simulationMeta.config,
       gameState: simulationMeta.gameState,
-      characters: config.fullCharacters || []
+      characters: config.fullCharacters || [],
+      missionOutcome: missionOutcome
     };
 
     // Save to local storage
