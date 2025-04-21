@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
@@ -7,7 +8,9 @@ export const FooterSection = () => (
     <div className="container mx-auto px-4 max-w-6xl">
       <div className="flex flex-col md:flex-row justify-between mb-8">
         <div className="mb-8 md:mb-0">
-          <h3 className="text-xl font-bold text-amber-400 mb-3">FLOMANJI</h3>
+          <Link to="/" className="block">
+            <h3 className="text-xl font-bold text-amber-400 mb-3">FLOMANJI</h3>
+          </Link>
           <p className="text-gray-400 max-w-md text-sm">
             A deck-building survival adventure where the weird and wild collide in paradise.
           </p>
