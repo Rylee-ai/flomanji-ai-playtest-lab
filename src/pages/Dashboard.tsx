@@ -1,15 +1,24 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Gamepad2, BookOpen, Settings } from "lucide-react";
 import { getExampleRules } from "@/lib/api";
 import { parseMarkdown } from "@/lib/utils";
+import { getSimulationSummaries } from "@/lib/storage";
+import { SimulationSummary } from "@/types";
+import { formatDate } from "@/lib/utils";
 
 const Dashboard = () => {
+  const [simulations, setSimulations] = useState<SimulationSummary[]>([]);
   const rules = getExampleRules();
   const rulesHtml = parseMarkdown(rules.substring(0, 200) + "...");
+
+  useEffect(() => {
+    const loadedSimulations = getSimulationSummaries();
+    setSimulations(loadedSimulations);
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -88,9 +97,23 @@ const Dashboard = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-center text-muted-foreground py-12">
-            No simulations yet. Start your first simulation to see it here.
-          </p>
+          {simulations.length > 0 ? (
+            <div className="space-y-4">
+              {simulations.slice(0, 3).map((simulation) => (
+                <div key={simulation.id} className="p-4 border border-gray-800 rounded-lg">
+                  <div className="flex justify-between mb-2">
+                    <h3 className="font-medium text-gray-300">{simulation.scenario}</h3>
+                    <span className="text-xs text-gray-500">{formatDate(simulation.timestamp)}</span>
+                  </div>
+                  <p className="text-sm text-gray-400 line-clamp-2">{simulation.result}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 py-12">
+              No simulations yet. Start your first simulation to see it here.
+            </p>
+          )}
         </CardContent>
         <CardFooter>
           <Button variant="outline" asChild className="w-full">

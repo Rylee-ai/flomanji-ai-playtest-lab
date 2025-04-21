@@ -24,13 +24,22 @@ const SimulationLogDisplay = ({ messages, showPrompts }: SimulationLogDisplayPro
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case "GM":
-        return "default";
+        return "default"; // Keep default styling but we'll ensure text is visible
       case "Player":
         return "outline";
       case "Critic":
         return "secondary";
       default:
         return "outline";
+    }
+  };
+
+  const getRoleTextColor = (role: string) => {
+    switch (role) {
+      case "GM":
+        return "text-gray-800"; // Darker text for GM to improve contrast
+      default:
+        return "text-gray-300"; // Keep other roles' text color
     }
   };
 
@@ -61,7 +70,7 @@ const SimulationLogDisplay = ({ messages, showPrompts }: SimulationLogDisplayPro
                 </button>
               </CollapsibleTrigger>
               
-              <Badge variant={getRoleBadgeVariant(message.role)} className="text-gray-300">
+              <Badge variant={getRoleBadgeVariant(message.role)} className={getRoleTextColor(message.role)}>
                 {message.role}
                 {message.role === "Player" && message.playerIndex !== undefined && ` ${message.playerIndex + 1}`}
               </Badge>
@@ -85,7 +94,9 @@ const SimulationLogDisplay = ({ messages, showPrompts }: SimulationLogDisplayPro
             
             <CollapsibleContent>
               <CardContent className="pt-0 pb-3">
-                <div className="whitespace-pre-wrap text-sm mt-2 text-gray-300">{message.content}</div>
+                <div className={`whitespace-pre-wrap text-sm mt-2 ${message.role === "GM" ? "text-gray-800" : "text-gray-300"}`}>
+                  {message.content}
+                </div>
                 
                 {showPrompts && message.metadata && (
                   <div className="mt-3 pt-2 border-t border-dashed border-gray-800">
