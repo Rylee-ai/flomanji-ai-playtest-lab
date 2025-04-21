@@ -26,14 +26,14 @@ const AgentManager = () => {
           Configure and test the AI agents that power Flomanji simulations
         </div>
       </div>
-      
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-3 mb-6">
           <TabsTrigger value="gm">Game Master</TabsTrigger>
           <TabsTrigger value="player">Player Character</TabsTrigger>
           <TabsTrigger value="critic">Critic</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="gm" className="space-y-6">
           <Card>
             <CardHeader>
@@ -55,7 +55,7 @@ Your role is to facilitate play, describe the environment, narrate outcomes, and
 Make the game challenging but fair, and create a cinematic B-movie horror-comedy atmosphere.`}
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="gm-temperature">Temperature: {temperature.toFixed(1)}</Label>
@@ -68,29 +68,23 @@ Make the game challenging but fair, and create a cinematic B-movie horror-comedy
                       onValueChange={(values) => setTemperature(values[0])} 
                     />
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="gm-model">LLM Model</Label>
-                    <select id="gm-model" className="w-full p-2 border rounded">
-                      <option value="gpt-4o">GPT-4o (Default)</option>
-                      <option value="gpt-4o-mini">GPT-4o-mini (Faster)</option>
-                      <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                    </select>
-                  </div>
+
+                  {/* Removed LLM model selector to use centralized setting */}
+
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch id="gm-verbose" defaultChecked />
                   <Label htmlFor="gm-verbose">Verbose Mode (Include detailed rule explanations)</Label>
                 </div>
               </div>
-              
+
               <div className="flex justify-end">
                 <Button onClick={() => handleSavePrompt("GM")}>Save GM Configuration</Button>
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>Test Game Master</CardTitle>
@@ -107,14 +101,14 @@ Make the game challenging but fair, and create a cinematic B-movie horror-comedy
                   rows={3}
                 />
               </div>
-              
+
               <div className="flex justify-end">
                 <Button>Test Response</Button>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="player" className="space-y-6">
           <Card>
             <CardHeader>
@@ -138,7 +132,7 @@ You have the following responsibilities:
 3. Manage your Health, Weirdness, and Luck effectively`}
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="player-personality">Player Personality</Label>
@@ -150,7 +144,7 @@ You have the following responsibilities:
                       <option value="selfish">Self-preserving</option>
                     </select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="player-skill">Player Skill Level</Label>
                     <select id="player-skill" className="w-full p-2 border rounded">
@@ -160,20 +154,20 @@ You have the following responsibilities:
                     </select>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch id="player-meta" />
                   <Label htmlFor="player-meta">Allow Meta-gaming (Use knowledge of game mechanics)</Label>
                 </div>
               </div>
-              
+
               <div className="flex justify-end">
                 <Button onClick={() => handleSavePrompt("Player")}>Save Player Configuration</Button>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="critic" className="space-y-6">
           <Card>
             <CardHeader>
@@ -199,7 +193,7 @@ Analyze the gameplay session objectively and provide feedback on:
 4. Design Improvement Opportunities`}
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="critic-focus">Analysis Focus</Label>
@@ -210,7 +204,7 @@ Analyze the gameplay session objectively and provide feedback on:
                       <option value="gm-quality">GM Quality</option>
                     </select>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="critic-detail">Detail Level</Label>
                     <select id="critic-detail" className="w-full p-2 border rounded">
@@ -220,13 +214,13 @@ Analyze the gameplay session objectively and provide feedback on:
                     </select>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-2">
                   <Switch id="critic-suggestions" defaultChecked />
                   <Label htmlFor="critic-suggestions">Include Improvement Suggestions</Label>
                 </div>
               </div>
-              
+
               <div className="flex justify-end">
                 <Button onClick={() => handleSavePrompt("Critic")}>Save Critic Configuration</Button>
               </div>
