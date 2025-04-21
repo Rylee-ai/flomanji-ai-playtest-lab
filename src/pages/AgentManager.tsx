@@ -8,12 +8,11 @@ import AgentConfigForm from "@/components/agent/AgentConfigForm";
 import AgentPreviewPanel from "@/components/agent/AgentPreviewPanel";
 import AgentConversationPanel from "@/components/agent/AgentConversationPanel";
 import AgentLibrary from "@/components/agent/AgentLibrary";
-import { TabsProvider } from "@/components/agent/TabsProvider";
-import { useAgentConfig } from "@/hooks/useAgentConfig";
 import { getOpenRouterApiKey } from "@/lib/openrouterApiKey";
 import { getOpenRouterModel } from "@/lib/openrouterModel";
 import { AgentRole } from "@/types";
 import { RefreshCw } from "lucide-react";
+import { useAgentConfig } from "@/hooks/useAgentConfig";
 
 const AgentManager = () => {
   const { configs, isLoading, isSaving, saveAgentConfig, resetAgentConfig, testAgentResponse } = useAgentConfig();
@@ -110,38 +109,36 @@ const AgentManager = () => {
         </Card>
       )}
 
-      <TabsProvider value={activeTab} onValueChange={setActiveTab}>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="config">Configuration</TabsTrigger>
-            <TabsTrigger value="library">Agent Library</TabsTrigger>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
-            <TabsTrigger value="test">Test Conversation</TabsTrigger>
-          </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="config">Configuration</TabsTrigger>
+          <TabsTrigger value="library">Agent Library</TabsTrigger>
+          <TabsTrigger value="preview">Preview</TabsTrigger>
+          <TabsTrigger value="test">Test Conversation</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="config" className="space-y-4">
-            <AgentConfigForm 
-              configs={configs} 
-              onChange={handleUpdateConfig} 
-              onSave={handleSaveAllConfigs}
-              onReset={handleResetConfig}
-              isLoading={isLoading || isSaving}
-            />
-          </TabsContent>
+        <TabsContent value="config" className="space-y-4">
+          <AgentConfigForm 
+            configs={configs} 
+            onChange={handleUpdateConfig} 
+            onSave={handleSaveAllConfigs}
+            onReset={handleResetConfig}
+            isLoading={isLoading || isSaving}
+          />
+        </TabsContent>
 
-          <TabsContent value="library" className="space-y-4">
-            <AgentLibrary />
-          </TabsContent>
+        <TabsContent value="library" className="space-y-4">
+          <AgentLibrary />
+        </TabsContent>
 
-          <TabsContent value="preview" className="space-y-4">
-            <AgentPreviewPanel configs={configs} />
-          </TabsContent>
+        <TabsContent value="preview" className="space-y-4">
+          <AgentPreviewPanel configs={configs} />
+        </TabsContent>
 
-          <TabsContent value="test" className="space-y-4">
-            <AgentConversationPanel configs={configs} />
-          </TabsContent>
-        </Tabs>
-      </TabsProvider>
+        <TabsContent value="test" className="space-y-4">
+          <AgentConversationPanel configs={configs} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
