@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { HeroSection } from "./sections/HeroSection";
 import { GameOverviewSection } from "./sections/GameOverviewSection";
 import { KeyFeaturesSection } from "./sections/KeyFeaturesSection";
-import { DesignPillarsSection } from "./sections/DesignPillarsSection";
 import { CallToActionSection } from "./sections/CallToActionSection";
 import { GameSpecificationsSection } from "./sections/GameSpecificationsSection";
 import { PreOrderSection } from "./sections/PreOrderSection";
@@ -37,23 +36,25 @@ const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
       <HeroSection scrollToWaitlist={scrollToWaitlist} />
-      {/* Added IDs for anchor link targets */}
-      <section id="overview"><GameOverviewSection /></section>
-      <section id="features"><KeyFeaturesSection /></section>
-      <section id="gameplay">
-        {/* Replaced DesignPillarsSection with a link to /gameplay page for Gameplay section */}
-        <a
-          href="/gameplay"
-          className="block text-amber-400 hover:underline hover-scale transition cursor-pointer text-lg py-4 text-center"
-          aria-label="Go to the Gameplay page"
-        >
-          Explore Gameplay Details &rarr;
-        </a>
-      </section>
-      <CallToActionSection scrollToWaitlist={scrollToWaitlist} />
-      <section id="faq"><GameSpecificationsSection /></section>
-      <PreOrderSection />
-      <WaitlistSignupSection ref={waitlistRef} />
+      {/* Content sections with improved spacing and ID anchors */}
+      <div className="space-y-16 md:space-y-24">
+        <section id="overview" className="pt-8"><GameOverviewSection /></section>
+        <section id="features"><KeyFeaturesSection /></section>
+        <section id="gameplay" className="py-8">
+          {/* Gameplay section with enhanced link */}
+          <a
+            href="/gameplay"
+            className="block text-amber-400 hover:text-amber-300 hover:underline transition-colors duration-300 text-xl py-6 text-center font-medium"
+            aria-label="Go to the Gameplay page"
+          >
+            Explore Gameplay Details &rarr;
+          </a>
+        </section>
+        <CallToActionSection scrollToWaitlist={scrollToWaitlist} />
+        <section id="faq"><GameSpecificationsSection /></section>
+        <PreOrderSection />
+        <WaitlistSignupSection ref={waitlistRef} />
+      </div>
       <FooterSection />
     </div>
   );
