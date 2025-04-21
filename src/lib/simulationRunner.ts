@@ -18,8 +18,17 @@ export const startSimulation = async (
     rounds = 5,
     players = 1,
     enableCritic = true,
-    outputMode = 'full'
+    outputMode = 'full',
+    characters = []
   } = config;
+
+  // Use the length of selected characters if available, otherwise use the players config
+  const actualPlayerCount = characters.length || players;
+  
+  // Ensure we have at least one player
+  if (actualPlayerCount < 1) {
+    throw new Error("At least one player character must be selected");
+  }
 
   const simulationId = simulateRandomId();
   const timestamp = new Date().toISOString();
@@ -29,9 +38,14 @@ export const startSimulation = async (
 
   // Prepare system prompts
   const gmSystemPrompt = getGMSystemPrompt(rulesContent, scenarioPrompt);
-  const playerSystemPrompts = Array(players)
+  
+  // Create player system prompts for each character
+  const playerSystemPrompts = Array(actualPlayerCount)
     .fill(0)
-    .map((_, i) => getPlayerSystemPrompt(rulesContent, i));
+    .map((_, i) => getPlayerSystemPrompt(rulesContent, i, 
+      config.fullCharacters && config.fullCharacters[i] ? config.fullCharacters[i] : undefined));
+
+  console.log(`Starting simulation with ${actualPlayerCount} players and ${rounds} rounds`);
 
   try {
     // Start with GM introduction
@@ -48,7 +62,12 @@ export const startSimulation = async (
 
     // Simulation loop
     for (let round = 0; round < rounds; round++) {
-      for (let playerIdx = 0; playerIdx < players; playerIdx++) {
+      console.log(`Starting round ${round + 1}`);
+      
+      // Each player takes their turn in this round
+      for (let playerIdx = 0; playerIdx < actualPlayerCount; playerIdx++) {
+        console.log(`Processing player ${playerIdx + 1}'s turn`);
+        
         // Convert the conversation log to messages format for this player
         const playerMessages = conversationLog.map(entry => ({
           role: entry.role === 'Player' ? 'assistant' : 'user',
@@ -64,13 +83,14 @@ export const startSimulation = async (
         conversationLog.push({
           role: 'Player',
           content: playerResponse,
+          playerIndex: playerIdx, // Track which player this is
           timestamp: new Date().toISOString()
         });
 
         // GM responds to this player
         const gmMessages = conversationLog.map(entry => ({
           role: entry.role === 'GM' ? 'assistant' : 'user',
-          content: `${entry.role}: ${entry.content}`
+          content: `${entry.role}${entry.playerIndex !== undefined ? ` ${entry.playerIndex + 1}` : ''}: ${entry.content}`
         }));
 
         const gmResponse = await createChatCompletion(
@@ -91,7 +111,7 @@ export const startSimulation = async (
     if (enableCritic) {
       const criticSystemPrompt = getCriticSystemPrompt(rulesContent);
       const fullTranscript = conversationLog.map(entry =>
-        `${entry.role}: ${entry.content}`
+        `${entry.role}${entry.playerIndex !== undefined ? ` ${entry.playerIndex + 1}` : ''}: ${entry.content}`
       ).join("\n\n");
 
       criticFeedback = await createChatCompletion(
@@ -106,6 +126,7 @@ export const startSimulation = async (
       timestamp,
       scenario: scenarioPrompt,
       rounds,
+      playerCount: actualPlayerCount,
       log: conversationLog,
       criticFeedback,
       annotations: ""

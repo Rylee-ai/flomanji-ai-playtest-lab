@@ -1,21 +1,26 @@
+import { MissionSheet } from "./cards/mission";
+import { PlayerCharacterSheet } from "./cards/player-character";
 
-// Simulation-related types
 export interface SimulationConfig {
   scenarioPrompt: string;
   rounds?: number;
   players?: number;
   enableCritic?: boolean;
-  outputMode?: 'full' | 'summary' | 'narrative-only' | 'minimal';
+  outputMode?: string;
   missionId?: string;
-  missionType?: 'exploration' | 'escape' | 'escort' | 'collection' | 'boss' | 'solo';
   characters?: string[];
   startingHeat?: number;
+  missionType?: string;
   extractionRegion?: string;
-  // Optional modules
-  secretTraitor?: boolean;
-  arcadeModule?: boolean;
-  nightmareDifficulty?: boolean;
-  competitiveMode?: boolean;
+  fullCharacters?: FlomanjiCharacter[];
+  objectives?: any[];
+}
+
+export interface AgentMessage {
+  role: string;
+  content: string;
+  timestamp: string;
+  playerIndex?: number; // Added to track which player this message belongs to
 }
 
 export interface SimulationResult {
@@ -23,33 +28,49 @@ export interface SimulationResult {
   timestamp: string;
   scenario: string;
   rounds: number;
+  playerCount?: number;
   log: AgentMessage[];
-  criticFeedback?: string;
-  annotations?: string;
-  missionOutcome?: 'success' | 'partial' | 'failure';
-  keyEvents?: Array<{
-    round: number;
-    description: string;
-    impact?: string;
-  }>;
+  criticFeedback: string;
+  annotations: string;
+  missionOutcome?: string;
+  keyEvents?: any[];
 }
 
-// Agent-related types
-export type AgentRole = "GM" | "Player" | "Critic";
-
-export interface AgentConfig {
-  systemPrompt: string;
-  temperature: number;
-  verbose: boolean;
-  personality?: string;
-  skillLevel?: string;
-  focus?: string;
-  detail?: string;
-  meta?: boolean;
-  suggestions?: boolean;
+export interface SimulationSummary {
+  id: string;
+  timestamp: string;
+  scenario: string;
+  rounds: number;
 }
 
-// Character-related types
+export interface StoredSimulation {
+  id: string;
+  timestamp: string;
+  scenario: string;
+  rounds: number;
+  log: AgentMessage[];
+  criticFeedback: string;
+  annotations: string;
+}
+
+export interface Settings {
+  openAiApiKey?: string;
+  openRouterApiKey?: string;
+}
+
+export interface FlomanjiCharacter {
+  id: string;
+  name: string;
+  role: string;
+  stats: CharacterStats;
+  ability: CharacterAbility;
+  health: number;
+  weirdness: number;
+  luck: number;
+  starterGear?: string[];
+  position?: string;
+}
+
 export interface CharacterStats {
   brawn: number;
   moxie: number;
@@ -61,42 +82,4 @@ export interface CharacterStats {
 export interface CharacterAbility {
   name: string;
   description: string;
-}
-
-// Add the CharacterGear interface to match what's used in characters.ts
-export interface CharacterGear {
-  name: string;
-  type: string;
-  effect: string;
-}
-
-export interface FlomanjiCharacter {
-  id: string;
-  name: string;
-  role?: string;
-  stats: CharacterStats;
-  ability: CharacterAbility;
-  health: number;
-  weirdness: number;
-  luck: number;
-  position?: string;
-  starterGear?: CharacterGear[]; // Update to use CharacterGear[] instead of string[]
-}
-
-// Simulation list related types
-export interface SimulationSummary {
-  id: string;
-  timestamp: string;
-  scenario: string;
-  rounds: number;
-  missionType?: string;
-  missionOutcome?: string;
-  result?: string;
-  notes?: string;
-}
-
-export interface AgentMessage {
-  role: string;
-  content: string; // This is the standard property name for message content
-  timestamp?: string;
 }
