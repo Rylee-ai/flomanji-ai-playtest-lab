@@ -98,6 +98,11 @@ export interface Objective {
   description: string;
   required: boolean;
   completed?: boolean;
+  regionId?: string; // Region where the objective must be completed (if applicable)
+  requiredItems?: string[]; // Items required to complete the objective (if applicable)
+  reward?: string; // Reward for completing the objective
+  difficultyLevel?: number; // Difficulty level of the objective
+  completionCheck?: string; // Logic for checking completion
 }
 
 /**

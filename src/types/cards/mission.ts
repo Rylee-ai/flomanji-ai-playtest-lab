@@ -1,4 +1,3 @@
-
 import { GameCard } from '../cards';
 
 export interface MissionObjective {
@@ -7,6 +6,8 @@ export interface MissionObjective {
   reward?: string;
   completionCheck?: string; // Logic for how to check completion
   difficultyLevel?: number; // Scale of 1-5 for balancing
+  regionId?: string; // Region where the objective must be completed
+  requiredItems?: string[]; // Items required to complete the objective
 }
 
 export interface MissionChallenge {
