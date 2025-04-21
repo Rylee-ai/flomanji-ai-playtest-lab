@@ -28,6 +28,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Function to fetch user profile data
   const fetchUserProfile = async (userId: string) => {
     try {
+      // We need to create this table first - for now let's mock the profile data
+      // In a real implementation, this would query the profiles table
+      const mockProfile: UserProfile = {
+        id: userId,
+        email: user?.email || '',
+        role: 'admin', // Default role for testing
+        firstName: 'Admin',
+        lastName: 'User',
+        createdAt: new Date().toISOString()
+      };
+      
+      setProfile(mockProfile);
+      return mockProfile;
+      
+      // Once we have a profiles table, use this code instead:
+      /*
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -45,6 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       
       return null;
+      */
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
       return null;
