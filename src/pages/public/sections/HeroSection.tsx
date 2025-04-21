@@ -98,9 +98,9 @@ export const HeroSection = ({
               bg-black/65 
               shadow-[0_2px_44px_0_rgba(0,0,0,0.33)]
               backdrop-blur-2xl border border-white/10 rounded-2xl
-              flex flex-col items-center
+              flex flex-col items-center justify-center
               w-full max-w-2xl
-              pb-8 pt-8 px-6 md:pb-12 md:pt-12 md:px-10
+              pb-8 pt-10 px-8 md:pb-12 md:pt-14 md:px-12
               animate-fade-in
             "
             style={{
@@ -109,7 +109,7 @@ export const HeroSection = ({
             }}
           >
             {/* Logo / Title */}
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3 md:mb-4 leading-tight drop-shadow-[0_2px_10px_rgba(249,220,94,0.18)] text-center max-w-full break-words">
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 md:mb-6 leading-tight drop-shadow-[0_2px_10px_rgba(249,220,94,0.18)] text-center max-w-full break-words">
               <span className="block text-white animate-[fade-in_0.67s_ease-in] drop-shadow-[0_2px_10px_rgba(255,255,255,0.17)]">
                 FLOMANJI:
               </span>
@@ -119,12 +119,12 @@ export const HeroSection = ({
             </h1>
 
             {/* Subheading */}
-            <p className="text-center text-base md:text-xl max-w-xl mb-6 md:mb-8 text-white/95 font-medium drop-shadow-[0_2px_9px_rgba(0,0,0,0.25)] leading-relaxed animate-fade-in">
+            <p className="text-center text-base md:text-xl max-w-xl mb-8 text-white/95 font-medium drop-shadow-[0_2px_9px_rgba(0,0,0,0.25)] leading-relaxed animate-fade-in">
               A deck-building survival adventure where paradise and chaos collide in an unforgettable journey of strategy and suspense.
             </p>
             
             {/* CTA Button */}
-            <div className="w-full flex justify-center mb-6 md:mb-8">
+            <div className="w-full flex justify-center mb-8">
               <Button
                 size="lg"
                 onClick={scrollToWaitlist}
@@ -169,3 +169,4 @@ export const HeroSection = ({
     </section>
   );
 };
+
