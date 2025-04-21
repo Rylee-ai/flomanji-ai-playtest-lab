@@ -4,7 +4,7 @@ import { MissionSheet } from "@/types/cards/mission";
 const cypressCanalSiege: MissionSheet = {
   id: "cypress-canal-siege",
   name: "Cypress Canal Siege",
-  type: "mission",
+  type: "escape", // Updated to a valid type from SimulationConfig
   icons: [{ symbol: "🌊", meaning: "Flood" }, { symbol: "🌳", meaning: "Swamp" }],
   keywords: ["Engineering", "Time-Pressure", "Environmental"],
   hook: "Early October, 1987 – The canal's locks have failed, flooding run amok. Survivors must seal gates before the rising tide drowns them.",

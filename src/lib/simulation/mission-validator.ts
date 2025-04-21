@@ -9,7 +9,7 @@ export function validatePlayerCountForMission(
   playerCount: number,
   mission: MissionSheet
 ): { valid: boolean; message?: string } {
-  // Solo missions require exactly 1 player
+  // Compare with the mission type string, not the card type
   if (mission.type === "solo" && playerCount !== 1) {
     return { valid: false, message: "Solo missions require exactly 1 player" };
   }
@@ -35,20 +35,13 @@ export function validatePlayerCountForMission(
     return { valid: false, message: "Maximum 6 players allowed" };
   }
 
-  // Check mission-specific requirements
-  switch (mission.type) {
-    case "escort":
-      if (playerCount < 2) {
-        return { valid: false, message: "Escort missions require at least 2 players" };
-      }
-      break;
-    case "boss":
-      if (playerCount < 3) {
-        return { valid: false, message: "Boss missions recommend at least 3 players" };
-      }
-      break;
-    default:
-      break;
+  // Check mission-specific requirements for mission type string
+  if (mission.type === "escort" && playerCount < 2) {
+    return { valid: false, message: "Escort missions require at least 2 players" };
+  }
+  
+  if (mission.type === "boss" && playerCount < 3) {
+    return { valid: false, message: "Boss missions recommend at least 3 players" };
   }
 
   return { valid: true };
@@ -91,8 +84,8 @@ export function applyMissionScaling(
     }
   }
   
-  // Ensure mission type matches
-  newConfig.missionType = playerCount === 1 ? "solo" : mission.type;
+  // Ensure mission type matches, using one of the valid mission types
+  newConfig.missionType = playerCount === 1 ? "solo" : (mission.type as SimulationConfig["missionType"]);
   
   // Set extraction region if applicable
   if (mission.extractionRegion) {

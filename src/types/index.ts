@@ -80,6 +80,8 @@ export interface SimulationConfig {
   missionId?: string;
   characters?: string[]; // Character IDs
   fullCharacters?: FlomanjiCharacter[]; // Full character data
+  extractionRegion?: string; // Added property for extraction region
+  objectives?: any[]; // Added for mission objectives
 }
 
 export interface SimulationResult {

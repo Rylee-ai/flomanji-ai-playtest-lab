@@ -1,3 +1,4 @@
+
 import { GameCard } from '../cards';
 
 export interface MissionObjective {
@@ -26,7 +27,7 @@ export interface MissionPhase {
 }
 
 export interface MissionSheet extends GameCard {
-  type: 'mission';
+  type: 'exploration' | 'escape' | 'escort' | 'collection' | 'boss' | 'solo'; // Updated to match SimulationConfig
   hook: string;
   mapLayout: string;
   startingHeat: number;
