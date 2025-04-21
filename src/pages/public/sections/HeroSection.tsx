@@ -11,8 +11,8 @@ export const HeroSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   
-  // Image path - using the correct file extension
-  const bgImageUrl = "/flomanji-hero-bg.webp"; // Using the original .webp extension
+  // Image path - using the uploaded image
+  const bgImageUrl = "/lovable-uploads/97c599e5-03f2-41f1-92c1-98dd4affe648.png"; 
   
   // Check if image loads properly
   useEffect(() => {
@@ -90,7 +90,7 @@ export const HeroSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void
           <div className="mt-4 p-3 bg-red-500/80 text-white rounded text-sm flex items-center">
             <Upload className="h-4 w-4 mr-2" />
             <span>
-              Please upload a file named "flomanji-hero-bg.webp" to the public folder.
+              Image failed to load. Please check the file path and try again.
             </span>
           </div>
         )}
