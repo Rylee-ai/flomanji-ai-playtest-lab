@@ -30,22 +30,7 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
-      {/* Add navigation bar at the top */}
-      <nav className="flex justify-between items-center py-4 px-6 absolute w-full z-10">
-        <div className="text-amber-400 font-bold text-xl">FLOMANJI</div>
-        <div className="flex gap-8">
-          <a href="/" className="text-white hover:text-amber-400">Home</a>
-          <a href="/about" className="text-white hover:text-amber-400">About</a>
-          <a href="/gameplay" className="text-white hover:text-amber-400">Gameplay</a>
-          <a href="#faq" className="text-white hover:text-amber-400">FAQ</a>
-        </div>
-        <a href="/player" className="text-white border border-white/30 px-4 py-1 rounded hover:bg-white/10">
-          Player Dashboard
-        </a>
-      </nav>
-      
       <HeroSection scrollToWaitlist={scrollToWaitlist} />
-      
       {/* Added IDs for anchor link targets */}
       <section id="overview"><GameOverviewSection /></section>
       <section id="features"><KeyFeaturesSection /></section>
