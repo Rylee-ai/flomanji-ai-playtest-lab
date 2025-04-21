@@ -30,7 +30,6 @@ import PlayerShipping from "./pages/player/PlayerShipping";
 import HomePage from "./pages/public/HomePage";
 import AuthPage from "./pages/public/AuthPage";
 import WaitlistSignup from "./pages/public/WaitlistSignup";
-import EmailConfirmationPage from "./pages/public/EmailConfirmationPage";
 import NotFound from "./pages/NotFound";
 
 import { Suspense, useState, useEffect } from "react";
@@ -128,19 +127,13 @@ const App = () => {
                 {/* Public routes */}
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<HomePage />} />
-                  <Route
-                    path="/auth"
+                  <Route 
+                    path="/auth" 
                     element={
                       <AuthGuard requireAuth={false}>
                         <AuthPage />
                       </AuthGuard>
-                    }
-                  />
-                  <Route
-                    path="/welcome"
-                    element={
-                      <EmailConfirmationPage />
-                    }
+                    } 
                   />
                   <Route path="/waitlist" element={<WaitlistSignup />} />
                   <Route path="/gameplay" element={<Gameplay />} />

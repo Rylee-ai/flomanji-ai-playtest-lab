@@ -6,7 +6,6 @@ import { MessageSquare, User, Truck, LogOut } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import UserAccountMenu from "@/components/UserAccountMenu";
 
 const NAV_ITEMS = [
   { path: "/player", label: "Dashboard", icon: <User className="h-5 w-5" /> },
@@ -72,32 +71,23 @@ const PlayerLayout = () => {
         {/* Mobile Header */}
         <header className="flex items-center justify-between border-b h-14 px-4 sm:px-6 md:hidden">
           <h1 className="text-lg font-medium">Flomanji Playtest</h1>
-          <div className="flex items-center gap-2">
-            {/* User account menu (top right) */}
-            <UserAccountMenu />
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <button className="text-foreground p-2">
-                  <User className="h-6 w-6" />
-                </button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-64 p-0">
-                <div className="p-4 border-b">
-                  <h2 className="text-xl font-bold">Flomanji Playtest</h2>
-                  <p className="text-sm text-muted-foreground">
-                    Welcome, {profile?.firstName || 'Player'}
-                  </p>
-                </div>
-                <NavLinks />
-              </SheetContent>
-            </Sheet>
-          </div>
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <button className="text-foreground p-2">
+                <User className="h-6 w-6" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-64 p-0">
+              <div className="p-4 border-b">
+                <h2 className="text-xl font-bold">Flomanji Playtest</h2>
+                <p className="text-sm text-muted-foreground">
+                  Welcome, {profile?.firstName || 'Player'}
+                </p>
+              </div>
+              <NavLinks />
+            </SheetContent>
+          </Sheet>
         </header>
-
-        {/* Desktop Topbar account menu */}
-        <div className="hidden md:flex items-center justify-end px-8 py-3 border-b bg-background">
-          <UserAccountMenu />
-        </div>
 
         {/* Content */}
         <main className="flex-1 overflow-auto">

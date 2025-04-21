@@ -18,20 +18,7 @@ export function formatDate(dateString: string): string {
   return date.toLocaleString();
 }
 
-/**
- * Safely parses markdown to HTML with sanitization
- */
-export function parseMarkdown(text: string): string {
-  try {
-    // Configure marked options - 'sanitize' is deprecated, removed this option
-    marked.setOptions({
-      breaks: true,
-      gfm: true,
-    });
-    
-    return marked(text) as string; // Add explicit type cast to ensure string return type
-  } catch (error) {
-    console.error("Error parsing markdown:", error);
-    return text;
-  }
+// Parse markdown content
+export function parseMarkdown(content: string): string {
+  return marked.parse(content) as string;
 }
