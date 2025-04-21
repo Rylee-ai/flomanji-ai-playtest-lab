@@ -8,18 +8,18 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { 
   ChevronRight, 
-  Star, 
   Clock, 
   Users, 
   Zap, 
-  Layers, 
   Shield, 
-  Play, 
+  Play,
   Map,
   Info,
   Check,
-  ArrowRight
+  ArrowRight,
+  Plus
 } from "lucide-react";
+import { TREASURE_CARDS } from "@/lib/cards/treasures";
 
 const HomePage = () => {
   const waitlistRef = useRef<HTMLDivElement>(null);
@@ -28,26 +28,26 @@ const HomePage = () => {
     waitlistRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Get 12 treasure cards for the card breakdown section
+  const displayCards = TREASURE_CARDS.slice(0, 12);
+
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
       {/* Hero Section */}
-      <section className="relative bg-[url('/lovable-uploads/a0756136-5441-4ed0-a2a9-adff50891e73.png')] bg-cover bg-center py-32">
-        <div className="absolute inset-0 bg-black/70"></div>
+      <section className="relative bg-[url('/lovable-uploads/ce75a97c-6836-41ee-b39b-1719726cb097.png')] bg-cover bg-center py-32">
+        <div className="absolute inset-0 bg-black/60"></div>
         <div className="container relative mx-auto px-4 flex flex-col items-start max-w-5xl">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             FLOMANJI:<br />
-            <span className="text-primary">Can You Escape Paradise?</span>
+            <span className="text-amber-400">Can You Escape Paradise?</span>
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mb-8 text-gray-300">
-            A deck-building survival adventure where Florida and Jumanji collide
+            A deck-building survival adventure where paradise and chaos collide
           </p>
           
           <div className="flex gap-4 mb-8">
-            <Button size="lg" onClick={scrollToWaitlist} className="bg-primary hover:bg-primary/90">
+            <Button size="lg" onClick={scrollToWaitlist} className="bg-amber-500 hover:bg-amber-600 text-black">
               Join Beta Waitlist
-            </Button>
-            <Button size="lg" variant="outline" className="border-white/30 hover:bg-white/10">
-              Watch Trailer <Play className="ml-2 h-4 w-4" />
             </Button>
           </div>
           
@@ -69,20 +69,20 @@ const HomePage = () => {
       <section className="py-16 bg-gray-950">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex items-center mb-8">
-            <Badge variant="outline" className="mr-2 bg-primary/10 text-primary border-primary/20">1</Badge>
+            <Badge variant="outline" className="mr-2 bg-amber-500/10 text-amber-400 border-amber-500/20">1</Badge>
             <h2 className="text-2xl font-bold">Game Overview</h2>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="bg-gray-900 border-gray-800">
               <CardContent className="pt-6">
-                <h3 className="text-xl font-bold mb-4">Florida's Craziest Card Game</h3>
+                <h3 className="text-xl font-bold mb-4">Paradise's Craziest Card Game</h3>
                 <p className="text-gray-400 mb-4">
-                  Flomanji combines deck-building mechanics with survival storytelling as players navigate through Florida's wildest environments, encountering bizarre hazards, eccentric characters, and unexpected treasures.
+                  Flomanji combines deck-building mechanics with survival storytelling as players navigate through exotic environments, encountering bizarre hazards, eccentric characters, and unexpected treasures.
                 </p>
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Now in development</span>
-                  <Link to="/about" className="text-primary flex items-center">
+                  <Link to="/about" className="text-amber-400 flex items-center">
                     Learn more <ChevronRight className="h-4 w-4" />
                   </Link>
                 </div>
@@ -90,9 +90,9 @@ const HomePage = () => {
             </Card>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-indigo-900/20 p-4 rounded-lg border border-indigo-800/30">
+              <div className="bg-amber-900/20 p-4 rounded-lg border border-amber-800/30">
                 <h4 className="font-medium mb-2">Deck Building</h4>
-                <Badge className="bg-indigo-600">Core Mechanic</Badge>
+                <Badge className="bg-amber-600">Core Mechanic</Badge>
               </div>
               <div className="bg-blue-900/20 p-4 rounded-lg border border-blue-800/30">
                 <h4 className="font-medium mb-2">Heat System</h4>
@@ -111,7 +111,7 @@ const HomePage = () => {
       <section className="py-16 bg-black">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex items-center mb-8">
-            <Badge variant="outline" className="mr-2 bg-primary/10 text-primary border-primary/20">2</Badge>
+            <Badge variant="outline" className="mr-2 bg-amber-500/10 text-amber-400 border-amber-500/20">2</Badge>
             <h2 className="text-2xl font-bold">Key Features</h2>
           </div>
 
@@ -122,16 +122,6 @@ const HomePage = () => {
                 <h3 className="text-lg font-bold mb-2">AI Game Master</h3>
                 <p className="text-gray-400 text-sm">
                   Dynamic storytelling powered by AI that adapts to your choices and creates unique gameplay experiences.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gray-900 border-gray-800">
-              <CardContent className="pt-6">
-                <Layers className="h-8 w-8 text-purple-500 mb-4" />
-                <h3 className="text-lg font-bold mb-2">Flomanjified Cards</h3>
-                <p className="text-gray-400 text-sm">
-                  Encounter bizarre Florida-themed hazards, characters and treasures with unique abilities.
                 </p>
               </CardContent>
             </Card>
@@ -151,7 +141,17 @@ const HomePage = () => {
                 <Map className="h-8 w-8 text-blue-500 mb-4" />
                 <h3 className="text-lg font-bold mb-2">Mission System</h3>
                 <p className="text-gray-400 text-sm">
-                  Complete unique objectives while exploring distinctive Florida regions with special challenges.
+                  Complete unique objectives while exploring distinctive regions with special challenges.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900 border-gray-800">
+              <CardContent className="pt-6">
+                <Plus className="h-8 w-8 text-red-500 mb-4" />
+                <h3 className="text-lg font-bold mb-2">Flomanjified Cards</h3>
+                <p className="text-gray-400 text-sm">
+                  Encounter bizarre paradise-themed hazards, characters and treasures with unique abilities.
                 </p>
               </CardContent>
             </Card>
@@ -163,7 +163,7 @@ const HomePage = () => {
       <section className="py-16 bg-gray-950">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex items-center mb-8">
-            <Badge variant="outline" className="mr-2 bg-primary/10 text-primary border-primary/20">3</Badge>
+            <Badge variant="outline" className="mr-2 bg-amber-500/10 text-amber-400 border-amber-500/20">3</Badge>
             <h2 className="text-2xl font-bold">Design Pillars</h2>
           </div>
 
@@ -172,25 +172,25 @@ const HomePage = () => {
               <h3 className="text-xl font-bold mb-3">1. Narrative-Driven Design</h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">Immersive storytelling that reacts to player decisions</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">Characters with unique backgrounds and motivations</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">Branching scenarios with meaningful consequences</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">AI-enhanced Game Master experience</span>
@@ -202,25 +202,25 @@ const HomePage = () => {
               <h3 className="text-xl font-bold mb-3">2. Tactical Resource Management</h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">Heat system creates escalating challenge</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">Strategic deck building and card management</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">Cooperation and competition mechanics</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">Risk vs. reward decision making</span>
@@ -229,28 +229,28 @@ const HomePage = () => {
             </div>
 
             <div className="bg-gray-900 p-6 rounded-lg border border-gray-800">
-              <h3 className="text-xl font-bold mb-3">3. Florida Meets Fantasy</h3>
+              <h3 className="text-xl font-bold mb-3">3. Paradise Meets Fantasy</h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
-                  <span className="text-gray-400 text-sm">Authentic Florida environments and hazards</span>
+                  <span className="text-gray-400 text-sm">Authentic paradise environments and hazards</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
-                  <span className="text-gray-400 text-sm">Surreal, magical realism with Florida flair</span>
+                  <span className="text-gray-400 text-sm">Surreal, magical realism with tropical flair</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">Character-driven humor and absurd situations</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="bg-gray-800 text-primary rounded-full p-1 mr-2 mt-0.5">
+                  <span className="bg-gray-800 text-amber-400 rounded-full p-1 mr-2 mt-0.5">
                     <Check className="h-3 w-3" />
                   </span>
                   <span className="text-gray-400 text-sm">Unique "Flomanjified" game elements</span>
@@ -266,8 +266,8 @@ const HomePage = () => {
         <div className="container mx-auto px-4 max-w-5xl">
           <h2 className="text-3xl font-bold mb-2">Gear Up, Get Weird, Get Out</h2>
           <p className="text-lg text-gray-400 mb-12 max-w-3xl mx-auto">
-            Get ready for an adventure where alligator wrestling is just the beginning.
-            Every game tells a story, every decision matters, and Florida never felt so dangerous.
+            Get ready for an adventure where danger is just the beginning.
+            Every game tells a story, every decision matters, and paradise never felt so dangerous.
           </p>
 
           <div className="relative mx-auto max-w-md">
@@ -293,7 +293,7 @@ const HomePage = () => {
           </div>
 
           <div className="flex justify-center mt-6 space-x-2">
-            <span className="h-2 w-2 rounded-full bg-primary"></span>
+            <span className="h-2 w-2 rounded-full bg-amber-400"></span>
             <span className="h-2 w-2 rounded-full bg-gray-700"></span>
             <span className="h-2 w-2 rounded-full bg-gray-700"></span>
           </div>
@@ -322,11 +322,11 @@ const HomePage = () => {
           
           <h3 className="text-xl font-bold mb-6">Card Breakdown</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-            {[...Array(12)].map((_, i) => (
+            {displayCards.map((card, i) => (
               <div key={i} className="bg-gray-900 aspect-card rounded-lg border border-gray-800 flex flex-col">
                 <div className="flex-1"></div>
                 <div className="p-3 border-t border-gray-800">
-                  <p className="text-sm font-medium">{['Character', 'Region', 'Hazard', 'Gear', 'Mission', 'Treasure', 'Chaos', 'Flomanjified', 'Secret', 'NPC', 'Automa', 'Objective'][i % 12]} Cards</p>
+                  <p className="text-sm font-medium">{card.name}</p>
                 </div>
               </div>
             ))}
@@ -334,7 +334,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
+      {/* Pre-order Section */}
       <section className="py-16 bg-black text-center">
         <div className="container mx-auto px-4 max-w-5xl">
           <h2 className="text-3xl font-bold mb-2">Get Ready for Launch!</h2>
@@ -347,7 +347,7 @@ const HomePage = () => {
               <span className="text-gray-400 ml-2">USD</span>
             </div>
             <p className="text-gray-400 text-sm mb-6">Base game with all core components</p>
-            <Button className="w-full bg-primary hover:bg-primary/90">
+            <Button className="w-full bg-amber-500 hover:bg-amber-600 text-black">
               Pre-Order Now
             </Button>
             <p className="mt-3 text-xs text-gray-500">Ships Q2 2025 • Limited quantities available</p>
@@ -404,13 +404,13 @@ const HomePage = () => {
                   <input 
                     type="checkbox" 
                     id="terms" 
-                    className="rounded border-gray-700 bg-gray-800 text-primary focus:ring-primary"
+                    className="rounded border-gray-700 bg-gray-800 text-amber-500 focus:ring-amber-500"
                   />
                   <label htmlFor="terms" className="text-xs text-gray-400">
                     I agree to receive emails about the Flomanji Playtest Program
                   </label>
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full bg-amber-500 hover:bg-amber-600 text-black">
                   Join the Waitlist <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </form>
@@ -421,25 +421,25 @@ const HomePage = () => {
                 <h3 className="text-lg font-bold mb-2">Beta Tester Perks</h3>
                 <ul className="space-y-2 text-gray-400">
                   <li className="flex items-start">
-                    <Check className="h-4 w-4 text-primary mr-2 mt-1" />
+                    <Check className="h-4 w-4 text-amber-400 mr-2 mt-1" />
                     <span>Early access to the digital AI playtesting tools</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-4 w-4 text-primary mr-2 mt-1" />
+                    <Check className="h-4 w-4 text-amber-400 mr-2 mt-1" />
                     <span>Physical prototype cards delivered to your door</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-4 w-4 text-primary mr-2 mt-1" />
+                    <Check className="h-4 w-4 text-amber-400 mr-2 mt-1" />
                     <span>Direct feedback channel to the design team</span>
                   </li>
                   <li className="flex items-start">
-                    <Check className="h-4 w-4 text-primary mr-2 mt-1" />
+                    <Check className="h-4 w-4 text-amber-400 mr-2 mt-1" />
                     <span>Exclusive beta tester credit in the final game</span>
                   </li>
                 </ul>
               </div>
               
-              <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+              <div className="p-4 bg-amber-500/10 border border-amber-400/20 rounded-lg">
                 <p className="text-sm text-gray-300">
                   <span className="font-medium">Limited availability:</span> We're selecting a diverse group of playtesters to ensure comprehensive feedback. Apply now to increase your chances of selection.
                 </p>
@@ -454,9 +454,9 @@ const HomePage = () => {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex flex-col md:flex-row justify-between mb-8">
             <div className="mb-8 md:mb-0">
-              <h3 className="text-xl font-bold text-primary mb-3">FLOMANJI</h3>
+              <h3 className="text-xl font-bold text-amber-400 mb-3">FLOMANJI</h3>
               <p className="text-gray-400 max-w-md text-sm">
-                A deck-building survival adventure where the weird and wild collide in the sunshine state.
+                A deck-building survival adventure where the weird and wild collide in paradise.
               </p>
             </div>
             
