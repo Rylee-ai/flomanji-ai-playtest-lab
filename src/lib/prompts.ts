@@ -26,6 +26,11 @@ Remember that at Heat 9, all players gain +1 Weirdness each round, and at Heat 1
 import { FlomanjiCharacter } from "@/types";
 
 export const getPlayerSystemPrompt = (rules: string, playerIndex: number, character?: FlomanjiCharacter): string => {
+  // Explicitly format the player number with appropriate ordinal
+  const playerNumberText = playerIndex === 0 
+    ? "This is a template for any player agent. During actual gameplay, the player number will be assigned."
+    : `You are Player ${playerIndex + 1} in this game session.`;
+
   const characterInfo = character 
     ? `\nYou are playing as ${character.name}, ${character.role}.\n
     Stats: Brawn ${character.stats.brawn}, Moxie ${character.stats.moxie}, 
@@ -35,7 +40,7 @@ export const getPlayerSystemPrompt = (rules: string, playerIndex: number, charac
     Current Status: Health ${character.health}, Weirdness ${character.weirdness}, Luck ${character.luck}`
     : "";
 
-  return `You are Player ${playerIndex + 1} in Flomanji, controlling a survivor in a semi-cooperative adventure set in a heightened 1987 Florida filled with supernatural threats.${characterInfo}
+  return `You are a player in Flomanji, controlling a survivor in a semi-cooperative adventure set in a heightened 1987 Florida filled with supernatural threats. ${playerNumberText}${characterInfo}
 
 Here are the game rules:
 ${rules}

@@ -17,7 +17,7 @@ export const getDefaultConfigs = async (): Promise<Record<AgentRole, AgentConfig
       verbose: true,
     },
     Player: {
-      systemPrompt: getPlayerSystemPrompt(exampleRules, 0),
+      systemPrompt: getPlayerSystemPrompt(exampleRules, 0), // Index 0 for default player
       temperature: 0.7,
       personality: "balanced",
       skillLevel: "intermediate",

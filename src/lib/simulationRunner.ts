@@ -39,7 +39,7 @@ export const startSimulation = async (
   // Prepare system prompts
   const gmSystemPrompt = getGMSystemPrompt(rulesContent, scenarioPrompt);
   
-  // Create player system prompts for each character
+  // Create player system prompts for each character with correct player indices
   const playerSystemPrompts = Array(actualPlayerCount)
     .fill(0)
     .map((_, i) => getPlayerSystemPrompt(rulesContent, i, 
