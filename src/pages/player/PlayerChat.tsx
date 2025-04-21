@@ -32,7 +32,12 @@ const PlayerChat = () => {
     setInput("");
     
     // Send message to AI
-    await sendMessage(userMessage);
+    try {
+      await sendMessage(userMessage);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
+    }
   };
 
   return (
@@ -127,4 +132,3 @@ const PlayerChat = () => {
 };
 
 export default PlayerChat;
-

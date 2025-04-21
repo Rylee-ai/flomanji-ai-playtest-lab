@@ -1,4 +1,3 @@
-
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { marked } from "marked";
@@ -18,7 +17,21 @@ export function formatDate(dateString: string): string {
   return date.toLocaleString();
 }
 
-// Parse markdown content
-export function parseMarkdown(content: string): string {
-  return marked.parse(content) as string;
+/**
+ * Safely parses markdown to HTML with sanitization
+ */
+export function parseMarkdown(text: string): string {
+  try {
+    // Configure marked options
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+      sanitize: true,
+    });
+    
+    return marked(text);
+  } catch (error) {
+    console.error("Error parsing markdown:", error);
+    return text;
+  }
 }
