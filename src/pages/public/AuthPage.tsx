@@ -13,6 +13,7 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,25 +41,23 @@ const AuthPage = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setSignupSuccess(false);
     
     try {
       const { error } = await signUp(email, password);
       
       if (!error) {
-        toast({
-          title: "Account created",
-          description: "Please check your email to confirm your account",
-        });
+        setSignupSuccess(true);
       }
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="container max-w-md mx-auto py-12">
       <Card className="border-2">
-        <Tabs defaultValue="signin">
+        <Tabs defaultValue="signin" defaultChecked={signupSuccess ? "signup" : "signin"} >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -119,48 +118,67 @@ const AuthPage = () => {
           </TabsContent>
           
           <TabsContent value="signup">
-            <form onSubmit={handleSignUp}>
-              <CardHeader>
-                <CardTitle>Sign Up</CardTitle>
-                <CardDescription>
-                  Create an account to join the Flomanji Playtest
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="name@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Password must be at least 8 characters long
-                  </p>
-                </div>
-              </CardContent>
-              <CardFooter className="flex-col gap-4">
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Creating account..." : "Sign Up"}
-                </Button>
-                <p className="text-xs text-center text-muted-foreground">
-                  By creating an account, you agree to our Terms of Service and Privacy Policy
+            {signupSuccess ? (
+              <div className="p-8 text-center">
+                <h2 className="text-2xl font-semibold mb-4">Account Created</h2>
+                <p className="mb-4 text-gray-300">
+                  Thank you for signing up! Please check your email to finalize your account setup.
                 </p>
-              </CardFooter>
-            </form>
+                <Button 
+                  onClick={() => {
+                    setSignupSuccess(false);
+                    setEmail("");
+                    setPassword("");
+                  }} 
+                  className="w-full"
+                >
+                  Back to Sign Up Form
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleSignUp}>
+                <CardHeader>
+                  <CardTitle>Sign Up</CardTitle>
+                  <CardDescription>
+                    Create an account to join the Flomanji Playtest
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">Email</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      placeholder="name@example.com"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password">Password</Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Password must be at least 8 characters long
+                    </p>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex-col gap-4">
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? "Creating account..." : "Sign Up"}
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground">
+                    By creating an account, you agree to our Terms of Service and Privacy Policy
+                  </p>
+                </CardFooter>
+              </form>
+            )}
           </TabsContent>
         </Tabs>
       </Card>
