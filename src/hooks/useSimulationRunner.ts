@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { recordMissionRun } from "@/lib/mission-analytics";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 import { MISSION_CARDS } from "@/lib/cards/mission-cards";
+import { clearOpenRouterCache } from "@/lib/openrouter";
 
 /**
  * Hook for running a simulation and tracking its state/results.
@@ -16,6 +17,30 @@ export function useSimulationRunner() {
   const [isFinished, setIsFinished] = useState(false);
   const [latestSimulationId, setLatestSimulationId] = useState<string | null>(null);
   const [latestResult, setLatestResult] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [currentConfig, setCurrentConfig] = useState<SimulationConfig | null>(null);
+
+  // Clear error state when starting a new simulation
+  const clearErrorState = () => {
+    setError(null);
+  };
+
+  // Reset the OpenRouter cache and try a different model
+  const retryWithDifferentModel = useCallback(async () => {
+    if (!currentConfig) {
+      toast.error("No previous configuration found to retry");
+      return;
+    }
+    
+    // Clear any cached model/API key to force a refresh
+    clearOpenRouterCache();
+    
+    // Clear errors
+    clearErrorState();
+    
+    // Run the simulation again with the same config
+    await runSimulation(currentConfig);
+  }, [currentConfig]);
 
   // Full typed wrapper to run simulations and store result
   const runSimulation = useCallback(
@@ -25,6 +50,8 @@ export function useSimulationRunner() {
         setIsFinished(false);
         setLatestSimulationId(null);
         setLatestResult(null);
+        setError(null);
+        setCurrentConfig(config); // Save config for potential retries
 
         const savedRules = localStorage.getItem("flomanji-rules");
         const rulesContent = savedRules || getExampleRules();
@@ -70,36 +97,44 @@ export function useSimulationRunner() {
             objectives: selectedMission?.objectives || []
           };
 
-          // Run the simulation!
-          const result = await startSimulation(simulationConfig, rulesContent);
-          setLatestResult(result);
+          try {
+            // Run the simulation!
+            const result = await startSimulation(simulationConfig, rulesContent);
+            setLatestResult(result);
 
-          // Analytics/recording
-          if (config.missionId) {
-            const runData = {
-              id: result.id,
-              timestamp: result.timestamp,
-              missionId: config.missionId,
-              completed: result.missionOutcome === "success",
-              objectivesCompleted: result.keyEvents?.filter((e: any) => e.description.includes("objective")).map((e: any) => e.description) || [],
-              rounds: result.rounds,
-              characters: config.characters,
-              finalHeatLevel: config.startingHeat || 0,
-              keyEvents: result.keyEvents?.map((e: any) => ({
-                round: e.round,
-                event: e.description,
-                impact: e.description
-              })) || []
-            };
+            // Analytics/recording
+            if (config.missionId) {
+              const runData = {
+                id: result.id,
+                timestamp: result.timestamp,
+                missionId: config.missionId,
+                completed: result.missionOutcome === "success",
+                objectivesCompleted: result.keyEvents?.filter((e: any) => e.description.includes("objective")).map((e: any) => e.description) || [],
+                rounds: result.rounds,
+                characters: config.characters,
+                finalHeatLevel: config.startingHeat || 0,
+                keyEvents: result.keyEvents?.map((e: any) => ({
+                  round: e.round,
+                  event: e.description,
+                  impact: e.description
+                })) || []
+              };
 
-            recordMissionRun(runData);
+              recordMissionRun(runData);
+            }
+
+            setIsLoading(false);
+            setIsFinished(true);
+            setLatestSimulationId(result.id);
+
+            toast.success("Simulation completed successfully");
+          } catch (error) {
+            console.error("Simulation failed:", error);
+            setError(`${error.message || "Unknown error"}`);
+            setIsLoading(false);
+            setIsFinished(false);
+            toast.error(`Simulation failed: ${error.message || "Unknown error"}`);
           }
-
-          setIsLoading(false);
-          setIsFinished(true);
-          setLatestSimulationId(result.id);
-
-          toast.success("Simulation completed successfully");
         } else {
           toast.error("No characters selected");
           setIsLoading(false);
@@ -107,9 +142,10 @@ export function useSimulationRunner() {
         }
       } catch (error) {
         console.error("Simulation failed:", error);
-        toast.error(`Simulation failed: ${error}`);
+        setError(`${error.message || "Unknown error"}`);
         setIsLoading(false);
         setIsFinished(false);
+        toast.error(`Simulation failed: ${error.message || "Unknown error"}`);
       }
     },
     []
@@ -130,6 +166,9 @@ export function useSimulationRunner() {
     latestSimulationId,
     goToResults,
     latestResult,
+    error,
+    retryWithDifferentModel,
+    clearErrorState,
     setIsFinished, // For custom "View Results" UX pattern
   };
 }

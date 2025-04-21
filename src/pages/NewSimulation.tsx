@@ -16,10 +16,10 @@ const NewSimulation = () => {
     isFinished,
     latestSimulationId,
     goToResults,
-    latestResult
+    latestResult,
+    error,
+    retryWithDifferentModel
   } = useSimulationRunner();
-
-  // Optionally, provide more info about latestResult or expose it via context/admin GUI here
 
   return (
     <div className="space-y-6">
@@ -33,7 +33,8 @@ const NewSimulation = () => {
         finished={isFinished}
         simulationId={latestSimulationId ?? undefined}
         onGoToResults={() => goToResults(navigate)}
-        // Optionally, pass latestResult here to show info in progress panel
+        error={error}
+        onRetry={retryWithDifferentModel}
       />
 
       {/* Setup and start simulation */}
@@ -54,4 +55,3 @@ const NewSimulation = () => {
 };
 
 export default NewSimulation;
-

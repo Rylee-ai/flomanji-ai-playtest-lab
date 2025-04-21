@@ -2,24 +2,29 @@
 import React from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, RefreshCw } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface SimulationProgressProps {
   isRunning: boolean;
   finished: boolean;
   simulationId?: string;
   onGoToResults: () => void;
+  error?: string | null;
+  onRetry?: () => void;
 }
 
 const SimulationProgress: React.FC<SimulationProgressProps> = ({
   isRunning,
   finished,
   simulationId,
-  onGoToResults
+  onGoToResults,
+  error,
+  onRetry
 }) => {
   return (
     <div className="w-full flex flex-col items-center space-y-4 pt-8">
-      {isRunning && !finished && (
+      {isRunning && !finished && !error && (
         <>
           <Progress value={70} className="w-1/2 mb-2 animate-pulse" />
           <div className="flex items-center space-x-2">
@@ -31,7 +36,30 @@ const SimulationProgress: React.FC<SimulationProgressProps> = ({
           </span>
         </>
       )}
-      {finished && simulationId && (
+      
+      {error && (
+        <Alert variant="destructive" className="max-w-xl">
+          <AlertTitle className="flex items-center gap-2">
+            Simulation Error
+          </AlertTitle>
+          <AlertDescription className="mt-2">
+            <p className="text-sm mb-3">{error}</p>
+            {onRetry && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onRetry} 
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className="h-4 w-4" />
+                Retry with Different Model
+              </Button>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
+      
+      {finished && simulationId && !error && (
         <Button onClick={onGoToResults} className="mt-4 animate-fade-in" autoFocus>
           View Simulation Results
         </Button>

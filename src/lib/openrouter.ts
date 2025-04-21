@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Cache for API key to avoid frequent database calls
@@ -250,61 +249,113 @@ export const clearOpenRouterCache = () => {
   console.log("OpenRouter cache cleared");
 };
 
-// Chat completion helper function
+// List of reliable fallback models to try if the primary model fails
+const FALLBACK_MODELS = [
+  "anthropic/claude-3-opus",
+  "anthropic/claude-3-sonnet",
+  "anthropic/claude-3-haiku",
+  "openai/gpt-4-turbo"
+];
+
+// Chat completion helper function with improved error handling and fallbacks
 export const createChatCompletion = async (
   systemPrompt: string, 
   messages: {role: string, content: string}[]
 ): Promise<string> => {
+  let apiKey: string;
+  let primaryModel: string;
+  let attemptedModels: string[] = [];
+  
   try {
-    const apiKey = await getOpenRouterApiKey();
-    const model = await getOpenRouterModel();
+    apiKey = await getOpenRouterApiKey();
+    primaryModel = await getOpenRouterModel();
     
     if (!apiKey) {
       throw new Error("OpenRouter API key not found. Please set it in the Settings page.");
     }
 
-    console.log(`Making API request to OpenRouter with model: ${model}`);
+    // Try the requested model first
+    let modelToUse = primaryModel;
+    attemptedModels.push(modelToUse);
     
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': window.location.href,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          ...messages.map(msg => ({
-            role: msg.role === "user" ? "user" : "assistant",
-            content: msg.content
-          }))
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-        return_images: false,
-        return_related_questions: false,
-      }),
-    });
+    console.log(`Making API request to OpenRouter with model: ${modelToUse}`);
     
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData.error?.message || response.statusText || `Status ${response.status}`;
-      throw new Error(`OpenRouter API error: ${errorMessage}`);
+    try {
+      // First attempt with primary model
+      const result = await makeOpenRouterRequest(apiKey, modelToUse, systemPrompt, messages);
+      return result;
+    } catch (error) {
+      console.error(`Error with primary model ${modelToUse}:`, error);
+      
+      // Try fallback models if primary fails
+      for (const fallbackModel of FALLBACK_MODELS) {
+        if (!attemptedModels.includes(fallbackModel)) {
+          attemptedModels.push(fallbackModel);
+          console.log(`Trying fallback model: ${fallbackModel}`);
+          
+          try {
+            const result = await makeOpenRouterRequest(apiKey, fallbackModel, systemPrompt, messages);
+            return result;
+          } catch (fallbackError) {
+            console.error(`Error with fallback model ${fallbackModel}:`, fallbackError);
+            // Continue to next fallback model
+          }
+        }
+      }
+      
+      // If we get here, all models failed
+      throw new Error(`Failed with all models (${attemptedModels.join(", ")}). Please try again later or select a different model in Settings.`);
     }
-    
-    const data = await response.json();
-    
-    if (!data.choices || !data.choices[0]?.message?.content) {
-      throw new Error("Received invalid response format from OpenRouter");
-    }
-    
-    return data.choices[0].message.content;
   } catch (error) {
     console.error("Error creating chat completion:", error);
     throw new Error(`Failed to get response from OpenRouter: ${error.message || error}`);
   }
+};
+
+// Helper function to make the actual OpenRouter API request
+const makeOpenRouterRequest = async (
+  apiKey: string,
+  model: string,
+  systemPrompt: string,
+  messages: {role: string, content: string}[]
+): Promise<string> => {
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': window.location.href,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...messages.map(msg => ({
+          role: msg.role === "user" ? "user" : "assistant",
+          content: msg.content
+        }))
+      ],
+      temperature: 0.7,
+      max_tokens: 2000,
+      return_images: false,
+      return_related_questions: false,
+    }),
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage = errorData.error?.message || response.statusText || `Status ${response.status}`;
+    throw new Error(`OpenRouter API error: ${errorMessage}`);
+  }
+  
+  const data = await response.json();
+  
+  if (!data.choices || !data.choices[0]?.message?.content) {
+    console.error("Invalid response format from OpenRouter:", data);
+    throw new Error("Received invalid response format from OpenRouter");
+  }
+  
+  return data.choices[0].message.content;
 };
 
 // Function to fetch available OpenRouter models
