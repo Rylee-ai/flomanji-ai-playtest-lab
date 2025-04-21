@@ -1,4 +1,3 @@
-
 import { MissionSheet } from "./cards/mission";
 
 export interface SimulationConfig {
@@ -44,7 +43,8 @@ export interface AgentMessage {
     completedObjectives?: string[];
     inventory?: any;
     gameState?: any;
-    reason?: string; // Added missing property
+    reason?: string;
+    outcome?: string; // Added the missing outcome property
   };
 }
 
