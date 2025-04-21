@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Clock, Users, Info } from "lucide-react";
@@ -15,14 +14,14 @@ export const HeroSection = ({
 }: {
   scrollToWaitlist: () => void;
 }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = React.useState(false);
+  const [imageError, setImageError] = React.useState(false);
 
-  // Updated path with your newly uploaded image
-  const bgImageUrl = "/lovable-uploads/af3a931f-d7d9-4ca5-96b8-04a4b9570a09.png";
+  // Updated path with the new user-uploaded image
+  const bgImageUrl = "/lovable-uploads/438e7f2b-2452-4522-a683-5e1713c49f5c.png";
 
   // Check if image loads properly
-  useEffect(() => {
+  React.useEffect(() => {
     const img = new Image();
     img.onload = () => {
       console.log("Background image loaded successfully");
