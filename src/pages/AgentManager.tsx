@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -9,14 +9,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/sonner";
+import { getOpenRouterModel } from "@/lib/openrouter";
 
 const AgentManager = () => {
   const [activeTab, setActiveTab] = useState("gm");
   const [temperature, setTemperature] = useState(0.7);
-  
+  const [llmModel, setLlmModel] = useState<string>("");
+
   const handleSavePrompt = (role: string) => {
     toast.success(`${role} prompt updated successfully`);
   };
+
+  useEffect(() => {
+    const fetchModel = async () => {
+      try {
+        const model = await getOpenRouterModel();
+        setLlmModel(model);
+      } catch (error) {
+        console.error("Failed to fetch LLM model:", error);
+      }
+    };
+    fetchModel();
+  }, []);
 
   return (
     <div className="container py-6 mx-auto space-y-6">
@@ -40,6 +54,9 @@ const AgentManager = () => {
               <CardTitle>Game Master Agent Configuration</CardTitle>
               <CardDescription>
                 Configure how the GM presents scenarios, manages game state, and responds to player actions
+              </CardDescription>
+              <CardDescription className="text-xs text-muted-foreground mt-1">
+                Current LLM Model: <span className="font-mono">{llmModel || "Loading..."}</span>
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -116,6 +133,9 @@ Make the game challenging but fair, and create a cinematic B-movie horror-comedy
               <CardDescription>
                 Configure how AI players make decisions and respond to game events
               </CardDescription>
+              <CardDescription className="text-xs text-muted-foreground mt-1">
+                Current LLM Model: <span className="font-mono">{llmModel || "Loading..."}</span>
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
@@ -175,6 +195,9 @@ You have the following responsibilities:
               <CardDescription>
                 Configure how the critic analyzes and provides feedback on game sessions
               </CardDescription>
+              <CardDescription className="text-xs text-muted-foreground mt-1">
+                Current LLM Model: <span className="font-mono">{llmModel || "Loading..."}</span>
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
@@ -233,3 +256,4 @@ Analyze the gameplay session objectively and provide feedback on:
 };
 
 export default AgentManager;
+
