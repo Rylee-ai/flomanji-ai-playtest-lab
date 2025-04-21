@@ -28,8 +28,8 @@ const AdminLayout = () => {
           className={`flex items-center px-3 py-2 rounded-md text-sm transition-colors ${
             location.pathname === item.path || 
             (item.path !== "/" && location.pathname.startsWith(item.path))
-              ? "bg-primary text-primary-foreground"
-              : "text-foreground hover:bg-accent hover:text-accent-foreground"
+              ? "bg-amber-500 text-black font-medium"
+              : "text-gray-300 hover:bg-gray-800 hover:text-amber-400"
           }`}
           onClick={() => isMobile && setIsMobileMenuOpen(false)}
         >
@@ -41,12 +41,12 @@ const AdminLayout = () => {
   );
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-gradient-to-br from-gray-900 to-black">
       {/* Desktop Sidebar */}
-      <aside className="flex-shrink-0 w-64 border-r bg-card hidden md:block">
-        <div className="p-4 mb-4">
-          <h1 className="text-xl font-bold">Flomanji Admin</h1>
-          <p className="text-sm text-muted-foreground">Game Master Dashboard</p>
+      <aside className="flex-shrink-0 w-64 border-r border-gray-800 bg-black/50 backdrop-blur-sm hidden md:block">
+        <div className="p-4 mb-4 border-b border-gray-800">
+          <h1 className="text-xl font-bold text-amber-400">Flomanji Admin</h1>
+          <p className="text-sm text-gray-400">Game Master Dashboard</p>
         </div>
         <NavLinks />
       </aside>
@@ -54,18 +54,18 @@ const AdminLayout = () => {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile Header */}
-        <header className="flex items-center justify-between border-b h-14 px-4 sm:px-6 md:hidden">
-          <h1 className="text-lg font-medium">Flomanji Admin</h1>
+        <header className="flex items-center justify-between border-b border-gray-800 bg-black/50 backdrop-blur-sm h-14 px-4 sm:px-6 md:hidden">
+          <h1 className="text-lg font-medium text-amber-400">Flomanji Admin</h1>
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
-              <button className="text-foreground p-2">
+              <button className="text-gray-300 p-2 hover:text-amber-400">
                 <List className="h-6 w-6" />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
-              <div className="p-4 border-b">
-                <h2 className="text-xl font-bold">Flomanji Admin</h2>
-                <p className="text-sm text-muted-foreground">Game Master Dashboard</p>
+            <SheetContent side="left" className="w-64 p-0 bg-black border-r border-gray-800">
+              <div className="p-4 border-b border-gray-800">
+                <h2 className="text-xl font-bold text-amber-400">Flomanji Admin</h2>
+                <p className="text-sm text-gray-400">Game Master Dashboard</p>
               </div>
               <NavLinks />
             </SheetContent>
@@ -73,7 +73,7 @@ const AdminLayout = () => {
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto px-4 py-8 md:px-8">
           <Outlet />
         </main>
       </div>
