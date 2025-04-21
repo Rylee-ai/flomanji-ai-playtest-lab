@@ -18,8 +18,8 @@ export const HeroSection = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   
-  // Image path - using the correct approach for Lovable uploads
-  const bgImageUrl = "/public/lovable-uploads/52fa03b2-c987-4f76-b147-53af093c109d.png";
+  // Fixed image path - removed the "/public" prefix
+  const bgImageUrl = "/lovable-uploads/52fa03b2-c987-4f76-b147-53af093c109d.png";
   
   // Check if image loads properly
   useEffect(() => {
