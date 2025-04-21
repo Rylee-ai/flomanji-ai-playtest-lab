@@ -17,10 +17,10 @@ export const HeroSection = ({
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  
-  // Updated path with the newly uploaded image
-  const bgImageUrl = "/lovable-uploads/fa04ed1d-8476-43c3-8002-651032803227.png";
-  
+
+  // Updated path with your newly uploaded image
+  const bgImageUrl = "/lovable-uploads/af3a931f-d7d9-4ca5-96b8-04a4b9570a09.png";
+
   // Check if image loads properly
   useEffect(() => {
     const img = new Image();
@@ -47,10 +47,11 @@ export const HeroSection = ({
       aria-label="Flomanji - Gator sunset hero background"
     >
       {/* Apply a gradient overlay for text readability */}
-      <div 
+      <div
         className="absolute inset-0 z-0"
         style={{
-          background: "linear-gradient(to top, rgba(10,10,20,0.86) 8%, rgba(10,10,20,0.60) 45%, rgba(10,10,20,0.13) 90%, rgba(0,0,0,0.00) 100%)",
+          background:
+            "linear-gradient(to top, rgba(10,10,20,0.86) 8%, rgba(10,10,20,0.60) 45%, rgba(10,10,20,0.13) 90%, rgba(0,0,0,0.00) 100%)",
         }}
         aria-hidden="true"
       />
@@ -59,7 +60,8 @@ export const HeroSection = ({
       <div
         className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[16vw] max-w-4xl rounded-full blur-3xl opacity-60 animate-pulse"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(252,174,38,0.37) 0%, rgba(252,174,38,0.09) 70%, rgba(252,174,38,0) 100%)"
+          background:
+            "radial-gradient(ellipse at center, rgba(252,174,38,0.37) 0%, rgba(252,174,38,0.09) 70%, rgba(252,174,38,0) 100%)",
         }}
         aria-hidden="true"
       />
@@ -67,14 +69,16 @@ export const HeroSection = ({
       <div
         className="pointer-events-none absolute bottom-[14%] left-1/2 -translate-x-1/2 w-[40vw] h-[4vw] max-w-xl rounded-full blur-2xl opacity-40 animate-fade-in"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(251,191,36,0.29) 0%, rgba(251,191,36,0.03) 80%)"
+          background:
+            "radial-gradient(ellipse at center, rgba(251,191,36,0.29) 0%, rgba(251,191,36,0.03) 80%)",
         }}
         aria-hidden="true"
       />
 
       {/* Dim overall dark veil for text contrast (gentler, topmost) */}
-      <div className="absolute inset-0 bg-black/[0.15] md:bg-black/[0.19] pointer-events-none z-10"
-           aria-hidden="true"
+      <div
+        className="absolute inset-0 bg-black/[0.15] md:bg-black/[0.19] pointer-events-none z-10"
+        aria-hidden="true"
       />
 
       {/* Debug message for image loading issues - only visible during development */}
@@ -95,11 +99,14 @@ export const HeroSection = ({
             animate-fade-in
           "
           style={{
-            boxShadow: '0 6px 32px 0 rgba(252,174,38,0.15), 0 4px 40px 0 rgba(0,0,0,0.55)',
+            boxShadow:
+              "0 6px 32px 0 rgba(252,174,38,0.15), 0 4px 40px 0 rgba(0,0,0,0.55)",
           }}
         >
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 leading-tight drop-shadow-[0_2px_10px_rgba(249,220,94,0.30)] text-center">
-            <span className="block text-white animate-[fade-in_0.57s_ease-in] drop-shadow-[0_2px_10px_rgba(255,255,255,0.20)]">FLOMANJI:</span>
+            <span className="block text-white animate-[fade-in_0.57s_ease-in] drop-shadow-[0_2px_10px_rgba(255,255,255,0.20)]">
+              FLOMANJI:
+            </span>
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-500 drop-shadow-[0_2px_9px_rgba(252,174,38,0.38)] animate-[fade-in_1.2s_ease-in]">
               Can You Escape Paradise?
             </span>
