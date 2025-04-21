@@ -2,8 +2,26 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { User } from "lucide-react";
 
 const PublicLayout = () => {
+  const { user, profile, signOut } = useAuth();
+  
+  const isLoggedIn = !!user;
+  
+  // Determine redirect path based on user role
+  const getDashboardPath = () => {
+    if (!profile) return "/";
+    return profile.role === "admin" ? "/dashboard" : "/player";
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">
       {/* Header */}
@@ -21,12 +39,40 @@ const PublicLayout = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="outline" asChild className="border-gray-700 hover:bg-gray-800 hidden md:flex">
-              <Link to="/waitlist">Join Waitlist</Link>
-            </Button>
-            <Button asChild className="bg-amber-500 hover:bg-amber-600 text-black">
-              <Link to="/auth">Sign In</Link>
-            </Button>
+            {isLoggedIn ? (
+              <div className="flex items-center gap-3">
+                <Button variant="outline" asChild className="border-gray-700 hover:bg-gray-800">
+                  <Link to={getDashboardPath()}>My Dashboard</Link>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full border border-gray-700">
+                      <User className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link to={getDashboardPath()}>Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => signOut()}
+                      className="text-red-500 cursor-pointer"
+                    >
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <>
+                <Button variant="outline" asChild className="border-gray-700 hover:bg-gray-800 hidden md:flex">
+                  <Link to="/waitlist">Join Waitlist</Link>
+                </Button>
+                <Button asChild className="bg-amber-500 hover:bg-amber-600 text-black">
+                  <Link to="/auth">Sign In</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
