@@ -68,11 +68,18 @@ export const startSimulation = async (
       for (let playerIdx = 0; playerIdx < actualPlayerCount; playerIdx++) {
         console.log(`Processing player ${playerIdx + 1}'s turn`);
         
-        // Convert the conversation log to messages format for this player
-        const playerMessages = conversationLog.map(entry => ({
-          role: entry.role === 'Player' ? 'assistant' : 'user',
-          content: `${entry.role}: ${entry.content}`
-        }));
+        // Format messages properly for the player without role repetition
+        const playerMessages = conversationLog.map(entry => {
+          // Remove any role prefixes that might already be in the content
+          const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
+          
+          return {
+            role: entry.role === 'Player' ? 'assistant' : 'user',
+            content: entry.role === 'Player' 
+              ? `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
+              : `GM: ${cleanContent}`
+          };
+        });
 
         // Get player's action
         const playerResponse = await createChatCompletion(
@@ -80,27 +87,41 @@ export const startSimulation = async (
           playerMessages
         );
 
+        // Remove role prefix if it exists in the response
+        const cleanPlayerResponse = playerResponse.replace(/^(Player \d+): /g, '');
+
         conversationLog.push({
           role: 'Player',
-          content: playerResponse,
+          content: cleanPlayerResponse,
           playerIndex: playerIdx, // Track which player this is
           timestamp: new Date().toISOString()
         });
 
-        // GM responds to this player
-        const gmMessages = conversationLog.map(entry => ({
-          role: entry.role === 'GM' ? 'assistant' : 'user',
-          content: `${entry.role}${entry.playerIndex !== undefined ? ` ${entry.playerIndex + 1}` : ''}: ${entry.content}`
-        }));
+        // Format messages properly for the GM without role repetition
+        const gmMessages = conversationLog.map(entry => {
+          // Remove any role prefixes that might already be in the content
+          const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
+          
+          return {
+            role: entry.role === 'GM' ? 'assistant' : 'user',
+            content: entry.role === 'GM'
+              ? `GM: ${cleanContent}`
+              : `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
+          };
+        });
 
+        // Get GM's response
         const gmResponse = await createChatCompletion(
           gmSystemPrompt,
           gmMessages
         );
 
+        // Remove role prefix if it exists in the response
+        const cleanGmResponse = gmResponse.replace(/^GM: /g, '');
+
         conversationLog.push({
           role: 'GM',
-          content: gmResponse,
+          content: cleanGmResponse,
           timestamp: new Date().toISOString()
         });
       }
@@ -110,13 +131,16 @@ export const startSimulation = async (
     let criticFeedback = "";
     if (enableCritic) {
       const criticSystemPrompt = getCriticSystemPrompt(rulesContent);
-      const fullTranscript = conversationLog.map(entry =>
-        `${entry.role}${entry.playerIndex !== undefined ? ` ${entry.playerIndex + 1}` : ''}: ${entry.content}`
-      ).join("\n\n");
+      
+      // Clean up the transcript to avoid role repetition
+      const formattedTranscript = conversationLog.map(entry => {
+        const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
+        return `${entry.role}${entry.playerIndex !== undefined ? ` ${entry.playerIndex + 1}` : ''}: ${cleanContent}`;
+      }).join("\n\n");
 
       criticFeedback = await createChatCompletion(
         criticSystemPrompt,
-        [{ role: "user", content: `Here is the transcript of the session:\n\n${fullTranscript}\n\nPlease provide your analysis.` }]
+        [{ role: "user", content: `Here is the transcript of the session:\n\n${formattedTranscript}\n\nPlease provide your analysis.` }]
       );
     }
 

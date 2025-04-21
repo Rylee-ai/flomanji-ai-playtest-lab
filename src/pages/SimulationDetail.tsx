@@ -1,7 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getSimulationById, updateSimulationAnnotations } from '@/lib/storage';
-import { AgentMessage } from '@/types'; // Ensure proper import
+import { AgentMessage } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 const SimulationDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +33,20 @@ const SimulationDetail = () => {
       }
       setIsSaving(false);
     }
+  };
+
+  // Helper function to format message content
+  const formatMessageContent = (entry: AgentMessage) => {
+    // Remove any role prefixes that might be in the content
+    return entry.content.replace(/^(GM|Player \d+): /g, '');
+  };
+
+  // Helper function to generate message display name
+  const getMessageDisplayName = (entry: AgentMessage) => {
+    if (entry.role === 'Player' && entry.playerIndex !== undefined) {
+      return `Player ${entry.playerIndex + 1}`;
+    }
+    return entry.role;
   };
 
   if (loading) {
@@ -97,8 +114,8 @@ const SimulationDetail = () => {
               entry.role === 'Critic' ? 'bg-yellow-100' :
               'bg-muted'
             }`}>
-              <div className="font-semibold mb-1">{entry.role}</div>
-              <div className="whitespace-pre-wrap">{entry.content}</div>
+              <div className="font-semibold mb-1">{getMessageDisplayName(entry)}</div>
+              <div className="whitespace-pre-wrap">{formatMessageContent(entry)}</div>
             </div>
           ))}
         </div>
@@ -113,19 +130,19 @@ const SimulationDetail = () => {
       
       <div className="bg-card rounded-lg p-4 mb-6">
         <h2 className="text-xl font-semibold mb-2">Notes</h2>
-        <textarea
-          className="w-full min-h-[100px] p-2 border rounded"
+        <Textarea
+          className="w-full min-h-[100px] p-2 mb-2"
           value={annotations}
           onChange={(e) => setAnnotations(e.target.value)}
           placeholder="Add your notes about this simulation..."
         />
-        <button
-          className="mt-2 px-4 py-2 bg-primary text-primary-foreground rounded"
+        <Button
           onClick={handleSaveAnnotations}
           disabled={isSaving}
+          className="mt-2"
         >
           {isSaving ? 'Saving...' : 'Save Notes'}
-        </button>
+        </Button>
       </div>
     </div>
   );
