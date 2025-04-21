@@ -94,7 +94,7 @@ const Rules = () => {
               <CardHeader>
                 <CardTitle>How Rules Are Used</CardTitle>
                 <CardDescription>
-                  Understanding how the AI agents interpret these rules
+                  Understanding how the AI agents interpret and apply these rules during simulations
                 </CardDescription>
               </CardHeader>
               <CardContent>
