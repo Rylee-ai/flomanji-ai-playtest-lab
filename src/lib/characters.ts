@@ -1,5 +1,5 @@
 
-import { FlomanjiCharacter, CharacterStats, CharacterAbility } from "@/types";
+import { FlomanjiCharacter, CharacterStats, CharacterAbility, CharacterGear } from "@/types";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 
 // Convert PlayerCharacterCards to FlomanjiCharacters

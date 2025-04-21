@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import SimulationValidationManager from "./SimulationValidationManager";
 import SimulationConfigPanel from "./SimulationConfigPanel";
 

@@ -24,7 +24,7 @@ export const getSimulationSummaries = () => {
       timestamp: sim.timestamp,
       scenario: sim.scenario,
       rounds: sim.rounds,
-      result: sim.log.slice(-1)[0]?.message.substring(0, 100) + "...",
+      result: sim.log.slice(-1)[0]?.content.substring(0, 100) + "...", // Updated from message to content
       notes: sim.annotations
     }));
   } catch (error) {

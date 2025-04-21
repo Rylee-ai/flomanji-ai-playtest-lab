@@ -63,17 +63,24 @@ export interface CharacterAbility {
   description: string;
 }
 
+// Add the CharacterGear interface to match what's used in characters.ts
+export interface CharacterGear {
+  name: string;
+  type: string;
+  effect: string;
+}
+
 export interface FlomanjiCharacter {
   id: string;
   name: string;
   role?: string;
   stats: CharacterStats;
-  ability: CharacterAbility; // Changed from string to object
+  ability: CharacterAbility;
   health: number;
   weirdness: number;
   luck: number;
   position?: string;
-  starterGear?: string[];
+  starterGear?: CharacterGear[]; // Update to use CharacterGear[] instead of string[]
 }
 
 // Simulation list related types
@@ -84,12 +91,12 @@ export interface SimulationSummary {
   rounds: number;
   missionType?: string;
   missionOutcome?: string;
-  result?: string; // Added missing property
-  notes?: string;  // Added missing property
+  result?: string;
+  notes?: string;
 }
 
 export interface AgentMessage {
   role: string;
-  content: string; // This is the standard property name
+  content: string; // This is the standard property name for message content
   timestamp?: string;
 }
