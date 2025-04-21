@@ -1,5 +1,5 @@
 
-import { FlomanjiCharacter, CharacterStats, CharacterAbility, CharacterGear } from "@/types";
+import { FlomanjiCharacter, CharacterStats, CharacterAbility } from "@/types";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 
 // Convert PlayerCharacterCards to FlomanjiCharacters
@@ -12,7 +12,7 @@ export const PREDEFINED_CHARACTERS: FlomanjiCharacter[] = PLAYER_CHARACTER_CARDS
   health: card.health,
   weirdness: card.weirdness,
   luck: card.luck,
-  starterGear: card.starterGear,
+  starterGear: card.starterGear?.map(gear => typeof gear === 'string' ? gear : gear.name) || [],
 }));
 
 export const getCharacterById = (id: string): FlomanjiCharacter | undefined => {

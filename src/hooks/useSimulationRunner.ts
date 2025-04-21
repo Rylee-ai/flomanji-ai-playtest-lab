@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 import { SimulationConfig } from "@/types";
 import { startSimulation, getExampleRules } from "@/lib/api";
@@ -82,7 +81,9 @@ export function useSimulationRunner() {
               health: card.health,
               weirdness: 0,
               luck: Math.ceil(statTotal / 2),
-              starterGear: [...(card.starterGear || [])]
+              starterGear: card.starterGear ? card.starterGear.map(gear => 
+                typeof gear === 'string' ? gear : gear.name
+              ) : []
             }
           });
 
@@ -90,7 +91,7 @@ export function useSimulationRunner() {
             ? MISSION_CARDS.find(m => m.id === config.missionId)
             : null;
           
-          const simulationConfig = { 
+          const simulationConfig: SimulationConfig = { 
             ...config, 
             fullCharacters,
             extractionRegion: config.extractionRegion || selectedMission?.extractionRegion || "exit",

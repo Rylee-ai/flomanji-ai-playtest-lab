@@ -54,9 +54,11 @@ const SimulationsList = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="pb-2">
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {simulation.result || "No result summary available"}
-                </p>
+                {simulation.result && (
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {simulation.result}
+                  </p>
+                )}
                 {simulation.notes && (
                   <div className="mt-2 p-2 bg-secondary rounded-md">
                     <p className="text-sm font-medium">Notes:</p>

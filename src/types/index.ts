@@ -1,5 +1,5 @@
+
 import { MissionSheet } from "./cards/mission";
-import { PlayerCharacterSheet } from "./cards/player-character";
 
 export interface SimulationConfig {
   scenarioPrompt: string;
@@ -14,6 +14,10 @@ export interface SimulationConfig {
   extractionRegion?: string;
   fullCharacters?: FlomanjiCharacter[];
   objectives?: any[];
+  secretTraitor?: boolean;
+  arcadeModule?: boolean;
+  nightmareDifficulty?: boolean;
+  competitiveMode?: boolean;
 }
 
 export interface AgentMessage {
@@ -41,6 +45,8 @@ export interface SimulationSummary {
   timestamp: string;
   scenario: string;
   rounds: number;
+  result?: string;
+  notes?: string;
 }
 
 export interface StoredSimulation {
@@ -82,4 +88,19 @@ export interface CharacterStats {
 export interface CharacterAbility {
   name: string;
   description: string;
+}
+
+// Agent types
+export type AgentRole = "GM" | "Player" | "Critic";
+
+export interface AgentConfig {
+  systemPrompt: string;
+  temperature: number;
+  verbose?: boolean;
+  personality?: string;
+  skillLevel?: string;
+  meta?: boolean;
+  focus?: string;
+  detail?: string;
+  suggestions?: boolean;
 }
