@@ -45,6 +45,8 @@ export interface SimulationResult {
   config?: SimulationConfig;
   characters?: FlomanjiCharacter[];
   annotations?: string;
+  criticFeedback?: string;
+  gameState?: any;
 }
 
 export interface AgentMessage {

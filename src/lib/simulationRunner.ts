@@ -576,6 +576,7 @@ export const startSimulation = async (
       scenario: scenarioPrompt,
       rounds,
       log: conversationLog,
+      result: "", // Empty result string to be populated later
       criticFeedback,
       annotations: "",
       config: {
