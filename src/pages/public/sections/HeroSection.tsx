@@ -11,7 +11,7 @@ export const HeroSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void
   <section
     className="relative bg-cover bg-center py-32"
     style={{
-      backgroundImage: "url('/lovable-uploads/9ca743a6-73ed-454b-b1bd-b36cb288e2a0.png')",
+      backgroundImage: "url('/lovable-uploads/57bf73a6-ede1-453d-819f-d737edee0813.png')",
     }}
   >
     {/* Strengthened overlay for max readability */}
