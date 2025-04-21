@@ -5,7 +5,7 @@ import { getGMSystemPrompt, getPlayerSystemPrompt, getCriticSystemPrompt } from 
 import { saveSimulationResult } from "@/lib/storage";
 import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
-import { createChatCompletion } from "@/lib/openrouterChat"; // Add this import
+import { createChatCompletion } from "@/lib/openrouterChat";
 
 import { 
   simulateDiceRoll, 
