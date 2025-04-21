@@ -2,47 +2,67 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Shield, Map, Plus } from "lucide-react";
+import { Zap, Shield, Map, Sparkles, Grid3X3 } from "lucide-react";
 
 export const KeyFeaturesSection = () => (
-  <section className="py-16 bg-black">
-    <div className="container mx-auto px-4 max-w-6xl">
-      <div className="flex items-center mb-8">
-        <Badge variant="outline" className="mr-2 bg-amber-500/10 text-amber-400 border-amber-500/20">2</Badge>
-        <h2 className="text-2xl font-bold">Key Features</h2>
+  <section className="py-16 bg-gradient-to-b from-gray-950 to-black relative">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_30%,rgba(120,41,148,0.1),transparent_50%)]"></div>
+    <div className="container mx-auto px-4 max-w-6xl relative z-10">
+      <div className="flex items-center mb-12">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-lg"></div>
+          <Badge variant="outline" className="relative z-10 h-8 w-8 flex items-center justify-center p-0 text-lg font-bold border-blue-500/30 bg-blue-500/10 text-blue-400">2</Badge>
+        </div>
+        <h2 className="text-2xl font-bold ml-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-blue-400">Key Features</h2>
       </div>
-      <div className="grid md:grid-cols-4 gap-6">
-        <Card className="bg-gray-900 border-gray-800">
-          <CardContent className="pt-6">
-            <Zap className="h-8 w-8 text-yellow-500 mb-4" />
-            <h3 className="text-lg font-bold mb-2">AI Game Master</h3>
+      
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="bg-gray-900/80 backdrop-blur-sm border-gray-800 shadow-lg overflow-hidden group hover:-translate-y-1 transition-all duration-300">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 to-yellow-300 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+          <CardContent className="pt-6 relative z-10">
+            <div className="bg-gray-800/80 p-3 rounded-lg inline-block mb-4 group-hover:bg-yellow-900/30 group-hover:border-yellow-700/40 transition-colors border border-gray-700/50">
+              <Zap className="h-6 w-6 text-yellow-500" />
+            </div>
+            <h3 className="text-lg font-bold mb-2 group-hover:text-yellow-400 transition-colors">AI Game Master</h3>
             <p className="text-gray-400 text-sm">
               Dynamic storytelling powered by AI that adapts to your choices and creates unique gameplay experiences.
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-gray-900 border-gray-800">
-          <CardContent className="pt-6">
-            <Shield className="h-8 w-8 text-green-500 mb-4" />
-            <h3 className="text-lg font-bold mb-2">Risk Management</h3>
+        
+        <Card className="bg-gray-900/80 backdrop-blur-sm border-gray-800 shadow-lg overflow-hidden group hover:-translate-y-1 transition-all duration-300">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-300 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+          <CardContent className="pt-6 relative z-10">
+            <div className="bg-gray-800/80 p-3 rounded-lg inline-block mb-4 group-hover:bg-green-900/30 group-hover:border-green-700/40 transition-colors border border-gray-700/50">
+              <Shield className="h-6 w-6 text-green-500" />
+            </div>
+            <h3 className="text-lg font-bold mb-2 group-hover:text-green-400 transition-colors">Risk Management</h3>
             <p className="text-gray-400 text-sm">
               Balance heat levels, resources, and strategy to survive the increasingly chaotic environment.
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-gray-900 border-gray-800">
-          <CardContent className="pt-6">
-            <Map className="h-8 w-8 text-blue-500 mb-4" />
-            <h3 className="text-lg font-bold mb-2">Mission System</h3>
+        
+        <Card className="bg-gray-900/80 backdrop-blur-sm border-gray-800 shadow-lg overflow-hidden group hover:-translate-y-1 transition-all duration-300">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-300 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+          <CardContent className="pt-6 relative z-10">
+            <div className="bg-gray-800/80 p-3 rounded-lg inline-block mb-4 group-hover:bg-blue-900/30 group-hover:border-blue-700/40 transition-colors border border-gray-700/50">
+              <Map className="h-6 w-6 text-blue-500" />
+            </div>
+            <h3 className="text-lg font-bold mb-2 group-hover:text-blue-400 transition-colors">Mission System</h3>
             <p className="text-gray-400 text-sm">
               Complete unique objectives while exploring distinctive regions with special challenges.
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-gray-900 border-gray-800">
-          <CardContent className="pt-6">
-            <Plus className="h-8 w-8 text-red-500 mb-4" />
-            <h3 className="text-lg font-bold mb-2">Flomanjified Cards</h3>
+        
+        <Card className="bg-gray-900/80 backdrop-blur-sm border-gray-800 shadow-lg overflow-hidden group hover:-translate-y-1 transition-all duration-300">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-300 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+          <CardContent className="pt-6 relative z-10">
+            <div className="bg-gray-800/80 p-3 rounded-lg inline-block mb-4 group-hover:bg-red-900/30 group-hover:border-red-700/40 transition-colors border border-gray-700/50">
+              <Grid3X3 className="h-6 w-6 text-red-500" />
+            </div>
+            <h3 className="text-lg font-bold mb-2 group-hover:text-red-400 transition-colors">Flomanjified Cards</h3>
             <p className="text-gray-400 text-sm">
               Encounter bizarre paradise-themed hazards, characters and treasures with unique abilities.
             </p>

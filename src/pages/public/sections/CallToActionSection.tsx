@@ -12,7 +12,7 @@ export const CallToActionSection = ({ scrollToWaitlist }: { scrollToWaitlist: ()
         Every game tells a story, every decision matters, and paradise never felt so dangerous.
       </p>
       <div className="relative mx-auto max-w-md">
-        <div className="bg-gray-900 border border-green-900/60 p-6 rounded-lg relative z-10">
+        <div className="bg-gray-900 border border-green-900/60 p-6 rounded-lg relative z-10 shadow-xl hover:shadow-green-900/20 transition-shadow">
           <Badge className="bg-green-600 mb-2">Early Access</Badge>
           <h3 className="text-xl font-bold mb-2">Join our Playtest</h3>
           <p className="text-gray-400 text-sm mb-4">
@@ -20,16 +20,11 @@ export const CallToActionSection = ({ scrollToWaitlist }: { scrollToWaitlist: ()
           </p>
           <Button 
             onClick={scrollToWaitlist} 
-            className="w-full bg-green-600 hover:bg-green-700"
+            className="w-full bg-green-600 hover:bg-green-700 transition-colors"
           >
             Sign Up Now
           </Button>
         </div>
-      </div>
-      <div className="flex justify-center mt-6 space-x-2">
-        <span className="h-2 w-2 rounded-full bg-amber-400"></span>
-        <span className="h-2 w-2 rounded-full bg-gray-700"></span>
-        <span className="h-2 w-2 rounded-full bg-gray-700"></span>
       </div>
     </div>
   </section>
