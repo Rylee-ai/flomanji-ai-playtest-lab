@@ -1,6 +1,7 @@
 
 import React from "react";
 import { GameSpecificationsSection } from "./sections/GameSpecificationsSection";
+import { FooterSection } from "./sections/FooterSection";
 
 const FAQPage = () => {
   return (
@@ -8,6 +9,7 @@ const FAQPage = () => {
       <div className="container mx-auto px-4 py-16">
         <GameSpecificationsSection />
       </div>
+      <FooterSection />
     </div>
   );
 };

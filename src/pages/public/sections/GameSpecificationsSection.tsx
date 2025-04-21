@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Accordion,
@@ -45,6 +44,38 @@ export const GameSpecificationsSection = () => {
     {
       question: "What happens when I encounter hazards?",
       answer: "When facing hazards, players can choose one of four approaches: Fight (Brawn check), Flee (Moxie check), Negotiate (Charm check), or Outsmart (Weird Sense check). Each approach has different consequences and may affect the Heat level."
+    },
+    {
+      question: "What happens when Weirdness increases?",
+      answer: "As Weirdness increases, characters gain access to supernatural abilities but also face greater dangers. At Weirdness 3, players draw a Weird card. At Weirdness 6, they gain a Flomanjified condition. At Weirdness 9, they must make Weird Sense checks each round or take damage."
+    },
+    {
+      question: "How do Team-Up actions work?",
+      answer: "Team-Up actions allow two or more players to combine their efforts. The lead player makes the check and adds +1 for each helping player. All participants must spend an action, but successful Team-Ups can accomplish tasks that would be impossible alone."
+    },
+    {
+      question: "What are Flomanjified conditions?",
+      answer: "Flomanjified conditions are supernatural alterations that affect characters when exposed to too much Weirdness. These can grant both benefits and drawbacks, like 'Swamp Vision' allowing you to see through murky water but making bright light painful."
+    },
+    {
+      question: "How does character progression work?",
+      answer: "Characters earn Experience Points (XP) for completing mission objectives and surviving scenarios. XP can be spent to improve stats, learn new abilities, or remove negative conditions. Each mission typically awards 1-3 XP based on performance."
+    },
+    {
+      question: "What happens if a character is knocked out?",
+      answer: "When reduced to 0 Health, a character is knocked out and cannot take actions. Other players can spend an action to revive them with 1 Health. If all players are knocked out simultaneously, the mission ends in failure."
+    },
+    {
+      question: "Can I replay missions?",
+      answer: "Yes! Missions are designed to be highly replayable. Random event cards, different character combinations, and player choices create unique experiences each time. Some missions also have alternate objectives and endings to discover."
+    },
+    {
+      question: "What's in the base game?",
+      answer: "The base game includes 6 player characters, 120+ cards (including Hazards, Gear, and Events), custom dice, Heat and Weirdness trackers, character sheets, and 5 complete missions. Additional content expansions are planned for future release."
+    },
+    {
+      question: "Is there a solo mode?",
+      answer: "Yes, Flomanji includes comprehensive solo rules using the Automa system. This allows single players to experience the full game with automated opponent behavior and modified mission objectives specifically balanced for solo play."
     }
   ];
 
