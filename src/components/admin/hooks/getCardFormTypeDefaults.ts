@@ -1,4 +1,3 @@
-
 import { CardFormValues } from "../CardForm";
 import { GameCard } from "@/types/cards";
 import { TreasureCard } from "@/types/cards/treasure";
@@ -140,8 +139,15 @@ export const getCardFormTypeDefaults = (card: GameCard): Partial<CardFormValues>
         starterGear: playerCharCard.starterGear || []
       };
     }
-    case "mission": {
-      const missionCard = card as MissionSheet;
+    case "mission":
+    case "exploration":
+    case "escape":
+    case "escort":
+    case "collection":
+    case "boss":
+    case "solo": {
+      // First, cast to unknown, then to MissionSheet to avoid direct cast error
+      const missionCard = card as unknown as MissionSheet;
       return {
         hook: missionCard.hook || "",
         mapLayout: missionCard.mapLayout || "",
@@ -176,4 +182,3 @@ export const getCardFormTypeDefaults = (card: GameCard): Partial<CardFormValues>
       return {};
   }
 };
-

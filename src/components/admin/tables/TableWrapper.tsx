@@ -1,4 +1,3 @@
-
 import React from "react";
 import { GameCard } from "@/types/cards";
 import { TreasureCard } from "@/types/cards/treasure";
@@ -50,11 +49,17 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard }: Table
         />
       );
     case "mission":
+    case "exploration":
+    case "escape":
+    case "escort":
+    case "collection":
+    case "boss":
+    case "solo":
       return (
         <MissionCardsTable
-          cards={cards as MissionSheet[]}
+          cards={cards as unknown as MissionSheet[]}
           onViewCard={onViewCard}
-          onEditCard={onEditCard}
+          onEditCard={(card) => onEditCard(card as unknown as GameCard)}
         />
       );
     case "gear":

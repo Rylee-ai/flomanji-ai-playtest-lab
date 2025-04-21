@@ -1,10 +1,9 @@
-
 import { MissionSheet } from "@/types/cards/mission";
 
 const neonNightmareAtGhostMall: MissionSheet = {
   id: "neon-nightmare-at-ghost-mall",
   name: "Neon Nightmare at Ghost Mall",
-  type: "mission",
+  type: "exploration",
   icons: [{ symbol: "🏬", meaning: "Mall" }, { symbol: "👻", meaning: "Haunted" }],
   keywords: ["Exploration", "Rescue", "Supernatural"],
   hook: "Late September, 1987 – An abandoned mall's neon signs flicker to life as specters roam its halls. Investigate missing teens before they vanish forever.",

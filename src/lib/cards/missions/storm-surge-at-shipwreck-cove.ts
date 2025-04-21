@@ -1,10 +1,9 @@
-
 import { MissionSheet } from "@/types/cards/mission";
 
 const stormSurgeAtShipwreckCove: MissionSheet = {
   id: "storm-surge-at-shipwreck-cove",
   name: "Storm Surge at Shipwreck Cove",
-  type: "mission",
+  type: "exploration",
   icons: [{ symbol: "🌀", meaning: "Hurricane" }, { symbol: "🚢", meaning: "Shipwreck" }],
   keywords: ["Exploration", "Collection", "Time-Pressure"],
   hook: "November 1987 – A late hurricane lashes the coast, unearthing a sunken wreck. Dive in, secure relics, and escape before the storm's eye returns.",

@@ -1,10 +1,9 @@
-
 import { MissionSheet } from "@/types/cards/mission";
 
 const bleachedCitrusRun: MissionSheet = {
   id: "bleached-citrus-run",
   name: "Bleached Citrus Run",
-  type: "mission",
+  type: "escort",
   icons: [{ symbol: "🍊", meaning: "Citrus" }, { symbol: "☀️", meaning: "Extreme Heat" }],
   keywords: ["Escort", "Rescue", "Time-Pressure"],
   hook: "Mid-July, 1987 – A sudden heatwave scorches the Citrus Grove to bone-white flats. Survivors must race to rescue stranded pickers before dehydration claims them.",

@@ -84,8 +84,8 @@ export function applyMissionScaling(
     }
   }
   
-  // Ensure mission type matches, using one of the valid mission types
-  newConfig.missionType = playerCount === 1 ? "solo" : (mission.type as SimulationConfig["missionType"]);
+  // Ensure mission type matches, using the correct type casting
+  newConfig.missionType = mission.type;
   
   // Set extraction region if applicable
   if (mission.extractionRegion) {

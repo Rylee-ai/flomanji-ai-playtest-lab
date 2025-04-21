@@ -1,10 +1,9 @@
-
 import { MissionSheet } from "@/types/cards/mission";
 
 const gatorAidOnI95: MissionSheet = {
   id: "gator-aid-on-i95",
   name: "Gator-Aid on I-95",
-  type: "mission",
+  type: "escort",
   icons: [{ symbol: "🛣️", meaning: "Highway" }, { symbol: "🐊", meaning: "Mutant Gators" }],
   keywords: ["Escort", "Urban", "Swamp"],
   hook: "August 23, 1987 – Interstate 95 grinds to a halt as an overturned tanker spills experimental \"Gator-Aid\" serum. Mutated reptiles feast on chaos.",
