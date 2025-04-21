@@ -10,31 +10,47 @@ import { Square, Car, SquareCheck, SquareX, RectangleVertical } from "lucide-rea
 const cardBg = "/lovable-uploads/b36d25ce-1de9-4d8a-bea8-c9b40cfee954.png";
 
 export const GameSpecificationsSection = () => {
-  // Prepare info for each category of card
-  const breakdown = [
+  // Create example cards from the actual card library
+  const showcaseCards = [
     {
       icon: <RectangleVertical size={18} className="opacity-70" />,
       category: "Region Cards",
       count: REGION_CARDS.length ?? 38,
       description: "Unique locations across Flomanji with distinct challenges and effects.",
+      exampleName: "Mystic Springs",
+      exampleText: "Weirdness +1 when entering. Any Survivor here must test Weirdness DC 10 at end of turn → Failure: gain Haunted condition.",
+      exampleIcons: ["🌋", "🔮"],
+      exampleKeywords: ["Weird", "Water Source"]
     },
     {
       icon: <Car size={18} className="opacity-70" />,
       category: "Flomanjified Roles",
       count: FLOMANJIFIED_CARDS.length ?? 4,
       description: "Chaotic roles for eliminated players to continue the mayhem.",
+      exampleName: "Swamp Zombie",
+      exampleText: "Choose a non-Flomanjified Survivor in your tile. They test Grit DC 9 → Failure: take 1 Damage.",
+      exampleIcons: ["💀", "🐊"],
+      exampleKeywords: ["Creature", "Undead"]
     },
     {
       icon: <SquareCheck size={18} className="opacity-70" />,
       category: "Core Chaos Cards",
       count: CHAOS_CARDS.length ?? 15,
       description: "Global events that increase Heat and challenge all players.",
+      exampleName: "Sudden Downpour",
+      exampleText: "Heat +2. All Survivors in Swamp or Coastal regions must test Grit DC 8 → Failure: lose 1 Action.",
+      exampleIcons: ["☔", "⚠️"],
+      exampleKeywords: ["Weather", "Hazard"]
     },
     {
       icon: <Square size={18} className="opacity-70" />,
       category: "Character Types",
       count: PLAYER_CHARACTER_CARDS.length ?? 5,
       description: "Unique archetypes with special abilities and starting stats.",
+      exampleName: "The Tourist",
+      exampleText: "Special: Once per game, may reroll any Luck check. Starts with +1 Luck and 'Disposable Camera' Gear.",
+      exampleIcons: ["👨‍👩‍👧", "🍀"],
+      exampleKeywords: ["Survivalist", "Lucky"]
     },
   ];
 
@@ -57,16 +73,19 @@ export const GameSpecificationsSection = () => {
           </div>
         </div>
         <h3 className="text-xl font-bold mb-8">Card Breakdown</h3>
-        {/* Simulated card grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-7 mb-10">
-          {breakdown.map((data) => (
+          {showcaseCards.map((card) => (
             <CardCategoryShowcase
-              key={data.category}
+              key={card.category}
               bgImage={cardBg}
-              icon={data.icon}
-              category={data.category}
-              count={data.count}
-              description={data.description}
+              icon={card.icon}
+              category={card.category}
+              count={card.count}
+              description={card.description}
+              exampleName={card.exampleName}
+              exampleText={card.exampleText}
+              exampleIcons={card.exampleIcons}
+              exampleKeywords={card.exampleKeywords}
             />
           ))}
         </div>
@@ -77,4 +96,3 @@ export const GameSpecificationsSection = () => {
     </section>
   );
 };
-
