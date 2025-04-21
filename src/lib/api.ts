@@ -1,4 +1,5 @@
-import { SimulationConfig, SimulationResult } from "@/types";
+import { SimulationConfig, AgentMessage } from "@/types";
+import { SimulationResult } from "@/types";
 import { simulateRandomId } from "@/lib/utils";
 import { createChatCompletion } from "@/lib/openrouterChat";
 import { getGMSystemPrompt, getPlayerSystemPrompt, getCriticSystemPrompt } from "@/lib/prompts";
@@ -272,7 +273,7 @@ When you venture into Flomanji's wilds, threats lurk everywhere. This chapter un
 **6.1  Hazard Card Anatomy**
 Every Hazard card shares a standard template:
 
-    ────────────────────��──��─────────────
+    ────────────────────����──��─────────────
     CARD NAME    (Creature/Weather/Trap…)
     Type: Hazard · [Biome Icons]
     ─────────────────────────────────────

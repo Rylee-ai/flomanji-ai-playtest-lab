@@ -6,6 +6,7 @@ import ConfigWarningsAlert from "./ConfigWarningsAlert";
 import SimulationConfigTabPane from "./SimulationConfigTabPane";
 import { getAllMissionAnalytics } from "@/lib/mission-analytics";
 import { SimulationConfig } from "@/types";
+import { MISSION_CARDS } from "@/lib/cards/mission-cards";
 
 interface SimulationConfigPanelProps {
   selectedMission: any;
@@ -43,7 +44,7 @@ const SimulationConfigPanel: React.FC<SimulationConfigPanelProps> = ({
   return (
     <>
       <MissionSelectionGrid
-        missions={require("@/lib/cards/mission-cards").MISSION_CARDS}
+        missions={MISSION_CARDS}
         selectedMission={selectedMission}
         onMissionSelect={setSelectedMission}
         missionAnalytics={getAllMissionAnalytics()}
@@ -73,4 +74,3 @@ const SimulationConfigPanel: React.FC<SimulationConfigPanelProps> = ({
 };
 
 export default SimulationConfigPanel;
-
