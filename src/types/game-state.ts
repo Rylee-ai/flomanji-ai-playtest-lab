@@ -1,4 +1,3 @@
-
 import { FlomanjiCharacter, CharacterStats } from "@/types";
 
 /**
@@ -91,18 +90,19 @@ export interface GameTurn {
 }
 
 /**
- * Represents a mission objective
+ * Represents a mission objective, compatible with MissionObjective in cards/mission.ts
  */
 export interface Objective {
-  id: string;
-  description: string;
-  required: boolean;
-  completed?: boolean;
-  regionId?: string; // Region where the objective must be completed (if applicable)
-  requiredItems?: string[]; // Items required to complete the objective (if applicable)
-  reward?: string; // Reward for completing the objective
-  difficultyLevel?: number; // Difficulty level of the objective
-  completionCheck?: string; // Logic for checking completion
+  id: string;                          // Unique objective identifier
+  description: string;                 // Objective description (full text from Player's Guide)
+  required: boolean;                   // If this objective is required to win
+  completed?: boolean;                 // Track completion status in game state
+  regionId?: string;                   // Region ID where objective must be completed, if applicable
+  requiredItems?: string[];            // List of required item IDs
+  reward?: string;                     // Reward for completing the objective
+  difficultyLevel?: number;            // Difficulty level for the objective (1-5 for balancing)
+  completionCheck?: string;            // Logic/text for checking completion
+  // Add other derived fields as needed for compatibility
 }
 
 /**
