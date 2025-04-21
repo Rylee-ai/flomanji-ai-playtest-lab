@@ -20,7 +20,7 @@ export const HeroSection = ({
   const [imageError, setImageError] = React.useState(false);
 
   // Use the user's newly uploaded image
-  const bgImageUrl = "/lovable-uploads/438e7f2b-2452-4522-a683-5e1713c49f5c.png";
+  const bgImageUrl = "/lovable-uploads/a8353376-c4a1-4f22-b62b-9f2145532f1a.png";
 
   React.useEffect(() => {
     const img = new window.Image();
@@ -54,33 +54,33 @@ export const HeroSection = ({
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background:
-              "linear-gradient(to top, rgba(10,10,20,0.87) 8%, rgba(10,10,20,0.60) 45%, rgba(10,10,20,0.13) 85%, rgba(0,0,0,0.00) 100%)",
+              "linear-gradient(to top, rgba(10,10,20,0.85) 10%, rgba(10,10,20,0.60) 50%, rgba(10,10,20,0.20) 80%, rgba(0,0,0,0) 100%)",
           }}
           aria-hidden="true"
         />
         {/* Subtle orange glow */}
         <div
-          className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[80vw] h-[16vw] max-w-4xl rounded-full blur-3xl opacity-60 pulse z-20"
+          className="pointer-events-none absolute bottom-0 left-1/2 -translate-x-1/2 w-[70vw] h-[14vw] max-w-3xl rounded-full blur-3xl opacity-60 pulse z-20"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(252,174,38,0.37) 0%, rgba(252,174,38,0.09) 70%, rgba(252,174,38,0) 100%)",
+              "radial-gradient(ellipse at center, rgba(252,174,38,0.35) 0%, rgba(252,174,38,0.07) 70%, rgba(252,174,38,0) 100%)",
           }}
           aria-hidden="true"
         />
 
         {/* Extra orange shimmer */}
         <div
-          className="pointer-events-none absolute bottom-[14%] left-1/2 -translate-x-1/2 w-[40vw] h-[4vw] max-w-xl rounded-full blur-2xl opacity-40 animate-fade-in z-20"
+          className="pointer-events-none absolute bottom-[12%] left-1/2 -translate-x-1/2 w-[35vw] h-[3.5vw] max-w-lg rounded-full blur-2xl opacity-40 animate-fade-in z-20"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(251,191,36,0.29) 0%, rgba(251,191,36,0.03) 80%)",
+              "radial-gradient(ellipse at center, rgba(251,191,36,0.28) 0%, rgba(251,191,36,0.02) 80%)",
           }}
           aria-hidden="true"
         />
 
         {/* Slight veil for text contrast */}
         <div
-          className="absolute inset-0 bg-black/[0.14] md:bg-black/[0.18] pointer-events-none z-30"
+          className="absolute inset-0 bg-black/[0.14] md:bg-black/[0.20] pointer-events-none z-30"
           aria-hidden="true"
         />
 
@@ -92,39 +92,39 @@ export const HeroSection = ({
         )}
 
         {/* Main Hero Content */}
-        <div className="relative z-40 container mx-auto px-4 md:px-8 max-w-6xl flex flex-col items-center justify-center h-full">
+        <div className="relative z-40 container mx-auto px-4 md:px-8 max-w-5xl flex flex-col items-center justify-center h-full">
           <div
             className="
               bg-black/65 
               shadow-[0_2px_44px_0_rgba(0,0,0,0.33)]
               backdrop-blur-2xl border border-white/10 rounded-2xl
               flex flex-col items-center
-              w-full max-w-3xl
-              pb-10 pt-9 px-4 md:pb-14 md:pt-16 md:px-12
+              w-full max-w-2xl
+              pb-8 pt-8 px-6 md:pb-12 md:pt-12 md:px-10
               animate-fade-in
             "
             style={{
               boxShadow:
-                "0 6px 32px 0 rgba(252,174,38,0.09), 0 4px 40px 0 rgba(0,0,0,0.48)",
+                "0 6px 32px 0 rgba(252,174,38,0.08), 0 4px 40px 0 rgba(0,0,0,0.44)",
             }}
           >
             {/* Logo / Title */}
-            <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-3 md:mb-6 leading-tight drop-shadow-[0_2px_10px_rgba(249,220,94,0.21)] text-center">
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3 md:mb-4 leading-tight drop-shadow-[0_2px_10px_rgba(249,220,94,0.18)] text-center max-w-full break-words">
               <span className="block text-white animate-[fade-in_0.67s_ease-in] drop-shadow-[0_2px_10px_rgba(255,255,255,0.17)]">
                 FLOMANJI:
               </span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-500 drop-shadow-[0_2px_8.5px_rgba(252,174,38,0.30)] animate-[fade-in_1.15s_ease-in]">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-500 drop-shadow-[0_2px_8.5px_rgba(252,174,38,0.25)] animate-[fade-in_1.15s_ease-in]">
                 Can You Escape Paradise?
               </span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-center text-lg md:text-2xl max-w-2xl mb-7 md:mb-10 text-white/95 font-medium drop-shadow-[0_2px_9px_rgba(0,0,0,0.30)] leading-relaxed animate-fade-in">
+            <p className="text-center text-base md:text-xl max-w-xl mb-6 md:mb-8 text-white/95 font-medium drop-shadow-[0_2px_9px_rgba(0,0,0,0.25)] leading-relaxed animate-fade-in">
               A deck-building survival adventure where paradise and chaos collide in an unforgettable journey of strategy and suspense.
             </p>
             
             {/* CTA Button */}
-            <div className="w-full flex justify-center mb-7 md:mb-10">
+            <div className="w-full flex justify-center mb-6 md:mb-8">
               <Button
                 size="lg"
                 onClick={scrollToWaitlist}
@@ -132,8 +132,8 @@ export const HeroSection = ({
                   bg-gradient-to-r from-amber-500 to-amber-600 pointer-events-auto
                   hover:from-amber-400 hover:to-amber-500 text-black font-extrabold
                   px-8 py-6 text-lg md:text-xl rounded-xl
-                  shadow-[0_4px_22px_rgba(251,191,36,0.44)]
-                  transition-all duration-300 hover:shadow-[0_4px_32px_rgba(251,191,36,0.66)] hover:scale-105
+                  shadow-[0_4px_22px_rgba(251,191,36,0.40)]
+                  transition-all duration-300 hover:shadow-[0_4px_32px_rgba(251,191,36,0.60)] hover:scale-105
                   animate-fade-in
                 "
                 aria-label="Join Beta Waitlist"
@@ -143,22 +143,22 @@ export const HeroSection = ({
             </div>
 
             {/* Info/Stats */}
-            <div className="flex flex-wrap gap-x-8 gap-y-5 md:gap-x-12 md:gap-y-8 text-base md:text-lg text-white/85 justify-center animate-fade-in">
+            <div className="flex flex-wrap gap-x-8 gap-y-5 md:gap-x-12 md:gap-y-8 text-sm md:text-base text-white/85 justify-center animate-fade-in max-w-xs mx-auto">
               <div className="flex items-center">
                 <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
-                  <Clock className="h-5 w-5 text-amber-300" />
+                  <Clock className="h-4 w-4 md:h-5 md:w-5 text-amber-300" />
                 </div>
                 <span>30-60 min</span>
               </div>
               <div className="flex items-center">
                 <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
-                  <Users className="h-5 w-5 text-amber-300" />
+                  <Users className="h-4 w-4 md:h-5 md:w-5 text-amber-300" />
                 </div>
                 <span>2-6 players</span>
               </div>
               <div className="flex items-center">
                 <div className="bg-amber-400/10 p-2 rounded-full mr-2 md:mr-3">
-                  <Info className="h-5 w-5 text-amber-300" />
+                  <Info className="h-4 w-4 md:h-5 md:w-5 text-amber-300" />
                 </div>
                 <span>Ages 12+</span>
               </div>
