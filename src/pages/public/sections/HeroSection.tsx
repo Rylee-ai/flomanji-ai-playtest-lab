@@ -5,10 +5,10 @@ import { Clock, Users, Info } from "lucide-react";
 
 /**
  * Flomanji "HeroSection"
- * - Uses attached image as striking background (cover, never repeat)
- * - Linear dark overlay + glass effect panel for max legibility and prestige
- * - Large, bold, high-contrast text and responsive layout
- * - Professional, award-caliber UI
+ * - Striking and impactful hero section design
+ * - Bold typography with custom gradient effects
+ * - High-contrast visual elements for maximum impact
+ * - Professional, award-caliber UI with dynamic elements
  */
 export const HeroSection = ({
   scrollToWaitlist,
@@ -16,52 +16,65 @@ export const HeroSection = ({
   scrollToWaitlist: () => void;
 }) => (
   <section
-    className="relative min-h-[65vh] md:min-h-[82vh] flex items-center justify-center"
+    className="relative min-h-[75vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden"
     style={{
       backgroundImage:
-        "linear-gradient(120deg, rgba(20,18,30,0.84) 55%, rgba(16, 12, 12, 0.55) 80%), url('/lovable-uploads/fa5f67b9-4e09-4e5b-a492-8e94935c05d5.png')",
+        "linear-gradient(to right, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0.6) 80%), url('/lovable-uploads/941dbf15-8a90-44c4-b925-13fbe867b360.png')",
       backgroundPosition: "center",
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
     }}
-    aria-label="Hero background alligators at sunset"
   >
-    {/* Glass panel overlays */}
-    <div className="relative w-full flex justify-center">
-      <div className="glass-morphism max-w-3xl md:max-w-4xl xl:max-w-5xl mx-4 px-6 py-10 md:py-14 rounded-3xl shadow-xl border border-white/10 bg-black/50 backdrop-blur-xl"
-        style={{
-          boxShadow:
-            "0 6px 32px 2px rgba(0,0,0,.77), 0 1.5px 6px 0 rgba(43,23,46,.21)",
-        }}
-        >
-        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-3 text-gradient-primary drop-shadow-lg leading-tight">
-          FLOMANJI:
-          <br />
-          <span className="text-amber-400 bg-gradient-to-tr from-amber-400 via-yellow-200/95 to-white/85 bg-clip-text text-transparent">
+    {/* Ambient glow effect */}
+    <div 
+      className="absolute bottom-0 right-0 w-1/2 h-1/2 rounded-full blur-3xl" 
+      style={{ background: "radial-gradient(circle, rgba(251,191,36,0.1) 0%, rgba(251,191,36,0) 70%)" }}
+    ></div>
+    
+    <div className="absolute top-0 left-0 w-full h-full bg-black/20 backdrop-blur-[2px]"></div>
+    
+    {/* Main content */}
+    <div className="relative z-10 container mx-auto px-4 md:px-8 max-w-6xl">
+      <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-12 shadow-[0_8px_40px_rgba(0,0,0,0.5)]">
+        <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-4 leading-tight">
+          <span className="block text-white drop-shadow-[0_2px_10px_rgba(255,255,255,0.15)]">FLOMANJI:</span>
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 drop-shadow-[0_2px_5px_rgba(251,191,36,0.5)]">
             Can You Escape Paradise?
           </span>
         </h1>
-        <p className="text-lg md:text-2xl max-w-2xl mb-9 text-gray-100 font-semibold leading-relaxed drop-shadow-sm">
-          A deck-building survival adventure where paradise and chaos collide.
+        
+        <p className="text-xl md:text-2xl max-w-3xl mb-10 text-white/90 font-medium drop-shadow-md leading-relaxed">
+          A deck-building survival adventure where paradise and chaos collide in an unforgettable journey of strategy and suspense.
         </p>
-        <div className="flex gap-4 flex-wrap mb-8">
+        
+        <div className="flex flex-wrap gap-6 mb-10">
           <Button
             size="lg"
             onClick={scrollToWaitlist}
-            className="bg-amber-400 hover:bg-amber-500 text-black font-bold shadow-lg px-8 py-3 text-lg rounded-xl transition hover-scale animate-fade-in"
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold px-8 py-6 text-lg md:text-xl rounded-xl shadow-[0_4px_20px_rgba(251,191,36,0.4)] transition-all duration-300 hover:shadow-[0_4px_25px_rgba(251,191,36,0.6)] hover:scale-105"
           >
             Join Beta Waitlist
           </Button>
         </div>
-        <div className="flex gap-6 text-sm text-gray-200 mt-6">
-          <div className="flex items-center drop-shadow-md">
-            <Clock className="h-4 w-4 mr-2 opacity-80" /> 30-60 min
+        
+        <div className="flex flex-wrap gap-6 md:gap-10 text-base md:text-lg text-white/80">
+          <div className="flex items-center">
+            <div className="bg-amber-500/10 p-2 rounded-full mr-3">
+              <Clock className="h-5 w-5 text-amber-400" />
+            </div>
+            <span>30-60 min</span>
           </div>
-          <div className="flex items-center drop-shadow-md">
-            <Users className="h-4 w-4 mr-2 opacity-80" /> 2-6 players
+          <div className="flex items-center">
+            <div className="bg-amber-500/10 p-2 rounded-full mr-3">
+              <Users className="h-5 w-5 text-amber-400" />
+            </div>
+            <span>2-6 players</span>
           </div>
-          <div className="flex items-center drop-shadow-md">
-            <Info className="h-4 w-4 mr-2 opacity-80" /> Ages 12+
+          <div className="flex items-center">
+            <div className="bg-amber-500/10 p-2 rounded-full mr-3">
+              <Info className="h-5 w-5 text-amber-400" />
+            </div>
+            <span>Ages 12+</span>
           </div>
         </div>
       </div>
