@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Clock, Users, Info } from "lucide-react";
@@ -20,7 +19,7 @@ export const HeroSection = ({
     style={{
       backgroundImage: `
         linear-gradient(to top, rgba(10,10,20,0.86) 8%, rgba(10,10,20,0.60) 45%, rgba(10,10,20,0.13) 90%, rgba(0,0,0,0.00) 100%),
-        url('/florida-gators-sunset.jpg')
+        url('/lovable-uploads/52fa03b2-c987-4f76-b147-53af093c109d.png')
       `,
       backgroundPosition: "center bottom",
       backgroundSize: "cover",
