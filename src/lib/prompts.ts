@@ -20,7 +20,18 @@ In your responses:
 5. Balance tension with moments of absurd humor
 6. Provide clear information about the current state of the game (region, heat level, etc.)
 
-Remember that at Heat 9, all players gain +1 Weirdness each round, and at Heat 10 the game ends in defeat.`;
+IMPORTANT MECHANICS:
+- Players roll 2d6 + relevant stat for checks (system will provide roll results)
+- Skill checks: 1-3 Failure, 4-7 Partial Success, 8-10 Success
+- Hazards usually increase Heat when encountered and when failed
+- Characters have Health, Weirdness, and Luck points to track
+- When characters find treasures or gear, they add these to their inventory
+- Players have 2 Actions per turn: Move, Use Gear, Interact, Team-Up, Rest, or Mission
+
+Remember that at Heat 9, all players gain +1 Weirdness each round, and at Heat 10 the game ends in defeat.
+
+Always explain dice rolls like: "You rolled X + Y (stat) for a total of Z, which is a [success/partial success/failure]."
+Always mention when cards are drawn, used, or discarded, and explain their effects.`;
 };
 
 import { FlomanjiCharacter } from "@/types";
@@ -45,14 +56,15 @@ export const getPlayerSystemPrompt = (rules: string, playerIndex: number, charac
 Here are the game rules:
 ${rules}
 
-You have the following responsibilities:
-1. Make decisions based on your character's stats and abilities
-2. Use your special ability strategically
-3. Manage your Health, Weirdness, and Luck effectively
-4. Consider your character's personality and background in social interactions
-5. Choose appropriate responses to hazards based on your stats
+IMPORTANT CARD AND DICE MECHANICS:
+- When making a check, specify which stat you're using (Brawn, Moxie, Charm, Grit, Weird Sense)
+- The system will tell you the result of your dice roll (success, partial success, or failure)
+- Clearly state when you want to use an item from your inventory
+- When facing hazards, explicitly choose one approach: Fight, Flee, Negotiate, or Outsmart
+- Keep track of your cards and resources - they are crucial for survival
 
 On your turn, you have 2 Actions from: Move, Use Gear, Interact, Team-Up, Rest, or Mission.
+Be explicit about which actions you're taking and what stats you're using.
 
 When facing Hazards, choose one response approach:
 - Fight (Brawn check)
@@ -91,7 +103,19 @@ Structure your analysis in these sections:
    - Which moments created the most engagement or friction?
    - IDENTIFY SPECIFIC TRANSCRIPT MOMENTS that show player engagement.
 
-4. PRIORITIZED IMPROVEMENT RECOMMENDATIONS (40% of your response)
+4. CARD MECHANICS EVALUATION (10% of your response)
+   - How well did the card drawing and usage mechanics work?
+   - Were hazards appropriately challenging?
+   - Did treasure and gear cards create interesting gameplay?
+   - CITE SPECIFIC EXAMPLES of card interactions.
+
+5. DICE MECHANICS EVALUATION (10% of your response)
+   - Did the dice mechanics create appropriate tension?
+   - Were stat checks balanced properly?
+   - Did success/failure outcomes feel fair and interesting?
+   - CITE SPECIFIC EXAMPLES of dice roll impacts.
+
+6. PRIORITIZED IMPROVEMENT RECOMMENDATIONS (20% of your response)
    - Provide EXACTLY 5 specific, actionable game improvements
    - Each must directly reference actual gameplay events from this session
    - For each recommendation:

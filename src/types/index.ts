@@ -1,4 +1,3 @@
-
 import { MissionSheet } from "./cards/mission";
 
 export interface SimulationConfig {
@@ -6,25 +5,40 @@ export interface SimulationConfig {
   rounds?: number;
   players?: number;
   enableCritic?: boolean;
-  outputMode?: string;
-  missionId?: string;
+  outputMode?: "full" | "summary";
   characters?: string[];
-  startingHeat?: number;
-  missionType?: string;
-  extractionRegion?: string;
   fullCharacters?: FlomanjiCharacter[];
+  missionId?: string;
+  extractionRegion?: string;
+  startingHeat?: number;
+  heatPerRound?: number;
   objectives?: any[];
-  secretTraitor?: boolean;
-  arcadeModule?: boolean;
-  nightmareDifficulty?: boolean;
-  competitiveMode?: boolean;
 }
 
 export interface AgentMessage {
-  role: string;
+  role: "GM" | "Player" | "Critic";
   content: string;
   timestamp: string;
-  playerIndex?: number; // Added to track which player this message belongs to
+  playerIndex?: number; // For Player role only
+  metadata?: {
+    roundNumber?: number;
+    phase?: string;
+    playerNumber?: number;
+    playerName?: string;
+    roll?: {
+      stat: string;
+      value: number;
+      modifier: number;
+      total: number;
+      result: string;
+    };
+    heat?: number;
+    hazard?: string;
+    activeHazards?: string[];
+    completedObjectives?: string[];
+    inventory?: any;
+    gameState?: any;
+  };
 }
 
 export interface SimulationResult {
@@ -32,12 +46,39 @@ export interface SimulationResult {
   timestamp: string;
   scenario: string;
   rounds: number;
-  playerCount?: number;
+  playerCount: number;
   log: AgentMessage[];
   criticFeedback: string;
   annotations: string;
-  missionOutcome?: string;
-  keyEvents?: any[];
+  config?: {
+    scenario: string;
+    rounds: number;
+    playerCount: number;
+    characters: FlomanjiCharacter[];
+    enableCritic: boolean;
+    outputMode: string;
+    startingHeat: number;
+    heatPerRound: number;
+    extractionRegion: string;
+    objectives: any[];
+  };
+  gameState?: {
+    currentRound: number;
+    heat: number;
+    completedObjectives: string[];
+    playerInventories: Record<number, {
+      gear: string[];
+      treasures: string[];
+      health: number;
+      weirdness: number;
+      luck: number;
+    }>;
+    regions: string[];
+    currentRegion: string;
+    activeHazards: string[];
+    rolls: {player: number, type: string, value: number, stat: string, result: string}[];
+  };
+  characters?: FlomanjiCharacter[];
 }
 
 export interface SimulationSummary {
@@ -90,7 +131,6 @@ export interface CharacterAbility {
   description: string;
 }
 
-// Agent types
 export type AgentRole = "GM" | "Player" | "Critic";
 
 export interface AgentConfig {
