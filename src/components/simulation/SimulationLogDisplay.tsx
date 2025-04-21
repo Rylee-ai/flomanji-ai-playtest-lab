@@ -38,6 +38,8 @@ const SimulationLogDisplay = ({ messages, showPrompts }: SimulationLogDisplayPro
     switch (role) {
       case "GM":
         return "text-gray-800"; // Darker text for GM to improve contrast
+      case "Critic":
+        return "text-gray-300"; // Light text for Critic on secondary background
       default:
         return "text-gray-300"; // Keep other roles' text color
     }

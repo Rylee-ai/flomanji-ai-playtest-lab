@@ -65,13 +65,27 @@ const SimulationDetails = ({ simulation }: SimulationDetailsProps) => {
       <SimulationSummaryPanel simulation={simulation} />
       
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-2 md:w-[400px]">
+        <TabsList className="grid grid-cols-3 md:w-[600px]">
           <TabsTrigger value="log" className="text-gray-300 data-[state=active]:text-white">Simulation Log</TabsTrigger>
+          <TabsTrigger value="critic" className="text-gray-300 data-[state=active]:text-white">Critic Feedback</TabsTrigger>
           <TabsTrigger value="annotations" className="text-gray-300 data-[state=active]:text-white">Notes & Annotations</TabsTrigger>
         </TabsList>
         
         <TabsContent value="log" className="p-4 border rounded-md mt-2 border-gray-800">
           <SimulationLogDisplay messages={simulation.log} showPrompts={showPrompts} />
+        </TabsContent>
+        
+        <TabsContent value="critic" className="p-4 border rounded-md mt-2 border-gray-800">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-300">Critic Feedback</h3>
+            {simulation.criticFeedback ? (
+              <div className="whitespace-pre-wrap text-sm bg-gray-900 p-4 rounded-md text-gray-300 border border-gray-800">
+                {simulation.criticFeedback}
+              </div>
+            ) : (
+              <p className="text-gray-400">No critic feedback available for this simulation.</p>
+            )}
+          </div>
         </TabsContent>
         
         <TabsContent value="annotations" className="p-4 border rounded-md mt-2 border-gray-800">
