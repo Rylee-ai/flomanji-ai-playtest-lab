@@ -72,13 +72,14 @@ export interface SimulationConfig {
   outputMode?: 'full' | 'narrative-only' | 'minimal';
   // Flomanji specific options
   startingHeat?: number;
-  missionType?: 'exploration' | 'escape' | 'escort' | 'collection' | 'boss';
+  missionType?: 'exploration' | 'escape' | 'escort' | 'collection' | 'boss' | 'solo';
   secretTraitor?: boolean;
   arcadeModule?: boolean;
   nightmareDifficulty?: boolean;
   competitiveMode?: boolean;
   missionId?: string;
   characters?: string[]; // Character IDs
+  fullCharacters?: FlomanjiCharacter[]; // Full character data
 }
 
 export interface SimulationResult {

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -91,6 +92,7 @@ const BasicSettings = ({ config, onConfigChange, onPlayerCountChange }: BasicSet
               <SelectItem value="escort">Escort</SelectItem>
               <SelectItem value="collection">Collection</SelectItem>
               <SelectItem value="boss">Boss Fight</SelectItem>
+              <SelectItem value="solo">Solo Automa</SelectItem>
             </SelectContent>
           </Select>
           <p className="text-sm text-muted-foreground">
