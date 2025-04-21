@@ -1,8 +1,8 @@
 
-import { SimulationConfig, AgentMessage, SimulationResult } from "@/types";
-import { startSimulation } from "./simulationRunner";
+import { SimulationConfig, SimulationResult } from "@/types";
+import { startSimulation } from "./simulation/simulation-runner";
 import { getExampleRules } from "./rules-loader";
-import { getSimulationSummaries, getSimulationById, updateSimulationAnnotations, saveSimulationResult } from "@/lib/storage";
+import { getSimulationSummaries, getSimulationById, updateSimulationAnnotations, saveSimulationResult } from "./storage";
 
 /**
  * Exported API utilities for simulation modules.
@@ -19,4 +19,3 @@ export {
   updateSimulationAnnotations,
   saveSimulationResult,
 };
-

@@ -1,13 +1,65 @@
-import { SimulationConfig, AgentMessage, SimulationResult } from "@/types";
+
+import { SimulationConfig, AgentMessage, SimulationResult, FlomanjiCharacter } from "@/types";
 import { simulateRandomId } from "@/lib/utils";
-import { createChatCompletion } from "@/lib/openrouterChat";
 import { getGMSystemPrompt, getPlayerSystemPrompt, getCriticSystemPrompt } from "@/lib/prompts";
 import { saveSimulationResult } from "@/lib/storage";
-import { getExampleRules } from "./rules-loader";
-import { HAZARD_CARDS } from "./cards/hazard-cards";
-import { TREASURE_CARDS } from "./cards/treasure-cards";
-import { GEAR_CARDS } from "./cards/gear-cards";
-import { FLOMANJIFIED_CARDS } from "./cards/flomanjified-cards";
+import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
+import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
+
+import { 
+  simulateDiceRoll, 
+  drawRandomCard 
+} from "./dice-utils";
+
+import { 
+  getGMResponse, 
+  getPlayerResponse, 
+  getCriticFeedback 
+} from "./agent-communication";
+
+import {
+  processPlayerAction,
+  detectItemUsage,
+  createFormattedTranscript,
+  createSimulationMetadata
+} from "./game-events";
+
+/**
+ * Initializes the game state for a simulation
+ */
+function initializeGameState(config: SimulationConfig) {
+  const gameState = {
+    currentRound: 0,
+    heat: config.startingHeat || 0,
+    completedObjectives: [] as string[],
+    playerInventories: {} as Record<number, {
+      gear: string[],
+      treasures: string[],
+      health: number,
+      weirdness: number,
+      luck: number
+    }>,
+    regions: [] as string[],
+    currentRegion: "start",
+    activeHazards: [] as string[],
+    rolls: [] as {player: number, type: string, value: number, stat: string, result: string}[]
+  };
+  
+  // Initialize player inventories
+  if (config.fullCharacters) {
+    config.fullCharacters.forEach((char, idx) => {
+      gameState.playerInventories[idx] = {
+        gear: char.starterGear || [],
+        treasures: [],
+        health: char.health || 5,
+        weirdness: char.weirdness || 0,
+        luck: char.luck || 3
+      };
+    });
+  }
+  
+  return gameState;
+}
 
 /**
  * Runs a simulation based on the provided configuration and rules.
@@ -22,14 +74,13 @@ export const startSimulation = async (
     players = 1,
     enableCritic = true,
     outputMode = 'full',
-    characters = [],
     startingHeat = 0,
     heatPerRound = 0,
     extractionRegion = 'exit'
   } = config;
 
   // Use the length of selected characters if available, otherwise use the players config
-  const actualPlayerCount = characters.length || players;
+  const actualPlayerCount = config.characters ? config.characters.length : players;
   
   // Ensure we have at least one player
   if (actualPlayerCount < 1) {
@@ -58,37 +109,9 @@ export const startSimulation = async (
       extractionRegion,
       objectives: config.objectives || []
     },
-    gameState: {
-      currentRound: 0,
-      heat: startingHeat,
-      completedObjectives: [] as string[],
-      playerInventories: {} as Record<number, {
-        gear: string[],
-        treasures: string[],
-        health: number,
-        weirdness: number,
-        luck: number
-      }>,
-      regions: [] as string[],
-      currentRegion: "start",
-      activeHazards: [] as string[],
-      rolls: [] as {player: number, type: string, value: number, stat: string, result: string}[]
-    }
+    gameState: initializeGameState(config)
   };
   
-  // Initialize player inventories
-  if (config.fullCharacters) {
-    config.fullCharacters.forEach((char, idx) => {
-      simulationMeta.gameState.playerInventories[idx] = {
-        gear: char.starterGear || [],
-        treasures: [],
-        health: char.health || 5,
-        weirdness: char.weirdness || 0,
-        luck: char.luck || 3
-      };
-    });
-  }
-
   // Prepare system prompts
   const gmSystemPrompt = getGMSystemPrompt(rulesContent, scenarioPrompt);
   
@@ -101,25 +124,6 @@ export const startSimulation = async (
   console.log(`Starting simulation with ${actualPlayerCount} players and ${rounds} rounds`);
 
   try {
-    // Simulate dice roll - returns a value between 1-10 to simulate 2d6
-    const simulateDiceRoll = (stat: number = 0): {value: number, result: string} => {
-      const roll = Math.floor(Math.random() * 10) + 1;
-      const total = roll + stat;
-      
-      let result = "failure";
-      if (total >= 8) result = "success";
-      else if (total >= 4) result = "partial success";
-      
-      return {value: roll, result};
-    };
-    
-    // Draw a random card from a deck
-    const drawRandomCard = (deck: any[]): any => {
-      if (deck.length === 0) return null;
-      const randomIndex = Math.floor(Math.random() * deck.length);
-      return deck[randomIndex];
-    };
-
     // Start with GM introduction and game setup
     let initPrompt = "Introduce the scenario and set the scene for the players. Describe the starting region, current Heat level, and initial objectives. Each player should make a roll at the start to determine if they notice any important details.";
     
@@ -153,6 +157,7 @@ export const startSimulation = async (
       initPrompt += `\nHeat increases by ${heatPerRound} each round.`;
     }
 
+    // Get GM's introduction
     const gmIntroMessage = await createChatCompletion(
       gmSystemPrompt,
       [{ role: "user", content: initPrompt }]
@@ -205,18 +210,7 @@ export const startSimulation = async (
         Introduce this hazard to the players and call for appropriate checks. The players need to decide if they will Fight (Brawn), Flee (Moxie), Negotiate (Charm), or Outsmart (Weird Sense) this hazard.`;
         
         // GM describes the hazard
-        const gmHazardMessage = await createChatCompletion(
-          gmSystemPrompt,
-          [...conversationLog.map(entry => {
-            const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
-            return {
-              role: entry.role === 'GM' ? 'assistant' : 'user',
-              content: entry.role === 'GM'
-                ? `GM: ${cleanContent}`
-                : `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
-            };
-          }), { role: "user", content: hazardPrompt }]
-        );
+        const gmHazardMessage = await getGMResponse(gmSystemPrompt, conversationLog, hazardPrompt);
         
         conversationLog.push({
           role: 'GM',
@@ -236,19 +230,6 @@ export const startSimulation = async (
       for (let playerIdx = 0; playerIdx < actualPlayerCount; playerIdx++) {
         console.log(`Processing player ${playerIdx + 1}'s turn`);
         
-        // Format messages properly for the player without role repetition
-        const playerMessages = conversationLog.map(entry => {
-          // Remove any role prefixes that might already be in the content
-          const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
-          
-          return {
-            role: entry.role === 'Player' ? 'assistant' : 'user',
-            content: entry.role === 'Player' 
-              ? `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
-              : `GM: ${cleanContent}`
-          };
-        });
-        
         // Add player-specific information about their current state
         const playerStatePrompt = `
         [System Information - Your Current State]
@@ -262,95 +243,38 @@ export const startSimulation = async (
         If responding to a hazard, clearly state if you choose to Fight, Flee, Negotiate, or Outsmart it.
         Please make your decision and specify which stats you will use for any necessary checks.`;
         
-        playerMessages.push({ 
-          role: 'user', 
-          content: playerStatePrompt 
-        });
-
         // Get player's action
-        const playerResponse = await createChatCompletion(
+        const playerResponse = await getPlayerResponse(
           playerSystemPrompts[playerIdx],
-          playerMessages
+          conversationLog,
+          playerIdx,
+          playerStatePrompt
         );
 
-        // Remove role prefix if it exists in the response
-        const cleanPlayerResponse = playerResponse.replace(/^(Player \d+): /g, '');
+        // Check for dice rolls and item usage
+        const character = config.fullCharacters?.[playerIdx];
+        const rollInfo = processPlayerAction(playerResponse, playerIdx, character);
+        const itemUsage = detectItemUsage(
+          playerResponse, 
+          simulationMeta.gameState.playerInventories[playerIdx] || { gear: [], treasures: [] }
+        );
         
-        // Check if player is making a dice roll and simulate it
         let rollResult = null;
-        const rollPatterns = [
-          /roll(?:s|ing)?\s+(?:for)?\s*(\w+)/i, // "roll for Brawn" or "rolling Charm"
-          /(\w+)\s+(?:check|roll|test)/i,       // "Brawn check" or "Moxie roll"
-          /check(?:s|ing)?\s+(?:with)?\s*(\w+)/i, // "checking with Charm"
-          /test(?:s|ing)?\s+(?:with)?\s*(\w+)/i  // "testing with Weird Sense"
-        ];
-        
-        let statName = "";
-        let statValue = 0;
-        
-        // Check for dice roll references in player response
-        for (const pattern of rollPatterns) {
-          const match = cleanPlayerResponse.match(pattern);
-          if (match && match[1]) {
-            statName = match[1].toLowerCase();
-            // Convert stat name to proper form
-            if (statName.includes("brawn") || statName === "strength") {
-              statName = "brawn";
-              statValue = config.fullCharacters?.[playerIdx]?.stats.brawn || 0;
-            } else if (statName.includes("moxie") || statName === "agility") {
-              statName = "moxie";
-              statValue = config.fullCharacters?.[playerIdx]?.stats.moxie || 0;
-            } else if (statName.includes("charm") || statName === "social") {
-              statName = "charm";
-              statValue = config.fullCharacters?.[playerIdx]?.stats.charm || 0;
-            } else if (statName.includes("grit") || statName === "endurance") {
-              statName = "grit";
-              statValue = config.fullCharacters?.[playerIdx]?.stats.grit || 0;
-            } else if (statName.includes("weird") || statName === "sense") {
-              statName = "weirdSense";
-              statValue = config.fullCharacters?.[playerIdx]?.stats.weirdSense || 0;
-            }
-            
-            if (statName) {
-              rollResult = simulateDiceRoll(statValue);
-              simulationMeta.gameState.rolls.push({
-                player: playerIdx + 1,
-                type: "action",
-                value: rollResult.value,
-                stat: statName,
-                result: rollResult.result
-              });
-              break;
-            }
-          }
-        }
-        
-        // Look for card usage
-        const cardUsagePatterns = [
-          /use(?:s|ing)?\s+(?:my)?\s*"?([^.,"]+)"?/i,  // "using my Flashlight"
-          /activate(?:s|ing)?\s+(?:my)?\s*"?([^.,"]+)"?/i, // "activating my Lucky Charm"
-          /pull(?:s|ing)? out(?:my)?\s*"?([^.,"]+)"?/i    // "pulls out First Aid Kit"
-        ];
-        
-        for (const pattern of cardUsagePatterns) {
-          const match = cleanPlayerResponse.match(pattern);
-          if (match && match[1]) {
-            const itemName = match[1].trim();
-            // Check if player has this item
-            const playerInventory = simulationMeta.gameState.playerInventories[playerIdx];
-            if (playerInventory && 
-                (playerInventory.gear.some(g => g.toLowerCase().includes(itemName.toLowerCase())) || 
-                 playerInventory.treasures.some(t => t.toLowerCase().includes(itemName.toLowerCase())))) {
-              // Item found in inventory, mark as used
-              console.log(`Player ${playerIdx+1} used item: ${itemName}`);
-            }
-          }
+        if (rollInfo.needsRoll) {
+          rollResult = simulateDiceRoll(rollInfo.statValue);
+          simulationMeta.gameState.rolls.push({
+            player: playerIdx + 1,
+            type: "action",
+            value: rollResult.value,
+            stat: rollInfo.statName,
+            result: rollResult.result
+          });
         }
 
         // Add player response to log
         conversationLog.push({
           role: 'Player',
-          content: cleanPlayerResponse,
+          content: playerResponse,
           playerIndex: playerIdx,
           timestamp: new Date().toISOString(),
           metadata: {
@@ -359,35 +283,22 @@ export const startSimulation = async (
             playerNumber: playerIdx + 1,
             playerName: config.fullCharacters?.[playerIdx]?.name || `Player ${playerIdx+1}`,
             roll: rollResult ? {
-              stat: statName,
+              stat: rollInfo.statName,
               value: rollResult.value,
-              modifier: statValue,
-              total: rollResult.value + statValue,
+              modifier: rollInfo.statValue,
+              total: rollResult.value + rollInfo.statValue,
               result: rollResult.result
             } : undefined,
             inventory: simulationMeta.gameState.playerInventories[playerIdx],
             gameState: {...simulationMeta.gameState}
           }
         });
-
-        // Format messages properly for the GM without role repetition
-        const gmMessages = conversationLog.map(entry => {
-          // Remove any role prefixes that might already be in the content
-          const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
-          
-          return {
-            role: entry.role === 'GM' ? 'assistant' : 'user',
-            content: entry.role === 'GM'
-              ? `GM: ${cleanContent}`
-              : `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
-          };
-        });
         
         // Add roll information for GM if a roll was made
         let gmPrompt = `Respond to Player ${playerIdx + 1}'s action.`;
         
         if (rollResult) {
-          gmPrompt += ` The player rolled for ${statName}: ${rollResult.value} + ${statValue} = ${rollResult.value + statValue}, which is a ${rollResult.result}.`;
+          gmPrompt += ` The player rolled for ${rollInfo.statName}: ${rollResult.value} + ${rollInfo.statValue} = ${rollResult.value + rollInfo.statValue}, which is a ${rollResult.result}.`;
           
           // If hazard was involved, update heat based on result
           if (hazard && simulationMeta.gameState.activeHazards.length > 0) {
@@ -426,19 +337,17 @@ export const startSimulation = async (
             }
           }
         }
+        
+        if (itemUsage.itemUsed) {
+          gmPrompt += ` The player is using their "${itemUsage.itemName}" item.`;
+        }
 
         // Get GM's response
-        const gmResponse = await createChatCompletion(
-          gmSystemPrompt,
-          [...gmMessages, { role: "user", content: gmPrompt }]
-        );
-
-        // Remove role prefix if it exists in the response
-        const cleanGmResponse = gmResponse.replace(/^GM: /g, '');
+        const gmResponse = await getGMResponse(gmSystemPrompt, conversationLog, gmPrompt);
 
         conversationLog.push({
           role: 'GM',
-          content: cleanGmResponse,
+          content: gmResponse,
           timestamp: new Date().toISOString(),
           metadata: {
             roundNumber: round + 1,
@@ -506,18 +415,7 @@ export const startSimulation = async (
       Active hazards: ${simulationMeta.gameState.activeHazards.length > 0 ? simulationMeta.gameState.activeHazards.join(", ") : "None"}. 
       Required Objectives completed: ${simulationMeta.gameState.completedObjectives.length} / ${config.objectives?.filter(o => o.required).length || 0}.`;
       
-      const gmSummaryResponse = await createChatCompletion(
-        gmSystemPrompt,
-        [...conversationLog.map(entry => {
-          const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
-          return {
-            role: entry.role === 'GM' ? 'assistant' : 'user',
-            content: entry.role === 'GM'
-              ? `GM: ${cleanContent}`
-              : `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
-          };
-        }), { role: "user", content: roundSummaryPrompt }]
-      );
+      const gmSummaryResponse = await getGMResponse(gmSystemPrompt, conversationLog, roundSummaryPrompt);
       
       conversationLog.push({
         role: 'GM',
@@ -539,33 +437,19 @@ export const startSimulation = async (
     if (enableCritic) {
       const criticSystemPrompt = getCriticSystemPrompt(rulesContent);
       
-      // Clean up the transcript to avoid role repetition
-      const formattedTranscript = conversationLog.map(entry => {
-        const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
-        return `${entry.role}${entry.playerIndex !== undefined ? ` ${entry.playerIndex + 1}` : ''}: ${cleanContent}`;
-      }).join("\n\n");
+      // Create formatted transcript and metadata
+      const formattedTranscript = createFormattedTranscript(conversationLog);
+      const metadataString = createSimulationMetadata(
+        config, 
+        simulationMeta.gameState.heat,
+        simulationMeta.gameState.completedObjectives
+      );
       
-      // Add simulation metadata to the critic
-      const criticPrompt = `
-      Here is the full simulation metadata:
-      - Scenario: ${scenarioPrompt}
-      - Players: ${actualPlayerCount}
-      - Rounds: ${rounds}
-      - Starting Heat: ${startingHeat}
-      - Heat per Round: ${heatPerRound}
-      - Characters: ${config.fullCharacters?.map(c => c.name).join(", ") || "Standard characters"}
-      - Final Heat Level: ${simulationMeta.gameState.heat}
-      - Completed Objectives: ${simulationMeta.gameState.completedObjectives.length}
-      
-      Here is the transcript of the session:
-      
-      ${formattedTranscript}
-      
-      Please provide your analysis focusing on how well the rules were applied, the balance of the game, and the player experience.`;
-
-      criticFeedback = await createChatCompletion(
+      // Get critic feedback
+      criticFeedback = await getCriticFeedback(
         criticSystemPrompt,
-        [{ role: "user", content: criticPrompt }]
+        formattedTranscript,
+        metadataString
       );
     }
 
@@ -573,19 +457,19 @@ export const startSimulation = async (
     const result: SimulationResult = {
       id: simulationId,
       timestamp,
-      scenario: scenarioPrompt,
+      scenario: scenarioPrompt || "",
       rounds,
       log: conversationLog,
       result: "", // Empty result string to be populated later
       criticFeedback,
       annotations: "",
       config: {
-        ...simulationMeta.config,
+        ...config,
         // Convert full character objects to just string IDs for config.characters
         characters: config.characters || [],
-        fullCharacters: simulationMeta.config.characters
+        fullCharacters: config.fullCharacters
       },
-      characters: simulationMeta.config.characters || [],
+      characters: config.fullCharacters || [],
       gameState: simulationMeta.gameState,
     };
 
