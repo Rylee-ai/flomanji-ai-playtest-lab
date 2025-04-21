@@ -1,11 +1,7 @@
-
 import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
@@ -14,17 +10,8 @@ import { CardType, GameCard } from "@/types/cards";
 import { useCardForm } from "./hooks/useCardForm";
 import { z } from "zod";
 import { BaseCardForm } from "./forms/BaseCardForm";
-import { TreasureCardForm } from "./forms/TreasureCardForm";
-import { HazardCardForm } from "./forms/HazardCardForm";
-import { RegionCardForm } from "./forms/RegionCardForm";
-import { NPCCardForm } from "./forms/NPCCardForm";
-import { GearCardForm } from "./forms/GearCardForm";
-import { ChaosCardForm } from "./forms/ChaosCardForm";
-import { FlomanjifiedCardForm } from "./forms/FlomanjifiedCardForm";
-import { SecretCardForm } from "./forms/SecretCardForm";
-import { AutomaCardForm } from "./forms/AutomaCardForm";
-import { PlayerCharacterForm } from "./forms/PlayerCharacterForm";
-import { MissionCardForm } from "./forms/MissionCardForm";
+import { CardFormDialogHeader } from "./CardFormDialogHeader";
+import { CardTypeFormSwitcher } from "./CardTypeFormSwitcher";
 
 export const cardFormSchema = z.object({
   // Base fields for all cards
@@ -187,7 +174,7 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
   const form = useCardForm(initialData);
   const isEditing = !!initialData;
   const type = form.watch("type");
-  
+
   // Set the form type based on activeTab when creating a new card
   useEffect(() => {
     if (!isEditing && activeTab) {
@@ -198,28 +185,11 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{isEditing ? `Edit ${initialData?.name}` : "Create Card"}</DialogTitle>
-          <DialogDescription>
-            {isEditing ? "Update the card's properties." : "Add a new card to the game."}
-          </DialogDescription>
-        </DialogHeader>
+        <CardFormDialogHeader isEditing={isEditing} initialData={initialData} />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <BaseCardForm form={form} />
-            
-            {type === "treasure" && <TreasureCardForm form={form} />}
-            {type === "hazard" && <HazardCardForm form={form} />}
-            {type === "region" && <RegionCardForm form={form} />}
-            {type === "npc" && <NPCCardForm form={form} />}
-            {type === "mission" && <MissionCardForm form={form} />}
-            {type === "gear" && <GearCardForm form={form} />}
-            {type === "chaos" && <ChaosCardForm form={form} />}
-            {type === "flomanjified" && <FlomanjifiedCardForm form={form} />}
-            {type === "secret" && <SecretCardForm form={form} />}
-            {type === "automa" && <AutomaCardForm form={form} />}
-            {type === "player-character" && <PlayerCharacterForm form={form} />}
-
+            <CardTypeFormSwitcher type={type} form={form} />
             <DialogFooter>
               <Button type="submit">
                 {isEditing ? "Update Card" : "Create Card"}
