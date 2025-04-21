@@ -44,6 +44,7 @@ You have the following responsibilities:
     personality: "balanced",
     skillLevel: "intermediate",
     meta: false,
+    verbose: false, // Added verbose explicitly as false
   },
   Critic: {
     systemPrompt: `You are a Critic AI analyzing a playtest session of Flomanji, a semi-cooperative survival horror card-and-dice adventure game.
@@ -58,6 +59,7 @@ Analyze the gameplay session objectively and provide feedback on:
     focus: "player-experience",
     detail: "standard",
     suggestions: true,
+    verbose: false, // Added verbose explicitly as false
   }
 };
 
@@ -155,3 +157,4 @@ export const useAgentConfig = () => {
     testAgentResponse,
   };
 };
+
