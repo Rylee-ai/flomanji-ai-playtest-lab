@@ -12,7 +12,32 @@ interface BasicSettingsProps {
   onPlayerCountChange: (value: number) => void;
 }
 
+const MISSION_TYPE_LABELS: Record<string, string> = {
+  exploration: "Exploration",
+  escape: "Escape",
+  escort: "Escort",
+  collection: "Collection",
+  boss: "Boss Fight",
+  solo: "Solo Automa"
+};
+
 const BasicSettings = ({ config, onConfigChange, onPlayerCountChange }: BasicSettingsProps) => {
+  // If players is 1, lock missionType to "solo"
+  const isSoloMode = config.players === 1;
+  const safeMissionType = isSoloMode ? "solo" : (config.missionType !== "solo" ? config.missionType : "exploration");
+
+  // Sync the displayed type label (for slider, select, etc.)
+  React.useEffect(() => {
+    if (isSoloMode && config.missionType !== "solo") {
+      onConfigChange("missionType", "solo");
+    }
+    if (!isSoloMode && config.missionType === "solo") {
+      onConfigChange("missionType", "exploration");
+    }
+    // Only run on relevant dependency change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.players]);
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -53,7 +78,9 @@ const BasicSettings = ({ config, onConfigChange, onPlayerCountChange }: BasicSet
             min={1}
             max={6}
             step={1}
+            value={[config.players || 1]} // Always controlled
             onValueChange={(value) => onPlayerCountChange(value[0])}
+            disabled={config.missionType === "solo"}
           />
           <p className="text-sm text-muted-foreground">
             How many AI player characters to simulate (1-6). If selecting 1, solo Automa is enabled.
@@ -80,23 +107,38 @@ const BasicSettings = ({ config, onConfigChange, onPlayerCountChange }: BasicSet
         <div className="space-y-2">
           <Label htmlFor="missionType">Mission Type</Label>
           <Select 
-            value={config.missionType as string} 
-            onValueChange={(value) => onConfigChange("missionType", value)}
+            value={safeMissionType as string}
+            onValueChange={(value) => {
+              // If user selects "solo", force players to 1 (and lock slider)
+              if (value === "solo") {
+                onConfigChange("players", 1);
+                onConfigChange("missionType", "solo");
+              } else {
+                // Restore standard mission type if not in solo
+                if (config.players === 1 && config.missionType === "solo") {
+                  onConfigChange("players", 2);
+                }
+                onConfigChange("missionType", value);
+              }
+            }}
+            disabled={isSoloMode}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select mission type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="exploration">Exploration</SelectItem>
-              <SelectItem value="escape">Escape</SelectItem>
-              <SelectItem value="escort">Escort</SelectItem>
-              <SelectItem value="collection">Collection</SelectItem>
-              <SelectItem value="boss">Boss Fight</SelectItem>
+              <SelectItem value="exploration" disabled={isSoloMode}>Exploration</SelectItem>
+              <SelectItem value="escape" disabled={isSoloMode}>Escape</SelectItem>
+              <SelectItem value="escort" disabled={isSoloMode}>Escort</SelectItem>
+              <SelectItem value="collection" disabled={isSoloMode}>Collection</SelectItem>
+              <SelectItem value="boss" disabled={isSoloMode}>Boss Fight</SelectItem>
               <SelectItem value="solo">Solo Automa</SelectItem>
             </SelectContent>
           </Select>
           <p className="text-sm text-muted-foreground">
-            The primary mission objective type.
+            {isSoloMode
+              ? "Solo Automa mission enabled for 1 player."
+              : "The primary mission objective type."}
           </p>
         </div>
       </div>

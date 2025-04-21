@@ -32,21 +32,69 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
 
   React.useEffect(() => {
     if (selectedMission) {
-      setConfig(prev => ({
-        ...prev,
-        scenarioPrompt: selectedMission.hook,
-        startingHeat: selectedMission.startingHeat,
-        rounds: selectedMission.estimatedDuration || 5
-      }));
+      setConfig(prev => {
+        let baseType = prev.missionType === "solo" && prev.players === 1 ? "solo" : (selectedMission.type !== "mission" ? "exploration" : prev.missionType);
+        if (prev.players === 1) baseType = "solo";
+        if (prev.players > 1 && prev.missionType === "solo") baseType = "exploration";
+        return ({
+          ...prev,
+          scenarioPrompt: selectedMission.hook,
+          startingHeat: selectedMission.startingHeat,
+          rounds: selectedMission.estimatedDuration || 5,
+          missionType: baseType
+        });
+      });
     }
   }, [selectedMission]);
 
   const handleInputChange = (field: keyof SimulationConfig, value: any) => {
-    setConfig(prev => ({ ...prev, [field]: value }));
+    if (field === "players") {
+      if (value === 1 && config.missionType !== "solo") {
+        setConfig(prev => ({
+          ...prev,
+          players: 1,
+          missionType: "solo"
+        }));
+        if (selectedCharacters.length > 1)
+          setSelectedCharacters(prev => prev.slice(0, 1));
+      } else if (value > 1 && config.missionType === "solo") {
+        setConfig(prev => ({
+          ...prev,
+          players: value,
+          missionType: "exploration"
+        }));
+      } else {
+        setConfig(prev => ({ ...prev, [field]: value }));
+      }
+    } else if (field === "missionType") {
+      if (value === "solo") {
+        setConfig(prev => ({
+          ...prev,
+          missionType: "solo",
+          players: 1
+        }));
+        if (selectedCharacters.length > 1)
+          setSelectedCharacters(prev => prev.slice(0, 1));
+      } else if (config.players === 1 && config.missionType === "solo") {
+        setConfig(prev => ({
+          ...prev,
+          missionType: value,
+          players: 2
+        }));
+      } else {
+        setConfig(prev => ({ ...prev, [field]: value }));
+      }
+    } else {
+      setConfig(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleCharacterSelect = (characterId: string) => {
-    setSelectedCharacters(prev => [...prev, characterId]);
+    if (config.players === 1) {
+      setSelectedCharacters([characterId]);
+    } else {
+      setSelectedCharacters(prev => [...prev, characterId]);
+    }
   };
 
   const handleCharacterDeselect = (characterId: string) => {
@@ -66,7 +114,7 @@ const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, is
       ...config,
       missionId: selectedMission.id,
       characters: selectedCharacters,
-      missionType: playersSelected === 1 ? "solo" : config.missionType
+      missionType: config.players === 1 ? "solo" : config.missionType
     };
 
     if (!selectedMission) {
