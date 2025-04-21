@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, BookOpen, Dice, ImageIcon } from "lucide-react";
+import { Send, BookOpen, Dice1, ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -113,7 +113,7 @@ const PlayerChat = () => {
           className="flex-1"
         />
         <Button type="button" variant="outline" disabled={isLoading} title="Roll dice">
-          <Dice className="h-5 w-5" />
+          <Dice1 className="h-5 w-5" />
         </Button>
         <Button type="button" variant="outline" disabled={isLoading} title="Share image">
           <ImageIcon className="h-5 w-5" />
@@ -127,3 +127,4 @@ const PlayerChat = () => {
 };
 
 export default PlayerChat;
+
