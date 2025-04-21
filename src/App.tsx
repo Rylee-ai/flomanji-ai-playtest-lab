@@ -1,7 +1,6 @@
 
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useRoutes, Navigate } from "react-router-dom";
 import { Suspense, useState, useEffect } from "react";
-import { AppProviders } from "@/components/providers/AppProviders";
 import { ErrorFallback, LoadingFallback } from "@/components/error/ErrorBoundary";
 import NotFound from "@/pages/NotFound";
 import { publicRoutes } from "@/routes/public.routes";
@@ -25,6 +24,26 @@ const App = () => {
     }
   }, []);
 
+  // Combine all routes
+  const allRoutes = [
+    ...publicRoutes,
+    ...adminRoutes,
+    ...playerRoutes,
+    // Redirect from index.html to base path
+    {
+      path: "/index.html",
+      element: <Navigate to="/" replace />
+    },
+    // Catch-all route
+    {
+      path: "*",
+      element: <NotFound />
+    }
+  ];
+
+  // Use the useRoutes hook to transform route objects into React elements
+  const routeElements = useRoutes(allRoutes);
+
   if (hasError) {
     return <ErrorFallback />;
   }
@@ -34,28 +53,10 @@ const App = () => {
   }
 
   return (
-    <AppProviders>
-      <Suspense fallback={<LoadingFallback />}>
-        <Routes>
-          {/* Public routes */}
-          {publicRoutes}
-          
-          {/* Admin routes */}
-          {adminRoutes}
-          
-          {/* Player routes */}
-          {playerRoutes}
-          
-          {/* Redirect from index.html to base path */}
-          <Route path="/index.html" element={<Navigate to="/" replace />} />
-          
-          {/* Catch-all route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
-    </AppProviders>
+    <Suspense fallback={<LoadingFallback />}>
+      {routeElements}
+    </Suspense>
   );
 };
 
 export default App;
-
