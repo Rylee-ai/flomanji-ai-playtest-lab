@@ -1,9 +1,20 @@
 
 import React from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import UserAccountMenu from "@/components/UserAccountMenu";
 
 const PublicLayout = () => {
+  const { user, profile } = useAuth();
+  const navigate = useNavigate();
+
+  // Determine the dashboard link based on user role
+  const getDashboardLink = () => {
+    if (!user) return "/auth";
+    return profile?.role === 'admin' ? '/dashboard' : '/player';
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-black text-white">
       {/* Header */}
@@ -21,12 +32,27 @@ const PublicLayout = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <Button variant="outline" asChild className="border-gray-700 hover:bg-gray-800 hidden md:flex">
-              <Link to="/waitlist">Join Waitlist</Link>
-            </Button>
-            <Button asChild className="bg-amber-500 hover:bg-amber-600 text-black">
-              <Link to="/auth">Sign In</Link>
-            </Button>
+            {user ? (
+              <div className="flex items-center gap-4">
+                <Button 
+                  variant="outline" 
+                  className="border-gray-700 hover:bg-gray-800"
+                  onClick={() => navigate(getDashboardLink())}
+                >
+                  {profile?.role === 'admin' ? 'Admin Dashboard' : 'Player Dashboard'}
+                </Button>
+                <UserAccountMenu />
+              </div>
+            ) : (
+              <>
+                <Button variant="outline" asChild className="border-gray-700 hover:bg-gray-800 hidden md:flex">
+                  <Link to="/waitlist">Join Waitlist</Link>
+                </Button>
+                <Button asChild className="bg-amber-500 hover:bg-amber-600 text-black">
+                  <Link to="/auth">Sign In</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>

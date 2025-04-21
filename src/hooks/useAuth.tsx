@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -30,10 +29,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // We need to create this table first - for now let's mock the profile data
       // In a real implementation, this would query the profiles table
+      let role = 'player'; // Default role
+      
+      // Set admin privileges for specific email
+      const userEmail = user?.email?.toLowerCase();
+      if (userEmail === 'contact@athipp.com') {
+        role = 'admin';
+      }
+      
       const mockProfile: UserProfile = {
         id: userId,
         email: user?.email || '',
-        role: 'admin', // Default role for testing
+        role: role, 
         firstName: 'Admin',
         lastName: 'User',
         createdAt: new Date().toISOString()
@@ -41,27 +48,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       setProfile(mockProfile);
       return mockProfile;
-      
-      // Once we have a profiles table, use this code instead:
-      /*
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (error) {
-        console.error('Error fetching user profile:', error);
-        return null;
-      }
-
-      if (data) {
-        setProfile(data as UserProfile);
-        return data as UserProfile;
-      }
-      
-      return null;
-      */
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
       return null;
