@@ -10,8 +10,13 @@ const PlayerShipping = () => {
   const { profile } = useAuth();
   
   // In a real implementation, this would come from the backend
-  const shippingStatus = {
-    status: "processing" as const, // "pending" | "processing" | "shipped" | "delivered"
+  const shippingStatus: {
+    status: 'pending' | 'processing' | 'shipped' | 'delivered';
+    updatedAt: string;
+    trackingNumber?: string;
+    trackingUrl?: string;
+  } = {
+    status: "processing",
     updatedAt: new Date().toISOString(),
     trackingNumber: "FLMJ1234567890",
     trackingUrl: "https://example.com/track"
