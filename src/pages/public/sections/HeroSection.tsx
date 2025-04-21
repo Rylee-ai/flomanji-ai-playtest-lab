@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Clock, Users, Info } from "lucide-react";
+import { Clock, Users, Info, Upload } from "lucide-react";
 
 /**
  * HeroSection component with improved background image overlay for optimal text contrast.
@@ -11,8 +11,8 @@ export const HeroSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   
-  // Use an absolute URL to ensure the image is accessible
-  const bgImageUrl = "/flomanji-hero-bg.webp";
+  // Image path - this should be the exact name of the file in the public folder
+  const bgImageUrl = "/flomanji-hero-bg.jpg"; // Changed extension to .jpg which is common
   
   // Check if image loads properly
   useEffect(() => {
@@ -41,17 +41,17 @@ export const HeroSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void
 
   return (
     <section
-      className={`relative py-32 ${!imageLoaded ? 'bg-gradient-to-b from-amber-900 to-black' : ''}`}
+      className={`relative py-32 ${!imageLoaded ? 'bg-gradient-to-b from-amber-600/90 to-amber-950/90' : ''}`}
       style={{
         backgroundImage: imageLoaded ? `url('${bgImageUrl}')` : 'none',
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      {/* Fallback color in case image doesn't load - already applied in className above */}
+      {/* Fallback gradient in case image doesn't load - applied in className above */}
       
       {/* Strengthened overlay for max readability */}
-      <div className="absolute inset-0 bg-black/75 backdrop-blur-[2px]"></div>
+      <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]"></div>
       
       <div className="container relative mx-auto px-4 flex flex-col items-start max-w-5xl">
         <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)]">
@@ -85,10 +85,13 @@ export const HeroSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void
           </div>
         </div>
         
-        {/* Debug info - only show if there's an actual error */}
+        {/* Error message with instructions if image fails to load */}
         {imageError && (
-          <div className="mt-4 p-2 bg-red-500/80 text-white rounded text-sm">
-            Image failed to load - using fallback styling. Please check if the image file is in the public folder.
+          <div className="mt-4 p-3 bg-red-500/80 text-white rounded text-sm flex items-center">
+            <Upload className="h-4 w-4 mr-2" />
+            <span>
+              Please upload a file named "flomanji-hero-bg.jpg" to the public folder.
+            </span>
           </div>
         )}
       </div>
