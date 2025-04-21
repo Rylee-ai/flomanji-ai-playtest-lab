@@ -75,6 +75,16 @@ export interface SimulationConfig {
   secretTraitor?: boolean;
 }
 
+// Add SimulationSummary interface which was missing
+export interface SimulationSummary {
+  id: string;
+  scenario: string;
+  result?: string;
+  timestamp: string;
+  rounds: number;
+  notes?: string;
+}
+
 // Agent system types
 export type AgentRole = "GM" | "Player" | "Critic";
 

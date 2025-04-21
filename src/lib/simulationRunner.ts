@@ -1,4 +1,3 @@
-
 import { SimulationConfig, AgentMessage, SimulationResult } from "@/types";
 import { simulateRandomId } from "@/lib/utils";
 import { createChatCompletion } from "@/lib/openrouterChat";
@@ -576,13 +575,17 @@ export const startSimulation = async (
       timestamp,
       scenario: scenarioPrompt,
       rounds,
-      playerCount: actualPlayerCount,
       log: conversationLog,
       criticFeedback,
       annotations: "",
-      config: simulationMeta.config,
+      config: {
+        ...simulationMeta.config,
+        // Convert full character objects to just string IDs for config.characters
+        characters: config.characters || [],
+        fullCharacters: simulationMeta.config.characters
+      },
+      characters: simulationMeta.config.characters || [],
       gameState: simulationMeta.gameState,
-      characters: config.fullCharacters || []
     };
 
     // Save to local storage

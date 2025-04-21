@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { marked } from "marked";
@@ -22,14 +23,13 @@ export function formatDate(dateString: string): string {
  */
 export function parseMarkdown(text: string): string {
   try {
-    // Configure marked options
+    // Configure marked options - 'sanitize' is deprecated, removed this option
     marked.setOptions({
       breaks: true,
       gfm: true,
-      sanitize: true,
     });
     
-    return marked(text);
+    return marked(text) as string; // Add explicit type cast to ensure string return type
   } catch (error) {
     console.error("Error parsing markdown:", error);
     return text;
