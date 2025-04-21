@@ -94,38 +94,38 @@ export const HeroSection = ({
           </div>
         )}
 
-        {/* Main Hero Content */}
+        {/* Main Hero Content - Improved centering and balance */}
         <div className="absolute inset-0 flex items-center justify-center z-40">
           <div
             className={`
               bg-gradient-to-br from-black/80 via-black/88 to-black/92
-              shadow-[0_4px_80px_0_rgba(252,174,38,0.33),0_0px_0px_8px_rgba(0,0,0,0.6)]
+              shadow-[0_4px_80px_0_rgba(252,174,38,0.38),0_0px_0px_8px_rgba(0,0,0,0.6)]
               border border-white/15 backdrop-blur-2xl rounded-3xl
-              flex flex-col items-center
-              min-w-[320px]
-              w-full max-w-[490px]
-              px-7 md:px-12 py-10 md:py-16
+              flex flex-col items-center justify-center
+              min-w-[340px]
+              w-full max-w-[520px]
+              px-8 md:px-14 py-12 md:py-16
               mx-auto
               transition-all
               animate-fade-in
               relative
-              ring-4 ring-amber-400/25 ring-inset
-              after:absolute after:inset-0 after:rounded-3xl after:ring-2 after:ring-amber-400/40 after:pointer-events-none
+              ring-4 ring-amber-400/30 ring-inset
+              after:absolute after:inset-0 after:rounded-3xl after:ring-2 after:ring-amber-400/50 after:pointer-events-none
             `}
             style={{
               boxShadow:
-                "0 0 80px 15px rgba(255,205,72,0.10), 0 2px 32px 0 rgba(252,174,38,0.10), 0 0px 0px 2.5px rgba(246,215,108,0.18)",
-              backdropFilter: "blur(11px)"
+                "0 0 100px 20px rgba(255,205,72,0.15), 0 2px 40px 0 rgba(252,174,38,0.15), 0 0px 0px 2.5px rgba(246,215,108,0.22)",
+              backdropFilter: "blur(12px)"
             }}
           >
             {/* Logo / Title */}
-            <h1 className="text-center font-extrabold mb-1 animate-fade-in">
+            <h1 className="text-center font-extrabold mb-2 animate-fade-in">
               <span
                 className="
                   block text-white text-3xl md:text-4xl lg:text-5xl leading-tight 
-                  tracking-tight drop-shadow-[0_2px_6px_rgba(255,255,255,0.23)]
+                  tracking-tight drop-shadow-[0_2px_8px_rgba(255,255,255,0.25)]
                 "
-                style={{ textShadow: "2px 2px 18px #fff9,0px 2px 5.5px #fbea80" }}
+                style={{ textShadow: "2px 2px 20px #fffc,0px 2px 6px #fbea80" }}
               >
                 FLOMANJI:
               </span>
@@ -133,11 +133,11 @@ export const HeroSection = ({
                 className="
                   block text-2xl md:text-3xl lg:text-4xl 
                   bg-gradient-to-r from-amber-300 via-yellow-400 to-orange-400 bg-clip-text text-transparent
-                  font-black drop-shadow-[0_3px_17px_rgba(252,220,38,0.96)]
-                  mt-1 mb-2 md:mb-3
+                  font-black drop-shadow-[0_3px_20px_rgba(252,220,38,0.98)]
+                  mt-1.5 mb-2.5 md:mb-3.5
                 "
                 style={{
-                  textShadow: "0 0 25px #fbc02d55,0px 2px 7px #ffe176,0px 1.5px 5.5px #ffeeb0",
+                  textShadow: "0 0 25px #fbc02d65,0px 2px 8px #ffe176,0px 1.5px 6px #ffeeb0",
                 }}
               >
                 Can You Escape Paradise?
@@ -145,29 +145,29 @@ export const HeroSection = ({
             </h1>
 
             {/* Subheading */}
-            <p className="text-center text-base md:text-lg max-w-[90%] mx-auto mb-7 md:mb-9 text-neutral-50/90 font-medium drop-shadow-[0_2px_11px_rgba(0,0,0,0.30)] leading-relaxed animate-fade-in">
+            <p className="text-center text-base md:text-lg max-w-[92%] mx-auto mb-8 md:mb-10 text-neutral-50/95 font-medium drop-shadow-[0_2px_12px_rgba(0,0,0,0.32)] leading-relaxed animate-fade-in">
               A deck-building survival adventure where paradise and chaos collide in an unforgettable journey of strategy and suspense.
             </p>
             
             {/* CTA Button */}
-            <div className="w-full flex justify-center mb-7 md:mb-10">
+            <div className="w-full flex justify-center mb-8 md:mb-10">
               <Button
                 size="lg"
                 onClick={scrollToWaitlist}
                 className="
                   bg-gradient-to-r from-amber-400 to-amber-500 hover:from-yellow-300 hover:to-yellow-400
                   text-black font-extrabold py-4 px-10 text-lg md:text-xl rounded-xl
-                  shadow-[0_6px_36px_rgba(251,191,36,0.65)]
-                  transition-all duration-300 hover:shadow-[0_8px_42px_rgba(251,191,36,0.92)] hover:scale-105
+                  shadow-[0_6px_38px_rgba(251,191,36,0.68)]
+                  transition-all duration-300 hover:shadow-[0_8px_45px_rgba(251,191,36,0.95)] hover:scale-105
                   focus-visible:ring-4 focus-visible:ring-yellow-300
                   animate-fade-in
-                  min-w-[212px]
+                  min-w-[220px]
                   border-none
                 "
                 aria-label="Join Beta Waitlist"
                 style={{
-                  boxShadow: "0 6px 36px 0 rgba(251,191,36,0.65), 0 1px 12px 0 rgba(255,220,70,0.22)",
-                  fontSize: "1.22rem"
+                  boxShadow: "0 6px 38px 0 rgba(251,191,36,0.68), 0 1px 14px 0 rgba(255,220,70,0.25)",
+                  fontSize: "1.25rem"
                 }}
               >
                 Join Beta Waitlist
@@ -176,23 +176,23 @@ export const HeroSection = ({
 
             {/* Info/Stats */}
             <div className="
-              flex flex-wrap gap-x-9 gap-y-5 md:gap-x-14 md:gap-y-7 text-sm md:text-base text-white justify-center
+              flex flex-wrap gap-x-10 gap-y-5 md:gap-x-14 md:gap-y-7 text-sm md:text-base text-white justify-center
               animate-fade-in max-w-xs mx-auto
             ">
-              <div className="flex items-center gap-2">
-                <div className="bg-neutral-900 border border-yellow-400/60 p-2 rounded-full flex items-center justify-center shadow-[0_2px_9px_rgba(251,191,36,0.11)]">
+              <div className="flex items-center gap-2.5">
+                <div className="bg-neutral-900 border border-yellow-400/60 p-2 rounded-full flex items-center justify-center shadow-[0_2px_12px_rgba(251,191,36,0.15)]">
                   <Clock className="h-5 w-5 text-amber-300" />
                 </div>
                 <span className="text-neutral-100 font-semibold">30–60 min</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="bg-neutral-900 border border-yellow-400/60 p-2 rounded-full flex items-center justify-center shadow-[0_2px_9px_rgba(251,191,36,0.11)]">
+              <div className="flex items-center gap-2.5">
+                <div className="bg-neutral-900 border border-yellow-400/60 p-2 rounded-full flex items-center justify-center shadow-[0_2px_12px_rgba(251,191,36,0.15)]">
                   <Users className="h-5 w-5 text-amber-300" />
                 </div>
                 <span className="text-neutral-100 font-semibold">2–6 players</span>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="bg-neutral-900 border border-yellow-400/60 p-2 rounded-full flex items-center justify-center shadow-[0_2px_9px_rgba(251,191,36,0.11)]">
+              <div className="flex items-center gap-2.5">
+                <div className="bg-neutral-900 border border-yellow-400/60 p-2 rounded-full flex items-center justify-center shadow-[0_2px_12px_rgba(251,191,36,0.15)]">
                   <Info className="h-5 w-5 text-amber-300" />
                 </div>
                 <span className="text-neutral-100 font-semibold">Ages 12+</span>
