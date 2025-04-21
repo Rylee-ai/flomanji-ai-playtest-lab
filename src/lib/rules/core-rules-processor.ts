@@ -1,3 +1,4 @@
+
 import { FlomanjiCharacter } from "@/types";
 import { ActionType, ActionValidationResult, GameState, PlayerAction, CharacterStatus } from "@/types/game-state";
 import {
@@ -8,6 +9,14 @@ import {
   validateRestAction,
   validateMissionAction,
 } from "./action-validations";
+import {
+  processMoveAction,
+  processUseGearAction,
+  processInteractAction,
+  processTeamUpAction,
+  processRestAction,
+  processMissionAction
+} from "./action-processors";
 
 /**
  * Core Rules Processor for Flomanji
@@ -93,20 +102,20 @@ export class FlomanjiRulesProcessor {
       timestamp: new Date().toISOString()
     });
 
-    // Process the action based on its type
+    // Process the action based on its type using the action processors
     switch (action.type) {
       case "move":
-        return this.processMoveAction(action, newState);
+        return processMoveAction(action, newState);
       case "use-gear":
-        return this.processUseGearAction(action, newState);
+        return processUseGearAction(action, newState);
       case "interact":
-        return this.processInteractAction(action, newState);
+        return processInteractAction(action, newState);
       case "team-up":
-        return this.processTeamUpAction(action, newState);
+        return processTeamUpAction(action, newState);
       case "rest":
-        return this.processRestAction(action, newState);
+        return processRestAction(action, newState);
       case "mission":
-        return this.processMissionAction(action, newState);
+        return processMissionAction(action, newState);
       default:
         return newState;
     }
@@ -186,54 +195,6 @@ export class FlomanjiRulesProcessor {
    */
   private cloneGameState(state: GameState): GameState {
     return JSON.parse(JSON.stringify(state));
-  }
-
-  // Individual action processing methods
-  private processMoveAction(action: PlayerAction, gameState: GameState): GameState {
-    // TODO: Implement move processing
-    return gameState;
-  }
-  
-  private processUseGearAction(action: PlayerAction, gameState: GameState): GameState {
-    // TODO: Implement gear usage
-    return gameState;
-  }
-  
-  private processInteractAction(action: PlayerAction, gameState: GameState): GameState {
-    // TODO: Implement interaction processing
-    return gameState;
-  }
-  
-  private processTeamUpAction(action: PlayerAction, gameState: GameState): GameState {
-    // TODO: Implement team-up processing
-    return gameState;
-  }
-  
-  private processRestAction(action: PlayerAction, gameState: GameState): GameState {
-    // Process rest action - restore 1 Health point
-    const characterIndex = gameState.characters.findIndex(c => c.id === action.characterId);
-    if (characterIndex !== -1) {
-      const character = gameState.characters[characterIndex];
-      gameState.characters[characterIndex] = {
-        ...character,
-        health: Math.min(FlomanjiRulesProcessor.MAX_HEALTH, character.health + 1)
-      };
-      
-      // Add event to turn log
-      gameState.currentTurn.events.push({
-        type: "character-rest",
-        characterId: character.id,
-        description: `${character.name} rested and recovered 1 Health`,
-        timestamp: new Date().toISOString()
-      });
-    }
-    
-    return gameState;
-  }
-  
-  private processMissionAction(action: PlayerAction, gameState: GameState): GameState {
-    // TODO: Implement mission action processing
-    return gameState;
   }
 
   /**
