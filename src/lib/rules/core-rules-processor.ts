@@ -1,6 +1,6 @@
 
-import { CharacterStatus, FlomanjiCharacter } from "@/types";
-import { ActionType, ActionValidationResult, GameState, PlayerAction } from "@/types/game-state";
+import { FlomanjiCharacter } from "@/types";
+import { ActionType, ActionValidationResult, GameState, PlayerAction, CharacterStatus } from "@/types/game-state";
 
 /**
  * Core Rules Processor for Flomanji
@@ -77,7 +77,7 @@ export class FlomanjiRulesProcessor {
     }
 
     // Create a deep copy of game state to modify
-    const newState = this.cloneGameState(gameState);
+    let newState = this.cloneGameState(gameState);
     
     // Record action as used
     newState.currentTurn.actionsUsed.push({
@@ -111,7 +111,7 @@ export class FlomanjiRulesProcessor {
    * @returns Updated game state with new turn
    */
   public advanceTurn(gameState: GameState): GameState {
-    const newState = this.cloneGameState(gameState);
+    let newState = this.cloneGameState(gameState);
     
     // Complete the current turn
     newState.currentTurn.completed = true;
@@ -279,30 +279,32 @@ export class FlomanjiRulesProcessor {
    * @returns Updated game state with end-of-turn effects applied
    */
   private applyEndOfTurnEffects(gameState: GameState): GameState {
+    let updatedState = this.cloneGameState(gameState);
+    
     // Apply region effects
     // TODO: Implement region-specific effects
     
     // Process any automatic heat increases
-    if (gameState.heatIncreasePerTurn > 0) {
-      gameState.heat = Math.min(
+    if (updatedState.heatIncreasePerTurn > 0) {
+      updatedState.heat = Math.min(
         FlomanjiRulesProcessor.MAX_HEAT,
-        gameState.heat + gameState.heatIncreasePerTurn
+        updatedState.heat + updatedState.heatIncreasePerTurn
       );
       
-      gameState.currentTurn.events.push({
+      updatedState.currentTurn.events.push({
         type: "heat-increase",
-        description: `Heat increased to ${gameState.heat}`,
+        description: `Heat increased to ${updatedState.heat}`,
         timestamp: new Date().toISOString()
       });
     }
     
     // Apply heat effects
-    gameState = this.applyHeatEffects(gameState);
+    updatedState = this.applyHeatEffects(updatedState);
     
     // Check win/loss conditions
-    gameState = this.checkWinLossConditions(gameState);
+    updatedState = this.checkWinLossConditions(updatedState);
     
-    return gameState;
+    return updatedState;
   }
 
   /**
@@ -311,55 +313,57 @@ export class FlomanjiRulesProcessor {
    * @returns Updated game state with game over flags if applicable
    */
   private checkWinLossConditions(gameState: GameState): GameState {
+    const newState = this.cloneGameState(gameState);
+    
     // Check if all characters are disabled/transformed
-    const activeCharacters = gameState.characters.filter(c => c.status === "active");
+    const activeCharacters = newState.characters.filter(c => c.status === "active");
     if (activeCharacters.length === 0) {
-      gameState.gameOver = true;
-      gameState.missionOutcome = "failure";
-      gameState.gameOverReason = "All characters incapacitated";
-      return gameState;
+      newState.gameOver = true;
+      newState.missionOutcome = "failure";
+      newState.gameOverReason = "All characters incapacitated";
+      return newState;
     }
     
     // Check if maximum rounds have been reached
-    if (gameState.currentTurn.turnNumber > gameState.maxRounds) {
-      gameState.gameOver = true;
-      gameState.missionOutcome = "failure";
-      gameState.gameOverReason = "Maximum rounds reached";
-      return gameState;
+    if (newState.currentTurn.turnNumber > newState.maxRounds) {
+      newState.gameOver = true;
+      newState.missionOutcome = "failure";
+      newState.gameOverReason = "Maximum rounds reached";
+      return newState;
     }
     
     // Check mission objectives
-    const allRequiredCompleted = gameState.objectives
+    const allRequiredCompleted = newState.objectives
       .filter(obj => obj.required)
-      .every(obj => gameState.completedObjectives.includes(obj.id));
+      .every(obj => newState.completedObjectives.includes(obj.id));
       
-    const anyOptionalCompleted = gameState.objectives
+    const anyOptionalCompleted = newState.objectives
       .filter(obj => !obj.required)
-      .some(obj => gameState.completedObjectives.includes(obj.id));
+      .some(obj => newState.completedObjectives.includes(obj.id));
     
     // Full success: all required objectives completed
     if (allRequiredCompleted) {
-      if (gameState.missionType === "escape" && 
-          activeCharacters.some(c => c.position === gameState.extractionRegion)) {
-        gameState.gameOver = true;
-        gameState.missionOutcome = "success";
-        gameState.gameOverReason = "Objectives completed and reached extraction";
-      } else if (gameState.missionType !== "escape") {
-        gameState.gameOver = true;
-        gameState.missionOutcome = "success";
-        gameState.gameOverReason = "All required objectives completed";
+      if (newState.missionType === "escape" && 
+          activeCharacters.some(c => c.position === newState.extractionRegion)) {
+        newState.gameOver = true;
+        newState.missionOutcome = "success";
+        newState.gameOverReason = "Objectives completed and reached extraction";
+      } else if (newState.missionType !== "escape") {
+        newState.gameOver = true;
+        newState.missionOutcome = "success";
+        newState.gameOverReason = "All required objectives completed";
       }
     } 
     // Partial success: some optional objectives completed
     else if (anyOptionalCompleted) {
-      if (gameState.missionType === "escape" && 
-          activeCharacters.some(c => c.position === gameState.extractionRegion)) {
-        gameState.gameOver = true;
-        gameState.missionOutcome = "partial";
-        gameState.gameOverReason = "Reached extraction with partial objectives";
+      if (newState.missionType === "escape" && 
+          activeCharacters.some(c => c.position === newState.extractionRegion)) {
+        newState.gameOver = true;
+        newState.missionOutcome = "partial";
+        newState.gameOverReason = "Reached extraction with partial objectives";
       }
     }
     
-    return gameState;
+    return newState;
   }
 }
