@@ -28,7 +28,7 @@ export const BaseCardForm = ({ form }: BaseCardFormProps) => {
           <FormItem>
             <FormLabel>Name</FormLabel>
             <FormControl>
-              <Input placeholder="Card Name" {...field} />
+              <Input placeholder="Card Name" {...field} value={field.value || ""} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -43,7 +43,6 @@ export const BaseCardForm = ({ form }: BaseCardFormProps) => {
             <FormLabel>Type</FormLabel>
             <Select
               onValueChange={field.onChange}
-              defaultValue={field.value}
               value={field.value}
             >
               <FormControl>
@@ -63,6 +62,7 @@ export const BaseCardForm = ({ form }: BaseCardFormProps) => {
                 <SelectItem value="secret">Secret Objective</SelectItem>
                 <SelectItem value="automa">Automa</SelectItem>
                 <SelectItem value="player-character">Player Character</SelectItem>
+                <SelectItem value="mission">Mission</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />

@@ -2,12 +2,13 @@
 import React from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { CardFormDialogHeader } from "./CardFormDialogHeader";
+import { GameCard } from "@/types/cards";
 
 interface CardFormDialogProps {
   open: boolean;
   onClose: () => void;
   isEditing: boolean;
-  initialData?: any;
+  initialData?: GameCard;
   children: React.ReactNode;
 }
 
