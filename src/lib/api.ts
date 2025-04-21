@@ -1,7 +1,6 @@
 import { SimulationConfig, SimulationResult } from "@/types";
 import { simulateRandomId } from "@/lib/utils";
 import { createChatCompletion } from "@/lib/openrouterChat";
-import { getExampleRules } from "./api";
 import { getGMSystemPrompt, getPlayerSystemPrompt, getCriticSystemPrompt } from "@/lib/prompts";
 import { saveSimulationResult, getSimulationSummaries, getSimulationById, updateSimulationAnnotations } from "@/lib/storage";
 
