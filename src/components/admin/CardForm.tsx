@@ -1,17 +1,9 @@
 import React, { useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { CardType, GameCard } from "@/types/cards";
 import { useCardForm } from "./hooks/useCardForm";
 import { z } from "zod";
-import { BaseCardForm } from "./forms/BaseCardForm";
-import { CardFormDialogHeader } from "./CardFormDialogHeader";
-import { CardTypeFormSwitcher } from "./CardTypeFormSwitcher";
+import { CardFormDialog } from "./CardFormDialog";
+import { CardFormBody } from "./CardFormBody";
 
 export const cardFormSchema = z.object({
   // Base fields for all cards
@@ -170,7 +162,13 @@ export interface CardFormProps {
   activeTab: string;
 }
 
-export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: CardFormProps) => {
+export const CardForm = ({
+  open,
+  onClose,
+  onSubmit,
+  initialData,
+  activeTab,
+}: CardFormProps) => {
   const form = useCardForm(initialData);
   const isEditing = !!initialData;
   const type = form.watch("type");
@@ -183,21 +181,13 @@ export const CardForm = ({ open, onClose, onSubmit, initialData, activeTab }: Ca
   }, [activeTab, form, isEditing]);
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
-        <CardFormDialogHeader isEditing={isEditing} initialData={initialData} />
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <BaseCardForm form={form} />
-            <CardTypeFormSwitcher type={type} form={form} />
-            <DialogFooter>
-              <Button type="submit">
-                {isEditing ? "Update Card" : "Create Card"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <CardFormDialog open={open} onClose={onClose} isEditing={isEditing} initialData={initialData}>
+      <CardFormBody
+        form={form}
+        onSubmit={onSubmit}
+        isEditing={isEditing}
+        type={type}
+      />
+    </CardFormDialog>
   );
 };
