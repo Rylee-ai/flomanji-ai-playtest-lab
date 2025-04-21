@@ -1,244 +1,294 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AgentRole } from "@/types";
+import { AgentConfig, AgentRole } from '@/types';
+import { RefreshCw } from 'lucide-react';
 
-// Configuration form for GM, Player, and Critic agents
-const AgentConfigForm = ({ 
+interface AgentConfigFormProps {
+  configs: Record<string, AgentConfig>;
+  onChange: (role: string, config: AgentConfig) => void;
+  onSave: () => void;
+  onReset: (role: AgentRole) => void;
+  isLoading?: boolean;
+}
+
+const AgentConfigForm: React.FC<AgentConfigFormProps> = ({ 
   configs, 
   onChange, 
-  onSave 
+  onSave,
+  onReset,
+  isLoading = false
 }) => {
-  const [activeAgentTab, setActiveAgentTab] = useState<AgentRole>("GM");
-  
-  const handleSystemPromptChange = (value: string) => {
-    onChange(activeAgentTab.toLowerCase(), {
-      ...configs[activeAgentTab.toLowerCase()],
-      systemPrompt: value
-    });
+  const handleTemperatureChange = (role: string, value: number[]) => {
+    onChange(role, { ...configs[role], temperature: value[0] });
   };
-  
-  const handleTemperatureChange = (value: number[]) => {
-    onChange(activeAgentTab.toLowerCase(), {
-      ...configs[activeAgentTab.toLowerCase()],
-      temperature: value[0]
-    });
+
+  const handleSystemPromptChange = (role: string, value: string) => {
+    onChange(role, { ...configs[role], systemPrompt: value });
   };
-  
-  const handleVerboseChange = (checked: boolean) => {
-    onChange(activeAgentTab.toLowerCase(), {
-      ...configs[activeAgentTab.toLowerCase()],
-      verbose: checked
-    });
+
+  const handleResetClick = (role: AgentRole) => {
+    onReset(role);
   };
-  
-  const handlePersonalityChange = (value: string) => {
-    onChange(activeAgentTab.toLowerCase(), {
-      ...configs[activeAgentTab.toLowerCase()],
-      personality: value
-    });
-  };
-  
-  const handleSkillLevelChange = (value: string) => {
-    onChange(activeAgentTab.toLowerCase(), {
-      ...configs[activeAgentTab.toLowerCase()],
-      skillLevel: value
-    });
-  };
-  
-  const handleFocusChange = (value: string) => {
-    onChange(activeAgentTab.toLowerCase(), {
-      ...configs[activeAgentTab.toLowerCase()],
-      focus: value
-    });
-  };
-  
-  const handleDetailChange = (value: string) => {
-    onChange(activeAgentTab.toLowerCase(), {
-      ...configs[activeAgentTab.toLowerCase()],
-      detail: value
-    });
-  };
-  
-  const handleMetaChange = (checked: boolean) => {
-    onChange(activeAgentTab.toLowerCase(), {
-      ...configs[activeAgentTab.toLowerCase()],
-      meta: checked
-    });
-  };
-  
-  const handleSuggestionsChange = (checked: boolean) => {
-    onChange(activeAgentTab.toLowerCase(), {
-      ...configs[activeAgentTab.toLowerCase()],
-      suggestions: checked
-    });
-  };
-  
-  const config = configs[activeAgentTab.toLowerCase()];
-  
-  // Fixed type issue: explicitly cast the value to AgentRole
-  const handleTabChange = (value: string) => {
-    setActiveAgentTab(value as AgentRole);
-  };
+
+  if (isLoading || !configs.gm || !configs.player || !configs.critic) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="col-span-full animate-pulse">
+          <CardHeader>
+            <div className="h-7 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-40 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Agent Configuration</CardTitle>
-        <CardDescription>
-          Configure the AI agents for your Flomanji game sessions
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Tabs value={activeAgentTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="mb-4 grid w-full grid-cols-3">
-            <TabsTrigger value="GM">Game Master</TabsTrigger>
-            <TabsTrigger value="Player">Player</TabsTrigger>
-            <TabsTrigger value="Critic">Critic</TabsTrigger>
-          </TabsList>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* Game Master Configuration Card */}
+      <Card>
+        <CardHeader className="flex flex-row items-start justify-between space-y-0">
+          <div>
+            <CardTitle>Game Master Agent</CardTitle>
+            <CardDescription>Configure how the GM runs the game</CardDescription>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => handleResetClick('GM')}
+            title="Reset to default configuration"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="gm-system-prompt">System Prompt</Label>
+            <Textarea
+              id="gm-system-prompt"
+              className="min-h-[200px] font-mono text-sm"
+              value={configs.gm.systemPrompt}
+              onChange={(e) => handleSystemPromptChange('gm', e.target.value)}
+            />
+          </div>
           
-          <TabsContent value={activeAgentTab} className="space-y-4">
-            <div className="space-y-4">
-              <div>
-                <Label className="mb-2 block">System Prompt</Label>
-                <Textarea 
-                  value={config?.systemPrompt || ""}
-                  onChange={(e) => handleSystemPromptChange(e.target.value)}
-                  className="min-h-[200px] font-mono text-sm"
-                  placeholder="Enter the system prompt for this agent"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="mb-2 block">Temperature: {config?.temperature.toFixed(2)}</Label>
-                <Slider 
-                  value={[config?.temperature || 0.7]} 
-                  min={0} 
-                  max={1} 
-                  step={0.01} 
-                  onValueChange={handleTemperatureChange}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Lower values (0.2-0.5) produce more predictable responses, higher values (0.7-1.0) create more creative variety.
-                </p>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Switch 
-                  checked={config?.verbose || false} 
-                  onCheckedChange={handleVerboseChange}
-                  id="verbose-mode"
-                />
-                <Label htmlFor="verbose-mode">Verbose Mode</Label>
-              </div>
-              
-              {activeAgentTab === "Player" && (
-                <>
-                  <div className="space-y-2">
-                    <Label className="mb-1 block">Personality</Label>
-                    <Select 
-                      value={config?.personality || "balanced"} 
-                      onValueChange={handlePersonalityChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select personality" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="cautious">Cautious</SelectItem>
-                        <SelectItem value="balanced">Balanced</SelectItem>
-                        <SelectItem value="reckless">Reckless</SelectItem>
-                        <SelectItem value="analytical">Analytical</SelectItem>
-                        <SelectItem value="impulsive">Impulsive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label className="mb-1 block">Skill Level</Label>
-                    <Select 
-                      value={config?.skillLevel || "intermediate"} 
-                      onValueChange={handleSkillLevelChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select skill level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                        <SelectItem value="expert">Expert</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Switch 
-                      checked={config?.meta || false} 
-                      onCheckedChange={handleMetaChange}
-                      id="meta-knowledge"
-                    />
-                    <Label htmlFor="meta-knowledge">Meta-Knowledge</Label>
-                  </div>
-                </>
-              )}
-              
-              {activeAgentTab === "Critic" && (
-                <>
-                  <div className="space-y-2">
-                    <Label className="mb-1 block">Focus Area</Label>
-                    <Select 
-                      value={config?.focus || "player-experience"} 
-                      onValueChange={handleFocusChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select focus area" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="rules-accuracy">Rules Accuracy</SelectItem>
-                        <SelectItem value="player-experience">Player Experience</SelectItem>
-                        <SelectItem value="game-balance">Game Balance</SelectItem>
-                        <SelectItem value="narrative">Narrative Quality</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label className="mb-1 block">Detail Level</Label>
-                    <Select 
-                      value={config?.detail || "standard"} 
-                      onValueChange={handleDetailChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select detail level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="brief">Brief</SelectItem>
-                        <SelectItem value="standard">Standard</SelectItem>
-                        <SelectItem value="comprehensive">Comprehensive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Switch 
-                      checked={config?.suggestions || false} 
-                      onCheckedChange={handleSuggestionsChange}
-                      id="include-suggestions"
-                    />
-                    <Label htmlFor="include-suggestions">Include Improvement Suggestions</Label>
-                  </div>
-                </>
-              )}
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label htmlFor="gm-temperature">Temperature: {configs.gm.temperature.toFixed(1)}</Label>
             </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+            <Slider
+              id="gm-temperature"
+              min={0}
+              max={1}
+              step={0.1}
+              value={[configs.gm.temperature]}
+              onValueChange={(value) => handleTemperatureChange('gm', value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Lower values (0.0-0.3) for more consistent, rule-focused responses. Higher values (0.6-1.0) for more creative descriptions.
+            </p>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="gm-verbose"
+              checked={configs.gm.verbose}
+              onCheckedChange={(checked) => onChange('gm', { ...configs.gm, verbose: checked })}
+            />
+            <Label htmlFor="gm-verbose">Verbose Mode</Label>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Player Agent Configuration Card */}
+      <Card>
+        <CardHeader className="flex flex-row items-start justify-between space-y-0">
+          <div>
+            <CardTitle>Player Agent</CardTitle>
+            <CardDescription>Configure AI-controlled player behavior</CardDescription>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => handleResetClick('Player')}
+            title="Reset to default configuration"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="player-system-prompt">System Prompt</Label>
+            <Textarea
+              id="player-system-prompt"
+              className="min-h-[200px] font-mono text-sm"
+              value={configs.player.systemPrompt}
+              onChange={(e) => handleSystemPromptChange('player', e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label htmlFor="player-temperature">Temperature: {configs.player.temperature.toFixed(1)}</Label>
+            </div>
+            <Slider
+              id="player-temperature"
+              min={0}
+              max={1}
+              step={0.1}
+              value={[configs.player.temperature]}
+              onValueChange={(value) => handleTemperatureChange('player', value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="player-personality">Personality</Label>
+            <Select
+              value={configs.player.personality}
+              onValueChange={(value) => onChange('player', { ...configs.player, personality: value })}
+            >
+              <SelectTrigger id="player-personality">
+                <SelectValue placeholder="Select a personality" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="cautious">Cautious</SelectItem>
+                <SelectItem value="balanced">Balanced</SelectItem>
+                <SelectItem value="risky">Risk-Taker</SelectItem>
+                <SelectItem value="leader">Leader</SelectItem>
+                <SelectItem value="support">Support</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="player-skill">Skill Level</Label>
+            <Select
+              value={configs.player.skillLevel}
+              onValueChange={(value) => onChange('player', { ...configs.player, skillLevel: value })}
+            >
+              <SelectTrigger id="player-skill">
+                <SelectValue placeholder="Select skill level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="beginner">Beginner</SelectItem>
+                <SelectItem value="intermediate">Intermediate</SelectItem>
+                <SelectItem value="expert">Expert</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="player-meta"
+              checked={configs.player.meta || false}
+              onCheckedChange={(checked) => onChange('player', { ...configs.player, meta: checked })}
+            />
+            <Label htmlFor="player-meta">Allow Meta Knowledge</Label>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Critic Agent Configuration Card */}
+      <Card>
+        <CardHeader className="flex flex-row items-start justify-between space-y-0">
+          <div>
+            <CardTitle>Critic Agent</CardTitle>
+            <CardDescription>Configure game analysis and feedback</CardDescription>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => handleResetClick('Critic')}
+            title="Reset to default configuration"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="critic-system-prompt">System Prompt</Label>
+            <Textarea
+              id="critic-system-prompt"
+              className="min-h-[200px] font-mono text-sm"
+              value={configs.critic.systemPrompt}
+              onChange={(e) => handleSystemPromptChange('critic', e.target.value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Label htmlFor="critic-temperature">Temperature: {configs.critic.temperature.toFixed(1)}</Label>
+            </div>
+            <Slider
+              id="critic-temperature"
+              min={0}
+              max={1}
+              step={0.1}
+              value={[configs.critic.temperature]}
+              onValueChange={(value) => handleTemperatureChange('critic', value)}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="critic-focus">Analysis Focus</Label>
+            <Select
+              value={configs.critic.focus}
+              onValueChange={(value) => onChange('critic', { ...configs.critic, focus: value })}
+            >
+              <SelectTrigger id="critic-focus">
+                <SelectValue placeholder="Select focus area" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="rules">Rules Implementation</SelectItem>
+                <SelectItem value="balance">Game Balance</SelectItem>
+                <SelectItem value="player-experience">Player Experience</SelectItem>
+                <SelectItem value="comprehensive">Comprehensive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="critic-detail">Detail Level</Label>
+            <Select
+              value={configs.critic.detail}
+              onValueChange={(value) => onChange('critic', { ...configs.critic, detail: value })}
+            >
+              <SelectTrigger id="critic-detail">
+                <SelectValue placeholder="Select detail level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="brief">Brief Summary</SelectItem>
+                <SelectItem value="standard">Standard Analysis</SelectItem>
+                <SelectItem value="detailed">Detailed Breakdown</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="critic-suggestions"
+              checked={configs.critic.suggestions || false}
+              onCheckedChange={(checked) => onChange('critic', { ...configs.critic, suggestions: checked })}
+            />
+            <Label htmlFor="critic-suggestions">Include Improvement Suggestions</Label>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

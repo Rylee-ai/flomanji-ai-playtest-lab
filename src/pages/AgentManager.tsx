@@ -13,9 +13,10 @@ import { useAgentConfig } from "@/hooks/useAgentConfig";
 import { getOpenRouterApiKey } from "@/lib/openrouterApiKey";
 import { getOpenRouterModel } from "@/lib/openrouterModel";
 import { AgentRole } from "@/types";
+import { RefreshCw } from "lucide-react";
 
 const AgentManager = () => {
-  const { configs, isLoading, isSaving, saveAgentConfig, testAgentResponse } = useAgentConfig();
+  const { configs, isLoading, isSaving, saveAgentConfig, resetAgentConfig, testAgentResponse } = useAgentConfig();
   const [activeTab, setActiveTab] = useState("config");
   const [apiKeyStatus, setApiKeyStatus] = useState<"loading" | "missing" | "available">("loading");
 
@@ -54,6 +55,26 @@ const AgentManager = () => {
     }
   };
 
+  const handleResetConfig = async (role: AgentRole) => {
+    const success = await resetAgentConfig(role);
+    if (success) {
+      toast.success(`Reset ${role} configuration to default`);
+    }
+  };
+
+  const handleResetAllConfigs = async () => {
+    try {
+      const roles: AgentRole[] = ["GM", "Player", "Critic"];
+      const promises = roles.map(role => resetAgentConfig(role));
+      
+      await Promise.all(promises);
+      toast.success("All agent configurations reset to defaults");
+    } catch (error) {
+      console.error("Error resetting configs:", error);
+      toast.error("Failed to reset agent configurations");
+    }
+  };
+
   const handleUpdateConfig = (role: string, newConfig: any) => {
     // This would need to be implemented in useAgentConfig hook
     console.log(`Updating ${role} config:`, newConfig);
@@ -64,9 +85,19 @@ const AgentManager = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">AI Agent Manager</h1>
-        <Button onClick={handleSaveAllConfigs} disabled={isSaving}>
-          {isSaving ? "Saving..." : "Save Configuration"}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleResetAllConfigs} 
+            disabled={isSaving || isLoading}
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Reset Defaults
+          </Button>
+          <Button onClick={handleSaveAllConfigs} disabled={isSaving || isLoading}>
+            {isSaving ? "Saving..." : "Save Configuration"}
+          </Button>
+        </div>
       </div>
 
       {apiKeyStatus === "missing" && (
@@ -92,7 +123,9 @@ const AgentManager = () => {
             <AgentConfigForm 
               configs={configs} 
               onChange={handleUpdateConfig} 
-              onSave={handleSaveAllConfigs} 
+              onSave={handleSaveAllConfigs}
+              onReset={handleResetConfig}
+              isLoading={isLoading || isSaving}
             />
           </TabsContent>
 

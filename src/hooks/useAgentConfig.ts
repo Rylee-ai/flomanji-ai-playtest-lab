@@ -2,72 +2,74 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { AgentRole, AgentConfig } from "@/types";
+import { getGMSystemPrompt, getPlayerSystemPrompt, getCriticSystemPrompt } from "@/lib/prompts";
+import { getExampleRules } from "@/lib/rules-loader";
 
 // Initial default configurations for each agent role
-const defaultConfigs: Record<AgentRole, AgentConfig> = {
-  GM: {
-    systemPrompt: `You are the Game Master for Flomanji, a semi-cooperative survival horror card-and-dice adventure game set in a heightened 1987 Florida.
+export const getDefaultConfigs = async (): Promise<Record<AgentRole, AgentConfig>> => {
+  // Get example rules to use in default prompts
+  const exampleRules = await getExampleRules();
+  
+  return {
+    GM: {
+      systemPrompt: getGMSystemPrompt(exampleRules, "Default scenario"),
+      temperature: 0.7,
+      verbose: true,
+    },
+    Player: {
+      systemPrompt: getPlayerSystemPrompt(exampleRules, 0),
+      temperature: 0.7,
+      personality: "balanced",
+      skillLevel: "intermediate",
+      meta: false,
+      verbose: false,
+    },
+    Critic: {
+      systemPrompt: getCriticSystemPrompt(exampleRules),
+      temperature: 0.7,
+      focus: "player-experience",
+      detail: "standard",
+      suggestions: true,
+      verbose: false,
+    }
+  };
+};
 
-Your role is to facilitate play, describe the environment, narrate outcomes, and enforce rules. 
-Make the game challenging but fair, and create a cinematic B-movie horror-comedy atmosphere.`,
-    temperature: 0.7,
-    verbose: true,
-  },
-  Player: {
-    systemPrompt: `You are a Player in Flomanji, controlling a survivor in a semi-cooperative adventure set in a heightened 1987 Florida filled with supernatural threats.
-
-You have the following responsibilities:
-1. Make decisions based on your character's stats and abilities
-2. Use your special ability strategically
-3. Manage your Health, Weirdness, and Luck effectively`,
-    temperature: 0.7,
-    personality: "balanced",
-    skillLevel: "intermediate",
-    meta: false,
-    verbose: false, // Added verbose explicitly as false
-  },
-  Critic: {
-    systemPrompt: `You are a Critic AI analyzing a playtest session of Flomanji, a semi-cooperative survival horror card-and-dice adventure game.
-
-Analyze the gameplay session objectively and provide feedback on:
-
-1. Rules Implementation
-2. Game Balance
-3. Player Experience
-4. Design Improvement Opportunities`,
-    temperature: 0.7,
-    focus: "player-experience",
-    detail: "standard",
-    suggestions: true,
-    verbose: false, // Added verbose explicitly as false
-  }
+// Storage keys for persistence
+const CONFIG_STORAGE_KEYS = {
+  GM: "flomanji-agent-gm",
+  Player: "flomanji-agent-player",
+  Critic: "flomanji-agent-critic"
 };
 
 export const useAgentConfig = () => {
-  const [configs, setConfigs] = useState<Record<string, AgentConfig>>({
-    gm: defaultConfigs.GM,
-    player: defaultConfigs.Player,
-    critic: defaultConfigs.Critic,
-  });
+  const [configs, setConfigs] = useState<Record<string, AgentConfig>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load agent configurations from localStorage on mount
+  // Load agent configurations on mount
   useEffect(() => {
-    const loadConfigs = () => {
+    const loadConfigs = async () => {
       try {
         setIsLoading(true);
         
-        const savedGM = localStorage.getItem("flomanji-agent-gm");
-        const savedPlayer = localStorage.getItem("flomanji-agent-player");
-        const savedCritic = localStorage.getItem("flomanji-agent-critic");
+        // Get default configurations first
+        const defaultConfigs = await getDefaultConfigs();
         
-        setConfigs({
-          gm: savedGM ? JSON.parse(savedGM) : defaultConfigs.GM,
-          player: savedPlayer ? JSON.parse(savedPlayer) : defaultConfigs.Player,
-          critic: savedCritic ? JSON.parse(savedCritic) : defaultConfigs.Critic,
-        });
+        // Use localStorage as temporary persistence but in a real app
+        // this would be replaced with a database call
+        const loadedConfigs: Record<string, AgentConfig> = {};
         
+        for (const [role, defaultConfig] of Object.entries(defaultConfigs)) {
+          const storageKey = CONFIG_STORAGE_KEYS[role as AgentRole];
+          const savedConfig = localStorage.getItem(storageKey);
+          
+          loadedConfigs[role.toLowerCase()] = savedConfig 
+            ? JSON.parse(savedConfig) 
+            : defaultConfig;
+        }
+        
+        setConfigs(loadedConfigs);
         setIsLoading(false);
       } catch (error) {
         console.error("Failed to load agent configurations:", error);
@@ -79,6 +81,36 @@ export const useAgentConfig = () => {
     loadConfigs();
   }, []);
 
+  // Resets a configuration to the default
+  const resetAgentConfig = async (role: AgentRole) => {
+    try {
+      setIsSaving(true);
+      
+      // Get fresh default configs
+      const defaultConfigs = await getDefaultConfigs();
+      const defaultConfig = defaultConfigs[role];
+      
+      // Save to storage
+      const storeRole = role.toLowerCase();
+      localStorage.setItem(CONFIG_STORAGE_KEYS[role], JSON.stringify(defaultConfig));
+      
+      // Update state
+      setConfigs(prevConfigs => ({
+        ...prevConfigs,
+        [storeRole]: defaultConfig,
+      }));
+      
+      setIsSaving(false);
+      toast.success(`Reset ${role} configuration to default`);
+      return true;
+    } catch (error) {
+      console.error(`Failed to reset ${role} configuration:`, error);
+      toast.error(`Failed to reset ${role} configuration`);
+      setIsSaving(false);
+      return false;
+    }
+  };
+
   // Save a specific agent configuration
   const saveAgentConfig = async (role: AgentRole, config: AgentConfig) => {
     try {
@@ -87,9 +119,8 @@ export const useAgentConfig = () => {
       // Convert role to lowercase for storage key
       const storeRole = role.toLowerCase();
       
-      // Save to localStorage for now
-      // In a real implementation, you would save to your database
-      localStorage.setItem(`flomanji-agent-${storeRole}`, JSON.stringify(config));
+      // Save to storage
+      localStorage.setItem(CONFIG_STORAGE_KEYS[role], JSON.stringify(config));
       
       // Update state with new config
       setConfigs(prevConfigs => ({
@@ -133,6 +164,7 @@ export const useAgentConfig = () => {
     isLoading,
     isSaving,
     saveAgentConfig,
+    resetAgentConfig,
     testAgentResponse,
   };
 };
