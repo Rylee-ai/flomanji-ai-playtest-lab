@@ -6,6 +6,7 @@ import NotFound from "@/pages/NotFound";
 import { publicRoutes } from "@/routes/public.routes";
 import { adminRoutes } from "@/routes/admin.routes";
 import { playerRoutes } from "@/routes/player.routes";
+import { AppProviders } from "@/components/providers/AppProviders";
 
 const App = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -42,7 +43,14 @@ const App = () => {
   ];
 
   // Use the useRoutes hook to transform route objects into React elements
-  const routeElements = useRoutes(allRoutes);
+  const RoutedContent = () => {
+    const routeElements = useRoutes(allRoutes);
+    return (
+      <Suspense fallback={<LoadingFallback />}>
+        {routeElements}
+      </Suspense>
+    );
+  };
 
   if (hasError) {
     return <ErrorFallback />;
@@ -53,9 +61,9 @@ const App = () => {
   }
 
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      {routeElements}
-    </Suspense>
+    <AppProviders>
+      <RoutedContent />
+    </AppProviders>
   );
 };
 
