@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getSimulationsList } from "@/lib/storage";
+import { getSimulationSummaries } from "@/lib/storage";
 import { SimulationResult } from "@/types";
 import { format } from "date-fns";
 import SimulationSummaryPanel from "@/components/simulation/SimulationSummaryPanel";
@@ -13,7 +13,7 @@ const SimulationsList = () => {
 
   useEffect(() => {
     // Load simulations list from storage
-    const list = getSimulationsList();
+    const list = getSimulationSummaries();
     setSimulations(list);
   }, []);
 
