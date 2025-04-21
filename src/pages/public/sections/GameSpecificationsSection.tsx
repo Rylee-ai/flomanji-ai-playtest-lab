@@ -1,11 +1,38 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TREASURE_CARDS } from "@/lib/cards/treasures";
+import { 
+  BookOpen, 
+  Map, 
+  Workflow, 
+  Users, 
+  Clock, 
+  Sparkles, 
+  Skull, 
+  HeartPulse, 
+  ShieldAlert, 
+  User, 
+  Shirt, 
+  Zap 
+} from "lucide-react";
 
 export const GameSpecificationsSection = () => {
-  const displayCards = TREASURE_CARDS.slice(0, 12);
+  const cardCategories = [
+    { name: "Treasure & Artifacts", icon: <Sparkles className="h-6 w-6" /> },
+    { name: "Missions", icon: <Map className="h-6 w-6" /> },
+    { name: "Regions", icon: <Map className="h-6 w-6" /> },
+    { name: "Hazards", icon: <ShieldAlert className="h-6 w-6" /> },
+    { name: "Gear", icon: <Shirt className="h-6 w-6" /> },
+    { name: "NPCs", icon: <User className="h-6 w-6" /> },
+    { name: "Player Characters", icon: <Users className="h-6 w-6" /> },
+    { name: "Secret Objectives", icon: <BookOpen className="h-6 w-6" /> },
+    { name: "Chaos Cards", icon: <Zap className="h-6 w-6" /> },
+    { name: "Automa", icon: <Workflow className="h-6 w-6" /> },
+    { name: "Flomanjified", icon: <Sparkles className="h-6 w-6" /> },
+    { name: "Boss Cards", icon: <Skull className="h-6 w-6" /> },
+  ];
 
   return (
     <section className="py-16 bg-gray-950">
@@ -27,11 +54,13 @@ export const GameSpecificationsSection = () => {
         </div>
         <h3 className="text-xl font-bold mb-6">Card Breakdown</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          {displayCards.map((card, i) => (
-            <div key={i} className="bg-gray-900 aspect-card rounded-lg border border-gray-800 flex flex-col">
-              <div className="flex-1"></div>
+          {cardCategories.map((category, index) => (
+            <div key={index} className="bg-gray-900 aspect-card rounded-lg border border-gray-800 flex flex-col">
+              <div className="flex-1 flex items-center justify-center">
+                {category.icon}
+              </div>
               <div className="p-3 border-t border-gray-800">
-                <p className="text-sm font-medium">{card.name}</p>
+                <p className="text-sm font-medium">{category.name}</p>
               </div>
             </div>
           ))}
