@@ -44,7 +44,7 @@ export interface AgentMessage {
     inventory?: any;
     gameState?: any;
     reason?: string;
-    outcome?: string; // Added the missing outcome property
+    outcome?: string; 
   };
 }
 
@@ -68,6 +68,11 @@ export interface SimulationResult {
     heatPerRound: number;
     extractionRegion: string;
     objectives: any[];
+    missionType?: string;
+    secretTraitor?: boolean;
+    arcadeModule?: boolean;
+    nightmareDifficulty?: boolean;
+    competitiveMode?: boolean;
   };
   gameState?: {
     currentRound: number;
@@ -86,8 +91,8 @@ export interface SimulationResult {
     rolls: {player: number, type: string, value: number, stat: string, result: string}[];
   };
   characters?: FlomanjiCharacter[];
-  missionOutcome?: string; // Added missing property
-  keyEvents?: string[]; // Added missing property
+  missionOutcome?: string;
+  keyEvents?: string[];
 }
 
 export interface SimulationSummary {
