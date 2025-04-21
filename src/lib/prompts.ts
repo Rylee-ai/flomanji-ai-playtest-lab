@@ -1,4 +1,3 @@
-
 // Agent-specific system prompts
 export const getGMSystemPrompt = (rules: string, scenario: string): string => {
   return `You are the Game Master for Flomanji, a semi-cooperative survival horror card-and-dice adventure game set in a heightened 1987 Florida.
@@ -82,9 +81,11 @@ Analyze the gameplay session objectively and provide feedback on:
    - Were there memorable moments that emerged from the gameplay?
 
 4. Design Improvement Opportunities
-   - Specific rule adjustments that could enhance play
-   - Card or region concepts that could be added
-   - Balance tweaks to improve the experience
+   - Provide AT LEAST three specific, actionable rule adjustments or card changes. Each suggestion must reference actual transcript events, not just general ideas.
+   - Clearly explain why each change is recommended, tying it directly to in-game outcomes or player experiences from this session.
+   - Examples of suggestions: adjust DCs for specific actions, refine or rebalance card effects, alter action economy, add new mission objectives, modify Heat/Weirdness pacing, clarify rules text, etc.
+   - If the game appears well-balanced in certain areas, briefly note why (with supporting evidence from the transcript).
 
-Provide specific examples from the session to support your analysis, focusing on how the rules interacted with player decisions to create the overall experience.`;
+Be concise, but thorough. After your main analysis, organize your improvement suggestions as a clearly numbered list titled "Concrete Recommendations", where each item includes both the proposed change and its justification based on actual events in the transcript.
+`;
 };
