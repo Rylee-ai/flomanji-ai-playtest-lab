@@ -4,7 +4,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
+import AuthGuard from "@/components/auth/AuthGuard";
 import AdminLayout from "./components/layout/AdminLayout";
+import PlayerLayout from "./components/layout/PlayerLayout";
+import PublicLayout from "./components/layout/PublicLayout";
+
+// Admin pages
 import Dashboard from "./pages/Dashboard";
 import SimulationsList from "./pages/SimulationsList";
 import NewSimulation from "./pages/NewSimulation";
@@ -13,8 +19,20 @@ import ContentManager from "./pages/ContentManager";
 import Rules from "./pages/Rules";
 import Settings from "./pages/Settings";
 import AgentManager from "./pages/AgentManager";
+import WaitlistManager from "./pages/WaitlistManager";
+
+// Player pages
+import PlayerDashboard from "./pages/player/PlayerDashboard";
+import PlayerChat from "./pages/player/PlayerChat";
+import PlayerProfile from "./pages/player/PlayerProfile";
+import PlayerShipping from "./pages/player/PlayerShipping";
+
+// Public pages
+import HomePage from "./pages/public/HomePage";
+import AuthPage from "./pages/public/AuthPage";
+import WaitlistSignup from "./pages/public/WaitlistSignup";
 import NotFound from "./pages/NotFound";
-import Index from "./pages/Index";
+
 import { Suspense, useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -91,29 +109,69 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <BrowserRouter>
-          <Toaster />
-          <Sonner />
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
-              <Route element={<AdminLayout />}>
-                <Route path="/" element={<Index />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/simulations" element={<SimulationsList />} />
-                <Route path="/simulations/new" element={<NewSimulation />} />
-                <Route path="/simulations/:id" element={<SimulationDetail />} />
-                <Route path="/content" element={<ContentManager />} />
-                <Route path="/rules" element={<Rules />} />
-                <Route path="/agents" element={<AgentManager />} />
-                <Route path="/settings" element={<Settings />} />
-              </Route>
-              {/* Redirect from index.html to base path */}
-              <Route path="/index.html" element={<Navigate to="/" replace />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <Toaster />
+            <Sonner />
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
+                {/* Public routes */}
+                <Route element={<PublicLayout />}>
+                  <Route path="/" element={<HomePage />} />
+                  <Route 
+                    path="/auth" 
+                    element={
+                      <AuthGuard requireAuth={false}>
+                        <AuthPage />
+                      </AuthGuard>
+                    } 
+                  />
+                  <Route path="/waitlist" element={<WaitlistSignup />} />
+                </Route>
+
+                {/* Admin routes */}
+                <Route 
+                  element={
+                    <AuthGuard requireAuth={true} allowedRoles={['admin']}>
+                      <AdminLayout />
+                    </AuthGuard>
+                  }
+                >
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/simulations" element={<SimulationsList />} />
+                  <Route path="/simulations/new" element={<NewSimulation />} />
+                  <Route path="/simulations/:id" element={<SimulationDetail />} />
+                  <Route path="/content" element={<ContentManager />} />
+                  <Route path="/rules" element={<Rules />} />
+                  <Route path="/agents" element={<AgentManager />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/waitlist-manager" element={<WaitlistManager />} />
+                </Route>
+
+                {/* Player routes */}
+                <Route 
+                  element={
+                    <AuthGuard requireAuth={true} allowedRoles={['player']}>
+                      <PlayerLayout />
+                    </AuthGuard>
+                  }
+                >
+                  <Route path="/player" element={<PlayerDashboard />} />
+                  <Route path="/player/chat" element={<PlayerChat />} />
+                  <Route path="/player/chat/:id" element={<PlayerChat />} />
+                  <Route path="/player/profile" element={<PlayerProfile />} />
+                  <Route path="/player/shipping" element={<PlayerShipping />} />
+                </Route>
+
+                {/* Redirect from index.html to base path */}
+                <Route path="/index.html" element={<Navigate to="/" replace />} />
+                
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );
