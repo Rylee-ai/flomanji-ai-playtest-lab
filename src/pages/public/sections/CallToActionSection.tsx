@@ -2,8 +2,6 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
 
 export const CallToActionSection = ({ scrollToWaitlist }: { scrollToWaitlist: () => void }) => (
   <section className="py-16 bg-black text-center">
@@ -27,12 +25,6 @@ export const CallToActionSection = ({ scrollToWaitlist }: { scrollToWaitlist: ()
             Sign Up Now
           </Button>
         </div>
-        <button className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 bg-gray-800 p-2 rounded-full">
-          <ChevronRight className="rotate-180 h-5 w-5" />
-        </button>
-        <button className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 bg-gray-800 p-2 rounded-full">
-          <ChevronRight className="h-5 w-5" />
-        </button>
       </div>
       <div className="flex justify-center mt-6 space-x-2">
         <span className="h-2 w-2 rounded-full bg-amber-400"></span>
