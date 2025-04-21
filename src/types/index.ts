@@ -1,87 +1,11 @@
 
-// Agent types
-export type AgentRole = 'GM' | 'Player' | 'Critic';
-
-export interface AgentMessage {
-  role: AgentRole;
-  message: string;
-  timestamp?: string;
-  characterId?: string; // Added to track messages from specific characters
-}
-
-// Character types
-export interface CharacterStats {
-  brawn: number;
-  moxie: number;
-  charm: number;
-  grit: number;
-  weirdSense: number;
-}
-
-export interface CharacterGear {
-  name: string;
-  type: string;
-  effect: string;
-}
-
-export interface FlomanjiCharacter {
-  id: string;
-  name: string;
-  role: string;
-  stats: CharacterStats;
-  ability: {
-    name: string;
-    description: string;
-  };
-  health: number;
-  weirdness: number;
-  luck: number;
-  starterGear: CharacterGear[];
-  position?: string; // Added for game-state.ts
-}
-
-// Character performance metrics in simulation
-export interface CharacterPerformanceMetrics {
-  characterId: string;
-  characterName: string;
-  actionsUsed: number;
-  statChecks: {
-    brawn: { attempts: number, successes: number },
-    moxie: { attempts: number, successes: number },
-    charm: { attempts: number, successes: number },
-    grit: { attempts: number, successes: number },
-    weirdSense: { attempts: number, successes: number },
-  };
-  damageTaken: number;
-  damageCaused: number;
-  heatIncreases: number;
-  abilityUses: number;
-  regionsExplored: number;
-  gearUsed: string[];
-  finalHealth: number;
-  finalWeirdness: number;
-  finalLuck: number;
-}
-
-// Simulation types
+// Simulation-related types
 export interface SimulationConfig {
   scenarioPrompt: string;
   rounds?: number;
   players?: number;
   enableCritic?: boolean;
-  outputMode?: 'full' | 'narrative-only' | 'minimal';
-  // Flomanji specific options
-  startingHeat?: number;
-  missionType?: 'exploration' | 'escape' | 'escort' | 'collection' | 'boss' | 'solo';
-  secretTraitor?: boolean;
-  arcadeModule?: boolean;
-  nightmareDifficulty?: boolean;
-  competitiveMode?: boolean;
-  missionId?: string;
-  characters?: string[]; // Character IDs
-  fullCharacters?: FlomanjiCharacter[]; // Full character data
-  extractionRegion?: string; // Added property for extraction region
-  objectives?: any[]; // Added for mission objectives
+  outputMode?: 'full' | 'summary';
 }
 
 export interface SimulationResult {
@@ -89,50 +13,26 @@ export interface SimulationResult {
   timestamp: string;
   scenario: string;
   rounds: number;
-  log: AgentMessage[];
+  log: Array<{
+    role: string;
+    message: string;
+    timestamp: string;
+  }>;
   criticFeedback?: string;
   annotations?: string;
-  characterMetrics?: CharacterPerformanceMetrics[]; // New field for character performance
-  missionOutcome?: 'success' | 'partial' | 'failure';
-  missionType?: string;
-  keyEvents?: { round: number, description: string }[];
 }
 
-export interface SimulationSummary {
-  id: string;
-  timestamp: string;
-  scenario: string;
-  rounds: number;
-  result?: string;
-  notes?: string;
-  missionOutcome?: 'success' | 'partial' | 'failure';
-  characters?: { id: string, name: string }[];
-}
+// Agent-related types
+export type AgentRole = "GM" | "Player" | "Critic";
 
-// Game content types
-export interface GameRule {
-  id: string;
-  title: string;
-  content: string;
-}
-
-export interface Card {
-  id: string;
-  name: string;
-  type: 'hazard' | 'treasure' | 'event' | 'gear' | 'npc' | 'region' | 'chaos';
-  description: string;
-  effects: string;
-  biome?: string[];
-  stats?: {
-    fightDC?: number;
-    fleeDC?: number;
-    negotiateDC?: number;
-    outsmartDC?: number;
-  };
-}
-
-// CMS types
-export interface MarkdownContent {
-  path: string;
-  content: string;
+export interface AgentConfig {
+  systemPrompt: string;
+  temperature: number;
+  verbose: boolean;
+  personality?: string;
+  skillLevel?: string;
+  focus?: string;
+  detail?: string;
+  meta?: boolean;
+  suggestions?: boolean;
 }

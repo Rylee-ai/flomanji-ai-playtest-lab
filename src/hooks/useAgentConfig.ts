@@ -1,27 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { AgentRole } from "@/types";
-
-interface AgentConfig {
-  systemPrompt: string;
-  temperature: number;
-  verbose: boolean;
-  personality?: string;
-  skillLevel?: string;
-  focus?: string;
-  detail?: string;
-  meta?: boolean;
-  suggestions?: boolean;
-}
-
-interface AgentConfigState {
-  gm: AgentConfig;
-  player: AgentConfig;
-  critic: AgentConfig;
-  isLoading: boolean;
-  isSaving: boolean;
-}
+import { AgentRole, AgentConfig } from "@/types";
 
 // Initial default configurations for each agent role
 const defaultConfigs: Record<AgentRole, AgentConfig> = {
@@ -64,35 +44,35 @@ Analyze the gameplay session objectively and provide feedback on:
 };
 
 export const useAgentConfig = () => {
-  const [state, setState] = useState<AgentConfigState>({
+  const [configs, setConfigs] = useState<Record<string, AgentConfig>>({
     gm: defaultConfigs.GM,
     player: defaultConfigs.Player,
     critic: defaultConfigs.Critic,
-    isLoading: true,
-    isSaving: false,
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Load agent configurations from localStorage on mount
   useEffect(() => {
     const loadConfigs = () => {
       try {
-        setState(prevState => ({ ...prevState, isLoading: true }));
+        setIsLoading(true);
         
         const savedGM = localStorage.getItem("flomanji-agent-gm");
         const savedPlayer = localStorage.getItem("flomanji-agent-player");
         const savedCritic = localStorage.getItem("flomanji-agent-critic");
         
-        setState(prevState => ({
-          ...prevState,
+        setConfigs({
           gm: savedGM ? JSON.parse(savedGM) : defaultConfigs.GM,
           player: savedPlayer ? JSON.parse(savedPlayer) : defaultConfigs.Player,
           critic: savedCritic ? JSON.parse(savedCritic) : defaultConfigs.Critic,
-          isLoading: false,
-        }));
+        });
+        
+        setIsLoading(false);
       } catch (error) {
         console.error("Failed to load agent configurations:", error);
         toast.error("Failed to load agent configurations");
-        setState(prevState => ({ ...prevState, isLoading: false }));
+        setIsLoading(false);
       }
     };
 
@@ -102,23 +82,26 @@ export const useAgentConfig = () => {
   // Save a specific agent configuration
   const saveAgentConfig = async (role: AgentRole, config: AgentConfig) => {
     try {
-      setState(prevState => ({ ...prevState, isSaving: true }));
+      setIsSaving(true);
+      
+      // Convert role to lowercase for storage key
+      const storeRole = role.toLowerCase();
       
       // Save to localStorage for now
       // In a real implementation, you would save to your database
-      localStorage.setItem(`flomanji-agent-${role.toLowerCase()}`, JSON.stringify(config));
+      localStorage.setItem(`flomanji-agent-${storeRole}`, JSON.stringify(config));
       
       // Update state with new config
-      setState(prevState => ({
-        ...prevState,
-        [role.toLowerCase()]: config,
-        isSaving: false,
+      setConfigs(prevConfigs => ({
+        ...prevConfigs,
+        [storeRole]: config,
       }));
       
+      setIsSaving(false);
       return true;
     } catch (error) {
       console.error(`Failed to save ${role} configuration:`, error);
-      setState(prevState => ({ ...prevState, isSaving: false }));
+      setIsSaving(false);
       return false;
     }
   };
@@ -146,15 +129,10 @@ export const useAgentConfig = () => {
   };
 
   return {
-    configs: {
-      gm: state.gm,
-      player: state.player,
-      critic: state.critic,
-    },
-    isLoading: state.isLoading,
-    isSaving: state.isSaving,
+    configs,
+    isLoading,
+    isSaving,
     saveAgentConfig,
     testAgentResponse,
   };
 };
-

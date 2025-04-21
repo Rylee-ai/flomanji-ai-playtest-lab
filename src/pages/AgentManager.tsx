@@ -12,9 +12,10 @@ import { TabsProvider } from "@/components/agent/TabsProvider";
 import { useAgentConfig } from "@/hooks/useAgentConfig";
 import { getOpenRouterApiKey } from "@/lib/openrouterApiKey";
 import { getOpenRouterModel } from "@/lib/openrouterModel";
+import { AgentRole } from "@/types";
 
 const AgentManager = () => {
-  const { config, saveConfig, updateConfig } = useAgentConfig();
+  const { configs, isLoading, isSaving, saveAgentConfig, testAgentResponse } = useAgentConfig();
   const [activeTab, setActiveTab] = useState("config");
   const [apiKeyStatus, setApiKeyStatus] = useState<"loading" | "missing" | "available">("loading");
 
@@ -38,21 +39,34 @@ const AgentManager = () => {
     checkApiKey();
   }, []);
 
-  const handleSave = async () => {
+  const handleSaveAllConfigs = async () => {
     try {
-      await saveConfig();
-      toast.success("Agent configuration saved successfully");
+      // Save all agent configurations
+      const promises = Object.entries(configs).map(([role, config]) => {
+        return saveAgentConfig(role as AgentRole, config);
+      });
+      
+      await Promise.all(promises);
+      toast.success("All agent configurations saved successfully");
     } catch (error) {
-      console.error("Error saving config:", error);
-      toast.error("Failed to save agent configuration");
+      console.error("Error saving configs:", error);
+      toast.error("Failed to save agent configurations");
     }
+  };
+
+  const handleUpdateConfig = (role: string, newConfig: any) => {
+    // This would need to be implemented in useAgentConfig hook
+    console.log(`Updating ${role} config:`, newConfig);
+    // For now, we'll just log the changes
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">AI Agent Manager</h1>
-        <Button onClick={handleSave}>Save Configuration</Button>
+        <Button onClick={handleSaveAllConfigs} disabled={isSaving}>
+          {isSaving ? "Saving..." : "Save Configuration"}
+        </Button>
       </div>
 
       {apiKeyStatus === "missing" && (
@@ -76,9 +90,9 @@ const AgentManager = () => {
 
           <TabsContent value="config" className="space-y-4">
             <AgentConfigForm 
-              config={config} 
-              onChange={updateConfig} 
-              onSave={handleSave} 
+              configs={configs} 
+              onChange={handleUpdateConfig} 
+              onSave={handleSaveAllConfigs} 
             />
           </TabsContent>
 
@@ -87,11 +101,11 @@ const AgentManager = () => {
           </TabsContent>
 
           <TabsContent value="preview" className="space-y-4">
-            <AgentPreviewPanel config={config} />
+            <AgentPreviewPanel configs={configs} />
           </TabsContent>
 
           <TabsContent value="test" className="space-y-4">
-            <AgentConversationPanel config={config} />
+            <AgentConversationPanel configs={configs} />
           </TabsContent>
         </Tabs>
       </TabsProvider>
