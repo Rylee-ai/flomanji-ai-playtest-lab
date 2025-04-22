@@ -1,5 +1,6 @@
+
 /**
- * Loads the rules content for Flomanji simulations.
+ * Loads the rules content for Flonaki simulations.
  * Tries localStorage first, then falls back to the complete players guide (full text).
  */
 export const getExampleRules = (): string => {
@@ -518,3 +519,4 @@ See Chapter 4.4 for full list of 38 Region Cards by Biome.
 ----------
 
 *End of Flonaki Master Players Guide – embark on your bizarre quest!*`;
+}
