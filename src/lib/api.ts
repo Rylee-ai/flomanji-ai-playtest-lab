@@ -1,22 +1,9 @@
 
-import { SimulationConfig, AgentMessage, SimulationResult } from "@/types";
-import { startSimulation } from "./simulationRunner";
-import { getExampleRules } from "./rules-loader";
-import { getSimulationSummaries, getSimulationById, updateSimulationAnnotations, saveSimulationResult } from "@/lib/storage";
+import { getExampleRules as getExampleRulesImpl } from './rules-loader';
 
-/**
- * Exported API utilities for simulation modules.
- * - startSimulation: Runs a simulation and returns results
- * - getExampleRules: Loads rules content (from localStorage or default)
- * - Storage and annotation utilities: getSimulationSummaries, getSimulationById, updateSimulationAnnotations, saveSimulationResult
- */
-
-export {
-  startSimulation,
-  getExampleRules,
-  getSimulationSummaries,
-  getSimulationById,
-  updateSimulationAnnotations,
-  saveSimulationResult,
+// Re-export with the same interface
+export const getExampleRules = async (): Promise<string> => {
+  return getExampleRulesImpl();
 };
 
+// Add any other API functions here

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,16 +14,30 @@ const Rules = () => {
   const [rules, setRules] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [editedRules, setEditedRules] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     // Load rules from localStorage or use default
-    const savedRules = localStorage.getItem("flomanji-rules");
-    if (savedRules) {
-      setRules(savedRules);
-    } else {
-      // Use the complete rules from API
-      setRules(getExampleRules());
-    }
+    const loadRules = async () => {
+      setIsLoading(true);
+      try {
+        const savedRules = localStorage.getItem("flonaki-rules");
+        if (savedRules) {
+          setRules(savedRules);
+        } else {
+          // Use the complete rules from API
+          const exampleRules = await getExampleRules();
+          setRules(exampleRules);
+        }
+      } catch (error) {
+        console.error("Error loading rules:", error);
+        toast.error("Failed to load rules");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadRules();
   }, []);
 
   const handleEditClick = () => {
@@ -32,7 +47,7 @@ const Rules = () => {
 
   const handleSaveRules = () => {
     try {
-      localStorage.setItem("flomanji-rules", editedRules);
+      localStorage.setItem("flonaki-rules", editedRules);
       setRules(editedRules);
       setEditMode(false);
       toast.success("Rules saved successfully");
@@ -49,18 +64,24 @@ const Rules = () => {
   return (
     <div className="container py-6 mx-auto max-w-[90rem] space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Flomanji Rules</h1>
-        {!editMode && (
+        <h1 className="text-3xl font-bold tracking-tight">Flonaki Rules</h1>
+        {!editMode && !isLoading && (
           <Button onClick={handleEditClick}>
             Edit Rules
           </Button>
         )}
       </div>
       
-      {editMode ? (
+      {isLoading ? (
+        <Card className="p-6">
+          <div className="flex justify-center">
+            <p className="text-muted-foreground">Loading rules...</p>
+          </div>
+        </Card>
+      ) : editMode ? (
         <Card>
           <CardHeader>
-            <CardTitle>Edit Flomanji Rules</CardTitle>
+            <CardTitle>Edit Flonaki Rules</CardTitle>
             <CardDescription>
               Use Markdown formatting to edit the rules
             </CardDescription>
