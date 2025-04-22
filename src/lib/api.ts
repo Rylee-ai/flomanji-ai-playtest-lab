@@ -1,6 +1,6 @@
 
 import { getExampleRules as getExampleRulesImpl } from './rules-loader';
-import { getSimulationSummaries as getSimulationSummariesFromStorage, getSimulationResult } from './storage';
+import { getSimulationSummaries as getSimulationSummariesFromStorage, getSimulationById } from './storage';
 import { SimulationConfig, SimulationResult } from '@/types';
 
 // Re-export with the same interface
@@ -27,10 +27,10 @@ export const startSimulation = async (
     id: `sim-${Date.now()}`,
     timestamp: new Date().toISOString(),
     scenario: config.scenario || "Unnamed Simulation",
-    rounds: config.maxRounds || 10,
+    rounds: config.rounds || 10,
     log: [
-      { role: "system", content: "Simulation started" },
-      { role: "assistant", content: "Example simulation log entry" }
+      { role: "GM", content: "Simulation started" },
+      { role: "Player", content: "Example simulation log entry" }
     ],
     annotations: "",
     missionOutcome: "pending",
@@ -42,7 +42,7 @@ export const startSimulation = async (
 
 // Function to get a specific simulation result
 export const getSimulationResult = (id: string): SimulationResult | null => {
-  return getSimulationResult(id);
+  return getSimulationById(id);
 };
 
 // Add any other API functions here

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getSimulationById } from "@/lib/storage";
+import { getSimulationResult } from "@/lib/api";
 import { SimulationResult } from "@/types";
 import SimulationDetails from "@/components/simulation/SimulationDetails";
 
@@ -15,7 +15,7 @@ const SimulationDetail = () => {
   useEffect(() => {
     if (id) {
       try {
-        const result = getSimulationById(id);
+        const result = getSimulationResult(id);
         if (result) {
           setSimulation(result);
         } else {
