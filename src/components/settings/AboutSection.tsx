@@ -6,7 +6,7 @@ export const AboutSection = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>About Flomanji AI Playtest Lab</CardTitle>
+        <CardTitle>About Flonaki AI Playtest Lab</CardTitle>
         <CardDescription>
           Version information and resources
         </CardDescription>

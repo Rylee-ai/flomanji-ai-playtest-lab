@@ -1,11 +1,11 @@
 
-# Flomanji AI Playtest Lab
+# Flonaki AI Playtest Lab
 
 An AI-powered simulation tool for testing tabletop RPG gameplay scenarios.
 
 ## Overview
 
-Flomanji AI Playtest Lab is a web-based system that enables game designers to conduct AI-driven playtest sessions for the Flomanji tabletop RPG. Using OpenAI-based agents to act as the Game Master, players, and a critic, the tool can simulate game rounds and produce detailed play logs.
+Flonaki AI Playtest Lab is a web-based system that enables game designers to conduct AI-driven playtest sessions for the Flonaki tabletop RPG. Using OpenAI-based agents to act as the Game Master, players, and a critic, the tool can simulate game rounds and produce detailed play logs.
 
 ## Features
 
