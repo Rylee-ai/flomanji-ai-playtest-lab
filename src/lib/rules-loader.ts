@@ -5,27 +5,27 @@
 export const getExampleRules = (): string => {
   const savedRules =
     typeof window !== "undefined"
-      ? localStorage.getItem("flomanji-rules")
+      ? localStorage.getItem("flonaki-rules")
       : null;
 
   if (savedRules) {
     return savedRules;
   }
 
-  // Return complete default rules content
-  return `# Flomanji Master Players Guide
+  // Return complete default rules content (first few lines changed)
+  return `# Flonaki Master Players Guide
 *Survive the sunshine. Embrace the chaos.* *Version 1.0 — Production-Ready — 18 April 2025*
 
 > **Layout Notes (💡):**
     - Use full‑spread art for cover; include summoning storm and neon gator silhouette.
     - Chapter openers get full‑page illustrations; sidebar call‑outs for designer commentary.
 
-## 1  Welcome to Flomanji
+## 1  Welcome to Flonaki
 
-*"When Flomanji Man meets survival horror, you're in for one wild ride."*
-Flomanji is a **semi‑co‑operative card‑and‑dice adventure** for 2–6 players. Set in a heightened 1987 Flomanji, it blends survival‑horror tension with tongue‑in‑cheek 'Flomanji Man' absurdity. Every session unfolds like a one‑shot B‑movie: outrun hurricanes, barter with swamp witches, and — if you're lucky — escape the entity known only as *Flomanji* before it eats the Sunshine State alive.
+*"When Flonaki Man meets survival horror, you're in for one wild ride."*
+Flonaki is a **semi‑co‑operative card‑and‑dice adventure** for 2–6 players. Set in a heightened 1987 Flonaki, it blends survival‑horror tension with tongue‑in‑cheek 'Flonaki Man' absurdity. Every session unfolds like a one‑shot B‑movie: outrun hurricanes, barter with swamp witches, and — if you're lucky — escape the entity known only as *Flonaki* before it eats the Sunshine State alive.
 
-💡 *Sidebar:* Flomanji draws DNA from: **Eldritch Horror** (co‑op tension), **Dead of Winter** (modular missions), and **Battlestar Galactica** (traitor jeopardy).
+💡 *Sidebar:* Flonaki draws DNA from: **Eldritch Horror** (co‑op tension), **Dead of Winter** (modular missions), and **Battlestar Galactica** (traitor jeopardy).
 
 **1.1  The Core Loop**
 Each round pulses with rising stakes through this five‑step loop:
@@ -46,12 +46,12 @@ Each round pulses with rising stakes through this five‑step loop:
 **1.2  Victory & Defeat**
 
 - **Victory:** Complete every Primary Objective and reach the Extraction Region before Heat 10.
-- **Defeat:** Heat hits 10, or all un‑Flomanjified Survivors are eliminated.
+- **Defeat:** Heat hits 10, or all un‑Flonakiified Survivors are eliminated.
 > **Call‑Out (💡):** Introduce Galaxy Bar as optional Special Zone in Chapter 11; see Appendix for full card.
 
 ## 2  Creating Your Survivor
 
-Every great Flomanji tale begins with a hardened—and a bit unhinged—Survivor. In this chapter you'll assemble your card, equip your starting hand, and launch into the danger.
+Every great Flonaki tale begins with a hardened—and a bit unhinged—Survivor. In this chapter you'll assemble your card, equip your starting hand, and launch into the danger.
 💡 *Layout Notes:* Survivor cards are poker‑size, double‑sided. Front shows Stats, Ability, tracking spots; back shows flavor art and starter gear slots.
 
 **2.1  Survivor Card Components**
@@ -60,7 +60,7 @@ Every great Flomanji tale begins with a hardened—and a bit unhinged—Survivor
 - **Stats:** Five core attributes—**Brawn, Moxie, Charm, Grit, Weird Sense**—to which you assign 5 Upgrade Points (no stat may exceed 5 at start).
 - **Unique Ability:** One‑line trait that triggers during play (see examples).
 - **Health:** Track on your personal d6 (start at 5; at 0 you are **Incapacitated**).
-- **Weirdness:** Use your personal d10, starting at 0, to track Weirdness (flip to a Flomanjified card at 10).
+- **Weirdness:** Use your personal d10, starting at 0, to track Weirdness (flip to a Flonakiified card at 10).
 - **Luck Tokens:** Represented by your Luck d6, start with half your Stat total (rounded up).
 - **Starter Gear Slots (5):** Place your opening five Gear cards here.
 
@@ -91,7 +91,7 @@ With your Survivor ready—Stats set, backstory chosen, cards drawn, and dice pl
 
 ## 3  Core Attributes & Game Mechanics
 
-In Flomanji, your Survivor's stats drive every roll and decision. This chapter dives deep—no shortcuts—covering checks, Actions, Damage, and the twin‑timer interplay.
+In Flonaki, your Survivor's stats drive every roll and decision. This chapter dives deep—no shortcuts—covering checks, Actions, Damage, and the twin‑timer interplay.
 💡 *Layout Notes:* Include full‑page stat sheet mock‑up showing die icons, stat labels, and example checks.
 **3.1  The Five Stats**
 Each Survivor has five core attributes. During a check, you roll 2d6 + the relevant Stat + modifiers against a Difficulty Class (DC).
@@ -139,17 +139,17 @@ Each turn you have **2 Actions**. You may take any combination:
 - **Regain:** Natural 12 on a check or certain card effects.
 
 **3.6  The Twin Timers**
-Flomanji is a race against two clocks:
+Flonaki is a race against two clocks:
 
 - **Heat:** Global danger meter. Advance +1 each End Phase (+2 if 4–6 players) and via card effects. At Heat 10 → Defeat.
-- **Weirdness:** Individual sanity meter tracked on your d10. Gain pips via weird events; at Weirdness 10 → flip to a Flomanjified Role.
+- **Weirdness:** Individual sanity meter tracked on your d10. Gain pips via weird events; at Weirdness 10 → flip to a Flonakiified Role.
 > **Cross‑Timer Triggers:** Some Effects tie Heat to Weirdness (e.g. "At Heat 9, each turn survivors gain +1 Weirdness").
 
-With these mechanics locked, you hold the tools to face every bizarre horrors Flomanji can vomit at you. Chapter 4 charts how to navigate and reveal the map itself.
+With these mechanics locked, you hold the tools to face every bizarre horrors Flonaki can vomit at you. Chapter 4 charts how to navigate and reveal the map itself.
 
 ## 4  Map & Regions
 
-Your adventure unfolds across a dynamic map of Flomanji. Instead of a static board, Flomanji uses **Region cards** laid out each game to create unique pathways, chokepoints, and surprises.
+Your adventure unfolds across a dynamic map of Flonaki. Instead of a static board, Flonaki uses **Region cards** laid out each game to create unique pathways, chokepoints, and surprises.
 💡 *Layout Notes:* Show a sample 3×3 map grid with Region cards face‑down and reveal arrows. Sidebar on modular layouts (grid vs branching highway).
 **4.1  Setting Up the Mission Map**
 
@@ -201,7 +201,7 @@ Flip, explore, survive—and let no Region be safe.
 
 ## 5  Cards & Phases
 
-Every game of Flomanji revolves around drawing and resolving cards in a structured turn sequence. This chapter breaks down:
+Every game of Flonaki revolves around drawing and resolving cards in a structured turn sequence. This chapter breaks down:
 
 1. **Deck Composition**
 2. **Card Anatomy**
@@ -215,7 +215,7 @@ Every game of Flomanji revolves around drawing and resolving cards in a structur
 - **Treasure & Artifact Deck (20 cards):** Rare reward deck; drawn via specific triggers.
 - **Region Cards (38):** Map tiles—see Chapter 4.
 - **NPC Deck (17 cards):** Social encounters; drawn via Region or Event effects.
-- **Flomanjified Role Deck (9 cards):** Replaces Survivors at Weirdness 10 or on death.
+- **Flonakiified Role Deck (9 cards):** Replaces Survivors at Weirdness 10 or on death.
 - **Secret Objective Deck (8 cards):** Hidden goals for Traitor Variant.
 - **Automa Deck (30 cards):** Solo AI instructions (optional solo mode).
 > Designer Tip: Keep decks separated in labeled tuck boxes; use color‑coded backs.
@@ -256,18 +256,18 @@ Each round consists of four phases. Track them in order:
 3. **Chaos Phase**
     - Reveal the top Chaos card.
     - Resolve its global effect (Heat spikes, new Hazards, Flotsam).
-    - Flomanjified Roles act now (see Appendix B).
+    - Flonakiified Roles act now (see Appendix B).
 4. **End Phase (Advance Timers)**
     - Increase Heat per player count.
     - Check for any cross‑timer triggers (see Ch. 3.6).
     - If Heat ≥ 10, the game ends in defeat.
 > Worked Example: After player actions, Chaos card 'Blistering Sun' adds +2 Heat (4‑6 players). Then each Survivor's Companion Oath triggers +1 Weirdness due to Heat 9.
 
-With your scissors and glue in hand, you now understand exactly how to wield every card Flomanji throws at you. Chapter 6 escalates into Facing Danger: Hazards, Combat & Damage.
+With your scissors and glue in hand, you now understand exactly how to wield every card Flonaki throws at you. Chapter 6 escalates into Facing Danger: Hazards, Combat & Damage.
 
 ## 6  Facing Danger — Hazards, Combat & Damage
 
-When you venture into Flomanji's wilds, threats lurk everywhere. This chapter unpacks every Hazard type, the combat flow, damage mechanics, and how to survive—if you can.
+When you venture into Flonaki's wilds, threats lurk everywhere. This chapter unpacks every Hazard type, the combat flow, damage mechanics, and how to survive—if you can.
 💡 *Layout Notes:* Two‑page spread: left – Hazard card anatomy with icon call‑outs; right – staged combat example illustrated like movie storyboard.
 **6.1  Hazard Card Anatomy**
 Every Hazard card shares a standard template:
@@ -333,7 +333,7 @@ With combat rules and damage flow etched into your memory, Chapter 7 readies you
 
 ## 7  Heat & Weirdness — The Twin Timers
 
-Survival in Flomanji demands mastering two relentless forces: the rising global Heat and your own slipping sanity. This chapter explores every facet of these dual threat meters.
+Survival in Flonaki demands mastering two relentless forces: the rising global Heat and your own slipping sanity. This chapter explores every facet of these dual threat meters.
 💡 *Layout Notes:* Show interlocking gauge graphics for Heat and Weirdness, with call‑outs for threshold effects. Include sample round‑tracker.
 **7.1  Raising Heat**
 Heat represents gathering danger and urgency. It increases from these sources:
@@ -350,14 +350,14 @@ Heat Track Setup
 - When Heat 10 is reached, the game ends in defeat.
 
 **7.2  Managing Weirdness**
-Weirdness gauges the psychological toll of Flomanji's horrors. Track on your personal d10:
+Weirdness gauges the psychological toll of Flonaki's horrors. Track on your personal d10:
 
 - **Gain Pips:** From card effects, Hazard failures, Environmental triggers.
 - **Thresholds:**
     - 3 pips: **Attuned** (you gain +1 on Weird checks).
     - 5 pips: **Hallucinating** (draw extra Gear on success; −1 Charm).
     - 7 pips: **Paranoid** (cannot Team‑Up; −1 Action per turn).
-    - 10 pips: **Flomanjified** (flip to your Flomanjified Role card).
+    - 10 pips: **Flonakiified** (flip to your Flonakiified Role card).
 
 Reducing Weirdness
 
@@ -373,18 +373,18 @@ Heat and Weirdness are intertwined:
 > Worked Example: After a Chaos spike to Heat 9, every Survivor rolls to add 1 Weirdness. Carlotta's pip jumps from 4 to 5, triggering Hallucinating bonuses next check.
 
 **7.4  Strategic Balance**
-Mastering Flomanji means balancing risk and recovery:
+Mastering Flonaki means balancing risk and recovery:
 
 - **When to Heat Dump:** Use Gear, NPCs, or Galaxy Bar to shed Heat before boss encounters.
 - **Weirdness Trade‑Offs:** Pushing Weird Sense checks can net extra Gear, but beware threshold penalties.
 - **Team Coordination:** Share rest turns and resources to stagger Weirdness climbs.
 > **Designer Note (💡):** Use the Weirdness gauge as a visual cue—players should feel their sanity fraying as Heat surges around them.
 
-With the twin‑timers laid bare, Chapter 8 arms you with optional modules and mission frameworks to heighten the drama or tailor your Flomanji experience.
+With the twin‑timers laid bare, Chapter 8 arms you with optional modules and mission frameworks to heighten the drama or tailor your Flonaki experience.
 
 ## 8  Mission Framework & Optional Modules
 
-The heart of Flomanji is its *Missions*—self‑contained adventures—and the wealth of *Optional Modules* you can layer on for endless replayability. This chapter shows you how to read a Mission sheet, link games into a campaign, and customize difficulty or style with modular rules.
+The heart of Flonaki is its *Missions*—self‑contained adventures—and the wealth of *Optional Modules* you can layer on for endless replayability. This chapter shows you how to read a Mission sheet, link games into a campaign, and customize difficulty or style with modular rules.
 💡 *Layout Notes:* Show a stylized Mission sheet with call‑outs for each section; include module icons grid at chapter end.
 **8.1  Mission Sheet Walkthrough**
 Every Mission comes with a dedicated sheet laid out in clear sections:
@@ -393,13 +393,13 @@ Every Mission comes with a dedicated sheet laid out in clear sections:
 2. **Map Diagram:** Exact layout instructions for Regions (grid or highway).
 3. **Starting Heat:** Default or mission‑specific starting value.
 4. **Primary & Secondary Objectives:** Clear victory goals with checkboxes.
-5. **Fail Conditions:** Instant‑loss triggers (e.g. Heat 10, all players Flomanjified).
+5. **Fail Conditions:** Instant‑loss triggers (e.g. Heat 10, all players Flonakiified).
 6. **Scaling Table:** Adjust timers or objective counts based on player count.
 7. **Special Rules:** Mission‑unique twists (e.g. hurricane track, traffic jam hazards).
 > Worked Example: Mission **"Gator‑Aid on I‑95"** opens with a tanker spill on I‑95. Map uses a 3×3 grid; start at **Broken Overpass**, extract at **Research Lab**; Heat starts at 2; objectives include escort and antidote collection.
 
 **8.2  Linking Missions — Campaign Play**
-Flomanji shines as a one‑shot, but linking Missions creates a dramatic mini‑campaign:
+Flonaki shines as a one‑shot, but linking Missions creates a dramatic mini‑campaign:
 
 - **Survivor Continuity:** Escaped Survivors carry over Gear and half of their Luck.
 - **Heat Scarring:** Each campaign failure adds +1 to next Mission's starting Heat.
@@ -431,7 +431,7 @@ Use these modules individually or combine them to dial up challenge and variety:
 
 > Designer Advice: Balance complexity—combine at most two modules for your first few plays to avoid rule overload.
 
-With Missions framed and Modules at hand, you're ready to craft every Flomanji session from pulse‑pounding terror to absurd relief. Chapter 9 dives into Appendices and quick reference tables for at‑a‑glance convenience.
+With Missions framed and Modules at hand, you're ready to craft every Flonaki session from pulse‑pounding terror to absurd relief. Chapter 9 dives into Appendices and quick reference tables for at‑a‑glance convenience.
 
 ## 9  Appendices & Quick Reference
 
@@ -445,7 +445,7 @@ This final chapter gathers all essential tables, icons, and module details into 
 | **Default DCs**          | Easy 7                                                                     | Standard 9      | Hard 11    | Heroic 13       |
 | **Health**               | Track on d6 (5 maximum); reduce per damage; heal via Rest or Consumables   |                 |            |                 |
 | **Heat Tick**            | +1 End Phase (+2 if 4–6 players); Deck & effects may add more              |                 |            |                 |
-| **Weirdness Thresholds** | 3 Attuned                                                                  | 5 Hallucinating | 7 Paranoid | 10 Flomanjified |
+| **Weirdness Thresholds** | 3 Attuned                                                                  | 5 Hallucinating | 7 Paranoid | 10 Flonakiified |
 | **Luck Tokens**          | Spend pre/post-roll; start = half Stats rounded up; regain on nat 12       |                 |            |                 |
 | **Rest (1 Action)**      | Heal 1 Health or reduce 1 Weirdness (safe Regions only)                    |                 |            |                 |
 
@@ -479,7 +479,7 @@ After **Play Arcade (1 Action)**, roll d6:
 4. **Snack Spill** – Draw 1 minor Gear (Consumable).
 5. **Jackpot** – Draw 1 Gear & Heal 1 Weirdness.
 
-**9.4  Appendix B – Flomanjified Roles**
+**9.4  Appendix B – Flonakiified Roles**
 List of 9 Roles, Icons & Chaos Actions (see Chapter 10):
 
 1. Swamp Zombie (💀🐊)
@@ -517,5 +517,4 @@ See Chapter 4.4 for full list of 38 Region Cards by Biome.
 
 ----------
 
-*End of Flomanji Master Players Guide – embark on your bizarre quest!*`;
-};
+*End of Flonaki Master Players Guide – embark on your bizarre quest!*`;
