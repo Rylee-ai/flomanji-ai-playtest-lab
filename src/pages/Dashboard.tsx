@@ -4,26 +4,42 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Gamepad2, BookOpen, Settings } from "lucide-react";
-import { getExampleRules } from "@/lib/api";
+import { getExampleRules, getSimulationSummaries } from "@/lib/api";
 import { parseMarkdown } from "@/lib/utils";
-import { getSimulationSummaries } from "@/lib/storage";
 import { SimulationSummary } from "@/types";
 import { formatDate } from "@/lib/utils";
 
 const Dashboard = () => {
   const [simulations, setSimulations] = useState<SimulationSummary[]>([]);
-  const rules = getExampleRules();
-  const rulesHtml = parseMarkdown(rules.substring(0, 200) + "...");
+  const [rulesPreview, setRulesPreview] = useState<string>("");
+  const [isLoadingRules, setIsLoadingRules] = useState(true);
 
   useEffect(() => {
+    // Load simulations
     const loadedSimulations = getSimulationSummaries();
     setSimulations(loadedSimulations);
+    
+    // Load rules preview
+    const loadRulesPreview = async () => {
+      try {
+        setIsLoadingRules(true);
+        const rules = await getExampleRules();
+        const preview = rules.substring(0, 200) + "...";
+        setRulesPreview(parseMarkdown(preview));
+      } catch (error) {
+        console.error("Error loading rules preview:", error);
+      } finally {
+        setIsLoadingRules(false);
+      }
+    };
+    
+    loadRulesPreview();
   }, []);
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Flomanji AI Playtest Lab</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Flonaki AI Playtest Lab</h1>
       </div>
       
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -57,7 +73,11 @@ const Dashboard = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div dangerouslySetInnerHTML={{ __html: rulesHtml }} className="text-sm text-muted-foreground prose prose-sm max-h-24 overflow-hidden" />
+            {isLoadingRules ? (
+              <p className="text-sm text-muted-foreground">Loading rules...</p>
+            ) : (
+              <div dangerouslySetInnerHTML={{ __html: rulesPreview }} className="text-sm text-muted-foreground prose prose-sm max-h-24 overflow-hidden" />
+            )}
           </CardContent>
           <CardFooter>
             <Button variant="outline" asChild>
