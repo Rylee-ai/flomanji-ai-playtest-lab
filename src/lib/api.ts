@@ -20,3 +20,39 @@ export {
   saveSimulationResult,
 };
 
+// Mock implementation of startSimulation for testing/development
+export const mockStartSimulation = async (
+  config: SimulationConfig,
+  rulesContent: string
+): Promise<SimulationResult> => {
+  // This is a placeholder implementation for testing
+  console.log("Starting mock simulation with config:", config);
+  console.log("Using rules content:", rulesContent);
+  
+  // For now, return a mock result with all required fields
+  const mockResult: SimulationResult = {
+    id: `sim-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    scenario: config.scenarioPrompt || "Unnamed Simulation", // Fixed property name
+    rounds: config.rounds || 10,
+    playerCount: config.players || 2, // Added missing property
+    log: [
+      { 
+        role: "GM", 
+        content: "Simulation started", 
+        timestamp: new Date().toISOString() 
+      },
+      { 
+        role: "Player", 
+        content: "Example simulation log entry", 
+        timestamp: new Date().toISOString() 
+      }
+    ],
+    criticFeedback: "", // Added missing property
+    annotations: "",
+    missionOutcome: "pending",
+    keyEvents: []
+  };
+  
+  return mockResult;
+};
