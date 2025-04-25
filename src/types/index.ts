@@ -1,24 +1,23 @@
-
 import { MissionSheet } from "./cards/mission";
 
 export interface SimulationConfig {
-  scenarioPrompt: string;
+  scenarioPrompt?: string;
   rounds?: number;
   players?: number;
   enableCritic?: boolean;
-  outputMode?: "full" | "summary";
+  outputMode?: string;
   characters?: string[];
   fullCharacters?: FlomanjiCharacter[];
-  missionId?: string;
-  extractionRegion?: string;
   startingHeat?: number;
   heatPerRound?: number;
+  missionId?: string;
   objectives?: any[];
-  missionType?: string;
+  extractionRegion?: string;
   secretTraitor?: boolean;
   arcadeModule?: boolean;
   nightmareDifficulty?: boolean;
   competitiveMode?: boolean;
+  gobletVoice?: 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';
 }
 
 export interface AgentMessage {

@@ -28,6 +28,28 @@ const AdvancedSettings = ({ config, onConfigChange }: AdvancedSettingsProps) => 
       </div>
       
       <div className="space-y-2">
+        <Label htmlFor="gobletVoice">Flomanji Goblet Voice</Label>
+        <Select 
+          value={config.gobletVoice as string || 'random'} 
+          onValueChange={(value) => onConfigChange("gobletVoice", value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select Goblet personality" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="random">Random</SelectItem>
+            <SelectItem value="swamp-prophet">Swamp Prophet</SelectItem>
+            <SelectItem value="pirate-radio-dj">Retired Pirate Radio DJ</SelectItem>
+            <SelectItem value="park-ranger">Mosquito Bitten Park Ranger</SelectItem>
+            <SelectItem value="theme-park-mascot">Unlicensed Theme Park Mascot</SelectItem>
+          </SelectContent>
+        </Select>
+        <p className="text-sm text-muted-foreground">
+          Choose the personality voice for the Flomanji Goblet AI Game Master.
+        </p>
+      </div>
+      
+      <div className="space-y-2">
         <Label htmlFor="outputMode">Output Mode</Label>
         <Select 
           value={config.outputMode as string} 
