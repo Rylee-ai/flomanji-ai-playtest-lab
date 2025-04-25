@@ -1,3 +1,4 @@
+
 import { MissionSheet } from "./cards/mission";
 
 export interface SimulationConfig {
@@ -18,6 +19,7 @@ export interface SimulationConfig {
   nightmareDifficulty?: boolean;
   competitiveMode?: boolean;
   gobletVoice?: 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';
+  missionType?: string; // Adding the missing missionType property
 }
 
 export interface AgentMessage {
@@ -45,6 +47,9 @@ export interface AgentMessage {
     gameState?: any;
     reason?: string;
     outcome?: string; 
+    gobletVoice?: string; // Adding the missing gobletVoice property
+    gobletMood?: string; // Adding gobletMood for completeness
+    isGobletHolder?: boolean; // Adding the missing isGobletHolder property
   };
 }
 
