@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 import { SimulationConfig } from "@/types";
 import { startSimulation, getExampleRules } from "@/lib/api";
@@ -53,14 +52,8 @@ export function useSimulationRunner() {
         setError(null);
         setCurrentConfig(config); // Save config for potential retries
 
-        const savedRules = localStorage.getItem("flonaki-rules");
-        let rulesContent: string;
-        
-        if (savedRules) {
-          rulesContent = savedRules;
-        } else {
-          rulesContent = await getExampleRules();
-        }
+        const savedRules = localStorage.getItem("flomanji-rules");
+        const rulesContent = savedRules || getExampleRules();
 
         if (!localStorage.getItem("openrouter-api-key")) {
           toast.error("Please set your OpenRouter API key in Settings first");

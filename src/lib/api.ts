@@ -1,48 +1,22 @@
 
-import { getExampleRules as getExampleRulesImpl } from './rules-loader';
-import { getSimulationSummaries as getSimulationSummariesFromStorage, getSimulationById } from './storage';
-import { SimulationConfig, SimulationResult } from '@/types';
+import { SimulationConfig, AgentMessage, SimulationResult } from "@/types";
+import { startSimulation } from "./simulationRunner";
+import { getExampleRules } from "./rules-loader";
+import { getSimulationSummaries, getSimulationById, updateSimulationAnnotations, saveSimulationResult } from "@/lib/storage";
 
-// Re-export with the same interface
-export const getExampleRules = async (): Promise<string> => {
-  return getExampleRulesImpl();
+/**
+ * Exported API utilities for simulation modules.
+ * - startSimulation: Runs a simulation and returns results
+ * - getExampleRules: Loads rules content (from localStorage or default)
+ * - Storage and annotation utilities: getSimulationSummaries, getSimulationById, updateSimulationAnnotations, saveSimulationResult
+ */
+
+export {
+  startSimulation,
+  getExampleRules,
+  getSimulationSummaries,
+  getSimulationById,
+  updateSimulationAnnotations,
+  saveSimulationResult,
 };
 
-// Re-export storage functions
-export const getSimulationSummaries = () => {
-  return getSimulationSummariesFromStorage();
-};
-
-// Simulation running functionality
-export const startSimulation = async (
-  config: SimulationConfig, 
-  rulesContent: string
-): Promise<SimulationResult> => {
-  // This is a placeholder implementation until we have a real API
-  console.log("Starting simulation with config:", config);
-  console.log("Using rules content:", rulesContent);
-  
-  // For now, return a mock result
-  const mockResult: SimulationResult = {
-    id: `sim-${Date.now()}`,
-    timestamp: new Date().toISOString(),
-    scenario: config.scenario || "Unnamed Simulation",
-    rounds: config.rounds || 10,
-    log: [
-      { role: "GM", content: "Simulation started", timestamp: new Date().toISOString() },
-      { role: "Player", content: "Example simulation log entry", timestamp: new Date().toISOString() }
-    ],
-    annotations: "",
-    missionOutcome: "pending",
-    keyEvents: []
-  };
-  
-  return mockResult;
-};
-
-// Function to get a specific simulation result
-export const getSimulationResult = (id: string): SimulationResult | null => {
-  return getSimulationById(id);
-};
-
-// Add any other API functions here

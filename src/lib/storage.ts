@@ -2,7 +2,7 @@
 import { SimulationResult } from "@/types";
 
 // Local storage keys
-const SIMULATIONS_STORAGE_KEY = "flonaki:simulations";
+const SIMULATIONS_STORAGE_KEY = "flomanji:simulations";
 
 // Save simulation result to storage
 export const saveSimulationResult = (result: SimulationResult) => {
@@ -45,7 +45,7 @@ export const getSimulationById = (id: string): SimulationResult | null => {
   }
 };
 
-// Get a specific simulation result - This provides backward compatibility
+// Get a specific simulation result - This was the missing function
 export const getSimulationResult = (id: string): SimulationResult | null => {
   return getSimulationById(id);
 };
