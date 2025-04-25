@@ -29,8 +29,8 @@ export const startSimulation = async (
     scenario: config.scenario || "Unnamed Simulation",
     rounds: config.rounds || 10,
     log: [
-      { role: "GM", content: "Simulation started" },
-      { role: "Player", content: "Example simulation log entry" }
+      { role: "GM", content: "Simulation started", timestamp: new Date().toISOString() },
+      { role: "Player", content: "Example simulation log entry", timestamp: new Date().toISOString() }
     ],
     annotations: "",
     missionOutcome: "pending",
