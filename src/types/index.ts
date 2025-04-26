@@ -16,4 +16,4 @@ export * from './cards/gear';
 
 // Explicitly handle any potential naming conflicts
 import { AgentMessage as SimulationAgentMessage } from './agent';
-export { SimulationAgentMessage };
+export type { SimulationAgentMessage };

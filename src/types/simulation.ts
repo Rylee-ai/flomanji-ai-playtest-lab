@@ -95,4 +95,4 @@ export interface StoredSimulation {
 }
 
 // Re-export AgentMessage from agent.ts to ensure it's available
-export { AgentMessage, AgentRole };
+export type { AgentMessage, AgentRole };
