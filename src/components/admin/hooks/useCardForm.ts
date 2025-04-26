@@ -1,8 +1,9 @@
+
 import { useForm } from "react-hook-form";
-import { CardFormValues, cardFormSchema } from "../CardForm";
+import { CardFormValues } from "@/types/forms/card-form";
 import { GameCard, CardType } from "@/types/cards";
 import { getCardFormTypeDefaults } from "./getCardFormTypeDefaults";
-import { missionSubtypes } from "../CardForm";
+import { missionSubtypes, cardFormSchema } from "@/schemas/card-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const normalizeCardType = (type: CardType): CardType => {
@@ -29,7 +30,6 @@ export const useCardForm = (initialData?: GameCard) => {
       rules: initialData.rules || [],
       flavor: initialData.flavor || "",
       imagePrompt: initialData.imagePrompt || "",
-      // Get type-specific defaults based on the card type
       ...getCardFormTypeDefaults(initialData)
     } : {
       // Default empty values for new cards
