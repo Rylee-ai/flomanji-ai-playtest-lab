@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -16,9 +16,10 @@ interface TreasureCardsTableProps {
   cards: TreasureCard[];
   onViewCard: (id: string) => void;
   onEditCard: (card: TreasureCard) => void;
+  onDeleteCard: (card: TreasureCard) => void;
 }
 
-export const TreasureCardsTable = ({ cards, onViewCard, onEditCard }: TreasureCardsTableProps) => {
+export const TreasureCardsTable = ({ cards, onViewCard, onEditCard, onDeleteCard }: TreasureCardsTableProps) => {
   return (
     <Table>
       <TableHeader>
@@ -57,6 +58,14 @@ export const TreasureCardsTable = ({ cards, onViewCard, onEditCard }: TreasureCa
               >
                 <Pencil className="h-4 w-4 mr-1" />
                 Edit
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => onDeleteCard(card)}
+              >
+                <Trash2 className="h-4 w-4 mr-1" />
+                Delete
               </Button>
             </TableCell>
           </TableRow>

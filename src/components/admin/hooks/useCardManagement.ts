@@ -91,6 +91,12 @@ export const useCardManagement = () => {
     }
   };
 
+  const handleDeleteCard = (card: GameCard) => {
+    // Here you would typically delete the card from your database
+    // For now, we just show a success message
+    toast.success(`${card.name} deleted successfully`);
+  };
+
   return {
     selectedCard,
     setSelectedCard,
@@ -105,5 +111,6 @@ export const useCardManagement = () => {
     handleAddNew,
     handleFormSubmit,
     getActiveCards,
+    handleDeleteCard,
   };
 };

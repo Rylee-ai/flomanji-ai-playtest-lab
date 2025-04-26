@@ -23,6 +23,7 @@ const GameContentManager = () => {
     handleEditCard,
     handleAddNew,
     handleFormSubmit,
+    handleDeleteCard,
     getActiveCards,
   } = useCardManagement();
 
@@ -80,6 +81,7 @@ const GameContentManager = () => {
               cards={cards}
               onViewCard={handleViewCard}
               onEditCard={handleEditCard}
+              onDeleteCard={handleDeleteCard}
             />
           </TabsContent>
         </Tabs>
