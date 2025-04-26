@@ -1,3 +1,4 @@
+
 import { FlomanjiCharacter } from "./character";
 import { MissionSheet } from "./cards/mission";
 import { AgentRole, AgentMessage } from "./agent";
@@ -92,3 +93,6 @@ export interface StoredSimulation {
   criticFeedback: string;
   annotations: string;
 }
+
+// Re-export AgentMessage from agent.ts to ensure it's available
+export { AgentMessage, AgentRole };
