@@ -119,7 +119,10 @@ Additionally, include card-specific fields based on the card type:`;
         
         // Apply the basic fields that all cards have
         if (parsedResponse.name) form.setValue("name", parsedResponse.name);
-        if (parsedResponse.description) form.setValue("description", parsedResponse.description);
+        // Add rules array from description
+        if (parsedResponse.description) {
+          form.setValue("rules", [parsedResponse.description]);
+        }
         if (parsedResponse.flavor) form.setValue("flavor", parsedResponse.flavor);
         if (parsedResponse.imagePrompt) form.setValue("imagePrompt", parsedResponse.imagePrompt);
         if (parsedResponse.keywords && Array.isArray(parsedResponse.keywords)) {
@@ -139,10 +142,13 @@ Additionally, include card-specific fields based on the card type:`;
             if (parsedResponse.onSuccess) form.setValue("onSuccess", parsedResponse.onSuccess);
             if (parsedResponse.onFailure) form.setValue("onFailure", parsedResponse.onFailure);
             if (parsedResponse.difficultyClass) {
-              form.setValue("difficultyClasses.brawn", Number(parsedResponse.difficultyClass));
-              form.setValue("difficultyClasses.moxie", Number(parsedResponse.difficultyClass));
-              form.setValue("difficultyClasses.charm", Number(parsedResponse.difficultyClass));
-              form.setValue("difficultyClasses.weirdSense", Number(parsedResponse.difficultyClass));
+              // Set each difficulty class field separately
+              form.setValue("difficultyClasses", {
+                brawn: Number(parsedResponse.difficultyClass),
+                moxie: Number(parsedResponse.difficultyClass),
+                charm: Number(parsedResponse.difficultyClass),
+                weirdSense: Number(parsedResponse.difficultyClass)
+              });
             }
             break;
           case "chaos":
@@ -163,21 +169,23 @@ Additionally, include card-specific fields based on the card type:`;
             break;
           case "npc":
             if (parsedResponse.role) form.setValue("role", parsedResponse.role);
-            if (parsedResponse.attitude) form.setValue("attitude", parsedResponse.attitude);
             if (parsedResponse.checkDC) form.setValue("checkDC", Number(parsedResponse.checkDC));
-            if (parsedResponse.specialOffer) form.setValue("specialOffer", parsedResponse.specialOffer);
+            // Handle NPC's actions array if needed
+            // Instead of setting attitude directly, we could add it to a description or role field
             break;
           case "region":
             if (parsedResponse.biomeTags && Array.isArray(parsedResponse.biomeTags)) {
               form.setValue("biomeTags", parsedResponse.biomeTags);
             }
-            if (parsedResponse.encounterChance) form.setValue("encounterChance", Number(parsedResponse.encounterChance));
+            if (parsedResponse.encounterChance) {
+              // Store encounter chance as part of rules or another field if needed
+            }
             if (parsedResponse.onEnter) form.setValue("onEnter", parsedResponse.onEnter);
             break;
           case "secret":
             if (parsedResponse.alignment) form.setValue("alignment", parsedResponse.alignment);
             if (parsedResponse.winCondition) form.setValue("winCondition", parsedResponse.winCondition);
-            if (parsedResponse.reward) form.setValue("reward", parsedResponse.reward);
+            // For reward, we could add it to the winCondition or another field
             break;
           case "automa":
             if (parsedResponse.action) form.setValue("action", parsedResponse.action);
