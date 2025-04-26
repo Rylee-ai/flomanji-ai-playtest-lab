@@ -1,16 +1,20 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { processImportedCards } from "@/utils/cardImport";
 import { CardFormValues } from "@/types/forms/card-form";
 import { Upload } from "lucide-react";
+import { CardType } from "@/types/cards";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CardBulkImportProps {
   onImport: (cards: CardFormValues[]) => void;
 }
 
 export const CardBulkImport = ({ onImport }: CardBulkImportProps) => {
+  const [cardType, setCardType] = useState<CardType>('gear');
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -18,18 +22,29 @@ export const CardBulkImport = ({ onImport }: CardBulkImportProps) => {
     try {
       const text = await file.text();
       const jsonData = JSON.parse(text);
-      const processedCards = processImportedCards(jsonData);
+      const processedCards = processImportedCards(jsonData, cardType);
       
       onImport(processedCards as CardFormValues[]);
-      toast.success(`Successfully processed ${processedCards.length} gear cards`);
+      toast.success(`Successfully processed ${processedCards.length} ${cardType} cards`);
     } catch (error) {
       console.error('Error importing cards:', error);
-      toast.error('Failed to import gear cards. Please check the file format.');
+      toast.error(`Failed to import ${cardType} cards. Please check the file format.`);
     }
   };
 
   return (
     <div className="flex items-center space-x-2">
+      <Select value={cardType} onValueChange={(value: CardType) => setCardType(value)}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select Card Type" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="gear">Gear Cards</SelectItem>
+          <SelectItem value="treasure">Treasure Cards</SelectItem>
+          {/* Add more card types as needed */}
+        </SelectContent>
+      </Select>
+      
       <input
         type="file"
         accept=".json"
@@ -41,7 +56,7 @@ export const CardBulkImport = ({ onImport }: CardBulkImportProps) => {
         <Button variant="outline" type="button" asChild>
           <span className="flex items-center space-x-2">
             <Upload className="h-4 w-4" />
-            <span>Import Gear Cards</span>
+            <span>Import {cardType.charAt(0).toUpperCase() + cardType.slice(1)} Cards</span>
           </span>
         </Button>
       </label>
