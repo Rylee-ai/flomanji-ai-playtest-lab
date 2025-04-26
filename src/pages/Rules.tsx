@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "@/components/ui/use-toast";
 import RulesViewer from "@/components/rules/RulesViewer";
 import RulesEditor from "@/components/rules/RulesEditor";
 import RulesUsage from "@/components/rules/RulesUsage";
@@ -24,7 +24,7 @@ const Rules = () => {
     const savedRef = localStorage.getItem("flomanji-quick-reference");
     
     setRules(savedRules || getExampleRules());
-    setAiUsage(savedUsage || "Default AI Usage Content");
+    setAiUsage(savedUsage || "");
     setQuickRef(savedRef || "Default Quick Reference Content");
   }, []);
 
@@ -60,10 +60,17 @@ const Rules = () => {
           break;
       }
       setEditMode(null);
-      toast.success("Content saved successfully");
+      toast({
+        title: "Success",
+        description: "Content saved successfully",
+      });
     } catch (error) {
       console.error("Error saving content:", error);
-      toast.error("Failed to save content");
+      toast({
+        title: "Error",
+        description: "Failed to save content",
+        variant: "destructive",
+      });
     }
   };
 
@@ -136,7 +143,11 @@ const Rules = () => {
                 {renderEditButton("usage")}
               </CardHeader>
               <CardContent>
-                <RulesViewer rules={aiUsage} />
+                {aiUsage ? (
+                  <RulesViewer rules={aiUsage} />
+                ) : (
+                  <RulesUsage />
+                )}
               </CardContent>
             </Card>
           </TabsContent>

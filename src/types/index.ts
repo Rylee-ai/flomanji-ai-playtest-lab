@@ -15,4 +15,5 @@ export * from './cards/flomanjified';
 export * from './cards/gear';
 
 // Explicitly handle any potential naming conflicts
-export { AgentMessage as SimulationAgentMessage } from './simulation';
+import { AgentMessage } from './simulation';
+export { AgentMessage as SimulationAgentMessage };
