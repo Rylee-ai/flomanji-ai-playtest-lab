@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +7,6 @@ import { CardForm } from "./CardForm";
 import { CardPreviewModal } from "./CardPreviewModal";
 import { TableWrapper } from "./tables/TableWrapper";
 import { useCardManagement } from "./hooks/useCardManagement";
-
 const GameContentManager = () => {
   const {
     selectedCard,
@@ -24,28 +22,20 @@ const GameContentManager = () => {
     handleAddNew,
     handleFormSubmit,
     handleDeleteCard,
-    getActiveCards,
+    getActiveCards
   } = useCardManagement();
-
   const card = selectedCard ? getCardById(selectedCard) : null;
   const cards = getActiveCards();
-
-  return (
-    <Card>
+  return <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Game Content Management</CardTitle>
+        <CardTitle>Card Content Management</CardTitle>
         <Button size="sm" onClick={handleAddNew}>
           <Plus className="mr-2 h-4 w-4" />
           Add New Card
         </Button>
       </CardHeader>
       <CardContent>
-        <Tabs 
-          defaultValue={activeTab} 
-          value={activeTab}
-          onValueChange={(value) => setActiveTab(value as any)}
-          className="w-full"
-        >
+        <Tabs defaultValue={activeTab} value={activeTab} onValueChange={value => setActiveTab(value as any)} className="w-full">
           <div className="mb-4">
             <h3 className="text-sm font-medium mb-2">Character Cards</h3>
             <TabsList className="flex flex-wrap mb-4">
@@ -76,34 +66,14 @@ const GameContentManager = () => {
           </div>
 
           <TabsContent value={activeTab} className="space-y-4">
-            <TableWrapper
-              activeTab={activeTab}
-              cards={cards}
-              onViewCard={handleViewCard}
-              onEditCard={handleEditCard}
-              onDeleteCard={handleDeleteCard}
-            />
+            <TableWrapper activeTab={activeTab} cards={cards} onViewCard={handleViewCard} onEditCard={handleEditCard} onDeleteCard={handleDeleteCard} />
           </TabsContent>
         </Tabs>
 
-        {card && (
-          <CardPreviewModal
-            card={card}
-            onClose={() => setSelectedCard(null)}
-            onEdit={() => handleEditCard(card)}
-          />
-        )}
+        {card && <CardPreviewModal card={card} onClose={() => setSelectedCard(null)} onEdit={() => handleEditCard(card)} />}
 
-        <CardForm
-          open={isFormOpen}
-          onClose={() => setIsFormOpen(false)}
-          onSubmit={handleFormSubmit}
-          initialData={editingCard}
-          activeTab={activeTab}
-        />
+        <CardForm open={isFormOpen} onClose={() => setIsFormOpen(false)} onSubmit={handleFormSubmit} initialData={editingCard} activeTab={activeTab} />
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default GameContentManager;
