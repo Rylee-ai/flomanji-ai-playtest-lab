@@ -58,6 +58,57 @@ const AIContentAssistant = ({
     selectedCardTemplate
   });
 
+  // Add the missing import/export functions
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        const importedCards = JSON.parse(content) as GameCard[];
+        
+        // Ensure we have an array of cards
+        const cardsArray = Array.isArray(importedCards) ? importedCards : [importedCards];
+        
+        // Validate that these are valid GameCard objects
+        if (cardsArray.length > 0 && cardsArray[0].type && cardsArray[0].name) {
+          setBulkResults(cardsArray);
+          toast.success(`Imported ${cardsArray.length} cards`);
+        } else {
+          toast.error("Invalid card format in the imported file");
+        }
+      } catch (error) {
+        console.error("Error importing cards:", error);
+        toast.error("Failed to import cards. Please check the file format.");
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset the input value so the same file can be selected again
+    e.target.value = '';
+  };
+
+  const handleExportJSON = () => {
+    if (bulkResults.length === 0) {
+      toast.error("No cards to export");
+      return;
+    }
+
+    const dataStr = JSON.stringify(bulkResults, null, 2);
+    const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
+    
+    const exportFileName = `flomanji-${selectedCardTemplate}-cards-${new Date().toISOString().slice(0, 10)}.json`;
+    
+    const linkElement = document.createElement("a");
+    linkElement.setAttribute("href", dataUri);
+    linkElement.setAttribute("download", exportFileName);
+    linkElement.click();
+    
+    toast.success(`Exported ${bulkResults.length} cards to ${exportFileName}`);
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* AI Generator Panel */}
