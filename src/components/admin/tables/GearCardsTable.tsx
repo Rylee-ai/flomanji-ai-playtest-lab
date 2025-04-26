@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Eye, Pencil } from "lucide-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -16,9 +16,10 @@ interface GearCardsTableProps {
   cards: GearCard[];
   onViewCard: (id: string) => void;
   onEditCard: (card: GearCard) => void;
+  onDeleteCard: (card: GearCard) => void;
 }
 
-export const GearCardsTable = ({ cards, onViewCard, onEditCard }: GearCardsTableProps) => {
+export const GearCardsTable = ({ cards, onViewCard, onEditCard, onDeleteCard }: GearCardsTableProps) => {
   return (
     <Table>
       <TableHeader>
@@ -55,6 +56,15 @@ export const GearCardsTable = ({ cards, onViewCard, onEditCard }: GearCardsTable
               >
                 <Pencil className="h-4 w-4 mr-1" />
                 Edit
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => onDeleteCard(card)}
+                className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              >
+                <Trash className="h-4 w-4 mr-1" />
+                Delete
               </Button>
             </TableCell>
           </TableRow>

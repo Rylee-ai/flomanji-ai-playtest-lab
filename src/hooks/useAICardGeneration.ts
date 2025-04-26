@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { CardFormValues } from "@/types/forms/card-form";
@@ -54,11 +55,12 @@ export const useAICardGeneration = ({ form }: UseAICardGenerationProps) => {
             if (parsedResponse.onSuccess) form.setValue("onSuccess", parsedResponse.onSuccess);
             if (parsedResponse.onFailure) form.setValue("onFailure", parsedResponse.onFailure);
             if (parsedResponse.difficultyClass) {
+              // Fix: Use valid properties for difficultyClasses
               form.setValue("difficultyClasses", {
-                brawn: Number(parsedResponse.difficultyClass),
-                moxie: Number(parsedResponse.difficultyClass),
-                charm: Number(parsedResponse.difficultyClass),
-                weirdSense: Number(parsedResponse.difficultyClass)
+                fight: Number(parsedResponse.difficultyClass),
+                flee: Number(parsedResponse.difficultyClass),
+                negotiate: Number(parsedResponse.difficultyClass),
+                outsmart: Number(parsedResponse.difficultyClass)
               });
             }
             break;
@@ -82,21 +84,16 @@ export const useAICardGeneration = ({ form }: UseAICardGenerationProps) => {
             if (parsedResponse.role) form.setValue("role", parsedResponse.role);
             if (parsedResponse.checkDC) form.setValue("checkDC", Number(parsedResponse.checkDC));
             // Handle NPC's actions array if needed
-            // Instead of setting attitude directly, we could add it to a description or role field
             break;
           case "region":
             if (parsedResponse.biomeTags && Array.isArray(parsedResponse.biomeTags)) {
               form.setValue("biomeTags", parsedResponse.biomeTags);
-            }
-            if (parsedResponse.encounterChance) {
-              // Store encounter chance as part of rules or another field if needed
             }
             if (parsedResponse.onEnter) form.setValue("onEnter", parsedResponse.onEnter);
             break;
           case "secret":
             if (parsedResponse.alignment) form.setValue("alignment", parsedResponse.alignment);
             if (parsedResponse.winCondition) form.setValue("winCondition", parsedResponse.winCondition);
-            // For reward, we could add it to the winCondition or another field
             break;
           case "automa":
             if (parsedResponse.action) form.setValue("action", parsedResponse.action);

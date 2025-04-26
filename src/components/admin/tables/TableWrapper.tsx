@@ -52,7 +52,6 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
 
   const confirmDelete = () => {
     if (cardToDelete) {
-      // Here you would typically delete the card from your database
       onDeleteCard(cardToDelete);
       setCardToDelete(null);
       toast.success(`Deleted ${cardToDelete.name} successfully`);
