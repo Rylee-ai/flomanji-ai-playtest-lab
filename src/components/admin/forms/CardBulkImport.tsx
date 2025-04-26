@@ -39,16 +39,17 @@ export const CardBulkImport = ({ onImport }: CardBulkImportProps) => {
           <SelectValue placeholder="Select Card Type" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="gear">Gear Cards</SelectItem>
+          <SelectItem value="player-character">Player Characters</SelectItem>
+          <SelectItem value="npc">NPC Characters</SelectItem>
+          <SelectItem value="flomanjified">Flomanjified Roles</SelectItem>
           <SelectItem value="treasure">Treasure Cards</SelectItem>
+          <SelectItem value="gear">Gear Cards</SelectItem>
           <SelectItem value="hazard">Hazard Cards</SelectItem>
-          <SelectItem value="npc">NPC Cards</SelectItem>
-          <SelectItem value="exploration">Exploration Mission</SelectItem>
-          <SelectItem value="escape">Escape Mission</SelectItem>
-          <SelectItem value="escort">Escort Mission</SelectItem>
-          <SelectItem value="collection">Collection Mission</SelectItem>
-          <SelectItem value="boss">Boss Mission</SelectItem>
-          <SelectItem value="solo">Solo Mission</SelectItem>
+          <SelectItem value="chaos">Chaos Cards</SelectItem>
+          <SelectItem value="region">Region Cards</SelectItem>
+          <SelectItem value="mission">Mission Sheets</SelectItem>
+          <SelectItem value="secret">Secret Objectives</SelectItem>
+          <SelectItem value="automa">Automa Cards</SelectItem>
         </SelectContent>
       </Select>
       
@@ -63,7 +64,7 @@ export const CardBulkImport = ({ onImport }: CardBulkImportProps) => {
         <Button variant="outline" type="button" asChild>
           <span className="flex items-center space-x-2">
             <Upload className="h-4 w-4" />
-            <span>Import {cardType.charAt(0).toUpperCase() + cardType.slice(1)} Cards</span>
+            <span>Import {cardType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} Cards</span>
           </span>
         </Button>
       </label>
