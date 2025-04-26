@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { CardType, GameCard, CardIcon } from "@/types/cards";
+import { CardType, GameCard } from "@/types/cards";
 import { toast } from "sonner";
 import { CardFormValues } from "../CardForm";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
@@ -14,20 +13,6 @@ import { GEAR_CARDS } from "@/lib/cards/gear-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
-
-const SESSION_CARDS: Record<string, GameCard[]> = {
-  treasure: [],
-  hazard: [],
-  automa: [],
-  region: [],
-  npc: [],
-  mission: [],
-  gear: [],
-  chaos: [],
-  flomanjified: [],
-  secret: [],
-  "player-character": [],
-};
 
 export const useCardManagement = () => {
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -47,8 +32,7 @@ export const useCardManagement = () => {
       ...GEAR_CARDS,
       ...CHAOS_CARDS,
       ...FLOMANJIFIED_CARDS,
-      ...PLAYER_CHARACTER_CARDS,
-      ...Object.values(SESSION_CARDS).flat()
+      ...PLAYER_CHARACTER_CARDS
     ];
     return allCards.find(card => card.id === id);
   };
@@ -71,70 +55,40 @@ export const useCardManagement = () => {
 
   const handleFormSubmit = (data: CardFormValues) => {
     console.log("Form submitted with data:", data);
-    
-    // Fixed the CardIcon type issue by ensuring symbol and meaning are provided
-    const icons: CardIcon[] = (data.icons || []).map(icon => ({
-      symbol: icon.symbol || "📋", // Provide default value to ensure symbol is not undefined
-      meaning: icon.meaning || "General", // Provide default value to ensure meaning is not undefined
-    }));
-    
-    const cardData: GameCard = {
-      id: editingCard?.id || `card-${Date.now().toString(36)}`,
-      name: data.name,
-      type: data.type as CardType,
-      icons: icons,
-      keywords: data.keywords || [],
-      rules: data.rules || [],
-      flavor: data.flavor || "",
-      imagePrompt: data.imagePrompt || "",
-    };
-    
-    if (!editingCard) {
-      const cardType = cardData.type as string;
-      const targetArray = SESSION_CARDS[cardType] || SESSION_CARDS.treasure;
-      targetArray.push(cardData);
-      
-      toast.success(`${data.name} created successfully`);
-    } else {
-      toast.success(`${data.name} updated successfully`);
-    }
-    
+    // Here you would typically save the data to your database
+    // For now, we just show a success message
+    toast.success(`${data.name} ${editingCard ? "updated" : "created"} successfully`);
     setIsFormOpen(false);
     setEditingCard(undefined);
   };
 
   const getActiveCards = () => {
-    const baseCards = (() => {
-      switch (activeTab) {
-        case "treasure":
-          return TREASURE_CARDS;
-        case "hazard":
-          return HAZARD_CARDS;
-        case "automa":
-          return AUTOMA_CARDS;
-        case "region":
-          return REGION_CARDS;
-        case "npc":
-          return NPC_CARDS;
-        case "mission":
-          return MISSION_CARDS;
-        case "gear":
-          return GEAR_CARDS;
-        case "chaos":
-          return CHAOS_CARDS;
-        case "flomanjified":
-          return FLOMANJIFIED_CARDS;
-        case "secret":
-          return SECRET_OBJECTIVES;
-        case "player-character":
-          return PLAYER_CHARACTER_CARDS;
-        default:
-          return [];
-      }
-    })();
-    
-    const sessionCards = SESSION_CARDS[activeTab] || [];
-    return [...baseCards, ...sessionCards];
+    switch (activeTab) {
+      case "treasure":
+        return TREASURE_CARDS;
+      case "hazard":
+        return HAZARD_CARDS;
+      case "automa":
+        return AUTOMA_CARDS;
+      case "region":
+        return REGION_CARDS;
+      case "npc":
+        return NPC_CARDS;
+      case "mission":
+        return MISSION_CARDS;
+      case "gear":
+        return GEAR_CARDS;
+      case "chaos":
+        return CHAOS_CARDS;
+      case "flomanjified":
+        return FLOMANJIFIED_CARDS;
+      case "secret":
+        return SECRET_OBJECTIVES;
+      case "player-character":
+        return PLAYER_CHARACTER_CARDS;
+      default:
+        return [];
+    }
   };
 
   return {
