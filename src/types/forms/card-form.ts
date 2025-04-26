@@ -1,5 +1,4 @@
-
-import { CardType } from "@/types/cards";
+import { CardType, GameCard } from "@/types/cards";
 
 export interface CardFormProps {
   open: boolean;
@@ -76,3 +75,5 @@ export type CardFormValues = {
     weirdSense: number;
   };
 };
+
+export { missionSubtypes } from "@/schemas/card-form-schema";
