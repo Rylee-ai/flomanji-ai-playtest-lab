@@ -12,48 +12,44 @@ import { processTreasureCard } from "./card-processors/treasure-processor";
 import { processHazardCard } from "./card-processors/hazard-processor";
 import { processNPCCard } from "./card-processors/npc-processor";
 import { processMissionCard } from "./card-processors/mission-processor";
+import { processPlayerCharacterCard } from "./card-processors/player-character-processor";
+import { processFlomanjifiedCard } from "./card-processors/flomanjified-processor";
+import { processChaosCard } from "./card-processors/chaos-processor";
+import { processRegionCard } from "./card-processors/region-processor";
+import { processSecretCard } from "./card-processors/secret-processor";
+import { processAutomaCard } from "./card-processors/automa-processor";
 
 export const processImportedCards = (jsonData: any, cardType: CardType): Partial<GameCard>[] => {
   try {
     const cards = Array.isArray(jsonData) ? jsonData : [jsonData];
 
-    // Select appropriate schema based on card type
-    const cardSchema = {
-      'gear': gearCardSchema,
-      'treasure': treasureCardSchema,
-      'hazard': hazardCardSchema,
-      'npc': npcCardSchema,
-      'exploration': missionCardSchema,
-      'escape': missionCardSchema,
-      'escort': missionCardSchema,
-      'collection': missionCardSchema,
-      'boss': missionCardSchema,
-      'solo': missionCardSchema,
+    // Select appropriate schema and processor based on card type
+    const processCard = {
+      'gear': { schema: gearCardSchema, processor: processGearCard },
+      'treasure': { schema: treasureCardSchema, processor: processTreasureCard },
+      'hazard': { schema: hazardCardSchema, processor: processHazardCard },
+      'npc': { schema: npcCardSchema, processor: processNPCCard },
+      'player-character': { schema: npcCardSchema, processor: processPlayerCharacterCard },
+      'flomanjified': { schema: npcCardSchema, processor: processFlomanjifiedCard },
+      'chaos': { schema: hazardCardSchema, processor: processChaosCard },
+      'region': { schema: hazardCardSchema, processor: processRegionCard },
+      'secret': { schema: hazardCardSchema, processor: processSecretCard },
+      'automa': { schema: hazardCardSchema, processor: processAutomaCard },
+      'exploration': { schema: missionCardSchema, processor: processMissionCard },
+      'escape': { schema: missionCardSchema, processor: processMissionCard },
+      'escort': { schema: missionCardSchema, processor: processMissionCard },
+      'collection': { schema: missionCardSchema, processor: processMissionCard },
+      'boss': { schema: missionCardSchema, processor: processMissionCard },
+      'solo': { schema: missionCardSchema, processor: processMissionCard },
     }[cardType];
 
-    if (!cardSchema) {
+    if (!processCard) {
       throw new Error(`Unsupported card type: ${cardType}`);
     }
 
     return cards.map(card => {
-      const validatedCard = cardSchema.parse(card);
-
-      // Process card based on type
-      switch (cardType) {
-        case 'gear':
-          return processGearCard(validatedCard);
-        case 'treasure':
-          return processTreasureCard(validatedCard);
-        case 'hazard':
-          return processHazardCard(validatedCard);
-        case 'npc':
-          return processNPCCard(validatedCard);
-        default:
-          if (['exploration', 'escape', 'escort', 'collection', 'boss', 'solo'].includes(cardType)) {
-            return processMissionCard(validatedCard);
-          }
-          throw new Error(`Unsupported card type: ${cardType}`);
-      }
+      const validatedCard = processCard.schema.parse(card);
+      return processCard.processor(validatedCard);
     });
   } catch (error) {
     console.error('Error processing imported cards:', error);
