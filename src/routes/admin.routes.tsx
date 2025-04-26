@@ -15,7 +15,8 @@ import AgentManager from "@/pages/AgentManager";
 import WaitlistManager from "@/pages/WaitlistManager";
 import NotFound from "@/pages/NotFound";
 
-const adminRoutes: RouteObject[] = [
+// Changed from default to named export
+export const adminRoutes: RouteObject[] = [
   {
     path: "/",
     element: <AdminLayout />,
@@ -73,4 +74,5 @@ const adminRoutes: RouteObject[] = [
   },
 ];
 
+// Also maintain default export for backward compatibility
 export default adminRoutes;

@@ -1,5 +1,6 @@
+
 import { useState } from "react";
-import { CardType, GameCard } from "@/types/cards";
+import { CardType, GameCard, CardIcon } from "@/types/cards";
 import { toast } from "sonner";
 import { CardFormValues } from "../CardForm";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
@@ -71,11 +72,17 @@ export const useCardManagement = () => {
   const handleFormSubmit = (data: CardFormValues) => {
     console.log("Form submitted with data:", data);
     
+    // Fixed the CardIcon type issue by ensuring symbol and meaning are provided
+    const icons: CardIcon[] = (data.icons || []).map(icon => ({
+      symbol: icon.symbol || "📋", // Provide default value to ensure symbol is not undefined
+      meaning: icon.meaning || "General", // Provide default value to ensure meaning is not undefined
+    }));
+    
     const cardData: GameCard = {
       id: editingCard?.id || `card-${Date.now().toString(36)}`,
       name: data.name,
       type: data.type as CardType,
-      icons: data.icons || [],
+      icons: icons,
       keywords: data.keywords || [],
       rules: data.rules || [],
       flavor: data.flavor || "",
