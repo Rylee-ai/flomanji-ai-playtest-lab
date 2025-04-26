@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FormLabel } from "@/components/ui/form";
+import { Label } from "@/components/ui/label"; // Import Label instead of FormLabel
 import { Textarea } from "@/components/ui/textarea";
-import { CardType } from "@/types/cards";
+import { toast } from "sonner"; // Import toast from sonner
+import { CardType, GameCard } from "@/types/cards";
 import { useAIGeneration } from "./hooks/useAIGeneration";
 import { SingleCardGenerator } from "./ai/SingleCardGenerator";
 import { BulkCardGenerator } from "./ai/BulkCardGenerator";
@@ -107,7 +108,7 @@ const AIContentAssistant = ({
           </TabsList>
           
           <div className="mb-4">
-            <FormLabel>Card Type</FormLabel>
+            <Label>Card Type</Label>
             <Select 
               value={selectedCardTemplate} 
               onValueChange={(value) => setSelectedCardTemplate(value as CardType)}
@@ -160,7 +161,7 @@ const AIContentAssistant = ({
         </Tabs>
 
         <div className="mt-8">
-          <FormLabel>System Prompt (Advanced)</FormLabel>
+          <Label>System Prompt (Advanced)</Label>
           <Textarea
             placeholder="Instructions for the AI..."
             className="min-h-[100px]"

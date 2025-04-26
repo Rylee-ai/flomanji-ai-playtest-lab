@@ -4,7 +4,7 @@ import { CardType, GameCard } from "@/types/cards";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { FormLabel } from "@/components/ui/form";
+import { Label } from "@/components/ui/label"; // Import Label instead of FormLabel
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileDown, FileText, FileUp, Loader2, Save, Zap } from "lucide-react";
 import { CardDisplay } from "@/components/cards/CardDisplay";
@@ -57,7 +57,7 @@ export const BulkCardGenerator = ({
   return (
     <div className="space-y-4">
       <div>
-        <FormLabel>Number of Cards</FormLabel>
+        <Label>Number of Cards</Label>
         <Input
           type="number"
           value={bulkCount}
@@ -71,7 +71,7 @@ export const BulkCardGenerator = ({
       </div>
 
       <div>
-        <FormLabel>Common Requirements</FormLabel>
+        <Label>Common Requirements</Label>
         <Textarea
           placeholder="Requirements for all generated cards..."
           className="min-h-[100px]"
