@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
-import { CardFormValues } from "../CardForm";
+import { CardFormValues } from "@/types/forms/card-form";
 import { Button } from "@/components/ui/button";
 import { Plus, Minus } from "lucide-react";
 

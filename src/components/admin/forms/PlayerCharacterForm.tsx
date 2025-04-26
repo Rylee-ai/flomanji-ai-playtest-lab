@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   FormField,
@@ -8,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { CardFormValues } from "../CardForm";
+import { CardFormValues } from "@/types/forms/card-form";
 import { Textarea } from "@/components/ui/textarea";
 
 interface PlayerCharacterFormProps {

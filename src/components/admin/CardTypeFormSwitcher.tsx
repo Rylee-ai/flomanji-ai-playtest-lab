@@ -2,7 +2,8 @@
 import React from "react";
 import { CardType } from "@/types/cards";
 import { UseFormReturn } from "react-hook-form";
-import { CardFormValues, missionSubtypes } from "./CardForm";
+import { CardFormValues } from "@/types/forms/card-form";
+import { missionSubtypes } from "@/schemas/card-form-schema";
 import { TreasureCardForm } from "./forms/TreasureCardForm";
 import { HazardCardForm } from "./forms/HazardCardForm";
 import { RegionCardForm } from "./forms/RegionCardForm";

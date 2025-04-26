@@ -7,7 +7,7 @@ import { BaseCardForm } from "./forms/BaseCardForm";
 import { CardTypeFormSwitcher } from "./CardTypeFormSwitcher";
 import { UseFormReturn } from "react-hook-form";
 import { CardType, GameCard } from "@/types/cards";
-import { CardFormValues } from "./CardForm";
+import { CardFormValues } from "@/types/forms/card-form";
 
 interface CardFormBodyProps {
   form: UseFormReturn<CardFormValues>;

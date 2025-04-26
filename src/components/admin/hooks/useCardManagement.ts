@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CardType, GameCard } from "@/types/cards";
 import { toast } from "sonner";
-import { CardFormValues } from "../CardForm";
+import { CardFormValues } from "@/types/forms/card-form";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
 import { AUTOMA_CARDS } from "@/lib/cards/automa-cards";
