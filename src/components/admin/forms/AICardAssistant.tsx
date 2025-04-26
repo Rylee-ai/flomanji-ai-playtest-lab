@@ -147,19 +147,19 @@ Additionally, include card-specific fields based on the card type:`;
             break;
           case "chaos":
             if (parsedResponse.globalEffect) form.setValue("globalEffect", parsedResponse.globalEffect);
-            if (parsedResponse.heatChange) form.setValue("heatChange", Number(parsedResponse.heatChange));
+            if (parsedResponse.heatChange !== undefined) form.setValue("heatEffect", Number(parsedResponse.heatChange));
             break;
           case "flomanjified":
             if (parsedResponse.chaosAction) form.setValue("chaosAction", parsedResponse.chaosAction);
-            if (parsedResponse.transformationEffect) form.setValue("transformationEffect", parsedResponse.transformationEffect);
+            if (parsedResponse.transformationEffect) form.setValue("specialAbility", parsedResponse.transformationEffect);
             break;
           case "gear":
             if (parsedResponse.category) form.setValue("category", parsedResponse.category);
             if (parsedResponse.durability) {
               const durability = parsedResponse.durability === "unlimited" ? -1 : Number(parsedResponse.durability);
-              form.setValue("durability", durability);
+              form.setValue("uses", durability);
             }
-            if (parsedResponse.specialAbility) form.setValue("specialAbility", parsedResponse.specialAbility);
+            if (parsedResponse.specialAbility) form.setValue("passive", parsedResponse.specialAbility);
             break;
           case "npc":
             if (parsedResponse.role) form.setValue("role", parsedResponse.role);
@@ -181,14 +181,14 @@ Additionally, include card-specific fields based on the card type:`;
             break;
           case "automa":
             if (parsedResponse.action) form.setValue("action", parsedResponse.action);
-            if (parsedResponse.trigger) form.setValue("trigger", parsedResponse.trigger);
-            if (parsedResponse.intensity) form.setValue("intensity", Number(parsedResponse.intensity));
+            if (parsedResponse.trigger) form.setValue("movement", parsedResponse.trigger);
+            if (parsedResponse.intensity) form.setValue("combatBonus", Number(parsedResponse.intensity));
             break;
           case "mission":
             if (parsedResponse.hook) form.setValue("hook", parsedResponse.hook);
             if (parsedResponse.startingHeat) form.setValue("startingHeat", Number(parsedResponse.startingHeat));
             if (parsedResponse.mapLayout) form.setValue("mapLayout", parsedResponse.mapLayout);
-            if (parsedResponse.playerCount) form.setValue("playerCount", Number(parsedResponse.playerCount));
+            if (parsedResponse.playerCount) form.setValue("recommendedPlayerCount", String(parsedResponse.playerCount));
             break;
         }
         

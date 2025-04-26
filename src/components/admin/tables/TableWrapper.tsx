@@ -12,7 +12,17 @@ import { PlayerCharacterCardsTable } from "./PlayerCharacterCardsTable";
 import { RegionCardsTable } from "./RegionCardsTable";
 import { SecretCardsTable } from "./SecretCardsTable";
 import { TreasureCardsTable } from "./TreasureCardsTable";
-import { AutomaCard, ChaosCard, FlomanjifiedRoleCard, GearCard, HazardCard, MissionSheet, NPCCard, PlayerCharacterCard, RegionCard, SecretObjectiveCard, TreasureCard } from "@/types/cards";
+import { AutomaCard } from "@/types/cards";
+import { ChaosCard } from "@/types/cards/chaos";
+import { FlomanjifiedRoleCard } from "@/types/cards/flomanjified";
+import { GearCard } from "@/types/cards/gear";
+import { HazardCard } from "@/types/cards/hazard";
+import { MissionSheet } from "@/types/cards/mission";
+import { NPCCard } from "@/types/cards/npc";
+import { PlayerCharacterCard } from "@/types/cards/player-character";
+import { RegionCard } from "@/types/cards/region";
+import { SecretObjectiveCard } from "@/types/cards";
+import { TreasureCard } from "@/types/cards/treasure";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,6 +55,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
       // Here you would typically delete the card from your database
       onDeleteCard(cardToDelete);
       setCardToDelete(null);
+      toast.success(`Deleted ${cardToDelete.name} successfully`);
     }
   };
 
@@ -62,27 +73,28 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
     // Type casting cards to the appropriate type based on activeTab
     switch (activeTab) {
       case "automa":
-        return <AutomaCardsTable cards={cards as AutomaCard[]} {...commonProps} />;
+        return <AutomaCardsTable cards={cards as unknown as AutomaCard[]} {...commonProps} />;
       case "chaos":
-        return <ChaosCardsTable cards={cards as ChaosCard[]} {...commonProps} />;
+        return <ChaosCardsTable cards={cards as unknown as ChaosCard[]} {...commonProps} />;
       case "flomanjified":
-        return <FlomanjifiedCardsTable cards={cards as FlomanjifiedRoleCard[]} {...commonProps} />;
+        return <FlomanjifiedCardsTable cards={cards as unknown as FlomanjifiedRoleCard[]} {...commonProps} />;
       case "gear":
-        return <GearCardsTable cards={cards as GearCard[]} {...commonProps} />;
+        return <GearCardsTable cards={cards as unknown as GearCard[]} {...commonProps} />;
       case "hazard":
-        return <HazardCardsTable cards={cards as HazardCard[]} {...commonProps} />;
+        return <HazardCardsTable cards={cards as unknown as HazardCard[]} {...commonProps} />;
       case "mission":
-        return <MissionCardsTable cards={cards as MissionSheet[]} {...commonProps} />;
+        return <MissionCardsTable cards={cards as unknown as MissionSheet[]} {...commonProps} />;
       case "npc":
-        return <NPCCardsTable cards={cards as NPCCard[]} {...commonProps} />;
+        return <NPCCardsTable cards={cards as unknown as NPCCard[]} {...commonProps} />;
       case "player-character":
-        return <PlayerCharacterCardsTable cards={cards as PlayerCharacterCard[]} {...commonProps} />;
+        return <PlayerCharacterCardsTable cards={cards as unknown as PlayerCharacterCard[]} {...commonProps} />;
       case "region":
-        return <RegionCardsTable cards={cards as RegionCard[]} {...commonProps} />;
+        return <RegionCardsTable cards={cards as unknown as RegionCard[]} {...commonProps} />;
       case "secret":
-        return <SecretCardsTable cards={cards as SecretObjectiveCard[]} {...commonProps} />;
+        return <SecretCardsTable cards={cards as unknown as SecretObjectiveCard[]} {...commonProps} />;
       case "treasure":
-        return <TreasureCardsTable cards={cards as TreasureCard[]} {...commonProps} />;
+      case "artifact":
+        return <TreasureCardsTable cards={cards as unknown as TreasureCard[]} {...commonProps} />;
       default:
         return null;
     }
