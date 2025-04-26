@@ -13,10 +13,10 @@ export const processCardIcons = (icons: (string | { symbol: string; meaning: str
   }) as CardIcon[];
 };
 
-export const createBaseCard = (validatedCard: any): Partial<GameCard> => ({
+// Base processor doesn't set the type since it will be overridden by specific processors
+export const createBaseCard = (validatedCard: any): Omit<Partial<GameCard>, 'type'> => ({
   id: String(validatedCard.id),
   name: validatedCard.title,
-  type: validatedCard.type,
   icons: processCardIcons(validatedCard.icons),
   keywords: validatedCard.keywords,
   rules: Array.isArray(validatedCard.rules) ? validatedCard.rules : [validatedCard.rules],
