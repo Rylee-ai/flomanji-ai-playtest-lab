@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,9 +32,35 @@ export const AICardAssistant = ({ form }: AICardAssistantProps) => {
           imagePrompt: prompt,
         };
         
+        // Apply the basic fields that all cards have
         form.setValue("name", demoResponse.name);
         form.setValue("flavor", demoResponse.flavor);
         form.setValue("imagePrompt", demoResponse.imagePrompt);
+        
+        // Apply type-specific fields based on the selected card type
+        switch(cardType) {
+          case "treasure":
+          case "artifact":
+            form.setValue("value", 3);
+            form.setValue("passiveEffect", "Provides a bonus when carried.");
+            break;
+          case "hazard":
+            form.setValue("onFailure", "Player takes 1 damage.");
+            form.setValue("onSuccess", "Player gains 1 luck.");
+            break;
+          case "chaos":
+            form.setValue("globalEffect", "All players must discard one card.");
+            break;
+          case "flomanjified":
+            form.setValue("chaosAction", "Choose a player to lose 1 health.");
+            break;
+          case "npc":
+            form.setValue("checkDC", 8);
+            break;
+          default:
+            // Other card types will just use the basic fields
+            break;
+        }
         
         toast.success("AI suggestions applied!");
         setPrompt("");

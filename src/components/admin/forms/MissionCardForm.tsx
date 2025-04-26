@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from '@/components/ui/form';
@@ -5,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { CardFormValues } from "@/types/forms/card-form";
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Plus, Minus } from 'lucide-react';
 
@@ -14,11 +14,12 @@ interface MissionCardFormProps {
 }
 
 export const MissionCardForm = ({ form }: MissionCardFormProps) => {
-  const objectives = form.watch("objectives") || [];
+  // Use an empty array as fallback when objectives doesn't exist
+  const objectives = form.watch('objectives') || [];
   
   const addObjective = () => {
-    const currentObjectives = form.getValues("objectives") || [];
-    form.setValue("objectives", [...currentObjectives, { 
+    const currentObjectives = form.getValues('objectives') || [];
+    form.setValue('objectives', [...currentObjectives, { 
       description: "", 
       required: true,
       reward: "",
@@ -28,8 +29,8 @@ export const MissionCardForm = ({ form }: MissionCardFormProps) => {
   };
 
   const removeObjective = (index: number) => {
-    const currentObjectives = form.getValues("objectives") || [];
-    form.setValue("objectives", currentObjectives.filter((_, i) => i !== index));
+    const currentObjectives = form.getValues('objectives') || [];
+    form.setValue('objectives', currentObjectives.filter((_, i) => i !== index));
   };
 
   return (

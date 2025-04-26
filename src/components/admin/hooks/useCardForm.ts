@@ -40,10 +40,14 @@ export const useCardForm = (initialData?: GameCard) => {
       rules: [],
       flavor: "",
       imagePrompt: "",
+      
+      // Treasure card fields
       value: undefined,
       consumable: false,
       passiveEffect: "",
       useEffect: "",
+      
+      // Hazard card fields
       subType: undefined,
       difficultyClasses: {
         fight: undefined,
@@ -55,13 +59,19 @@ export const useCardForm = (initialData?: GameCard) => {
       onSuccess: "",
       bossHazard: false,
       gearBonuses: [],
+      
+      // Region card fields
       biomeTags: [],
       onEnter: "",
       action: "",
       rest: "",
       bonusZone: "",
+      
+      // NPC card fields
       checkDC: undefined,
       actions: [],
+      
+      // Gear card fields
       category: undefined,
       uses: undefined,
       actionCost: undefined,
@@ -70,18 +80,27 @@ export const useCardForm = (initialData?: GameCard) => {
         stat: undefined,
         value: undefined
       },
+      
+      // Chaos card fields
       heatEffect: undefined,
       globalEffect: "",
       duration: undefined,
+      
+      // Flomanjified card fields
       originalRole: "",
       chaosAction: "",
       specialAbility: "",
+      
+      // Secret card fields
       alignment: undefined,
       winCondition: "",
+      
+      // Automa card fields
       movement: "",
       combatBonus: undefined,
       specialEffect: "",
-      // Player Character defaults
+      
+      // Player Character fields
       role: "",
       stats: {
         brawn: 1,
@@ -97,7 +116,21 @@ export const useCardForm = (initialData?: GameCard) => {
       health: 5,
       weirdness: 0,
       luck: 5,
-      starterGear: []
+      starterGear: [],
+      
+      // Mission card fields
+      hook: "",
+      mapLayout: "",
+      startingHeat: undefined,
+      objectives: [],
+      extractionRegion: "",
+      scaling: {
+        small: "",
+        large: ""
+      },
+      recommendedPlayerCount: "",
+      estimatedDuration: undefined,
+      difficultyRating: undefined
     }
   });
 
