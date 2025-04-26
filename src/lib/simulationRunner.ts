@@ -38,9 +38,9 @@ export const startSimulation = async (
   const simulationId = simulateRandomId();
   const timestamp = new Date().toISOString();
 
-  let selectedGobletVoice = gobletVoice;
+  let selectedGobletVoice = gobletVoice as 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';
   if (gobletVoice === 'random') {
-    const gobletVoices = ['swamp-prophet', 'pirate-radio-dj', 'park-ranger', 'theme-park-mascot'];
+    const gobletVoices = ['swamp-prophet', 'pirate-radio-dj', 'park-ranger', 'theme-park-mascot'] as const;
     selectedGobletVoice = gobletVoices[Math.floor(Math.random() * gobletVoices.length)];
   }
 
