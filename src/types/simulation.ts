@@ -1,6 +1,6 @@
-
 import { FlomanjiCharacter } from "./character";
 import { MissionSheet } from "./cards/mission";
+import { AgentRole } from "./agent";
 
 export interface SimulationConfig {
   scenarioPrompt?: string;
@@ -21,6 +21,37 @@ export interface SimulationConfig {
   competitiveMode?: boolean;
   gobletVoice?: 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';
   missionType?: string;
+}
+
+export interface AgentMessage {
+  role: AgentRole;
+  content: string;
+  timestamp: string;
+  playerIndex?: number;
+  metadata?: {
+    roundNumber?: number;
+    phase?: string;
+    playerNumber?: number;
+    playerName?: string;
+    roll?: {
+      stat: string;
+      value: number;
+      modifier: number;
+      total: number;
+      result: string;
+    };
+    heat?: number;
+    hazard?: string;
+    activeHazards?: string[];
+    completedObjectives?: string[];
+    inventory?: any;
+    gameState?: any;
+    reason?: string;
+    outcome?: string;
+    gobletVoice?: string;
+    gobletMood?: string;
+    isGobletHolder?: boolean;
+  };
 }
 
 export interface SimulationResult {
@@ -48,6 +79,7 @@ export interface SimulationResult {
     arcadeModule?: boolean;
     nightmareDifficulty?: boolean;
     competitiveMode?: boolean;
+    gobletVoice?: string;
   };
   gameState?: {
     currentRound: number;
@@ -64,6 +96,9 @@ export interface SimulationResult {
     currentRegion: string;
     activeHazards: string[];
     rolls: {player: number, type: string, value: number, stat: string, result: string}[];
+    currentGobletHolder: number;
+    gobletVoice: 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';
+    gobletMood: string;
   };
   characters?: FlomanjiCharacter[];
   missionOutcome?: string;
