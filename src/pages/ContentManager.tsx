@@ -9,8 +9,8 @@ const ContentManager = () => {
   const handleBulkImport = (cards: CardFormValues[]) => {
     // Here you would typically save the cards to your database
     // For now, we just show a success message
-    toast.success(`Processed ${cards.length} cards for import`);
-    console.log('Imported cards:', cards);
+    toast.success(`Processed ${cards.length} gear cards for import`);
+    console.log('Imported gear cards:', cards);
   };
 
   return (
@@ -36,4 +36,3 @@ const ContentManager = () => {
 };
 
 export default ContentManager;
-

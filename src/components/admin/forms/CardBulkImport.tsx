@@ -21,10 +21,10 @@ export const CardBulkImport = ({ onImport }: CardBulkImportProps) => {
       const processedCards = processImportedCards(jsonData);
       
       onImport(processedCards as CardFormValues[]);
-      toast.success(`Successfully processed ${processedCards.length} cards`);
+      toast.success(`Successfully processed ${processedCards.length} gear cards`);
     } catch (error) {
       console.error('Error importing cards:', error);
-      toast.error('Failed to import cards. Please check the file format.');
+      toast.error('Failed to import gear cards. Please check the file format.');
     }
   };
 
@@ -41,11 +41,10 @@ export const CardBulkImport = ({ onImport }: CardBulkImportProps) => {
         <Button variant="outline" type="button" asChild>
           <span className="flex items-center space-x-2">
             <Upload className="h-4 w-4" />
-            <span>Import Cards</span>
+            <span>Import Gear Cards</span>
           </span>
         </Button>
       </label>
     </div>
   );
 };
-

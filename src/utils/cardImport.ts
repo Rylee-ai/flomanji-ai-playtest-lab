@@ -45,7 +45,7 @@ export const processImportedCards = (jsonData: any): Partial<GearCard>[] => {
       return {
         id: String(validatedCard.id),
         name: validatedCard.title,
-        type: 'gear' as CardType,
+        type: "gear" as const, // Force the type to be specifically "gear"
         icons: processedIcons as CardIcon[],
         keywords: validatedCard.keywords,
         rules: [validatedCard.rules],
@@ -59,4 +59,3 @@ export const processImportedCards = (jsonData: any): Partial<GearCard>[] => {
     throw new Error('Invalid card data format');
   }
 };
-
