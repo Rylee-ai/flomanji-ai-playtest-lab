@@ -41,7 +41,14 @@ export const CardBulkImport = ({ onImport }: CardBulkImportProps) => {
         <SelectContent>
           <SelectItem value="gear">Gear Cards</SelectItem>
           <SelectItem value="treasure">Treasure Cards</SelectItem>
-          {/* Add more card types as needed */}
+          <SelectItem value="hazard">Hazard Cards</SelectItem>
+          <SelectItem value="npc">NPC Cards</SelectItem>
+          <SelectItem value="exploration">Exploration Mission</SelectItem>
+          <SelectItem value="escape">Escape Mission</SelectItem>
+          <SelectItem value="escort">Escort Mission</SelectItem>
+          <SelectItem value="collection">Collection Mission</SelectItem>
+          <SelectItem value="boss">Boss Mission</SelectItem>
+          <SelectItem value="solo">Solo Mission</SelectItem>
         </SelectContent>
       </Select>
       
@@ -63,3 +70,4 @@ export const CardBulkImport = ({ onImport }: CardBulkImportProps) => {
     </div>
   );
 };
+
