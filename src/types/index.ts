@@ -13,3 +13,6 @@ export * from './cards/player-character';
 export * from './cards/chaos';
 export * from './cards/flomanjified';
 export * from './cards/gear';
+
+// Explicitly handle any potential naming conflicts
+export { AgentMessage as SimulationAgentMessage } from './simulation';
