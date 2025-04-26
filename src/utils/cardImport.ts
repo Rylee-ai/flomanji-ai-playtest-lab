@@ -7,7 +7,11 @@ import {
   npcCardSchema,
   missionCardSchema
 } from "@/schemas/card-schemas";
-import { createBaseCard } from "./card-processors/base-processor";
+import { processGearCard } from "./card-processors/gear-processor";
+import { processTreasureCard } from "./card-processors/treasure-processor";
+import { processHazardCard } from "./card-processors/hazard-processor";
+import { processNPCCard } from "./card-processors/npc-processor";
+import { processMissionCard } from "./card-processors/mission-processor";
 
 export const processImportedCards = (jsonData: any, cardType: CardType): Partial<GameCard>[] => {
   try {
@@ -33,50 +37,22 @@ export const processImportedCards = (jsonData: any, cardType: CardType): Partial
 
     return cards.map(card => {
       const validatedCard = cardSchema.parse(card);
-      const baseCard = createBaseCard(validatedCard);
 
-      // Add type-specific fields
+      // Process card based on type
       switch (cardType) {
         case 'gear':
-          return {
-            ...baseCard,
-            category: validatedCard.category || 'tool',
-          };
+          return processGearCard(validatedCard);
         case 'treasure':
-          return {
-            ...baseCard,
-            value: validatedCard.value,
-            consumable: validatedCard.consumable,
-          };
+          return processTreasureCard(validatedCard);
         case 'hazard':
-          return {
-            ...baseCard,
-            subType: validatedCard.subType,
-            difficultyClasses: validatedCard.difficultyClasses,
-            onFailure: validatedCard.onFailure,
-            onSuccess: validatedCard.onSuccess,
-            bossHazard: validatedCard.bossHazard,
-            gearBonuses: validatedCard.gearBonuses,
-          };
+          return processHazardCard(validatedCard);
         case 'npc':
-          return {
-            ...baseCard,
-            checkDC: validatedCard.checkDC,
-            actions: validatedCard.actions,
-          };
+          return processNPCCard(validatedCard);
         default:
           if (['exploration', 'escape', 'escort', 'collection', 'boss', 'solo'].includes(cardType)) {
-            return {
-              ...baseCard,
-              hook: validatedCard.hook,
-              mapLayout: validatedCard.mapLayout,
-              startingHeat: validatedCard.startingHeat,
-              objectives: validatedCard.objectives,
-              extractionRegion: validatedCard.extractionRegion,
-              scaling: validatedCard.scaling,
-            };
+            return processMissionCard(validatedCard);
           }
-          return baseCard;
+          throw new Error(`Unsupported card type: ${cardType}`);
       }
     });
   } catch (error) {
