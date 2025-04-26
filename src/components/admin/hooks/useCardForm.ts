@@ -1,48 +1,45 @@
-
 import { useForm } from "react-hook-form";
-import { CardFormValues } from "../CardForm";
+import { CardFormValues, cardFormSchema } from "../CardForm";
 import { GameCard, CardType } from "@/types/cards";
 import { getCardFormTypeDefaults } from "./getCardFormTypeDefaults";
 import { missionSubtypes } from "../CardForm";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-// Helper to map mission subtypes to "mission" for form consistency
-const normalizeCardType = (type: CardType): "treasure" | "artifact" | "automa" | "secret" | "hazard" | "gear" | "npc" | "region" | "chaos" | "mission" | "flomanjified" | "player-character" => {
-  // If type is a mission subtype, return "mission"
+const normalizeCardType = (type: CardType): CardType => {
   if (missionSubtypes.includes(type as any)) {
     return "mission";
   }
-  
-  // Handle artifact as treasure
   if (type === "artifact") {
     return "treasure";
   }
-  
-  // Return as is for other valid form types
-  return type as any;
+  return type;
 };
 
 export const useCardForm = (initialData?: GameCard) => {
-  console.log("Initial form data:", initialData); // Kept for debugging
- 
+  console.log("Initial form data:", initialData); // Keep for debugging
+
   const form = useForm<CardFormValues>({
+    resolver: zodResolver(cardFormSchema),
     defaultValues: initialData ? {
+      // Base card fields
       name: initialData.name,
-      type: normalizeCardType(initialData.type), // Normalize type for the form
+      type: normalizeCardType(initialData.type),
       keywords: initialData.keywords || [],
       icons: initialData.icons || [],
       rules: initialData.rules || [],
       flavor: initialData.flavor || "",
       imagePrompt: initialData.imagePrompt || "",
+      // Get type-specific defaults based on the card type
       ...getCardFormTypeDefaults(initialData)
     } : {
+      // Default empty values for new cards
       name: "",
-      type: "treasure", // Default type
+      type: "treasure",
       keywords: [],
       icons: [],
       rules: [],
       flavor: "",
       imagePrompt: "",
-      // Default empty values for type-specific fields
       value: undefined,
       consumable: false,
       passiveEffect: "",

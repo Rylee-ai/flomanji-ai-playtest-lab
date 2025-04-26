@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { CardType, GameCard } from "@/types/cards";
 import { useCardForm } from "./hooks/useCardForm";
@@ -183,17 +182,37 @@ export const CardForm = ({
   const isEditing = !!initialData;
   const type = form.watch("type");
 
-  // Set the form type based on activeTab when creating a new card
+  // Reset form with initial data when editing
   useEffect(() => {
-    if (!isEditing && activeTab) {
-      // Handle mission subtypes - map them to 'mission' for the form
+    if (isEditing && initialData) {
+      // Reset the entire form with initial data
+      form.reset({
+        name: initialData.name,
+        type: initialData.type,
+        flavor: initialData.flavor || "",
+        imagePrompt: initialData.imagePrompt || "",
+        keywords: initialData.keywords || [],
+        icons: initialData.icons || [],
+        rules: initialData.rules || [],
+        // Pass through any type-specific fields that exist in initialData
+        ...(initialData as any)
+      });
+    } else if (!isEditing && activeTab) {
+      // Handle new card creation
       const formType = missionSubtypes.includes(activeTab as any) 
         ? "mission" 
         : activeTab as CardType;
-      
-      form.setValue("type", formType);
+      form.reset({
+        name: "",
+        type: formType,
+        flavor: "",
+        imagePrompt: "",
+        keywords: [],
+        icons: [],
+        rules: []
+      });
     }
-  }, [activeTab, form, isEditing]);
+  }, [isEditing, initialData, activeTab, form]);
 
   return (
     <CardFormDialog open={open} onClose={onClose} isEditing={isEditing} initialData={initialData}>
