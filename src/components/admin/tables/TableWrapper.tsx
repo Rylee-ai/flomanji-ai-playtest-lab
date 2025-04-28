@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { GameCard, CardType } from "@/types/cards";
 import { AutomaCardsTable } from "./AutomaCardsTable";
 import { ChaosCardsTable } from "./ChaosCardsTable";
@@ -34,6 +33,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { CardGrid } from "../cards/CardGrid";
+import { LayoutGrid, Table as TableIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface TableWrapperProps {
   activeTab: CardType;
@@ -44,7 +46,8 @@ interface TableWrapperProps {
 }
 
 export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDeleteCard }: TableWrapperProps) => {
-  const [cardToDelete, setCardToDelete] = React.useState<GameCard | null>(null);
+  const [view, setView] = useState<'table' | 'grid'>('grid');
+  const [cardToDelete, setCardToDelete] = useState<GameCard | null>(null);
 
   const handleDeleteCard = (card: GameCard) => {
     setCardToDelete(card);
@@ -62,6 +65,32 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
     setCardToDelete(null);
   };
 
+  const handleImageUpload = async (cardId: string, imageUrl: string) => {
+    console.log('Image uploaded for card:', cardId, imageUrl);
+  };
+
+  const ViewToggle = () => (
+    <div className="flex justify-end mb-4">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setView(view === 'table' ? 'grid' : 'table')}
+      >
+        {view === 'table' ? (
+          <>
+            <LayoutGrid className="h-4 w-4 mr-2" />
+            Grid View
+          </>
+        ) : (
+          <>
+            <TableIcon className="h-4 w-4 mr-2" />
+            Table View
+          </>
+        )}
+      </Button>
+    </div>
+  );
+
   const getTable = () => {
     const commonProps = {
       onViewCard,
@@ -69,7 +98,6 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
       onDeleteCard: handleDeleteCard,
     };
 
-    // Type casting cards to the appropriate type based on activeTab
     switch (activeTab) {
       case "automa":
         return <AutomaCardsTable cards={cards as unknown as AutomaCard[]} {...commonProps} />;
@@ -101,7 +129,18 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
 
   return (
     <>
-      {getTable()}
+      <ViewToggle />
+      {view === 'grid' ? (
+        <CardGrid
+          cards={cards}
+          onViewCard={onViewCard}
+          onEditCard={onEditCard}
+          onDeleteCard={handleDeleteCard}
+          onImageUpload={handleImageUpload}
+        />
+      ) : (
+        getTable()
+      )}
       <AlertDialog open={!!cardToDelete} onOpenChange={() => setCardToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
