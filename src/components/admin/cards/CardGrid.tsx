@@ -44,25 +44,25 @@ export const CardGrid = ({ cards, onViewCard, onEditCard, onDeleteCard, onImageU
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4 p-2 sm:p-4">
       {cards.map((card) => (
-        <Card key={card.id} className="overflow-hidden group relative">
-          <CardContent className="p-4">
-            <div className="relative aspect-[3/4] mb-4 bg-muted rounded-lg overflow-hidden">
+        <Card key={card.id} className="overflow-hidden group relative hover:shadow-lg transition-shadow">
+          <CardContent className="p-3 sm:p-4">
+            <div className="relative aspect-[3/4] mb-3 sm:mb-4 bg-muted rounded-lg overflow-hidden">
               {card.imageUrl ? (
                 <img 
                   src={card.imageUrl} 
                   alt={card.name}
-                  className="object-cover w-full h-full"
+                  className="object-cover w-full h-full transition-transform hover:scale-105"
                 />
               ) : (
-                <div className="flex items-center justify-center w-full h-full">
+                <div className="flex items-center justify-center w-full h-full hover:bg-muted/80 transition-colors">
                   <label 
                     htmlFor={`image-upload-${card.id}`}
-                    className="cursor-pointer flex flex-col items-center justify-center"
+                    className="cursor-pointer flex flex-col items-center justify-center p-4 text-center"
                   >
-                    <Upload className="w-8 h-8 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground mt-2">Upload Image</span>
+                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground mb-2" />
+                    <span className="text-xs sm:text-sm text-muted-foreground">Upload Image</span>
                   </label>
                   <input
                     type="file"
@@ -77,33 +77,35 @@ export const CardGrid = ({ cards, onViewCard, onEditCard, onDeleteCard, onImageU
                 </div>
               )}
             </div>
-            <h3 className="font-semibold text-lg mb-2">{card.name}</h3>
-            <p className="text-sm text-muted-foreground line-clamp-2">{card.type}</p>
+            <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2 truncate">{card.name}</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{card.type}</p>
           </CardContent>
-          <CardFooter className="flex justify-between p-4 pt-0">
+          <CardFooter className="flex flex-wrap gap-2 p-3 sm:p-4 pt-0">
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => onViewCard(card.id)}
+              className="flex-1 min-w-[80px]"
             >
-              <Eye className="h-4 w-4 mr-1" />
+              <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               View
             </Button>
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => onEditCard(card)}
+              className="flex-1 min-w-[80px]"
             >
-              <Pencil className="h-4 w-4 mr-1" />
+              <Pencil className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               Edit
             </Button>
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => onDeleteCard(card)}
-              className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              className="flex-1 min-w-[80px] text-destructive hover:bg-destructive hover:text-destructive-foreground"
             >
-              <Trash className="h-4 w-4 mr-1" />
+              <Trash className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               Delete
             </Button>
           </CardFooter>
