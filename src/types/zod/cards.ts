@@ -8,6 +8,11 @@ export const CardIconSchema = z.object({
   meaning: z.string().min(1),
 });
 
+// Protected assets constant
+export const PROTECTED_BRAND_ASSETS = [
+  "/lovable-uploads/e5635414-17a2-485e-86cb-feaf926b9af5.png", // Flomanji card back
+];
+
 // Base GameCard schema
 export const GameCardSchema = z.object({
   id: z.string().min(1),
@@ -18,6 +23,9 @@ export const GameCardSchema = z.object({
   rules: z.array(z.string()),
   flavor: z.string(),
   imagePrompt: z.string(),
+  imageUrl: z.string().optional(),
+  adminNotes: z.string().optional(),
+  isProtectedAsset: z.boolean().optional(),
 });
 
 // TreasureCard schema

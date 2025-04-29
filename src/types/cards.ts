@@ -1,3 +1,4 @@
+
 export type CardType = 'treasure' | 'artifact' | 'automa' | 'secret' | 'hazard' | 'gear' | 'npc' | 'region' | 'chaos' | 'mission' | 'flomanjified' | 'player-character' | 'exploration' | 'escape' | 'escort' | 'collection' | 'boss' | 'solo';
 
 export interface CardIcon {
@@ -16,6 +17,7 @@ export interface GameCard {
   imagePrompt: string;
   imageUrl?: string;
   adminNotes?: string;
+  isProtectedAsset?: boolean;
 }
 
 export interface TreasureCard extends GameCard {

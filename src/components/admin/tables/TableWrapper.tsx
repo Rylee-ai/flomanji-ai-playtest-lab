@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { GameCard, CardType } from "@/types/cards";
 import { AutomaCardsTable } from "./AutomaCardsTable";
@@ -34,7 +35,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { CardGrid } from "../cards/CardGrid";
-import { LayoutGrid, Table as TableIcon } from "lucide-react";
+import { LayoutGrid, Table as TableIcon, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface TableWrapperProps {
@@ -45,11 +46,21 @@ interface TableWrapperProps {
   onDeleteCard: (card: GameCard) => void;
 }
 
+// Protected brand assets - MUST NOT be modified without explicit permission
+const PROTECTED_BRAND_ASSETS = [
+  "/lovable-uploads/e5635414-17a2-485e-86cb-feaf926b9af5.png", // Flomanji card back
+];
+
 export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDeleteCard }: TableWrapperProps) => {
   const [view, setView] = useState<'table' | 'grid'>('grid');
   const [cardToDelete, setCardToDelete] = useState<GameCard | null>(null);
 
   const handleDeleteCard = (card: GameCard) => {
+    // Prevent deletion of cards with protected brand assets
+    if (card.imageUrl && PROTECTED_BRAND_ASSETS.includes(card.imageUrl)) {
+      toast.error('Cannot delete cards with protected brand assets');
+      return;
+    }
     setCardToDelete(card);
   };
 
@@ -66,6 +77,22 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
   };
 
   const handleImageUpload = async (cardId: string, imageUrl: string) => {
+    // Brand protection check - prevent modifications to brand assets
+    const cardToUpdate = cards.find(card => card.id === cardId);
+    if (cardToUpdate && cardToUpdate.imageUrl && PROTECTED_BRAND_ASSETS.includes(cardToUpdate.imageUrl)) {
+      toast.error('Cannot modify protected brand assets');
+      return;
+    }
+    
+    // Find the card and update its image
+    const updatedCards = cards.map(card => {
+      if (card.id === cardId) {
+        return {...card, imageUrl};
+      }
+      return card;
+    });
+    
+    // This is just logging - the actual update would happen in the parent component
     console.log('Image uploaded for card:', cardId, imageUrl);
   };
 
