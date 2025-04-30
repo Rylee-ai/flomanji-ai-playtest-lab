@@ -1,9 +1,10 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { WaitlistEntry } from "@/types/user";
 import { useAuth } from "@/hooks/useAuth";
+import { isAdminUser, isProfileLoaded } from "@/utils/auth-helpers";
 
 /**
  * Hook for loading and managing waitlist entries data
@@ -12,12 +13,13 @@ export const useWaitlistData = () => {
   const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [loadAttempts, setLoadAttempts] = useState(0);
   const { profile, user } = useAuth();
   
   /**
    * Load waitlist entries from Supabase
    */
-  const loadWaitlistEntries = async () => {
+  const loadWaitlistEntries = useCallback(async () => {
     try {
       setIsLoading(true);
       setHasError(false);
@@ -31,7 +33,14 @@ export const useWaitlistData = () => {
         return;
       }
       
-      if (profile?.role !== 'admin') {
+      // If profile is still loading, we'll retry later
+      if (!isProfileLoaded(profile)) {
+        console.log("Profile not fully loaded yet, deferring waitlist load");
+        setHasError(true);
+        return;
+      }
+      
+      if (!isAdminUser(profile)) {
         console.error("Only admins can access waitlist data. Current role:", profile?.role);
         toast.error("You don't have permission to view waitlist data");
         setHasError(true);
@@ -46,7 +55,15 @@ export const useWaitlistData = () => {
       
       if (error) {
         console.error("Supabase error:", error);
-        toast.error(`Failed to load waitlist entries: ${error.message}`);
+        
+        // Show more specific error messages based on error code
+        if (error.code === 'PGRST116') {
+          console.error("Permission denied error. Check RLS policies.");
+          toast.error("Access denied. Please verify your admin permissions.");
+        } else {
+          toast.error(`Failed to load waitlist entries: ${error.message}`);
+        }
+        
         setHasError(true);
         return;
       }
@@ -66,6 +83,7 @@ export const useWaitlistData = () => {
       }));
       
       setWaitlistEntries(transformedData);
+      setLoadAttempts(0); // Reset attempt counter on success
     } catch (error) {
       console.error("Error loading waitlist entries:", error);
       toast.error("Failed to load waitlist entries. Please try again.");
@@ -73,18 +91,26 @@ export const useWaitlistData = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user, profile]);
   
-  // Load entries on component mount and when profile changes
+  // Load entries when profile status changes
   useEffect(() => {
-    if (user && profile?.role === 'admin') {
+    if (user && isAdminUser(profile)) {
       console.log("Admin user detected, loading waitlist entries");
       loadWaitlistEntries();
-    } else if (profile && profile.role !== 'admin') {
+    } else if (profile && !isAdminUser(profile)) {
       console.log("Non-admin user detected, not loading waitlist entries");
       setHasError(true);
+    } else if (user && !profile && loadAttempts < 3) {
+      // Profile isn't loaded yet but we have a user, set a retry timer
+      console.log(`Attempt ${loadAttempts + 1}: Waiting for profile to load before fetching waitlist entries`);
+      const timer = setTimeout(() => {
+        setLoadAttempts(prev => prev + 1);
+      }, 1000 * (loadAttempts + 1)); // Exponential backoff
+      
+      return () => clearTimeout(timer);
     }
-  }, [user, profile]);
+  }, [user, profile, loadAttempts, loadWaitlistEntries]);
   
   /**
    * Update the local waitlist entries state with a new entry

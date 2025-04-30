@@ -11,6 +11,11 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
   try {
     console.log(`Fetching profile for user: ${userId}`);
     
+    if (!userId) {
+      console.error("Cannot fetch profile: User ID is empty");
+      return null;
+    }
+    
     // Query the profiles table from our database with a short timeout to prevent hanging
     const { data, error } = await supabase
       .from('profiles')
@@ -21,6 +26,12 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
     if (error) {
       // Handle specific error cases more gracefully
       console.error('Error fetching user profile:', error);
+      
+      // Check if this is a permissions error (common with RLS issues)
+      if (error.code === 'PGRST116') {
+        console.warn('Permission denied error. This might be an RLS policy issue.');
+      }
+      
       toast({
         title: "Profile error",
         description: "Could not load your profile. Please try again or contact support.",

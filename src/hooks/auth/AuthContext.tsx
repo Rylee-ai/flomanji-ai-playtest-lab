@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [profileAttempts, setProfileAttempts] = useState(0);
 
   // Function to refresh the user profile
   const refreshProfile = async () => {
@@ -28,15 +29,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           userProfile.email = user.email || '';
           setProfile(userProfile);
           console.log("Profile refreshed successfully:", userProfile.role);
+          return true;
         } else {
           console.error("Failed to fetch user profile during refresh");
-          toast.error("Could not load your profile data. Please try again or contact support.");
+          
+          // Only show toast if we've attempted a few times
+          if (profileAttempts > 2) {
+            toast.error("Could not load your profile data. Please try again or contact support.");
+          }
+          setProfileAttempts(prev => prev + 1);
+          return false;
         }
       } catch (error) {
         console.error("Error refreshing profile:", error);
         toast.error("Error refreshing your profile data");
+        return false;
       }
     }
+    return false;
   };
 
   useEffect(() => {
@@ -60,10 +70,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               userProfile.email = session.user.email || '';
               setProfile(userProfile);
               console.log("Profile loaded:", userProfile.role);
+              setProfileAttempts(0); // Reset attempts counter on success
             } else {
               console.warn("No profile found for logged in user");
               setProfile(null);
-              toast.error("Your user profile could not be loaded");
+              
+              // Don't show toast on first attempt to avoid flickering
+              if (profileAttempts > 0) {
+                toast.error("Your user profile could not be loaded");
+              }
+              setProfileAttempts(prev => prev + 1);
             }
           } catch (err) {
             console.error("Profile fetch error:", err);
@@ -72,6 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } else {
           setProfile(null);
+          setProfileAttempts(0);
         }
         
         setIsLoading(false);
@@ -91,11 +108,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             userProfile.email = session.user.email || '';
             setProfile(userProfile);
             console.log("Existing profile loaded:", userProfile.role);
+            setProfileAttempts(0);
           } else {
             console.warn("No profile found for existing session");
+            setProfileAttempts(1); // Start with 1 attempt
           }
         }).catch(err => {
           console.error("Error in get session profile fetch:", err);
+          setProfileAttempts(1);
         });
       }
       
@@ -110,6 +130,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Retry profile load if previous attempts failed
+  useEffect(() => {
+    // Only retry if we have a user but no profile, and have made fewer than 5 attempts
+    if (user && !profile && profileAttempts > 0 && profileAttempts < 5) {
+      console.log(`Retry attempt ${profileAttempts} to load profile for ${user.email}`);
+      
+      // Add a delay to allow time for database to catch up
+      const timer = setTimeout(() => {
+        refreshProfile();
+      }, 1000 * profileAttempts); // Exponential backoff
+      
+      return () => clearTimeout(timer);
+    }
+  }, [user, profile, profileAttempts]);
 
   // Helper function for sign in that also fetches the profile
   const signIn = async (email: string, password: string) => {
