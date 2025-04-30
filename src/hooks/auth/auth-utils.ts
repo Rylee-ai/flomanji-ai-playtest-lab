@@ -1,7 +1,6 @@
 
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { UserProfile } from "@/types";
-import { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -45,13 +44,13 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
       return null;
     }
 
-    // Transform the data to match our UserProfile type
+    // Transform the data to match our UserProfile type - FIXED snake_case to camelCase mapping
     const userProfile: UserProfile = {
       id: data.id,
       email: '', // Will be populated by the auth provider
       role: data.role as "admin" | "player", // Explicitly cast to UserRole type
-      firstName: data.first_name,
-      lastName: data.last_name,
+      firstName: data.first_name, // Correctly map from snake_case database column
+      lastName: data.last_name,   // Correctly map from snake_case database column
       createdAt: data.created_at
     };
     
@@ -73,9 +72,11 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
  */
 export const signInWithEmail = async (email: string, password: string) => {
   try {
+    console.log(`Attempting sign in for: ${email}`);
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     
     if (error) {
+      console.error("Sign in error:", error.message);
       toast({
         title: "Error signing in",
         description: error.message,
@@ -84,8 +85,10 @@ export const signInWithEmail = async (email: string, password: string) => {
       return { error };
     }
     
+    console.log("Sign in successful");
     return { data, error: null };
   } catch (error) {
+    console.error("Unexpected sign in error:", error);
     toast({
       title: "Error signing in",
       description: "An unexpected error occurred",

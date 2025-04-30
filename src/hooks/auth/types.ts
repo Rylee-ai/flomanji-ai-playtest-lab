@@ -12,4 +12,6 @@ export interface AuthContextType {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any | null }>;
   refreshProfile: () => Promise<boolean>;
+  debugMode?: boolean;
+  toggleDebugMode?: () => void;
 }

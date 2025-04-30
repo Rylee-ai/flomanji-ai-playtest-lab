@@ -16,6 +16,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [profileAttempts, setProfileAttempts] = useState(0);
+  const [debugMode, setDebugMode] = useState(false);
+
+  // Toggle debug mode with key sequence 'auth-debug'
+  useEffect(() => {
+    const keys: string[] = [];
+    const authDebug = 'auth-debug';
+    
+    const keyHandler = (e: KeyboardEvent) => {
+      keys.push(e.key.toLowerCase());
+      if (keys.length > authDebug.length) {
+        keys.shift();
+      }
+      
+      if (keys.join('') === authDebug) {
+        setDebugMode(prev => !prev);
+        console.log("Auth debug mode:", !debugMode);
+        toast({
+          title: !debugMode ? "Auth Debug Enabled" : "Auth Debug Disabled",
+          description: "Check console for auth state information"
+        });
+      }
+    };
+    
+    window.addEventListener('keydown', keyHandler);
+    return () => window.removeEventListener('keydown', keyHandler);
+  }, [debugMode]);
 
   // Function to refresh the user profile
   const refreshProfile = async (): Promise<boolean> => {
@@ -29,6 +55,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           userProfile.email = user.email || '';
           setProfile(userProfile);
           console.log("Profile refreshed successfully:", userProfile.role);
+          
+          // Debug info
+          if (debugMode) {
+            console.table({
+              userId: user.id,
+              userEmail: user.email,
+              profileId: userProfile.id,
+              profileRole: userProfile.role,
+              firstName: userProfile.firstName,
+              lastName: userProfile.lastName
+            });
+          }
+          
           return true;
         } else {
           console.error("Failed to fetch user profile during refresh");
@@ -70,6 +109,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               userProfile.email = session.user.email || '';
               setProfile(userProfile);
               console.log("Profile loaded:", userProfile.role);
+              
+              if (debugMode) {
+                console.log("Auth debug - Profile loaded successfully:", {
+                  role: userProfile.role,
+                  name: `${userProfile.firstName} ${userProfile.lastName}`,
+                  email: userProfile.email
+                });
+              }
+              
               setProfileAttempts(0); // Reset attempts counter on success
             } else {
               console.warn("No profile found for logged in user");
@@ -161,10 +209,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signUp: signUpWithEmail,
     signOut: signOutUser,
     resetPassword: resetUserPassword,
-    refreshProfile
+    refreshProfile,
+    debugMode,
+    toggleDebugMode: () => setDebugMode(!debugMode)
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  // If in debug mode, render debug overlay
+  const renderDebugInfo = () => {
+    if (!debugMode) return null;
+    
+    return (
+      <div 
+        style={{
+          position: 'fixed',
+          bottom: '10px',
+          right: '10px',
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          color: 'lime',
+          padding: '10px',
+          borderRadius: '5px',
+          fontSize: '12px',
+          zIndex: 9999,
+          maxWidth: '400px',
+          overflow: 'auto',
+          maxHeight: '200px'
+        }}
+      >
+        <div><strong>Auth Debug</strong></div>
+        <div>User: {user ? `${user.email} (${user.id.slice(0,8)}...)` : 'None'}</div>
+        <div>Profile: {profile ? `${profile.role} (${profile.firstName || 'No name'})` : 'None'}</div>
+        <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
+        <div>Profile Attempts: {profileAttempts}</div>
+      </div>
+    );
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+      {renderDebugInfo()}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
