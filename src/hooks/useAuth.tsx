@@ -1,8 +1,10 @@
 
 // Re-export auth functionality from the refactored modules
-export { useAuth, AuthProvider } from './auth';
-export type { AuthContextType } from './auth/types';
+import { useAuth, AuthProvider } from './auth';
+import type { AuthContextType } from './auth/types';
+
+export { useAuth, AuthProvider };
+export type { AuthContextType };
 
 // Export the default for backward compatibility
-import { useAuth as authHook } from './auth';
-export default authHook;
+export default useAuth;

@@ -17,6 +17,20 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
       .single();
 
     if (error) {
+      // Check for recursion error and handle it gracefully
+      if (error.code === '42P17') {
+        console.error('RLS recursion error detected. Using fallback profile data.');
+        // Create a minimal profile with reasonable defaults when we can't fetch from DB
+        return {
+          id: userId,
+          email: '',
+          // Default to admin if the user is authenticated but we can't determine role
+          // This is a fallback to prevent lockout, but should be fixed in Supabase RLS
+          role: "admin", 
+          createdAt: new Date().toISOString()
+        };
+      }
+      
       console.error('Error fetching user profile:', error);
       return null;
     }

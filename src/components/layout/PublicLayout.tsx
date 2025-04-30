@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { 
@@ -13,6 +13,7 @@ import { User } from "lucide-react";
 
 const PublicLayout = () => {
   const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
   
   const isLoggedIn = !!user;
   
@@ -20,6 +21,18 @@ const PublicLayout = () => {
   const getDashboardPath = () => {
     if (!profile) return "/";
     return profile.role === "admin" ? "/dashboard" : "/player";
+  };
+
+  // Handle dashboard navigation with error catching
+  const handleDashboardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      navigate(getDashboardPath());
+    } catch (error) {
+      console.error("Navigation error:", error);
+      // Fallback to admin dashboard if there's an issue
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -41,8 +54,8 @@ const PublicLayout = () => {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <div className="flex items-center gap-3">
-                <Button variant="outline" asChild className="border-gray-700 hover:bg-gray-800">
-                  <Link to={getDashboardPath()}>My Dashboard</Link>
+                <Button variant="outline" asChild className="border-gray-700 hover:bg-gray-800" onClick={handleDashboardClick}>
+                  <Link to="#" onClick={handleDashboardClick}>My Dashboard</Link>
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -52,7 +65,7 @@ const PublicLayout = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link to={getDashboardPath()}>Dashboard</Link>
+                      <Link to="#" onClick={handleDashboardClick}>Dashboard</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={() => signOut()}
