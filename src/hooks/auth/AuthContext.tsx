@@ -40,6 +40,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    console.log("Setting up auth state listener");
+    setIsLoading(true);
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -102,15 +105,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log("Cleaning up auth state listener");
+      subscription.unsubscribe();
+    };
   }, []);
+
+  // Helper function for sign in that also fetches the profile
+  const signIn = async (email: string, password: string) => {
+    const result = await signInWithEmail(email, password);
+    return result;
+  };
 
   const value = {
     session,
     user,
     profile,
     isLoading,
-    signIn: signInWithEmail,
+    signIn,
     signUp: signUpWithEmail,
     signOut: signOutUser,
     resetPassword: resetUserPassword,

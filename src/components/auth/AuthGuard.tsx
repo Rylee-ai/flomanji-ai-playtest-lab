@@ -24,17 +24,30 @@ const AuthGuard = ({
   const { user, isLoading, profile } = useAuth();
   const location = useLocation();
 
+  // Show meaningful debug information
+  console.log("AuthGuard check:", {
+    requireAuth,
+    allowedRoles,
+    isLoading,
+    hasUser: !!user,
+    userEmail: user?.email,
+    profileRole: profile?.role,
+    currentPath: location.pathname
+  });
+
   // While checking authentication status, show a loading state
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+        <span className="ml-2">Verifying access...</span>
       </div>
     );
   }
 
   // For protected routes: if no user is logged in, redirect to login
   if (requireAuth && !user) {
+    console.log("Not authenticated, redirecting to auth page");
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
@@ -42,19 +55,23 @@ const AuthGuard = ({
   if (!requireAuth && user) {
     // Redirect admin users to admin dashboard, players to player dashboard
     const redirectPath = profile?.role === 'admin' ? '/dashboard' : '/player';
+    console.log(`Already authenticated as ${profile?.role}, redirecting to ${redirectPath}`);
     return <Navigate to={redirectPath} replace />;
   }
 
   // Check role-based access if roles are specified and user is authenticated
   if (requireAuth && user && allowedRoles && profile) {
+    console.log(`Role check: user has ${profile.role}, allowed roles are ${allowedRoles}`);
     if (!allowedRoles.includes(profile.role)) {
       // Redirect to the appropriate dashboard based on user role
       const redirectPath = profile.role === 'admin' ? '/dashboard' : '/player';
+      console.log(`Role mismatch, redirecting to ${redirectPath}`);
       return <Navigate to={redirectPath} replace />;
     }
   }
 
   // If all checks pass, render the children
+  console.log("Access granted");
   return <>{children}</>;
 };
 

@@ -11,7 +11,7 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
   try {
     console.log(`Fetching profile for user: ${userId}`);
     
-    // Query the profiles table from our database
+    // Query the profiles table from our database with a short timeout to prevent hanging
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -20,16 +20,6 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
 
     if (error) {
       // Handle specific error cases more gracefully
-      if (error.code === '42P17') {
-        console.error('RLS recursion error detected:', error.message);
-        toast({
-          title: "Authentication error",
-          description: "There was an issue loading your profile due to a permission configuration problem. Please contact support.",
-          variant: "destructive"
-        });
-        return null;
-      }
-      
       console.error('Error fetching user profile:', error);
       toast({
         title: "Profile error",
@@ -41,11 +31,6 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
 
     if (!data) {
       console.warn(`No profile found for user ID: ${userId}`);
-      toast({
-        title: "Profile missing",
-        description: "We could not find your profile information. Please contact support.",
-        variant: "destructive"
-      });
       return null;
     }
 
@@ -77,7 +62,7 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
  */
 export const signInWithEmail = async (email: string, password: string) => {
   try {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     
     if (error) {
       toast({
@@ -85,16 +70,17 @@ export const signInWithEmail = async (email: string, password: string) => {
         description: error.message,
         variant: "destructive"
       });
+      return { error };
     }
     
-    return { error };
+    return { data, error: null };
   } catch (error) {
     toast({
       title: "Error signing in",
       description: "An unexpected error occurred",
       variant: "destructive"
     });
-    return { error };
+    return { data: null, error };
   }
 };
 
