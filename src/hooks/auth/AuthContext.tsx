@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [profileAttempts, setProfileAttempts] = useState(0);
 
   // Function to refresh the user profile
-  const refreshProfile = async () => {
+  const refreshProfile = async (): Promise<boolean> => {
     if (user) {
       try {
         console.log("Refreshing user profile for:", user.email);
@@ -152,7 +152,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return result;
   };
 
-  const value = {
+  const value: AuthContextType = {
     session,
     user,
     profile,
