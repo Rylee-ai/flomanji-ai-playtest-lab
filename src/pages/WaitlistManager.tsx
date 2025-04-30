@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,7 @@ import { AccessDenied } from "@/components/waitlist/AccessDenied";
  */
 const WaitlistManager = () => {
   // Hook for waitlist management operations
-  const { waitlistEntries, isLoading, updateWaitlistStatus, loadWaitlistEntries } = useWaitlistManager();
+  const { waitlistEntries, isLoading, hasError, updateWaitlistStatus, loadWaitlistEntries } = useWaitlistManager();
   
   // State for selected entry and dialogs
   const [actionEntry, setActionEntry] = useState<WaitlistEntry | null>(null);
@@ -34,10 +33,9 @@ const WaitlistManager = () => {
   // State for filtering and error handling
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
-  const [hasError, setHasError] = useState(false);
   
   // User authentication context
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   
   // Load waitlist entries when the component mounts
   useEffect(() => {
@@ -51,11 +49,10 @@ const WaitlistManager = () => {
    */
   const handleRefresh = async () => {
     try {
-      setHasError(false);
       await loadWaitlistEntries();
+      console.log("Refreshed waitlist entries. User:", user?.email, "Profile:", profile);
     } catch (error) {
       console.error("Failed to load waitlist entries:", error);
-      setHasError(true);
       toast.error("Failed to load waitlist entries. Please try again.");
     }
   };
@@ -137,7 +134,12 @@ const WaitlistManager = () => {
   });
   
   // Check for admin access
+  if (!user) {
+    return <AccessDenied />;
+  }
+  
   if (profile?.role !== 'admin') {
+    console.log("User does not have admin access. Profile:", profile);
     return <AccessDenied />;
   }
   

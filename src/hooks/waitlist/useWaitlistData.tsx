@@ -58,7 +58,7 @@ export const useWaitlistData = () => {
     }
   };
   
-  // Load entries on component mount
+  // Load entries on component mount and when profile changes
   useEffect(() => {
     if (profile?.role === 'admin') {
       loadWaitlistEntries();
