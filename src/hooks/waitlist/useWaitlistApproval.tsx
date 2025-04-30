@@ -10,6 +10,49 @@ export const useWaitlistApproval = (updateLocalWaitlistEntry: (id: string, statu
   const { user, profile } = useAuth();
 
   /**
+   * Send notification email to user and admin after status update
+   */
+  const sendNotificationEmail = async (
+    type: "waitlistApproval" | "waitlistRejection",
+    recipientEmail: string, 
+    recipientName: string,
+    adminEmails: string[] = ["admin@flomanji.com"]
+  ) => {
+    try {
+      // Get the user's auth token for the edge function call
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error("No valid session found");
+      }
+
+      // Call the edge function to send email notification
+      const response = await supabase.functions.invoke("send-notification", {
+        body: {
+          type,
+          recipientEmail,
+          recipientName,
+          adminEmails,
+          userDetails: { firstName: recipientName, email: recipientEmail }
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (response.error) {
+        console.error("Email notification error:", response.error);
+        // Don't block the approval process if email fails
+        toast.error("Email notification could not be sent, but the status was updated successfully.");
+      } else {
+        console.log("Email notification sent successfully");
+      }
+    } catch (error) {
+      console.error("Failed to send email notification:", error);
+      // Don't block the approval process if email fails
+    }
+  };
+
+  /**
    * Create user account for approved waitlist entry using edge function
    */
   const approveWaitlistEntry = async (waitlistId: string, notes?: string) => {
@@ -23,6 +66,18 @@ export const useWaitlistApproval = (updateLocalWaitlistEntry: (id: string, statu
       if (profile?.role !== 'admin') {
         toast.error("Only admins can approve waitlist entries");
         return false;
+      }
+      
+      // Get the waitlist entry details for the email notification
+      const { data: waitlistEntry, error: fetchError } = await supabase
+        .from('waitlist_entries')
+        .select('*')
+        .eq('id', waitlistId)
+        .single();
+        
+      if (fetchError) {
+        console.error("Error fetching waitlist entry:", fetchError);
+        throw new Error("Could not fetch waitlist entry details");
       }
       
       // Update notes first if provided
@@ -59,6 +114,13 @@ export const useWaitlistApproval = (updateLocalWaitlistEntry: (id: string, statu
       // Update local state
       updateLocalWaitlistEntry(waitlistId, 'approved', notes);
       
+      // Send approval email notification
+      await sendNotificationEmail(
+        "waitlistApproval",
+        waitlistEntry.email,
+        waitlistEntry.first_name,
+      );
+      
       toast.success("Waitlist entry approved and user account created");
       return true;
     } catch (error) {
@@ -68,5 +130,65 @@ export const useWaitlistApproval = (updateLocalWaitlistEntry: (id: string, statu
     }
   };
 
-  return { approveWaitlistEntry };
+  /**
+   * Reject waitlist entry and send notification email
+   */
+  const rejectWaitlistEntry = async (waitlistId: string, notes?: string) => {
+    try {
+      if (!user) {
+        throw new Error("You must be logged in to reject waitlist entries");
+      }
+
+      if (profile?.role !== 'admin') {
+        toast.error("Only admins can reject waitlist entries");
+        return false;
+      }
+      
+      // Get the waitlist entry details for the email notification
+      const { data: waitlistEntry, error: fetchError } = await supabase
+        .from('waitlist_entries')
+        .select('*')
+        .eq('id', waitlistId)
+        .single();
+        
+      if (fetchError) {
+        console.error("Error fetching waitlist entry:", fetchError);
+        throw new Error("Could not fetch waitlist entry details");
+      }
+
+      // Update the status to rejected
+      const { error } = await supabase
+        .from('waitlist_entries')
+        .update({ 
+          status: "rejected", 
+          notes: notes || null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', waitlistId);
+        
+      if (error) {
+        console.error("Error rejecting waitlist entry:", error);
+        throw new Error("Could not update waitlist entry status");
+      }
+      
+      // Update local state
+      updateLocalWaitlistEntry(waitlistId, 'rejected', notes);
+      
+      // Send rejection email notification
+      await sendNotificationEmail(
+        "waitlistRejection",
+        waitlistEntry.email,
+        waitlistEntry.first_name,
+      );
+      
+      toast.success("Waitlist entry rejected");
+      return true;
+    } catch (error) {
+      console.error("Error rejecting waitlist entry:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to reject waitlist entry");
+      return false;
+    }
+  };
+
+  return { approveWaitlistEntry, rejectWaitlistEntry };
 };

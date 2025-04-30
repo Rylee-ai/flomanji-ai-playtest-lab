@@ -1,5 +1,4 @@
 
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useWaitlistApproval } from "./useWaitlistApproval";
@@ -11,7 +10,7 @@ export const useWaitlistStatusUpdate = (
   updateLocalWaitlistEntry: (id: string, status: 'approved' | 'rejected', notes?: string) => void
 ) => {
   const { profile, user } = useAuth();
-  const { approveWaitlistEntry } = useWaitlistApproval(updateLocalWaitlistEntry);
+  const { approveWaitlistEntry, rejectWaitlistEntry } = useWaitlistApproval(updateLocalWaitlistEntry);
   
   /**
    * Update waitlist entry status
@@ -31,28 +30,12 @@ export const useWaitlistStatusUpdate = (
         return await approveWaitlistEntry(id, notes);
       }
       
-      // For rejection, just update the status
-      const { error } = await supabase
-        .from('waitlist_entries')
-        .update({ 
-          status, 
-          notes: notes || null,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', id);
-      
-      if (error) {
-        console.error("Error in updateWaitlistStatus:", error);
-        throw error;
+      // For rejection, use our new rejection function
+      if (status === 'rejected') {
+        return await rejectWaitlistEntry(id, notes);
       }
       
-      console.log(`Successfully updated waitlist entry ${id} to status: ${status}`);
-      
-      // Update local state
-      updateLocalWaitlistEntry(id, status, notes);
-      
-      toast.success(`Waitlist entry ${status}`);
-      return true;
+      return false;
     } catch (error) {
       console.error("Error updating waitlist status:", error);
       toast.error("Failed to update waitlist status");

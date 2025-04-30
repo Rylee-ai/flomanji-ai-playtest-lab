@@ -1,13 +1,15 @@
 
 import { useState } from "react";
 import { WaitlistEntry } from "@/types/user";
-import { useWaitlistManager } from "@/hooks/waitlist/useWaitlistManager";
+import { useWaitlistStatusUpdate } from "./useWaitlistStatusUpdate";
+import { useWaitlistData } from "./useWaitlistData";
 
 /**
  * Hook for handling waitlist entry action operations (approve, reject, notes)
  */
 export const useWaitlistActions = () => {
-  const { updateWaitlistStatus } = useWaitlistManager();
+  const { updateLocalWaitlistEntry } = useWaitlistData();
+  const { updateWaitlistStatus } = useWaitlistStatusUpdate(updateLocalWaitlistEntry);
   
   // State for selected entry and dialogs
   const [actionEntry, setActionEntry] = useState<WaitlistEntry | null>(null);

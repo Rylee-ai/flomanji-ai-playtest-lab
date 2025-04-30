@@ -1,6 +1,6 @@
 
-import React, { useEffect } from "react";
-import { useWaitlistManager } from "@/hooks/waitlist/useWaitlistManager";
+import React, { useEffect, useState } from "react";
+import { useWaitlistData } from "@/hooks/waitlist/useWaitlistData";
 import { useWaitlistActions } from "@/hooks/waitlist/useWaitlistActions";
 import { useWaitlistFilters } from "@/hooks/waitlist/useWaitlistFilters";
 import { useAuth } from "@/hooks/useAuth";
@@ -16,11 +16,17 @@ import { AccessDenied } from "@/components/waitlist/AccessDenied";
  * WaitlistManager allows admins to review, approve, and reject waitlist applications
  */
 const WaitlistManager = () => {
-  // Hook for waitlist management operations
-  const { waitlistEntries, isLoading, hasError, loadWaitlistEntries } = useWaitlistManager();
-  
   // User authentication context
   const { profile, user } = useAuth();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Hook for waitlist management operations
+  const { 
+    waitlistEntries, 
+    isLoading, 
+    hasError, 
+    loadWaitlistEntries 
+  } = useWaitlistData();
   
   // Action handlers for waitlist entries
   const {
@@ -55,34 +61,38 @@ const WaitlistManager = () => {
     if (profile?.role === 'admin') {
       handleRefresh();
     }
-  }, [profile?.role]);
+  }, [profile?.role, user?.id]);
   
   /**
    * Refreshes the waitlist entries data
    */
   const handleRefresh = async () => {
     try {
+      setIsRefreshing(true);
+      console.log("Refreshing waitlist entries. User:", user?.email, "Profile:", profile);
       await loadWaitlistEntries();
-      console.log("Refreshed waitlist entries. User:", user?.email, "Profile:", profile);
+      console.log("Waitlist entries refreshed:", waitlistEntries.length);
     } catch (error) {
       console.error("Failed to load waitlist entries:", error);
       toast.error("Failed to load waitlist entries. Please try again.");
+    } finally {
+      setIsRefreshing(false);
     }
   };
   
   // Check for admin access
   if (!user) {
-    return <AccessDenied />;
+    return <AccessDenied message="Please sign in to access this page." />;
   }
   
   if (profile?.role !== 'admin') {
     console.log("User does not have admin access. Profile:", profile);
-    return <AccessDenied />;
+    return <AccessDenied message="You must be an administrator to access this page." />;
   }
   
   return (
     <div className="space-y-6">
-      <WaitlistHeader onRefresh={handleRefresh} />
+      <WaitlistHeader onRefresh={handleRefresh} isRefreshing={isRefreshing || isLoading} />
       
       <WaitlistContent
         filteredEntries={filteredEntries}
