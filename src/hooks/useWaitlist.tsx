@@ -35,7 +35,7 @@ export const useWaitlist = () => {
       // First, check if email already exists with any status
       const { data: existingEntries, error: checkError } = await supabase
         .from('waitlist_entries')
-        .select('id, status, email')
+        .select('id, status, email, created_at')
         .eq('email', data.email)
         .maybeSingle();
       
@@ -45,18 +45,20 @@ export const useWaitlist = () => {
       
       // If entry exists, provide appropriate feedback
       if (existingEntries) {
+        const createdDate = new Date(existingEntries.created_at).toLocaleDateString();
+        
         if (existingEntries.status === 'approved') {
-          const message = "You've already been approved for the Flomanji Playtest! Please check your email for login information.";
+          const message = `You've already been approved for the Flomanji Playtest! Please check your email for login information. Application submitted on ${createdDate}.`;
           toast.info(message);
           setStatusMessage(message);
           return { success: false, alreadyApproved: true };
         } else if (existingEntries.status === 'pending') {
-          const message = "You're already on our waitlist. We'll contact you soon when a spot opens up!";
+          const message = `You're already on our waitlist since ${createdDate}. We'll contact you soon when a spot opens up!`;
           toast.info(message);
           setStatusMessage(message);
           return { success: false, alreadyOnWaitlist: true };
         } else if (existingEntries.status === 'rejected') {
-          const message = "Your previous application was not approved. If you believe this is an error, please contact support.";
+          const message = `Your previous application from ${createdDate} was not approved. If you believe this is an error, please contact support.`;
           toast.info(message);
           setStatusMessage(message);
           return { success: false, previouslyRejected: true };
@@ -87,7 +89,9 @@ export const useWaitlist = () => {
       return { success: true };
     } catch (error) {
       console.error("Error submitting to waitlist:", error);
-      toast.error("There was a problem submitting your request. Please try again.");
+      const errorMessage = "There was a problem submitting your request. Please try again or contact support if the issue persists.";
+      toast.error(errorMessage);
+      setStatusMessage(errorMessage);
       
       return { success: false, error };
     } finally {

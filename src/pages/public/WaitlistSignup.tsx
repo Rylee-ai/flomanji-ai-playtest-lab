@@ -26,12 +26,15 @@ const WaitlistSignup = () => {
       return;
     }
     
-    await submitToWaitlist({
+    const result = await submitToWaitlist({
       firstName,
       lastName,
       email,
       agreedToTerms: agreeTerms
     });
+    
+    // Scroll to top to ensure users see the status message
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
   
   if (isSuccess) {
@@ -52,11 +55,20 @@ const WaitlistSignup = () => {
                 Your waitlist application has been successfully submitted. Your current status is <strong>pending review</strong>.
               </AlertDescription>
             </Alert>
-            <p className="text-green-700">
+            <p className="text-green-700 mb-4">
               We've received your information and added you to our waitlist. 
               Keep an eye on your email ({email}) for updates on your application 
               status and next steps. An admin will review your application soon.
             </p>
+            <div className="border border-green-300 bg-green-100 p-4 rounded-md">
+              <h3 className="text-green-800 font-medium mb-2">What happens next?</h3>
+              <ol className="list-decimal list-inside text-green-700 space-y-2">
+                <li>Our team reviews your application (typically within 1-3 business days)</li>
+                <li>If approved, you'll receive an email with login information</li>
+                <li>Once logged in, you can set your shipping address for your physical prototype</li>
+                <li>Start playtesting and providing valuable feedback!</li>
+              </ol>
+            </div>
           </CardContent>
           <CardFooter className="flex-col gap-2">
             <Button asChild className="w-full">

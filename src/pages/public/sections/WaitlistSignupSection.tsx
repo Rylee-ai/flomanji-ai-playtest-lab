@@ -36,6 +36,10 @@ export const WaitlistSignupSection = React.forwardRef<HTMLDivElement>((props, re
       setLastName("");
       setEmail("");
       setAgreedToTerms(false);
+      
+      // Scroll to form to ensure status message is visible
+      const formElement = e.currentTarget;
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
   
@@ -123,7 +127,8 @@ export const WaitlistSignupSection = React.forwardRef<HTMLDivElement>((props, re
               {isSuccess && (
                 <div className="p-3 bg-green-900/30 border border-green-800 rounded text-green-400 text-sm">
                   <p className="font-medium">Thank you! Your application has been submitted successfully.</p>
-                  <p className="mt-1 text-xs">Your application is now pending review. We'll contact you soon with updates.</p>
+                  <p className="mt-1">Your application is now pending review. We'll contact you soon with updates.</p>
+                  <p className="mt-2">Want to learn more? <a href="/waitlist" className="underline hover:text-green-300">View Waitlist Details</a></p>
                 </div>
               )}
             </form>
