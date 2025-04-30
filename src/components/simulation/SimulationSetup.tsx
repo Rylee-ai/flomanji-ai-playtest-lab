@@ -8,8 +8,12 @@ interface SimulationSetupProps {
   isLoading: boolean;
 }
 
+/**
+ * Component for setting up simulation parameters
+ */
 const SimulationSetup: React.FC<SimulationSetupProps> = ({ onStartSimulation, isLoading }) => {
   const [activeTab, setActiveTab] = useState("mission");
+  
   return (
     <SimulationValidationManager
       isLoading={isLoading}

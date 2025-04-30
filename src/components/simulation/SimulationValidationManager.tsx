@@ -2,8 +2,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { SimulationConfig } from "@/types";
 import { MISSION_CARDS } from "@/lib/cards/mission-cards";
-import { applyMissionScaling, validatePlayerCountForMission } from "@/lib/simulation/mission-validator";
 import { toast } from "sonner";
+import ValidationRules from "./validation/ValidationRules";
+import ConfigValidation from "./validation/ConfigValidation";
+import { ValidationProvider, useValidation } from "./validation/ValidationContext";
 
 interface SimulationValidationManagerProps {
   isLoading: boolean;
@@ -24,124 +26,30 @@ interface SimulationValidationManagerProps {
   }) => React.ReactNode;
 }
 
-const SimulationValidationManager: React.FC<SimulationValidationManagerProps> = ({
+/**
+ * Inner component that uses the validation context
+ */
+const ValidationManagerInner: React.FC<SimulationValidationManagerProps> = ({
   isLoading,
   onStartSimulation,
-  children,
+  children
 }) => {
   const [selectedMission, setSelectedMission] = useState(MISSION_CARDS[0]);
-  const [selectedCharacters, setSelectedCharacters] = useState<string[]>([]);
-  const [config, setConfig] = useState<SimulationConfig>({
-    scenarioPrompt: "",
-    rounds: 5,
-    players: 2,
-    enableCritic: true,
-    outputMode: "full",
-    startingHeat: selectedMission?.startingHeat || 2,
-    missionType: "exploration"
-  });
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (selectedMission) {
-      const scaledConfig = applyMissionScaling(
-        { ...config, scenarioPrompt: selectedMission.hook },
-        selectedMission
-      );
-      setConfig(scaledConfig);
-      validateConfiguration(scaledConfig);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedMission]);
-
-  useEffect(() => {
-    validateConfiguration(config);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.players, config.missionType]);
   
-  const validateConfiguration = useCallback((configToValidate: SimulationConfig) => {
-    const errors: string[] = [];
-    if (selectedMission) {
-      const playerValidation = validatePlayerCountForMission(
-        configToValidate.players || 2, 
-        selectedMission
-      );
-      if (!playerValidation.valid && playerValidation.message) {
-        errors.push(playerValidation.message);
-      }
-    }
-    if (selectedCharacters.length > (configToValidate.players || 2)) {
-      errors.push(`Too many characters selected. Please select at most ${configToValidate.players} characters.`);
-    }
-    setValidationErrors(errors);
-  }, [selectedCharacters.length, selectedMission]);
+  const {
+    config,
+    setConfig,
+    selectedCharacters,
+    setSelectedCharacters,
+    validationErrors,
+    setValidationErrors,
+    handleInputChange,
+    handlePlayerCountChange,
+    handleCharacterSelect,
+    handleCharacterDeselect
+  } = useValidation();
 
-  const handleInputChange = useCallback((field: keyof SimulationConfig, value: any) => {
-    if (field === "players") {
-      if (value === 1 && config.missionType !== "solo") {
-        setConfig(prev => ({
-          ...prev,
-          players: 1,
-          missionType: "solo"
-        }));
-        if (selectedCharacters.length > 1)
-          setSelectedCharacters(prev => prev.slice(0, 1));
-      } else if (value > 1 && config.missionType === "solo") {
-        setConfig(prev => ({
-          ...prev,
-          players: value,
-          missionType: "exploration"
-        }));
-      } else {
-        setConfig(prev => ({ ...prev, [field]: value }));
-      }
-    } else if (field === "missionType") {
-      if (value === "solo") {
-        setConfig(prev => ({
-          ...prev,
-          missionType: "solo",
-          players: 1
-        }));
-        if (selectedCharacters.length > 1)
-          setSelectedCharacters(prev => prev.slice(0, 1));
-      } else if (config.players === 1 && config.missionType === "solo") {
-        setConfig(prev => ({
-          ...prev,
-          missionType: value,
-          players: 2
-        }));
-      } else {
-        setConfig(prev => ({ ...prev, [field]: value }));
-      }
-    } else {
-      setConfig(prev => ({ ...prev, [field]: value }));
-    }
-  }, [config.missionType, config.players, selectedCharacters.length]);
-
-  const handleCharacterSelect = (characterId: string) => {
-    if (config.players === 1) {
-      setSelectedCharacters([characterId]);
-    } else {
-      if (selectedCharacters.length < (config.players || 2)) {
-        setSelectedCharacters(prev => [...prev, characterId]);
-      } else {
-        toast.error(`Maximum ${config.players} characters allowed`);
-      }
-    }
-  };
-
-  const handleCharacterDeselect = (characterId: string) => {
-    setSelectedCharacters(prev => prev.filter(id => id !== characterId));
-  };
-
-  const handlePlayerCountChange = (value: number) => {
-    handleInputChange("players", value);
-    if (selectedCharacters.length > value) {
-      setSelectedCharacters(prev => prev.slice(0, value));
-    }
-  };
-
-  const handleStartSimulation = () => {
+  const handleStartSimulation = useCallback(() => {
     const simulationConfig: SimulationConfig = {
       ...config,
       missionId: selectedMission.id,
@@ -170,10 +78,24 @@ const SimulationValidationManager: React.FC<SimulationValidationManagerProps> = 
     }
 
     onStartSimulation(simulationConfig);
-  };
+  }, [config, selectedCharacters, selectedMission, validationErrors, onStartSimulation]);
 
+  // Render validation components
   return (
     <>
+      <ValidationRules
+        config={config}
+        selectedMission={selectedMission}
+        selectedCharacters={selectedCharacters}
+        onValidationComplete={setValidationErrors}
+      />
+      
+      <ConfigValidation
+        config={config}
+        setConfig={setConfig}
+        selectedMission={selectedMission}
+      />
+      
       {children({
         selectedMission,
         setSelectedMission,
@@ -192,5 +114,25 @@ const SimulationValidationManager: React.FC<SimulationValidationManagerProps> = 
   );
 };
 
-export default SimulationValidationManager;
+/**
+ * Main validation manager component with provider
+ */
+const SimulationValidationManager: React.FC<SimulationValidationManagerProps> = (props) => {
+  const initialConfig: SimulationConfig = {
+    scenarioPrompt: "",
+    rounds: 5,
+    players: 2,
+    enableCritic: true,
+    outputMode: "full",
+    startingHeat: props.children({} as any).props.selectedMission?.startingHeat || 2,
+    missionType: "exploration"
+  };
 
+  return (
+    <ValidationProvider initialConfig={initialConfig}>
+      <ValidationManagerInner {...props} />
+    </ValidationProvider>
+  );
+};
+
+export default SimulationValidationManager;
