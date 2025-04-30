@@ -10,7 +10,7 @@ import { useWaitlistApproval } from "./useWaitlistApproval";
 export const useWaitlistStatusUpdate = (
   updateLocalWaitlistEntry: (id: string, status: 'approved' | 'rejected', notes?: string) => void
 ) => {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const { approveWaitlistEntry } = useWaitlistApproval(updateLocalWaitlistEntry);
   
   /**
@@ -18,8 +18,11 @@ export const useWaitlistStatusUpdate = (
    */
   const updateWaitlistStatus = async (id: string, status: 'approved' | 'rejected', notes?: string) => {
     try {
+      console.log(`Updating waitlist entry ${id} to status: ${status}. User: ${user?.email}`);
+      
       if (profile?.role !== 'admin') {
-        toast.error("Only admins can update waitlist entries");
+        console.error("Only admins can update waitlist entries");
+        toast.error("You don't have permission to update waitlist entries");
         return false;
       }
       
@@ -39,8 +42,11 @@ export const useWaitlistStatusUpdate = (
         .eq('id', id);
       
       if (error) {
+        console.error("Error in updateWaitlistStatus:", error);
         throw error;
       }
+      
+      console.log(`Successfully updated waitlist entry ${id} to status: ${status}`);
       
       // Update local state
       updateLocalWaitlistEntry(id, status, notes);

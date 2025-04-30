@@ -14,6 +14,8 @@ export const useWaitlistApproval = (updateLocalWaitlistEntry: (id: string, statu
    */
   const approveWaitlistEntry = async (waitlistId: string, notes?: string) => {
     try {
+      console.log(`Approving waitlist entry ${waitlistId}. User: ${user?.email}`);
+      
       if (!user) {
         throw new Error("You must be logged in to approve waitlist entries");
       }
@@ -37,6 +39,8 @@ export const useWaitlistApproval = (updateLocalWaitlistEntry: (id: string, statu
         throw new Error("No valid session found");
       }
       
+      console.log("Calling edge function to process waitlist approval");
+      
       // Call the edge function to create a user account for the waitlist entry
       const response = await supabase.functions.invoke("process-waitlist-approval", {
         body: { waitlistId },
@@ -46,8 +50,11 @@ export const useWaitlistApproval = (updateLocalWaitlistEntry: (id: string, statu
       });
       
       if (response.error) {
+        console.error("Edge function error:", response.error);
         throw new Error(response.error.message || "Error approving waitlist entry");
       }
+      
+      console.log("Successfully approved waitlist entry and created user account");
       
       // Update local state
       updateLocalWaitlistEntry(waitlistId, 'approved', notes);

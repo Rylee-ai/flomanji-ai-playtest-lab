@@ -12,7 +12,7 @@ export const useWaitlistData = () => {
   const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   
   /**
    * Load waitlist entries from Supabase
@@ -22,19 +22,28 @@ export const useWaitlistData = () => {
       setIsLoading(true);
       setHasError(false);
       
+      console.log("Loading waitlist entries. User email:", user?.email);
+      console.log("User profile:", profile);
+      
       if (profile?.role !== 'admin') {
         console.error("Only admins can access waitlist data");
+        toast.error("You don't have permission to view waitlist data");
+        setHasError(true);
         return;
       }
       
+      console.log("Fetching waitlist entries...");
       const { data, error } = await supabase
         .from('waitlist_entries')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
+      
+      console.log("Waitlist entries fetched:", data?.length || 0);
       
       // Transform database field names to match our TypeScript types
       const transformedData = data.map(entry => ({
@@ -63,7 +72,7 @@ export const useWaitlistData = () => {
     if (profile?.role === 'admin') {
       loadWaitlistEntries();
     }
-  }, [profile?.role]);
+  }, [profile?.role, user?.id]);
   
   /**
    * Update the local waitlist entries state with a new entry
