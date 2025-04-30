@@ -63,15 +63,14 @@ serve(async (req: Request) => {
       );
     }
 
-    // Get user role to verify admin status
-    // Since we need to enforce our own RLS, we have to use the service role client
-    const { data: roleData, error: roleError } = await adminClient
-      .from("auth_users")
+    // Get user role to verify admin status from the new profiles table
+    const { data: profileData, error: profileError } = await adminClient
+      .from("profiles")
       .select("role")
       .eq("id", user.id)
       .single();
 
-    if (roleError || roleData?.role !== "admin") {
+    if (profileError || profileData?.role !== "admin") {
       return new Response(
         JSON.stringify({ error: "Only admins can approve waitlist entries" }),
         { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -103,7 +102,8 @@ serve(async (req: Request) => {
       user_metadata: {
         first_name: waitlistEntry.first_name,
         last_name: waitlistEntry.last_name,
-        waitlist_id: waitlistEntry.id
+        waitlist_id: waitlistEntry.id,
+        role: "player" // Setting default role in metadata for the trigger function
       }
     });
 
