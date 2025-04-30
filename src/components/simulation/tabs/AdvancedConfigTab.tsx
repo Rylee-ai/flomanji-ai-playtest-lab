@@ -40,9 +40,8 @@ const AdvancedConfigTab: React.FC<AdvancedConfigTabProps> = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="outputMode">Output Detail Level</Label>
+        <Label htmlFor="output-mode">Output Detail Level</Label>
         <Select
-          id="outputMode"
           value={config.outputMode || "full"}
           onValueChange={(value) => onConfigChange("outputMode", value)}
         >

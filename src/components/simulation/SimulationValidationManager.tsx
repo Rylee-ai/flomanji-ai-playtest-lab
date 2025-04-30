@@ -124,7 +124,7 @@ const SimulationValidationManager: React.FC<SimulationValidationManagerProps> = 
     players: 2,
     enableCritic: true,
     outputMode: "full",
-    startingHeat: props.children({} as any).props.selectedMission?.startingHeat || 2,
+    startingHeat: 2,
     missionType: "exploration"
   };
 
