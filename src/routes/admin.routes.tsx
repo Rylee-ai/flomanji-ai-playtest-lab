@@ -11,6 +11,7 @@ import Rules from "@/pages/Rules";
 import Settings from "@/pages/Settings";
 import AgentManager from "@/pages/AgentManager";
 import WaitlistManager from "@/pages/WaitlistManager";
+import ShippingManager from "@/pages/ShippingManager";
 
 export const adminRoutes: RouteObject[] = [
   {
@@ -29,7 +30,7 @@ export const adminRoutes: RouteObject[] = [
       { path: "/agents", element: <AgentManager /> },
       { path: "/settings", element: <Settings /> },
       { path: "/waitlist-manager", element: <WaitlistManager /> },
+      { path: "/shipping-manager", element: <ShippingManager /> },
     ],
   },
 ];
-

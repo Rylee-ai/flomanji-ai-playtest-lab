@@ -5,57 +5,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
+import { useWaitlist } from "@/hooks/useWaitlist";
+import { toast } from "sonner";
 
 const WaitlistSignup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  
+  const { submitToWaitlist, isSubmitting, isSuccess } = useWaitlist();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!agreeTerms) {
-      toast({
-        title: "Please agree to terms",
-        description: "You must agree to the terms and conditions to join the waitlist",
-        variant: "destructive",
-      });
+    if (!firstName || !lastName || !email) {
+      toast.error("Please fill out all required fields");
       return;
     }
     
-    setIsSubmitting(true);
-    
-    try {
-      // Simulate an API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // This would submit to your database in a real implementation
-      console.log({
-        firstName,
-        lastName,
-        email,
-        timestamp: new Date().toISOString(),
-      });
-      
-      setIsSuccess(true);
-      toast({
-        title: "Waitlist Signup Successful",
-        description: "Thank you for joining our waitlist! We'll be in touch soon.",
-      });
-    } catch (error) {
-      console.error("Error submitting to waitlist:", error);
-      toast({
-        title: "Submission Error",
-        description: "There was a problem submitting your request. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await submitToWaitlist({
+      firstName,
+      lastName,
+      email,
+      agreedToTerms: agreeTerms
+    });
   };
   
   if (isSuccess) {

@@ -1,80 +1,147 @@
 
-import React, { useState } from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
-import { BookOpen, BarChart2, PlayCircle, FileText, List, Settings, Bot } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-
-const NAV_ITEMS = [
-  { path: "/", label: "Dashboard", icon: <BarChart2 className="h-5 w-5" /> },
-  { path: "/simulations", label: "Simulations", icon: <PlayCircle className="h-5 w-5" /> },
-  { path: "/content", label: "Content", icon: <List className="h-5 w-5" /> },
-  { path: "/rules", label: "Rules", icon: <BookOpen className="h-5 w-5" /> },
-  { path: "/agents", label: "AI Agents", icon: <Bot className="h-5 w-5" /> },
-  { path: "/settings", label: "Settings", icon: <Settings className="h-5 w-5" /> },
-];
+import React from "react";
+import { Outlet, Link, NavLink, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { 
+  Users, 
+  Settings, 
+  LogOut, 
+  Menu, 
+  X, 
+  Home, 
+  PlaySquare, 
+  LayoutGrid, 
+  FileText, 
+  Bot, 
+  Truck,
+  UserCheck
+} from "lucide-react";
 
 const AdminLayout = () => {
+  const { signOut, user, profile } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const location = useLocation();
-  const isMobile = useIsMobile();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const NavLinks = () => (
-    <nav className="px-2 space-y-1">
-      {NAV_ITEMS.map((item) => (
-        <Link
-          key={item.path}
-          to={item.path}
-          className={`flex items-center px-3 py-2 rounded-md text-sm transition-colors ${
-            location.pathname === item.path || 
-            (item.path !== "/" && location.pathname.startsWith(item.path))
-              ? "bg-amber-500 text-black font-medium"
-              : "text-gray-300 hover:bg-gray-800 hover:text-amber-400"
-          }`}
-          onClick={() => isMobile && setIsMobileMenuOpen(false)}
-        >
-          {item.icon}
-          <span className="ml-3">{item.label}</span>
-        </Link>
-      ))}
-    </nav>
-  );
-
+  
+  const navItems = [
+    { title: "Dashboard", icon: <Home className="h-4 w-4 mr-2" />, href: "/dashboard" },
+    { title: "Simulations", icon: <PlaySquare className="h-4 w-4 mr-2" />, href: "/simulations" },
+    { title: "Content", icon: <LayoutGrid className="h-4 w-4 mr-2" />, href: "/content" },
+    { title: "Rules", icon: <FileText className="h-4 w-4 mr-2" />, href: "/rules" },
+    { title: "AI Agents", icon: <Bot className="h-4 w-4 mr-2" />, href: "/agents" },
+    { title: "Playtesters", icon: <UserCheck className="h-4 w-4 mr-2" />, href: "/waitlist-manager" },
+    { title: "Shipping", icon: <Truck className="h-4 w-4 mr-2" />, href: "/shipping-manager" },
+    { title: "Settings", icon: <Settings className="h-4 w-4 mr-2" />, href: "/settings" },
+  ];
+  
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 to-black">
-      {/* Desktop Sidebar */}
-      <aside className="flex-shrink-0 w-64 border-r border-gray-800 bg-black/50 backdrop-blur-sm hidden md:block">
-        <div className="p-4 mb-4 border-b border-gray-800">
-          <h1 className="text-xl font-bold text-amber-400">Flomanji Admin</h1>
-          <p className="text-sm text-gray-400">Game Master Dashboard</p>
+    <div className="min-h-screen flex bg-gray-900 text-white">
+      {/* Sidebar for larger screens */}
+      <div className="hidden md:flex md:flex-col md:w-64 bg-gray-950 border-r border-gray-800">
+        <div className="p-4 border-b border-gray-800">
+          <Link to="/" className="flex items-center text-xl font-bold text-amber-400">
+            FLOMANJI
+          </Link>
         </div>
-        <NavLinks />
-      </aside>
-
+        <nav className="flex flex-col flex-1 p-4 overflow-y-auto">
+          <div className="space-y-1">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.href}
+                to={item.href}
+                className={({ isActive }) => `
+                  flex items-center px-3 py-2 rounded-md text-sm
+                  ${isActive 
+                    ? 'bg-amber-500/20 text-amber-400' 
+                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
+                `}
+              >
+                {item.icon}
+                {item.title}
+              </NavLink>
+            ))}
+          </div>
+        </nav>
+        <div className="p-4 border-t border-gray-800">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="w-full justify-start">
+                <Users className="h-4 w-4 mr-2" />
+                {profile?.firstName || user?.email}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-red-500">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+      
+      {/* Mobile sidebar */}
+      <div className={`fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden ${isSidebarOpen ? 'block' : 'hidden'}`} onClick={() => setIsSidebarOpen(false)}></div>
+      <div className={`fixed inset-y-0 left-0 w-64 bg-gray-950 border-r border-gray-800 z-30 transition-transform transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:hidden`}>
+        <div className="p-4 border-b border-gray-800 flex justify-between items-center">
+          <Link to="/" className="flex items-center text-xl font-bold text-amber-400">
+            FLOMANJI
+          </Link>
+          <button onClick={() => setIsSidebarOpen(false)}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <nav className="flex flex-col flex-1 p-4 overflow-y-auto">
+          <div className="space-y-1">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.href}
+                to={item.href}
+                className={({ isActive }) => `
+                  flex items-center px-3 py-2 rounded-md text-sm
+                  ${isActive 
+                    ? 'bg-amber-500/20 text-amber-400' 
+                    : 'text-gray-400 hover:bg-gray-800 hover:text-white'}
+                `}
+                onClick={() => setIsSidebarOpen(false)}
+              >
+                {item.icon}
+                {item.title}
+              </NavLink>
+            ))}
+          </div>
+        </nav>
+        <div className="p-4 border-t border-gray-800">
+          <Button variant="ghost" className="w-full justify-start" onClick={() => signOut()}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
+          </Button>
+        </div>
+      </div>
+      
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Mobile Header */}
-        <header className="flex items-center justify-between border-b border-gray-800 bg-black/50 backdrop-blur-sm h-14 px-4 sm:px-6 md:hidden">
-          <h1 className="text-lg font-medium text-amber-400">Flomanji Admin</h1>
-          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <button className="text-gray-300 p-2 hover:text-amber-400">
-                <List className="h-6 w-6" />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0 bg-black border-r border-gray-800">
-              <div className="p-4 border-b border-gray-800">
-                <h2 className="text-xl font-bold text-amber-400">Flomanji Admin</h2>
-                <p className="text-sm text-gray-400">Game Master Dashboard</p>
-              </div>
-              <NavLinks />
-            </SheetContent>
-          </Sheet>
+        {/* Header for mobile */}
+        <header className="md:hidden bg-gray-950 border-b border-gray-800 p-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center text-xl font-bold text-amber-400">
+            FLOMANJI
+          </Link>
+          <button onClick={() => setIsSidebarOpen(true)}>
+            <Menu className="h-6 w-6" />
+          </button>
         </header>
-
-        {/* Content */}
-        <main className="flex-1 overflow-auto px-4 py-8 md:px-8">
-          <Outlet />
+        
+        {/* Main content */}
+        <main className="flex-1 overflow-auto bg-gray-900 p-6">
+          <div className="max-w-6xl mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

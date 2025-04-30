@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
-import { toast } from '@/components/ui/use-toast';
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from 'sonner';
 
 interface WaitlistFormData {
   firstName: string;
@@ -15,37 +16,39 @@ export const useWaitlist = () => {
   
   const submitToWaitlist = async (data: WaitlistFormData) => {
     if (!data.agreedToTerms) {
-      toast({
-        title: "Terms Agreement Required",
-        description: "Please agree to receive emails about the Flomanji Playtest Program",
-        variant: "destructive",
-      });
-      return;
+      toast.error("Please agree to receive emails about the Flomanji Playtest Program");
+      return { success: false };
     }
     
     setIsSubmitting(true);
     
     try {
-      // Simulate an API call - this would be replaced with a real API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Submit to Supabase
+      const { error } = await supabase
+        .from('waitlist_entries')
+        .insert([
+          { 
+            first_name: data.firstName, 
+            last_name: data.lastName, 
+            email: data.email,
+          }
+        ]);
       
-      // This would submit to your database in a real implementation
-      console.log("Submitting to waitlist:", data);
+      if (error) {
+        if (error.code === '23505') { // Unique violation
+          toast.error("This email is already on our waitlist");
+          return { success: false, error };
+        }
+        throw error;
+      }
       
       setIsSuccess(true);
-      toast({
-        title: "Waitlist Signup Successful",
-        description: "Thank you for your interest in Flomanji! We'll be in touch soon.",
-      });
+      toast.success("Thank you for your interest in Flomanji! We'll be in touch soon.");
       
       return { success: true };
     } catch (error) {
       console.error("Error submitting to waitlist:", error);
-      toast({
-        title: "Submission Error",
-        description: "There was a problem submitting your request. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("There was a problem submitting your request. Please try again.");
       
       return { success: false, error };
     } finally {

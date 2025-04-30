@@ -9,6 +9,86 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      mailing_addresses: {
+        Row: {
+          apartment: string | null
+          city: string
+          country: string
+          created_at: string
+          id: string
+          postal_code: string
+          state: string
+          street: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          apartment?: string | null
+          city: string
+          country?: string
+          created_at?: string
+          id?: string
+          postal_code: string
+          state: string
+          street: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          apartment?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          id?: string
+          postal_code?: string
+          state?: string
+          street?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      player_details: {
+        Row: {
+          created_at: string
+          id: string
+          shipping_status: string
+          tracking_number: string | null
+          tracking_url: string | null
+          updated_at: string
+          user_id: string
+          waitlist_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          shipping_status?: string
+          tracking_number?: string | null
+          tracking_url?: string | null
+          updated_at?: string
+          user_id: string
+          waitlist_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          shipping_status?: string
+          tracking_number?: string | null
+          tracking_url?: string | null
+          updated_at?: string
+          user_id?: string
+          waitlist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_details_waitlist_id_fkey"
+            columns: ["waitlist_id"]
+            isOneToOne: true
+            referencedRelation: "waitlist_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       settings: {
         Row: {
           created_at: string | null
@@ -30,6 +110,39 @@ export type Database = {
           key?: string
           updated_at?: string | null
           value?: string | null
+        }
+        Relationships: []
+      }
+      waitlist_entries: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          notes: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
