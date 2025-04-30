@@ -29,9 +29,9 @@ export function AppProviders({ children }: AppProvidersProps) {
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <AuthProvider>
+              {children}
               <Toaster />
               <Sonner />
-              {children}
             </AuthProvider>
           </TooltipProvider>
         </QueryClientProvider>

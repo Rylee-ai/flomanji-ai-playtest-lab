@@ -1,10 +1,10 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, MessageSquare, Search, Filter, RefreshCcw } from "lucide-react";
+import { Check, X, MessageSquare, Search, Filter, RefreshCcw, AlertCircle } from "lucide-react";
 import { useWaitlistManager } from "@/hooks/useWaitlistManager";
 import { WaitlistEntry } from "@/types/user";
 import {
@@ -28,6 +28,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const WaitlistManager = () => {
   const { waitlistEntries, isLoading, updateWaitlistStatus, loadWaitlistEntries } = useWaitlistManager();
@@ -38,6 +40,26 @@ const WaitlistManager = () => {
   const [notes, setNotes] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [hasError, setHasError] = useState(false);
+  const { profile } = useAuth();
+  
+  // Load waitlist entries when the component mounts
+  useEffect(() => {
+    if (profile?.role === 'admin') {
+      handleRefresh();
+    }
+  }, [profile?.role]);
+  
+  const handleRefresh = async () => {
+    try {
+      setHasError(false);
+      await loadWaitlistEntries();
+    } catch (error) {
+      console.error("Failed to load waitlist entries:", error);
+      setHasError(true);
+      toast.error("Failed to load waitlist entries. Please try again.");
+    }
+  };
   
   const handleApprove = (entry: WaitlistEntry) => {
     setActionEntry(entry);
@@ -103,11 +125,23 @@ const WaitlistManager = () => {
     }
   };
   
+  if (profile?.role !== 'admin') {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
+        <p className="text-center text-muted-foreground mb-4">
+          You don't have permission to access the Waitlist Manager.
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Waitlist Manager</h1>
-        <Button variant="outline" size="sm" onClick={loadWaitlistEntries}>
+        <Button variant="outline" size="sm" onClick={handleRefresh}>
           <RefreshCcw className="h-4 w-4 mr-2" /> Refresh
         </Button>
       </div>
@@ -148,6 +182,14 @@ const WaitlistManager = () => {
             <div className="text-center py-8">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
               <p>Loading waitlist entries...</p>
+            </div>
+          ) : hasError ? (
+            <div className="text-center py-8">
+              <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+              <p className="text-red-600 mb-4">Failed to load waitlist entries.</p>
+              <Button onClick={handleRefresh} variant="outline">
+                Try Again
+              </Button>
             </div>
           ) : filteredEntries.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
@@ -192,21 +234,21 @@ const WaitlistManager = () => {
                             <>
                               <Button 
                                 size="sm" 
-                                variant="outline" 
-                                className="h-8 w-8 p-0 bg-green-50 border-green-200 hover:bg-green-100 hover:text-green-700" 
+                                variant="success" 
+                                className="h-8 w-8 p-0" 
                                 onClick={() => handleApprove(entry)}
                               >
                                 <span className="sr-only">Approve</span>
-                                <Check className="h-4 w-4 text-green-600" />
+                                <Check className="h-4 w-4" />
                               </Button>
                               <Button 
                                 size="sm" 
-                                variant="outline" 
-                                className="h-8 w-8 p-0 bg-red-50 border-red-200 hover:bg-red-100 hover:text-red-700" 
+                                variant="destructive" 
+                                className="h-8 w-8 p-0" 
                                 onClick={() => handleReject(entry)}
                               >
                                 <span className="sr-only">Reject</span>
-                                <X className="h-4 w-4 text-red-600" />
+                                <X className="h-4 w-4" />
                               </Button>
                             </>
                           )}
@@ -257,7 +299,7 @@ const WaitlistManager = () => {
             }}>
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmApprove} className="bg-green-600 hover:bg-green-700">
+            <AlertDialogAction onClick={confirmApprove} className="bg-green-600 hover:bg-green-700 text-white">
               Approve
             </AlertDialogAction>
           </AlertDialogFooter>

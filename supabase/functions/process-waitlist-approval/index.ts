@@ -7,6 +7,40 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Send welcome email (in a real implementation this would use a proper email service)
+const sendWelcomeEmail = async (email: string, firstName: string, resetUrl: string) => {
+  console.log(`Sending welcome email to ${email}`);
+  
+  // In a real implementation, you would integrate with an email service like Resend or SendGrid
+  // For now, we'll log the email content
+  const emailTemplate = `
+    To: ${email}
+    Subject: Welcome to Flomanji Playtest Program!
+    
+    Dear ${firstName},
+    
+    Congratulations on being accepted into the Flomanji Playtest Program!
+    
+    Your account has been created and you can now log in using your email address.
+    Please use the following link to set your password and access your account:
+    
+    ${resetUrl}
+    
+    After logging in, please add your shipping address so we can send you your playtest materials.
+    
+    If you have any questions, please don't hesitate to contact us.
+    
+    Thank you for joining us on this exciting journey!
+    
+    The Flomanji Team
+  `;
+  
+  console.log("Email content:", emailTemplate);
+  
+  // Return true as if email was sent successfully
+  return true;
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -74,10 +108,11 @@ serve(async (req) => {
       );
     }
 
-    // Generate a random password for the new user
-    const generatedPassword = Math.random().toString(36).slice(-10) + 
-                             Math.random().toString(36).slice(-10).toUpperCase() +
-                             Math.random().toString(36).slice(-2) + '!';
+    // Generate a strong random password for the new user
+    const generatedPassword = Array(16)
+      .fill(0)
+      .map(() => Math.random().toString(36).charAt(2))
+      .join('') + Math.random().toString(36).slice(-2).toUpperCase() + '!';
 
     // Create a new user in auth
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
@@ -113,8 +148,26 @@ serve(async (req) => {
       );
     }
 
-    // Send welcome email (in a real app you'd use an email service here)
-    console.log(`Would send welcome email to ${waitlistEntry.email} with password reset instructions`);
+    // Generate password reset link for the user (so they can set their own password)
+    const { data: resetData, error: resetError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'recovery',
+      email: waitlistEntry.email,
+      options: {
+        redirectTo: `${req.headers.get('origin') || ''}/auth`,
+      }
+    });
+
+    if (resetError) {
+      console.error("Error generating password reset link:", resetError);
+    }
+
+    // Send welcome email with password reset link
+    const resetUrl = resetData?.properties?.action_link || `${req.headers.get('origin') || ''}/auth`;
+    await sendWelcomeEmail(
+      waitlistEntry.email, 
+      waitlistEntry.first_name, 
+      resetUrl
+    );
 
     return new Response(
       JSON.stringify({ 

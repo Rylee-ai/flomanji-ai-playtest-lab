@@ -20,9 +20,41 @@ export const useWaitlist = () => {
       return { success: false };
     }
     
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      toast.error("Please enter a valid email address");
+      return { success: false };
+    }
+    
     setIsSubmitting(true);
     
     try {
+      // First, check if email already exists with any status
+      const { data: existingEntries, error: checkError } = await supabase
+        .from('waitlist_entries')
+        .select('id, status, email')
+        .eq('email', data.email)
+        .maybeSingle();
+      
+      if (checkError) {
+        throw checkError;
+      }
+      
+      // If entry exists, provide appropriate feedback
+      if (existingEntries) {
+        if (existingEntries.status === 'approved') {
+          toast.info("You've already been approved for the Flomanji Playtest! Please check your email for login information.");
+          return { success: false, alreadyApproved: true };
+        } else if (existingEntries.status === 'pending') {
+          toast.info("You're already on our waitlist. We'll contact you soon!");
+          return { success: false, alreadyOnWaitlist: true };
+        } else if (existingEntries.status === 'rejected') {
+          toast.info("Your previous application was not approved. If you believe this is an error, please contact support.");
+          return { success: false, previouslyRejected: true };
+        }
+      }
+      
       // Submit to Supabase with field names matching the database schema
       const { error } = await supabase
         .from('waitlist_entries')
@@ -36,10 +68,6 @@ export const useWaitlist = () => {
         ]);
       
       if (error) {
-        if (error.code === '23505') { // Unique violation
-          toast.error("This email is already on our waitlist");
-          return { success: false, error };
-        }
         throw error;
       }
       

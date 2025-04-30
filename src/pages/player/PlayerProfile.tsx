@@ -7,18 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import { Link } from "react-router-dom";
+import { PackageOpen } from "lucide-react";
+import { usePlayerShipping } from "@/hooks/usePlayerShipping";
 
 const PlayerProfile = () => {
   const { profile, user } = useAuth();
-  
-  const handleSaveAddress = (e: React.FormEvent) => {
-    e.preventDefault();
-    // This would save the address to the database in a real implementation
-    toast({
-      title: "Address Updated",
-      description: "Your shipping address has been updated successfully",
-    });
-  };
+  const { shippingAddress } = usePlayerShipping();
   
   const handleSavePreferences = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,49 +67,38 @@ const PlayerProfile = () => {
         </Card>
         
         <Card>
-          <form onSubmit={handleSaveAddress}>
-            <CardHeader>
-              <CardTitle>Shipping Address</CardTitle>
-              <CardDescription>
-                Where we'll send your playtest materials
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="street">Street Address</Label>
-                  <Input id="street" placeholder="123 Main St" />
-                </div>
-                <div>
-                  <Label htmlFor="apartment">Apartment/Suite (Optional)</Label>
-                  <Input id="apartment" placeholder="Apt 4B" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="city">City</Label>
-                    <Input id="city" placeholder="New York" />
-                  </div>
-                  <div>
-                    <Label htmlFor="state">State</Label>
-                    <Input id="state" placeholder="NY" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="postal">Postal Code</Label>
-                    <Input id="postal" placeholder="10001" />
-                  </div>
-                  <div>
-                    <Label htmlFor="country">Country</Label>
-                    <Input id="country" placeholder="United States" />
-                  </div>
-                </div>
+          <CardHeader>
+            <CardTitle>Shipping Address</CardTitle>
+            <CardDescription>
+              Where we'll send your playtest materials
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {shippingAddress ? (
+              <div className="p-4 border rounded-md bg-gray-50">
+                <p className="mb-1">{profile?.firstName} {profile?.lastName}</p>
+                <p className="mb-1">{shippingAddress.street}</p>
+                {shippingAddress.apartment && <p className="mb-1">{shippingAddress.apartment}</p>}
+                <p className="mb-1">{shippingAddress.city}, {shippingAddress.state} {shippingAddress.postal_code}</p>
+                <p>{shippingAddress.country}</p>
               </div>
-            </CardContent>
-            <CardFooter>
-              <Button type="submit">Save Address</Button>
-            </CardFooter>
-          </form>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-6 text-center">
+                <PackageOpen className="h-12 w-12 text-muted-foreground mb-3" />
+                <p className="text-muted-foreground mb-4">No shipping address on file</p>
+                <Button asChild>
+                  <Link to="/player/shipping">Add Shipping Address</Link>
+                </Button>
+              </div>
+            )}
+          </CardContent>
+          <CardFooter>
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/player/shipping">
+                {shippingAddress ? "Manage Shipping" : "Set Up Shipping"}
+              </Link>
+            </Button>
+          </CardFooter>
         </Card>
       </div>
       
