@@ -9,47 +9,48 @@ import { supabase } from "@/integrations/supabase/client";
  */
 export const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
   try {
+    console.log(`Fetching profile for user: ${userId}`);
+    
     // Query the profiles table from our database
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      // Check for recursion error and handle it gracefully
+      // Handle specific error cases more gracefully
       if (error.code === '42P17') {
-        console.error('RLS recursion error detected. Using fallback profile data.');
-        // Create a minimal profile with reasonable defaults when we can't fetch from DB
-        return {
-          id: userId,
-          email: '',
-          // Default to admin if the user is authenticated but we can't determine role
-          // This is a fallback to prevent lockout, but should be fixed in Supabase RLS
-          role: "admin", 
-          createdAt: new Date().toISOString()
-        };
+        console.error('RLS recursion error detected:', error.message);
+        toast({
+          title: "Authentication error",
+          description: "There was an issue loading your profile due to a permission configuration problem. Please contact support.",
+          variant: "destructive"
+        });
+        return null;
       }
       
       console.error('Error fetching user profile:', error);
       return null;
     }
 
-    if (data) {
-      // Transform the data to match our UserProfile type
-      const userProfile: UserProfile = {
-        id: data.id,
-        email: '', // Will be populated by the auth provider
-        role: data.role as "admin" | "player", // Explicitly cast to UserRole type
-        firstName: data.first_name,
-        lastName: data.last_name,
-        createdAt: data.created_at
-      };
-      
-      return userProfile;
+    if (!data) {
+      console.warn(`No profile found for user ID: ${userId}`);
+      return null;
     }
+
+    // Transform the data to match our UserProfile type
+    const userProfile: UserProfile = {
+      id: data.id,
+      email: '', // Will be populated by the auth provider
+      role: data.role as "admin" | "player", // Explicitly cast to UserRole type
+      firstName: data.first_name,
+      lastName: data.last_name,
+      createdAt: data.created_at
+    };
     
-    return null;
+    console.log(`Profile loaded successfully for ${userId}, role: ${userProfile.role}`);
+    return userProfile;
   } catch (error) {
     console.error('Error in fetchUserProfile:', error);
     return null;

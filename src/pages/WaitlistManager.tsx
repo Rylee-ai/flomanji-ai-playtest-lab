@@ -73,12 +73,13 @@ const WaitlistManager = () => {
     }
   };
   
-  // Load waitlist entries when the component mounts
+  // Load waitlist entries when the component mounts or when user/profile changes
   useEffect(() => {
-    if (profile?.role === 'admin') {
+    if (user && profile?.role === 'admin') {
+      console.log("WaitlistManager: Admin user detected, refreshing data");
       handleRefresh();
     }
-  }, [profile?.role]);
+  }, [user, profile]);
   
   // Check for admin access
   if (!user) {

@@ -22,11 +22,17 @@ export const useWaitlistData = () => {
       setIsLoading(true);
       setHasError(false);
       
-      console.log("Loading waitlist entries. User email:", user?.email);
-      console.log("User profile:", profile);
+      console.log("Loading waitlist entries. User:", user?.email, "Role:", profile?.role);
+      
+      if (!user) {
+        console.error("User not authenticated");
+        toast.error("You must be logged in to access waitlist data");
+        setHasError(true);
+        return;
+      }
       
       if (profile?.role !== 'admin') {
-        console.error("Only admins can access waitlist data");
+        console.error("Only admins can access waitlist data. Current role:", profile?.role);
         toast.error("You don't have permission to view waitlist data");
         setHasError(true);
         return;
@@ -40,7 +46,9 @@ export const useWaitlistData = () => {
       
       if (error) {
         console.error("Supabase error:", error);
-        throw error;
+        toast.error(`Failed to load waitlist entries: ${error.message}`);
+        setHasError(true);
+        return;
       }
       
       console.log("Waitlist entries fetched:", data?.length || 0);
@@ -60,7 +68,7 @@ export const useWaitlistData = () => {
       setWaitlistEntries(transformedData);
     } catch (error) {
       console.error("Error loading waitlist entries:", error);
-      toast.error("Failed to load waitlist entries");
+      toast.error("Failed to load waitlist entries. Please try again.");
       setHasError(true);
     } finally {
       setIsLoading(false);
@@ -69,10 +77,14 @@ export const useWaitlistData = () => {
   
   // Load entries on component mount and when profile changes
   useEffect(() => {
-    if (profile?.role === 'admin') {
+    if (user && profile?.role === 'admin') {
+      console.log("Admin user detected, loading waitlist entries");
       loadWaitlistEntries();
+    } else if (profile && profile.role !== 'admin') {
+      console.log("Non-admin user detected, not loading waitlist entries");
+      setHasError(true);
     }
-  }, [profile?.role]);
+  }, [user, profile]);
   
   /**
    * Update the local waitlist entries state with a new entry
