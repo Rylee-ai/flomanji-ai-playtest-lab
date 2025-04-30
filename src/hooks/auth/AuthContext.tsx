@@ -18,11 +18,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Function to refresh the user profile
   const refreshProfile = async () => {
     if (user) {
-      const userProfile = await fetchUserProfile(user.id);
-      if (userProfile) {
-        // Add the email from the user object
-        userProfile.email = user.email || '';
-        setProfile(userProfile);
+      try {
+        const userProfile = await fetchUserProfile(user.id);
+        if (userProfile) {
+          // Add the email from the user object
+          userProfile.email = user.email || '';
+          setProfile(userProfile);
+        }
+      } catch (error) {
+        console.error("Error refreshing profile:", error);
       }
     }
   };
@@ -43,6 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 userProfile.email = session.user.email || '';
                 setProfile(userProfile);
               }
+            }).catch(err => {
+              console.error("Error in auth state change profile fetch:", err);
             });
           }, 0);
         } else {
@@ -65,9 +71,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             userProfile.email = session.user.email || '';
             setProfile(userProfile);
           }
+        }).catch(err => {
+          console.error("Error in get session profile fetch:", err);
         });
       }
       
+      setIsLoading(false);
+    }).catch(err => {
+      console.error("Error getting session:", err);
       setIsLoading(false);
     });
 
@@ -96,5 +107,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-export default useAuth;
