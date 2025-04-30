@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, Check } from "lucide-react";
 import { useWaitlist } from "@/hooks/useWaitlist";
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export const WaitlistSignupSection = React.forwardRef<HTMLDivElement>((props, ref) => {
   const [firstName, setFirstName] = useState("");
@@ -12,7 +13,7 @@ export const WaitlistSignupSection = React.forwardRef<HTMLDivElement>((props, re
   const [email, setEmail] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   
-  const { submitToWaitlist, isSubmitting, isSuccess } = useWaitlist();
+  const { submitToWaitlist, isSubmitting, isSuccess, statusMessage } = useWaitlist();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +50,13 @@ export const WaitlistSignupSection = React.forwardRef<HTMLDivElement>((props, re
         <div className="grid md:grid-cols-2 gap-8">
           <div className="bg-gray-900 p-6 rounded-lg border border-gray-800">
             <form className="space-y-4" onSubmit={handleSubmit}>
+              {statusMessage && (
+                <Alert className="bg-amber-500/10 border border-amber-400/20">
+                  <AlertDescription className="text-amber-200 text-sm">
+                    {statusMessage}
+                  </AlertDescription>
+                </Alert>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium text-gray-400 mb-1">
@@ -114,7 +122,8 @@ export const WaitlistSignupSection = React.forwardRef<HTMLDivElement>((props, re
               </Button>
               {isSuccess && (
                 <div className="p-3 bg-green-900/30 border border-green-800 rounded text-green-400 text-sm">
-                  Thank you! Your application has been submitted successfully.
+                  <p className="font-medium">Thank you! Your application has been submitted successfully.</p>
+                  <p className="mt-1 text-xs">Your application is now pending review. We'll contact you soon with updates.</p>
                 </div>
               )}
             </form>

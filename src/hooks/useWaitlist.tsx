@@ -13,6 +13,7 @@ interface WaitlistFormData {
 export const useWaitlist = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   
   const submitToWaitlist = async (data: WaitlistFormData) => {
     if (!data.agreedToTerms) {
@@ -28,6 +29,7 @@ export const useWaitlist = () => {
     }
     
     setIsSubmitting(true);
+    setStatusMessage(null);
     
     try {
       // First, check if email already exists with any status
@@ -44,13 +46,19 @@ export const useWaitlist = () => {
       // If entry exists, provide appropriate feedback
       if (existingEntries) {
         if (existingEntries.status === 'approved') {
-          toast.info("You've already been approved for the Flomanji Playtest! Please check your email for login information.");
+          const message = "You've already been approved for the Flomanji Playtest! Please check your email for login information.";
+          toast.info(message);
+          setStatusMessage(message);
           return { success: false, alreadyApproved: true };
         } else if (existingEntries.status === 'pending') {
-          toast.info("You're already on our waitlist. We'll contact you soon!");
+          const message = "You're already on our waitlist. We'll contact you soon when a spot opens up!";
+          toast.info(message);
+          setStatusMessage(message);
           return { success: false, alreadyOnWaitlist: true };
         } else if (existingEntries.status === 'rejected') {
-          toast.info("Your previous application was not approved. If you believe this is an error, please contact support.");
+          const message = "Your previous application was not approved. If you believe this is an error, please contact support.";
+          toast.info(message);
+          setStatusMessage(message);
           return { success: false, previouslyRejected: true };
         }
       }
@@ -72,7 +80,9 @@ export const useWaitlist = () => {
       }
       
       setIsSuccess(true);
-      toast.success("Thank you for your interest in Flomanji! We'll be in touch soon.");
+      const successMessage = "Thank you for your interest in Flomanji! Your application has been received and is now pending review. We'll be in touch soon once your application has been considered.";
+      toast.success(successMessage);
+      setStatusMessage(successMessage);
       
       return { success: true };
     } catch (error) {
@@ -89,5 +99,6 @@ export const useWaitlist = () => {
     submitToWaitlist,
     isSubmitting,
     isSuccess,
+    statusMessage
   };
 };
