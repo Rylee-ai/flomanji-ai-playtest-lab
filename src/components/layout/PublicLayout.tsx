@@ -46,8 +46,7 @@ const PublicLayout = () => {
     
     // If profile is loading, show a loading message
     if (isLoading) {
-      toast({
-        title: "Loading your profile",
+      toast("Loading your profile", {
         description: "Please wait a moment while we load your information"
       });
       return;
@@ -56,10 +55,8 @@ const PublicLayout = () => {
     // If not logged in (shouldn't happen due to UI hiding), redirect to auth
     if (!user) {
       console.error("Dashboard click attempted without login");
-      toast({
-        title: "Not signed in",
-        description: "Please sign in to access your dashboard",
-        variant: "destructive"
+      toast("Not signed in", {
+        description: "Please sign in to access your dashboard"
       });
       navigate('/auth');
       return;
@@ -69,8 +66,7 @@ const PublicLayout = () => {
       // If no profile, try to refresh it before navigation
       if (!profile) {
         console.warn("Profile not loaded yet. Attempting refresh before navigation.");
-        toast({
-          title: "Loading your profile",
+        toast("Loading your profile", {
           description: "Please wait while we access your information"
         });
         
@@ -82,10 +78,8 @@ const PublicLayout = () => {
             navigate(path);
           } else {
             setNavError("Could not load your profile information. Please try again.");
-            toast({
-              title: "Navigation error",
-              description: "Could not load your profile information. Please try again.",
-              variant: "destructive"
+            toast("Navigation error", {
+              description: "Could not load your profile information. Please try again."
             });
           }
         });
@@ -98,10 +92,8 @@ const PublicLayout = () => {
     } catch (error) {
       console.error("Navigation error:", error);
       setNavError("An error occurred while navigating to your dashboard");
-      toast({
-        title: "Navigation error",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive"
+      toast("Navigation error", {
+        description: "An unexpected error occurred. Please try again."
       });
     }
   };

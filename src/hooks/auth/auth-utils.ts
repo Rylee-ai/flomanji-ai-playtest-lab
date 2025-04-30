@@ -31,11 +31,7 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
         console.warn('Permission denied error. This might be an RLS policy issue.');
       }
       
-      toast({
-        title: "Profile error",
-        description: "Could not load your profile. Please try again or contact support.",
-        variant: "destructive"
-      });
+      toast.error("Could not load your profile. Please try again or contact support.");
       return null;
     }
 
@@ -58,11 +54,7 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
     return userProfile;
   } catch (error) {
     console.error('Error in fetchUserProfile:', error);
-    toast({
-      title: "Profile error",
-      description: "An unexpected error occurred while loading your profile.",
-      variant: "destructive"
-    });
+    toast.error("An unexpected error occurred while loading your profile.");
     return null;
   }
 };
@@ -77,11 +69,7 @@ export const signInWithEmail = async (email: string, password: string) => {
     
     if (error) {
       console.error("Sign in error:", error.message);
-      toast({
-        title: "Error signing in",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast.error(error.message);
       return { error };
     }
     
@@ -89,11 +77,7 @@ export const signInWithEmail = async (email: string, password: string) => {
     return { data, error: null };
   } catch (error) {
     console.error("Unexpected sign in error:", error);
-    toast({
-      title: "Error signing in",
-      description: "An unexpected error occurred",
-      variant: "destructive"
-    });
+    toast.error("An unexpected error occurred");
     return { data: null, error };
   }
 };
@@ -106,25 +90,16 @@ export const signUpWithEmail = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     
     if (error) {
-      toast({
-        title: "Error signing up",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast.error(error.message);
     } else {
-      toast({
-        title: "Account created",
+      toast("Account created", {
         description: "Please check your email to confirm your account"
       });
     }
     
     return { data, error };
   } catch (error) {
-    toast({
-      title: "Error signing up",
-      description: "An unexpected error occurred",
-      variant: "destructive"
-    });
+    toast.error("An unexpected error occurred");
     return { data: null, error };
   }
 };
@@ -135,17 +110,12 @@ export const signUpWithEmail = async (email: string, password: string) => {
 export const signOutUser = async () => {
   try {
     await supabase.auth.signOut();
-    toast({
-      title: "Signed out",
+    toast("Signed out", {
       description: "You have been successfully signed out"
     });
   } catch (error) {
     console.error("Error signing out:", error);
-    toast({
-      title: "Error signing out",
-      description: "An unexpected error occurred",
-      variant: "destructive"
-    });
+    toast.error("An unexpected error occurred");
   }
 };
 
@@ -159,25 +129,16 @@ export const resetUserPassword = async (email: string) => {
     });
     
     if (error) {
-      toast({
-        title: "Error resetting password",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast.error(error.message);
     } else {
-      toast({
-        title: "Password reset email sent",
+      toast("Password reset email sent", {
         description: "Please check your email for a link to reset your password"
       });
     }
     
     return { error };
   } catch (error) {
-    toast({
-      title: "Error resetting password",
-      description: "An unexpected error occurred",
-      variant: "destructive"
-    });
+    toast.error("An unexpected error occurred");
     return { error };
   }
 };

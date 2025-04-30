@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -32,8 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (keys.join('') === authDebug) {
         setDebugMode(prev => !prev);
         console.log("Auth debug mode:", !debugMode);
-        toast({
-          title: !debugMode ? "Auth Debug Enabled" : "Auth Debug Disabled",
+        toast("Auth Debug " + (!debugMode ? "Enabled" : "Disabled"), {
           description: "Check console for auth state information"
         });
       }
