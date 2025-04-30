@@ -72,7 +72,7 @@ export const useWaitlistData = () => {
     if (profile?.role === 'admin') {
       loadWaitlistEntries();
     }
-  }, [profile?.role, user?.id]);
+  }, [profile?.role]);
   
   /**
    * Update the local waitlist entries state with a new entry
