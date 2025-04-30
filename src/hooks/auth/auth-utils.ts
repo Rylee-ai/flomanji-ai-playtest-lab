@@ -31,11 +31,21 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
       }
       
       console.error('Error fetching user profile:', error);
+      toast({
+        title: "Profile error",
+        description: "Could not load your profile. Please try again or contact support.",
+        variant: "destructive"
+      });
       return null;
     }
 
     if (!data) {
       console.warn(`No profile found for user ID: ${userId}`);
+      toast({
+        title: "Profile missing",
+        description: "We could not find your profile information. Please contact support.",
+        variant: "destructive"
+      });
       return null;
     }
 
@@ -53,6 +63,11 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
     return userProfile;
   } catch (error) {
     console.error('Error in fetchUserProfile:', error);
+    toast({
+      title: "Profile error",
+      description: "An unexpected error occurred while loading your profile.",
+      variant: "destructive"
+    });
     return null;
   }
 };
