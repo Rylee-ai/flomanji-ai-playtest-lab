@@ -57,9 +57,7 @@ const AuthGuard = ({
         } else {
           console.warn("Profile refresh failed in AuthGuard");
           if (requireAuth && allowedRoles) {
-            toast("Profile error", {
-              description: "Could not verify your access permissions. Please try again."
-            });
+            toast.error("Could not verify your access permissions. Please try again.");
           }
         }
       });

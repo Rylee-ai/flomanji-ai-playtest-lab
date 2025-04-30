@@ -78,9 +78,7 @@ const PublicLayout = () => {
             navigate(path);
           } else {
             setNavError("Could not load your profile information. Please try again.");
-            toast("Navigation error", {
-              description: "Could not load your profile information. Please try again."
-            });
+            toast.error("Could not load your profile information. Please try again.");
           }
         });
       } else {
@@ -92,9 +90,7 @@ const PublicLayout = () => {
     } catch (error) {
       console.error("Navigation error:", error);
       setNavError("An error occurred while navigating to your dashboard");
-      toast("Navigation error", {
-        description: "An unexpected error occurred. Please try again."
-      });
+      toast.error("An unexpected error occurred. Please try again.");
     }
   };
 
