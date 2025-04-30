@@ -84,8 +84,8 @@ const WaitlistManager = () => {
   const filteredEntries = waitlistEntries.filter(entry => {
     const matchesSearch = 
       entry.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      entry.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      entry.last_name.toLowerCase().includes(searchQuery.toLowerCase());
+      entry.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      entry.lastName.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesStatus = statusFilter === "all" || entry.status === statusFilter;
     
@@ -172,11 +172,11 @@ const WaitlistManager = () => {
                   {filteredEntries.map((entry) => (
                     <TableRow key={entry.id}>
                       <TableCell className="font-medium">
-                        {entry.first_name} {entry.last_name}
+                        {entry.firstName} {entry.lastName}
                       </TableCell>
                       <TableCell>{entry.email}</TableCell>
                       <TableCell>{getStatusBadge(entry.status as any)}</TableCell>
-                      <TableCell>{format(new Date(entry.created_at), 'MMM d, yyyy')}</TableCell>
+                      <TableCell>{format(new Date(entry.createdAt), 'MMM d, yyyy')}</TableCell>
                       <TableCell>
                         {entry.notes ? (
                           <div className="max-w-xs truncate text-xs text-muted-foreground">
@@ -235,7 +235,7 @@ const WaitlistManager = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Approve Waitlist Entry</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to approve {actionEntry?.first_name} {actionEntry?.last_name}? 
+              Are you sure you want to approve {actionEntry?.firstName} {actionEntry?.lastName}? 
               This will create a user account and send them an email invitation.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -269,7 +269,7 @@ const WaitlistManager = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Reject Waitlist Entry</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to reject {actionEntry?.first_name} {actionEntry?.last_name}?
+              Are you sure you want to reject {actionEntry?.firstName} {actionEntry?.lastName}?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="py-2">
@@ -302,7 +302,7 @@ const WaitlistManager = () => {
           <DialogHeader>
             <DialogTitle>Admin Notes</DialogTitle>
             <DialogDescription>
-              Notes for {actionEntry?.first_name} {actionEntry?.last_name}
+              Notes for {actionEntry?.firstName} {actionEntry?.lastName}
             </DialogDescription>
           </DialogHeader>
           <div className="py-2">

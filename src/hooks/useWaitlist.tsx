@@ -23,7 +23,7 @@ export const useWaitlist = () => {
     setIsSubmitting(true);
     
     try {
-      // Submit to Supabase
+      // Submit to Supabase with field names matching the database schema
       const { error } = await supabase
         .from('waitlist_entries')
         .insert([
@@ -31,6 +31,7 @@ export const useWaitlist = () => {
             first_name: data.firstName, 
             last_name: data.lastName, 
             email: data.email,
+            status: 'pending'
           }
         ]);
       

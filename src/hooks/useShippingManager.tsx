@@ -73,7 +73,7 @@ export const useShippingManager = () => {
           firstName: entry.waitlist_entries.first_name,
           lastName: entry.waitlist_entries.last_name,
           email: entry.waitlist_entries.email,
-          status: entry.shipping_status,
+          status: entry.shipping_status as 'pending' | 'processing' | 'shipped' | 'delivered',
           trackingNumber: entry.tracking_number,
           trackingUrl: entry.tracking_url,
           createdAt: entry.created_at,

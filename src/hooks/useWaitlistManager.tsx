@@ -29,7 +29,19 @@ export const useWaitlistManager = () => {
         throw error;
       }
       
-      setWaitlistEntries(data as WaitlistEntry[]);
+      // Transform database field names to match our TypeScript types
+      const transformedData = data.map(entry => ({
+        id: entry.id,
+        email: entry.email,
+        firstName: entry.first_name,
+        lastName: entry.last_name,
+        status: entry.status as 'pending' | 'approved' | 'rejected',
+        notes: entry.notes,
+        createdAt: entry.created_at,
+        updatedAt: entry.updated_at
+      }));
+      
+      setWaitlistEntries(transformedData);
     } catch (error) {
       console.error("Error loading waitlist entries:", error);
       toast.error("Failed to load waitlist entries");
@@ -69,7 +81,12 @@ export const useWaitlistManager = () => {
       // Update local state
       setWaitlistEntries(prev => 
         prev.map(entry => 
-          entry.id === id ? { ...entry, status, notes, updated_at: new Date().toISOString() } : entry
+          entry.id === id ? { 
+            ...entry, 
+            status, 
+            notes, 
+            updatedAt: new Date().toISOString() 
+          } : entry
         )
       );
       
@@ -122,7 +139,7 @@ export const useWaitlistManager = () => {
             ...entry, 
             status: 'approved', 
             notes: notes || entry.notes,
-            updated_at: new Date().toISOString() 
+            updatedAt: new Date().toISOString() 
           } : entry
         )
       );
@@ -131,7 +148,7 @@ export const useWaitlistManager = () => {
       return true;
     } catch (error) {
       console.error("Error approving waitlist entry:", error);
-      toast.error(error.message || "Failed to approve waitlist entry");
+      toast.error(error instanceof Error ? error.message : "Failed to approve waitlist entry");
       return false;
     }
   };

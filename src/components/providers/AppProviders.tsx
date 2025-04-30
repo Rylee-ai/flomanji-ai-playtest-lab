@@ -5,8 +5,9 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { BrowserRouter } from "react-router-dom";
-import * as React from "react";
+import React from "react";
 
+// Create a new QueryClient instance with proper settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -17,17 +18,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// Add a global error handler for query errors
-queryClient.setDefaultOptions({
-  queries: {
-    meta: {
-      onError: (error: Error) => {
-        console.error("Query error:", error);
-      }
-    }
-  }
-});
-
 interface AppProvidersProps {
   children: React.ReactNode;
 }
@@ -35,17 +25,17 @@ interface AppProvidersProps {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <AuthProvider>
-            <BrowserRouter>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <AuthProvider>
               <Toaster />
               <Sonner />
               {children}
-            </BrowserRouter>
-          </AuthProvider>
-        </TooltipProvider>
-      </QueryClientProvider>
+            </AuthProvider>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </BrowserRouter>
     </React.StrictMode>
   );
 }
