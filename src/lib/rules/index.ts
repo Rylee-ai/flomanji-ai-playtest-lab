@@ -7,14 +7,13 @@ export * from './action-validator';
 export * from './action-validations';
 export * from './action-processors';
 
-// Export the refactored game engine components
-export * from './engine/game-engine';
-export * from './engine/game-engine-factory';
+// Export the refactored game engine interfaces
 export * from './engine/game-engine-types';
-export * from './engine/action-service';
-export * from './engine/state-service';
-export * from './engine/region-service';
-export * from './engine/objective-service';
 
-// Re-export the singleton gameEngine instance for backward compatibility
-export { gameEngine } from './engine/game-engine-factory';
+// Export the refactored game engine service implementations
+export { FlomanjiGameEngine } from './engine/game-engine';
+export { GameEngineFactory, gameEngine } from './engine/game-engine-factory';
+export { ActionService } from './engine/action-service';
+export { StateService } from './engine/state-service';
+export { RegionService } from './engine/region-service';
+export { ObjectiveService } from './engine/objective-service';
