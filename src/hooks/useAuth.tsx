@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const userProfile: UserProfile = {
           id: data.id,
           email: user?.email || '',
-          role: data.role,
+          role: data.role as "admin" | "player", // Explicitly cast to UserRole type
           firstName: data.first_name,
           lastName: data.last_name,
           createdAt: data.created_at
