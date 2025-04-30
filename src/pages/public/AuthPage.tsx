@@ -35,10 +35,10 @@ const AuthPage = () => {
     
     try {
       console.log("Attempting sign in with:", email);
-      const { data, error } = await signIn(email, password);
+      const { error } = await signIn(email, password);
       
-      if (!error && data?.user) {
-        console.log("Sign-in successful:", data.user.email);
+      if (!error) {
+        console.log("Sign-in successful");
         toast({
           title: "Welcome back!",
           description: "You have successfully signed in",
@@ -46,11 +46,8 @@ const AuthPage = () => {
         
         // Delay navigation slightly to ensure profile is loaded
         setTimeout(() => {
-          // Check if profile exists and has a role to determine redirect path
-          if (data.user) {
-            // The auth state listener will handle redirection based on role
-            console.log("Sign-in complete, auth state listener will handle redirection");
-          }
+          // The auth state listener will handle redirection based on role
+          console.log("Sign-in complete, auth state listener will handle redirection");
         }, 200);
       } else {
         console.error("Sign-in error:", error);
