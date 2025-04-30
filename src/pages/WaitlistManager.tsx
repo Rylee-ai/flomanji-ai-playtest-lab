@@ -1,53 +1,42 @@
 
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Check, X, MessageSquare, Search, Filter, RefreshCcw, AlertCircle } from "lucide-react";
+import { RefreshCcw } from "lucide-react";
 import { useWaitlistManager } from "@/hooks/useWaitlistManager";
 import { WaitlistEntry } from "@/types/user";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { format } from "date-fns";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
+// Import refactored components
+import { WaitlistFilters } from "@/components/waitlist/WaitlistFilters";
+import { WaitlistTable } from "@/components/waitlist/WaitlistTable";
+import { ApproveDialog } from "@/components/waitlist/ApproveDialog";
+import { RejectDialog } from "@/components/waitlist/RejectDialog";
+import { NotesDialog } from "@/components/waitlist/NotesDialog";
+import { NoWaitlistEntries } from "@/components/waitlist/NoWaitlistEntries";
+import { AccessDenied } from "@/components/waitlist/AccessDenied";
+
+/**
+ * WaitlistManager allows admins to review, approve, and reject waitlist applications
+ */
 const WaitlistManager = () => {
+  // Hook for waitlist management operations
   const { waitlistEntries, isLoading, updateWaitlistStatus, loadWaitlistEntries } = useWaitlistManager();
+  
+  // State for selected entry and dialogs
   const [actionEntry, setActionEntry] = useState<WaitlistEntry | null>(null);
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [notes, setNotes] = useState("");
+  
+  // State for filtering and error handling
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
   const [hasError, setHasError] = useState(false);
+  
+  // User authentication context
   const { profile } = useAuth();
   
   // Load waitlist entries when the component mounts
@@ -57,6 +46,9 @@ const WaitlistManager = () => {
     }
   }, [profile?.role]);
   
+  /**
+   * Refreshes the waitlist entries data
+   */
   const handleRefresh = async () => {
     try {
       setHasError(false);
@@ -68,22 +60,36 @@ const WaitlistManager = () => {
     }
   };
   
+  /**
+   * Opens the approval dialog for a waitlist entry
+   */
   const handleApprove = (entry: WaitlistEntry) => {
     setActionEntry(entry);
+    setNotes(entry.notes || "");
     setIsApproving(true);
   };
   
+  /**
+   * Opens the rejection dialog for a waitlist entry
+   */
   const handleReject = (entry: WaitlistEntry) => {
     setActionEntry(entry);
+    setNotes(entry.notes || "");
     setIsRejecting(true);
   };
 
+  /**
+   * Opens the notes dialog for a waitlist entry
+   */
   const handleShowNotes = (entry: WaitlistEntry) => {
     setActionEntry(entry);
     setNotes(entry.notes || "");
     setShowNotes(true);
   };
   
+  /**
+   * Confirms approval of a waitlist entry
+   */
   const confirmApprove = async () => {
     if (actionEntry) {
       await updateWaitlistStatus(actionEntry.id, "approved", notes);
@@ -93,6 +99,9 @@ const WaitlistManager = () => {
     }
   };
   
+  /**
+   * Confirms rejection of a waitlist entry
+   */
   const confirmReject = async () => {
     if (actionEntry) {
       await updateWaitlistStatus(actionEntry.id, "rejected", notes);
@@ -102,6 +111,9 @@ const WaitlistManager = () => {
     }
   };
 
+  /**
+   * Saves notes for a waitlist entry
+   */
   const saveNotes = async () => {
     if (actionEntry) {
       await updateWaitlistStatus(actionEntry.id, actionEntry.status as any, notes);
@@ -110,6 +122,9 @@ const WaitlistManager = () => {
     }
   };
   
+  /**
+   * Filters waitlist entries based on search query and status filter
+   */
   const filteredEntries = waitlistEntries.filter(entry => {
     const matchesSearch = 
       entry.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -121,27 +136,9 @@ const WaitlistManager = () => {
     return matchesSearch && matchesStatus;
   });
   
-  const getStatusBadge = (status: 'pending' | 'approved' | 'rejected') => {
-    switch (status) {
-      case 'pending':
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Pending</Badge>;
-      case 'approved':
-        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Approved</Badge>;
-      case 'rejected':
-        return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Rejected</Badge>;
-    }
-  };
-  
+  // Check for admin access
   if (profile?.role !== 'admin') {
-    return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <AlertCircle className="h-16 w-16 text-red-500 mb-4" />
-        <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
-        <p className="text-center text-muted-foreground mb-4">
-          You don't have permission to access the Waitlist Manager.
-        </p>
-      </div>
-    );
+    return <AccessDenied />;
   }
   
   return (
@@ -159,235 +156,60 @@ const WaitlistManager = () => {
           <CardDescription>
             Review and manage users who have signed up for the Flomanji Playtest
           </CardDescription>
-          <div className="flex flex-col sm:flex-row gap-4 mt-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name or email"
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-2 items-center">
-              <Filter className="h-4 w-4 text-muted-foreground" />
-              <Select 
-                value={statusFilter} 
-                onValueChange={(value: any) => setStatusFilter(value)}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <WaitlistFilters
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+          />
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="text-center py-8">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
-              <p>Loading waitlist entries...</p>
-            </div>
-          ) : hasError ? (
-            <div className="text-center py-8">
-              <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-              <p className="text-red-600 mb-4">Failed to load waitlist entries.</p>
-              <Button onClick={handleRefresh} variant="outline">
-                Try Again
-              </Button>
-            </div>
-          ) : filteredEntries.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">
-              {searchQuery || statusFilter !== "all" 
-                ? "No waitlist entries match your filter criteria." 
-                : "No waitlist entries yet."}
-            </p>
+          {filteredEntries.length === 0 ? (
+            <NoWaitlistEntries 
+              isLoading={isLoading}
+              hasError={hasError}
+              hasSearchFilter={searchQuery !== "" || statusFilter !== "all"}
+              onRefresh={handleRefresh}
+            />
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Joined</TableHead>
-                    <TableHead>Notes</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredEntries.map((entry) => (
-                    <TableRow key={entry.id}>
-                      <TableCell className="font-medium">
-                        {entry.firstName} {entry.lastName}
-                      </TableCell>
-                      <TableCell>{entry.email}</TableCell>
-                      <TableCell>{getStatusBadge(entry.status as any)}</TableCell>
-                      <TableCell>{format(new Date(entry.createdAt), 'MMM d, yyyy')}</TableCell>
-                      <TableCell>
-                        {entry.notes ? (
-                          <div className="max-w-xs truncate text-xs text-muted-foreground">
-                            {entry.notes}
-                          </div>
-                        ) : (
-                          <span className="text-xs text-muted-foreground italic">No notes</span>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          {entry.status === 'pending' && (
-                            <>
-                              <Button 
-                                size="sm" 
-                                variant="success" 
-                                className="h-8 w-8 p-0" 
-                                onClick={() => handleApprove(entry)}
-                              >
-                                <span className="sr-only">Approve</span>
-                                <Check className="h-4 w-4" />
-                              </Button>
-                              <Button 
-                                size="sm" 
-                                variant="destructive" 
-                                className="h-8 w-8 p-0" 
-                                onClick={() => handleReject(entry)}
-                              >
-                                <span className="sr-only">Reject</span>
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </>
-                          )}
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="h-8 w-8 p-0"
-                            onClick={() => handleShowNotes(entry)}
-                          >
-                            <span className="sr-only">Notes</span>
-                            <MessageSquare className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+            <WaitlistTable
+              entries={filteredEntries}
+              onApprove={handleApprove}
+              onReject={handleReject}
+              onShowNotes={handleShowNotes}
+            />
           )}
         </CardContent>
       </Card>
       
-      <AlertDialog open={isApproving} onOpenChange={setIsApproving}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Approve Waitlist Entry</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to approve {actionEntry?.firstName} {actionEntry?.lastName}? 
-              This will create a user account and send them an email invitation.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="py-2">
-            <Label htmlFor="notes">Admin Notes (Optional)</Label>
-            <Textarea
-              id="notes"
-              placeholder="Add any notes about this approval"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="mt-2"
-            />
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setIsApproving(false);
-              setActionEntry(null);
-              setNotes("");
-            }}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmApprove} className="bg-green-600 hover:bg-green-700 text-white">
-              Approve
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ApproveDialog
+        isOpen={isApproving}
+        setIsOpen={setIsApproving}
+        entry={actionEntry}
+        notes={notes}
+        setNotes={setNotes}
+        onConfirm={confirmApprove}
+      />
 
-      <AlertDialog open={isRejecting} onOpenChange={setIsRejecting}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Reject Waitlist Entry</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to reject {actionEntry?.firstName} {actionEntry?.lastName}?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="py-2">
-            <Label htmlFor="rejectNotes">Admin Notes (Optional)</Label>
-            <Textarea
-              id="rejectNotes"
-              placeholder="Add reason for rejection"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="mt-2"
-            />
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setIsRejecting(false);
-              setActionEntry(null);
-              setNotes("");
-            }}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmReject} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Reject
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <RejectDialog
+        isOpen={isRejecting}
+        setIsOpen={setIsRejecting}
+        entry={actionEntry}
+        notes={notes}
+        setNotes={setNotes}
+        onConfirm={confirmReject}
+      />
       
-      <Dialog open={showNotes} onOpenChange={setShowNotes}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Admin Notes</DialogTitle>
-            <DialogDescription>
-              Notes for {actionEntry?.firstName} {actionEntry?.lastName}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-2">
-            <Textarea
-              placeholder="Add notes about this applicant"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={5}
-              className="mt-2"
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowNotes(false)}>
-              Cancel
-            </Button>
-            <Button onClick={saveNotes}>
-              Save Notes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <NotesDialog
+        isOpen={showNotes}
+        setIsOpen={setShowNotes}
+        entry={actionEntry}
+        notes={notes}
+        setNotes={setNotes}
+        onSave={saveNotes}
+      />
     </div>
   );
 };
-
-const Label = ({ htmlFor, children, className = "" }) => (
-  <label 
-    htmlFor={htmlFor}
-    className={`block text-sm font-medium ${className}`}
-  >
-    {children}
-  </label>
-);
 
 export default WaitlistManager;
