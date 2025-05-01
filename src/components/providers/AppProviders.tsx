@@ -2,7 +2,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/auth";
-import { Toaster as Sonner } from "@/components/ui/sonner"; 
+import { Toaster } from "sonner"; 
 import { BrowserRouter } from "react-router-dom";
 import React from "react";
 
@@ -29,7 +29,7 @@ export function AppProviders({ children }: AppProvidersProps) {
           <TooltipProvider>
             <AuthProvider>
               {children}
-              <Sonner />
+              <Toaster />
             </AuthProvider>
           </TooltipProvider>
         </QueryClientProvider>

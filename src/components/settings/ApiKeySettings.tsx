@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Key } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { getOpenRouterApiKey, setOpenRouterApiKey } from "@/lib/openrouterApiKey";
 
 export const ApiKeySettings = () => {
@@ -20,11 +20,7 @@ export const ApiKeySettings = () => {
         setApiKey(key ? key.slice(0, 5) + '***' + key.slice(-4) : "");
       } catch (error) {
         console.error("Error fetching API key:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load API key. Please try again."
-        });
+        toast.error("Failed to load API key. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -37,11 +33,7 @@ export const ApiKeySettings = () => {
     // Allow both "or-" and "sk-or-v1-" prefixes
     const trimmedKey = apiKey.trim();
     if (trimmedKey && !(trimmedKey.startsWith("or-") || trimmedKey.startsWith("sk-or-v1-"))) {
-      toast({
-        variant: "destructive",
-        title: "Invalid API Key",
-        description: "OpenRouter API keys must start with 'or-' or 'sk-or-v1-'"
-      });
+      toast.error("OpenRouter API keys must start with 'or-' or 'sk-or-v1-'");
       return;
     }
 
@@ -50,22 +42,13 @@ export const ApiKeySettings = () => {
       const success = await setOpenRouterApiKey(trimmedKey);
       
       if (success) {
-        toast({
-          title: "Success",
-          description: "API key saved successfully"
-        });
-        // Mask the key after saving
-        setApiKey(trimmedKey ? trimmedKey.slice(0, 5) + '***' + trimmedKey.slice(-4) : "");
+        toast.success("API key saved successfully");
       } else {
         throw new Error("Failed to save API key");
       }
     } catch (error) {
       console.error("Error saving API key:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to save API key. Please check your connection and try again."
-      });
+      toast.error("Failed to save API key. Please check your connection and try again.");
     } finally {
       setIsSaving(false);
     }

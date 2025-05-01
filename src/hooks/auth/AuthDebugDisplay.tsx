@@ -24,22 +24,7 @@ export const AuthDebugDisplay: React.FC<AuthDebugDisplayProps> = ({
   if (!debugMode) return null;
   
   return (
-    <div 
-      style={{
-        position: 'fixed',
-        bottom: '10px',
-        right: '10px',
-        backgroundColor: 'rgba(0,0,0,0.8)',
-        color: 'lime',
-        padding: '10px',
-        borderRadius: '5px',
-        fontSize: '12px',
-        zIndex: 9999,
-        maxWidth: '400px',
-        overflow: 'auto',
-        maxHeight: '200px'
-      }}
-    >
+    <div className="fixed bottom-3 right-3 bg-black/80 text-lime-500 p-3 rounded-md text-xs z-50 max-w-sm overflow-auto max-h-48">
       <div><strong>Auth Debug</strong></div>
       <div>User: {user ? `${user.email} (${user.id.slice(0,8)}...)` : 'None'}</div>
       <div>Profile: {profile ? `${profile.role} (${profile.firstName || 'No name'})` : 'None'}</div>

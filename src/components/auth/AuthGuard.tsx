@@ -1,4 +1,3 @@
-
 import React, { ReactNode, useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,9 +14,6 @@ interface AuthGuardProps {
 
 /**
  * A component that guards routes based on authentication status and user roles
- * @param children - The components to render if authentication check passes
- * @param requireAuth - Whether authentication is required (default: true)
- * @param allowedRoles - Array of roles allowed to access the route (if undefined, all roles are allowed)
  */
 const AuthGuard = ({ 
   children, 

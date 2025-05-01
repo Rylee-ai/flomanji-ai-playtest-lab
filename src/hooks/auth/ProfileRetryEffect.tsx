@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { User } from "@supabase/supabase-js";
 import { UserProfile } from "@/types";
+import { toast } from "sonner";
 
 interface ProfileRetryEffectProps {
   user: User | null;
@@ -11,13 +12,13 @@ interface ProfileRetryEffectProps {
 }
 
 /**
- * Effect component to retry profile loading when initial attempts fail
+ * Effect hook to retry profile loading when previous attempts failed
  */
-export function ProfileRetryEffect({ 
-  user, 
-  profile, 
-  profileAttempts, 
-  refreshProfile 
+export function ProfileRetryEffect({
+  user,
+  profile,
+  profileAttempts,
+  refreshProfile
 }: ProfileRetryEffectProps) {
   // Retry profile load if previous attempts failed
   useEffect(() => {
@@ -33,6 +34,6 @@ export function ProfileRetryEffect({
       return () => clearTimeout(timer);
     }
   }, [user, profile, profileAttempts, refreshProfile]);
-
+  
   return null;
 }

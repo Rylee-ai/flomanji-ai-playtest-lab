@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Settings2, Loader2, AlertCircle } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { OpenRouterModelSelector } from "./OpenRouterModelSelector";
 import { getOpenRouterModel, setOpenRouterModel } from "@/lib/openrouterModel";
 import { getOpenRouterApiKey } from "@/lib/openrouterApiKey";
@@ -39,11 +38,7 @@ export const ModelSettings = () => {
       } catch (error) {
         console.error("Error fetching model settings:", error);
         setError(`Failed to load model settings: ${error.message || "Unknown error"}`);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load model settings"
-        });
+        toast.error("Failed to load model settings");
       } finally {
         setIsLoading(false);
       }
@@ -55,11 +50,7 @@ export const ModelSettings = () => {
   const handleModelChange = async (model: string) => {
     try {
       if (!model) {
-        toast({
-          variant: "destructive",
-          title: "Invalid Selection",
-          description: "Please select a valid model"
-        });
+        toast.error("Please select a valid model");
         return;
       }
       
@@ -70,20 +61,13 @@ export const ModelSettings = () => {
       
       if (success) {
         setSelectedModel(model);
-        toast({
-          title: "Success",
-          description: "LLM model updated successfully"
-        });
+        toast.success("LLM model updated successfully");
       } else {
         throw new Error("Failed to update model in database");
       }
     } catch (error) {
       console.error("Error updating model:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: `Failed to update model: ${error.message || "Unknown error"}`
-      });
+      toast.error(`Failed to update model: ${error.message || "Unknown error"}`);
     } finally {
       setIsLoading(false);
     }
