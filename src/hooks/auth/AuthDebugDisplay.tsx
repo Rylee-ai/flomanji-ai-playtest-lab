@@ -24,12 +24,14 @@ export const AuthDebugDisplay: React.FC<AuthDebugDisplayProps> = ({
   if (!debugMode) return null;
   
   return (
-    <div className="fixed bottom-3 right-3 bg-black/80 text-lime-500 p-3 rounded-md text-xs z-50 max-w-sm overflow-auto max-h-48">
-      <div><strong>Auth Debug</strong></div>
-      <div>User: {user ? `${user.email} (${user.id.slice(0,8)}...)` : 'None'}</div>
-      <div>Profile: {profile ? `${profile.role} (${profile.firstName || 'No name'})` : 'None'}</div>
-      <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
-      <div>Profile Attempts: {profileAttempts}</div>
+    <div className="fixed bottom-3 right-3 bg-black/80 text-lime-500 p-3 rounded-md text-xs z-50 max-w-sm overflow-auto max-h-48 border border-lime-500/30 shadow-lg">
+      <div className="font-bold mb-1">Auth Debug</div>
+      <div className="grid gap-1">
+        <div>User: {user ? `${user.email} (${user.id.slice(0,8)}...)` : 'None'}</div>
+        <div>Profile: {profile ? `${profile.role} (${profile.firstName || 'No name'})` : 'None'}</div>
+        <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
+        <div>Profile Attempts: {profileAttempts}</div>
+      </div>
     </div>
   );
 };
