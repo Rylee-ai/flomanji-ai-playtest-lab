@@ -6,6 +6,7 @@ import { UserProfile } from "@/types";
 import { AuthContextType } from "./types";
 import { fetchUserProfile, signInWithEmail, signUpWithEmail, signOutUser, resetUserPassword } from "./auth-utils";
 import { toast } from "sonner";
+import { AuthDebugDisplay } from "./AuthDebugDisplay";
 
 // Create the auth context with undefined as default value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -67,6 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             });
           }
           
+          setProfileAttempts(0); // Reset attempts counter on success
           return true;
         } else {
           console.error("Failed to fetch user profile during refresh");
@@ -123,7 +125,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               setProfile(null);
               
               // Don't show toast on first attempt to avoid flickering
-              if (profileAttempts > 0) {
+              if (event !== 'INITIAL_SESSION') {
                 toast.error("Your user profile could not be loaded");
               }
               setProfileAttempts(prev => prev + 1);
@@ -176,7 +178,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log("Cleaning up auth state listener");
       subscription.unsubscribe();
     };
-  }, []);
+  }, [debugMode]);
 
   // Retry profile load if previous attempts failed
   useEffect(() => {
@@ -191,7 +193,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       return () => clearTimeout(timer);
     }
-  }, [user, profile, profileAttempts]);
+  }, [user, profile, profileAttempts, refreshProfile]);
 
   // Helper function for sign in that also fetches the profile
   const signIn = async (email: string, password: string) => {
@@ -213,40 +215,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     toggleDebugMode: () => setDebugMode(!debugMode)
   };
 
-  // If in debug mode, render debug overlay
-  const renderDebugInfo = () => {
-    if (!debugMode) return null;
-    
-    return (
-      <div 
-        style={{
-          position: 'fixed',
-          bottom: '10px',
-          right: '10px',
-          backgroundColor: 'rgba(0,0,0,0.8)',
-          color: 'lime',
-          padding: '10px',
-          borderRadius: '5px',
-          fontSize: '12px',
-          zIndex: 9999,
-          maxWidth: '400px',
-          overflow: 'auto',
-          maxHeight: '200px'
-        }}
-      >
-        <div><strong>Auth Debug</strong></div>
-        <div>User: {user ? `${user.email} (${user.id.slice(0,8)}...)` : 'None'}</div>
-        <div>Profile: {profile ? `${profile.role} (${profile.firstName || 'No name'})` : 'None'}</div>
-        <div>Loading: {isLoading ? 'Yes' : 'No'}</div>
-        <div>Profile Attempts: {profileAttempts}</div>
-      </div>
-    );
-  };
-
   return (
     <AuthContext.Provider value={value}>
       {children}
-      {renderDebugInfo()}
+      <AuthDebugDisplay 
+        debugMode={debugMode} 
+        user={user} 
+        profile={profile} 
+        isLoading={isLoading} 
+        profileAttempts={profileAttempts}
+      />
     </AuthContext.Provider>
   );
 };
