@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const PlayerChat = () => {
   const { id } = useParams<{ id?: string }>();
@@ -54,11 +54,7 @@ const PlayerChat = () => {
       setMessages(prev => [...prev, aiResponse]);
     } catch (error) {
       console.error('Error sending message:', error);
-      toast({
-        title: "Error sending message",
-        description: "There was a problem connecting to the Game Master AI",
-        variant: "destructive",
-      });
+      toast.error("There was a problem connecting to the Game Master AI");
     } finally {
       setIsLoading(false);
     }

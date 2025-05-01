@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, AlertCircle, Loader2 } from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { fetchOpenRouterModels } from "@/lib/openrouterModels";
 
 export interface OpenRouterModel {
@@ -57,11 +58,7 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
         console.error("Error fetching OpenRouter models:", error);
         setFetchError(`Failed to fetch models: ${error.message || "Unknown error"}`);
         
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to fetch OpenRouter models. Please check your API key and try again."
-        });
+        toast.error("Failed to fetch OpenRouter models. Please check your API key and try again.");
       } finally {
         setIsLoadingModels(false);
       }
@@ -88,11 +85,7 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
       onModelChange(value);
     } catch (error) {
       console.error("Error changing model:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update model selection. Please try again."
-      });
+      toast.error("Failed to update model selection. Please try again.");
     }
   };
 

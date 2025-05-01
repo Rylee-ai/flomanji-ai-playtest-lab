@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 interface RulesEditorProps {
   editedRules: string;

@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { PackageOpen } from "lucide-react";
 import { usePlayerShipping } from "@/hooks/usePlayerShipping";
@@ -18,10 +18,7 @@ const PlayerProfile = () => {
   const handleSavePreferences = (e: React.FormEvent) => {
     e.preventDefault();
     // This would save preferences to the database in a real implementation
-    toast({
-      title: "Preferences Updated",
-      description: "Your playtest preferences have been updated successfully",
-    });
+    toast.success("Your playtest preferences have been updated successfully");
   };
   
   return (

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import RulesViewer from "@/components/rules/RulesViewer";
 import RulesEditor from "@/components/rules/RulesEditor";
 import RulesUsage from "@/components/rules/RulesUsage";
@@ -60,17 +60,10 @@ const Rules = () => {
           break;
       }
       setEditMode(null);
-      toast({
-        title: "Success",
-        description: "Content saved successfully",
-      });
+      toast.success("Content saved successfully");
     } catch (error) {
       console.error("Error saving content:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save content",
-        variant: "destructive",
-      });
+      toast.error("Failed to save content");
     }
   };
 
