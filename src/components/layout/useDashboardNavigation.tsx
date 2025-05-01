@@ -1,0 +1,85 @@
+
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "sonner";
+import { AuthContextType } from "@/hooks/auth/types";
+
+export const useDashboardNavigation = (auth: AuthContextType) => {
+  const { user, profile, isLoading, refreshProfile } = auth;
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [navError, setNavError] = useState<string | null>(null);
+
+  // Clear navigation error when location changes
+  useEffect(() => {
+    setNavError(null);
+  }, [location.pathname]);
+  
+  // Helper function to determine which dashboard to navigate to
+  const getDashboardPath = () => {
+    // Default to player dashboard if no profile or if profile load is still pending
+    if (!profile) {
+      console.log("No profile available, defaulting to /player dashboard");
+      return "/player";
+    }
+    
+    console.log(`Navigating based on role: ${profile.role}`);
+    return profile.role === "admin" ? "/dashboard" : "/player";
+  };
+
+  // Handle dashboard navigation with robust error handling
+  const handleDashboardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // If profile is loading, show a loading message
+    if (isLoading) {
+      toast("Loading your profile", {
+        description: "Please wait a moment while we load your information"
+      });
+      return;
+    }
+
+    // If not logged in (shouldn't happen due to UI hiding), redirect to auth
+    if (!user) {
+      console.error("Dashboard click attempted without login");
+      toast("Not signed in", {
+        description: "Please sign in to access your dashboard"
+      });
+      navigate('/auth');
+      return;
+    }
+    
+    try {
+      // If no profile, try to refresh it before navigation
+      if (!profile) {
+        console.warn("Profile not loaded yet. Attempting refresh before navigation.");
+        toast("Loading your profile", {
+          description: "Please wait while we access your information"
+        });
+        
+        // Try to refresh the profile and navigate on success
+        refreshProfile().then(success => {
+          if (success) {
+            const path = getDashboardPath();
+            console.log(`Profile refresh successful, navigating to: ${path}`);
+            navigate(path);
+          } else {
+            setNavError("Could not load your profile information. Please try again.");
+            toast.error("Could not load your profile information. Please try again.");
+          }
+        });
+      } else {
+        // Profile is loaded, navigate directly
+        const path = getDashboardPath();
+        console.log(`Navigating to ${path} for ${profile.role} user: ${profile.email}`);
+        navigate(path);
+      }
+    } catch (error) {
+      console.error("Navigation error:", error);
+      setNavError("An error occurred while navigating to your dashboard");
+      toast.error("An unexpected error occurred. Please try again.");
+    }
+  };
+
+  return { navError, setNavError, handleDashboardClick };
+};
