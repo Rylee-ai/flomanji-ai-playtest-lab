@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { toast } from "sonner";
 import { AuthContextType } from "@/hooks/auth/types";
+import { showInfoToast, showErrorToast } from "@/lib/toast";
 
 export const useDashboardNavigation = (auth: AuthContextType) => {
   const { user, profile, isLoading, refreshProfile } = auth;
@@ -33,7 +33,7 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
     
     // If profile is loading, show a loading message
     if (isLoading) {
-      toast("Loading your profile", {
+      showInfoToast("Loading your profile", {
         description: "Please wait a moment while we load your information"
       });
       return;
@@ -42,7 +42,7 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
     // If not logged in (shouldn't happen due to UI hiding), redirect to auth
     if (!user) {
       console.error("Dashboard click attempted without login");
-      toast("Not signed in", {
+      showInfoToast("Not signed in", {
         description: "Please sign in to access your dashboard"
       });
       navigate('/auth');
@@ -53,7 +53,7 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
       // If no profile, try to refresh it before navigation
       if (!profile) {
         console.warn("Profile not loaded yet. Attempting refresh before navigation.");
-        toast("Loading your profile", {
+        showInfoToast("Loading your profile", {
           description: "Please wait while we access your information"
         });
         
@@ -65,7 +65,7 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
             navigate(path);
           } else {
             setNavError("Could not load your profile information. Please try again.");
-            toast.error("Could not load your profile information. Please try again.");
+            showErrorToast("Could not load your profile information. Please try again.");
           }
         });
       } else {
@@ -77,7 +77,7 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
     } catch (error) {
       console.error("Navigation error:", error);
       setNavError("An error occurred while navigating to your dashboard");
-      toast.error("An unexpected error occurred. Please try again.");
+      showErrorToast("An unexpected error occurred. Please try again.");
     }
   };
 

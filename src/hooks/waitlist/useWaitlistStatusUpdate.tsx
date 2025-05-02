@@ -1,7 +1,7 @@
 
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useWaitlistApproval } from "./useWaitlistApproval";
+import { showErrorToast } from "@/lib/toast";
 
 /**
  * Hook for handling waitlist entry status updates
@@ -21,7 +21,7 @@ export const useWaitlistStatusUpdate = (
       
       if (profile?.role !== 'admin') {
         console.error("Only admins can update waitlist entries");
-        toast.error("You don't have permission to update waitlist entries");
+        showErrorToast("You don't have permission to update waitlist entries");
         return false;
       }
       
@@ -38,7 +38,7 @@ export const useWaitlistStatusUpdate = (
       return false;
     } catch (error) {
       console.error("Error updating waitlist status:", error);
-      toast.error("Failed to update waitlist status");
+      showErrorToast("Failed to update waitlist status");
       return false;
     }
   };

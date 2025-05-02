@@ -33,10 +33,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
 import { CardGrid } from "../cards/CardGrid";
 import { LayoutGrid, Table as TableIcon, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 interface TableWrapperProps {
   activeTab: CardType;
@@ -58,7 +58,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
   const handleDeleteCard = (card: GameCard) => {
     // Prevent deletion of cards with protected brand assets
     if (card.imageUrl && PROTECTED_BRAND_ASSETS.includes(card.imageUrl)) {
-      toast.error('Cannot delete cards with protected brand assets');
+      showErrorToast('Cannot delete cards with protected brand assets');
       return;
     }
     setCardToDelete(card);
@@ -68,7 +68,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
     if (cardToDelete) {
       onDeleteCard(cardToDelete);
       setCardToDelete(null);
-      toast.success(`Deleted ${cardToDelete.name} successfully`);
+      showSuccessToast(`Deleted ${cardToDelete.name} successfully`);
     }
   };
 
@@ -80,7 +80,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
     // Brand protection check - prevent modifications to brand assets
     const cardToUpdate = cards.find(card => card.id === cardId);
     if (cardToUpdate && cardToUpdate.imageUrl && PROTECTED_BRAND_ASSETS.includes(cardToUpdate.imageUrl)) {
-      toast.error('Cannot modify protected brand assets');
+      showErrorToast('Cannot modify protected brand assets');
       return;
     }
     

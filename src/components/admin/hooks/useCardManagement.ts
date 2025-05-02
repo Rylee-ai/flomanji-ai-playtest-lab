@@ -1,6 +1,6 @@
+
 import { useState } from "react";
 import { CardType, GameCard } from "@/types/cards";
-import { toast } from "sonner";
 import { CardFormValues } from "@/types/forms/card-form";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
@@ -13,6 +13,7 @@ import { GEAR_CARDS } from "@/lib/cards/gear-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
+import { showSuccessToast } from "@/lib/toast";
 
 export const useCardManagement = () => {
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -57,7 +58,7 @@ export const useCardManagement = () => {
     console.log("Form submitted with data:", data);
     // Here you would typically save the data to your database
     // For now, we just show a success message
-    toast.success(`${data.name} ${editingCard ? "updated" : "created"} successfully`);
+    showSuccessToast(`${data.name} ${editingCard ? "updated" : "created"} successfully`);
     setIsFormOpen(false);
     setEditingCard(undefined);
   };
@@ -94,7 +95,7 @@ export const useCardManagement = () => {
   const handleDeleteCard = (card: GameCard) => {
     // Here you would typically delete the card from your database
     // For now, we just show a success message
-    toast.success(`${card.name} deleted successfully`);
+    showSuccessToast(`${card.name} deleted successfully`);
   };
 
   return {

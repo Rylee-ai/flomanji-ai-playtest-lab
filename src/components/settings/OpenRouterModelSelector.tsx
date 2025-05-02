@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, AlertCircle, Loader2 } from "lucide-react";
-import { toast } from "sonner";
 import { fetchOpenRouterModels } from "@/lib/openrouterModels";
+import { showErrorToast } from "@/lib/toast";
 
 export interface OpenRouterModel {
   id: string;
@@ -58,7 +58,7 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
         console.error("Error fetching OpenRouter models:", error);
         setFetchError(`Failed to fetch models: ${error.message || "Unknown error"}`);
         
-        toast.error("Failed to fetch OpenRouter models. Please check your API key and try again.");
+        showErrorToast("Failed to fetch OpenRouter models", "Please check your API key and try again.");
       } finally {
         setIsLoadingModels(false);
       }
@@ -85,7 +85,7 @@ export const OpenRouterModelSelector: React.FC<OpenRouterModelSelectorProps> = (
       onModelChange(value);
     } catch (error) {
       console.error("Error changing model:", error);
-      toast.error("Failed to update model selection. Please try again.");
+      showErrorToast("Failed to update model selection", "Please try again.");
     }
   };
 

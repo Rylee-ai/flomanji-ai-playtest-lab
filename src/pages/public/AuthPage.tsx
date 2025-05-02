@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { showSuccessToast, showErrorToast, showInfoToast } from "@/lib/toast";
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
@@ -39,7 +39,7 @@ const AuthPage = () => {
       
       if (!error) {
         console.log("Sign-in successful");
-        toast("Welcome back!", {
+        showSuccessToast("Welcome back!", {
           description: "You have successfully signed in"
         });
         
@@ -53,7 +53,7 @@ const AuthPage = () => {
       }
     } catch (err) {
       console.error("Unexpected error during sign in:", err);
-      toast.error("An unexpected error occurred during sign in");
+      showErrorToast("An unexpected error occurred during sign in");
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +91,7 @@ const AuthPage = () => {
                   className="p-0 h-auto text-xs text-muted-foreground"
                   type="button"
                   onClick={() => {
-                    toast("Reset Password", {
+                    showInfoToast("Reset Password", {
                       description: "Please contact an admin for password reset assistance"
                     });
                   }}

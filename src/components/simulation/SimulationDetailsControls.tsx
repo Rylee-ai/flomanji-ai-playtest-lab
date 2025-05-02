@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ChevronLeft, Download, Clipboard } from "lucide-react";
-import { toast } from "sonner";
+import { showSuccessToast } from "@/lib/toast";
 
 interface SimulationDetailsControlsProps {
   simulationId: string;
@@ -23,7 +23,7 @@ const SimulationDetailsControls = ({
 }: SimulationDetailsControlsProps) => {
   const copyIdToClipboard = () => {
     navigator.clipboard.writeText(simulationId);
-    toast.success("Simulation ID has been copied to clipboard");
+    showSuccessToast("Simulation ID has been copied to clipboard");
   };
 
   return (

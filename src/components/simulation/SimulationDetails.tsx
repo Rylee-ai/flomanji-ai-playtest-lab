@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { SimulationResult } from "@/types";
 import { updateSimulationAnnotations } from "@/lib/storage";
-import { toast } from "sonner";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import SimulationSummaryPanel from "./SimulationSummaryPanel";
 import SimulationLogDisplay from "./SimulationLogDisplay";
 import SimulationDetailsControls from "./SimulationDetailsControls";
@@ -23,9 +23,9 @@ const SimulationDetails = ({ simulation, onBack }: SimulationDetailsProps) => {
   const handleSaveAnnotations = () => {
     const success = updateSimulationAnnotations(simulation.id, annotations);
     if (success) {
-      toast.success("Annotations updated successfully");
+      showSuccessToast("Annotations updated successfully");
     } else {
-      toast.error("Failed to update annotations");
+      showErrorToast("Failed to update annotations");
     }
   };
 
@@ -41,7 +41,7 @@ const SimulationDetails = ({ simulation, onBack }: SimulationDetailsProps) => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    toast.success("Simulation data has been exported as JSON");
+    showSuccessToast("Simulation data has been exported as JSON");
   };
 
   return (

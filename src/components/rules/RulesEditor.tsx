@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 interface RulesEditorProps {
   editedRules: string;
@@ -12,6 +12,15 @@ interface RulesEditorProps {
 }
 
 const RulesEditor = ({ editedRules, setEditedRules, onSave, onCancel }: RulesEditorProps) => {
+  const handleSave = () => {
+    try {
+      onSave();
+      showSuccessToast("Rules saved successfully");
+    } catch (error) {
+      showErrorToast("Failed to save rules", "Please try again or contact support.");
+    }
+  };
+
   return (
     <div className="space-y-4">
       <Textarea 
@@ -23,7 +32,7 @@ const RulesEditor = ({ editedRules, setEditedRules, onSave, onCancel }: RulesEdi
         <Button variant="outline" onClick={onCancel}>
           Cancel
         </Button>
-        <Button onClick={onSave}>
+        <Button onClick={handleSave}>
           Save Rules
         </Button>
       </div>

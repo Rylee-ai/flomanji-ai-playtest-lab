@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Key } from "lucide-react";
-import { toast } from "sonner";
 import { getOpenRouterApiKey, setOpenRouterApiKey } from "@/lib/openrouterApiKey";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export const ApiKeySettings = () => {
   const [apiKey, setApiKey] = useState("");
@@ -20,7 +21,7 @@ export const ApiKeySettings = () => {
         setApiKey(key ? key.slice(0, 5) + '***' + key.slice(-4) : "");
       } catch (error) {
         console.error("Error fetching API key:", error);
-        toast.error("Failed to load API key. Please try again.");
+        showErrorToast("Failed to load API key", "Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -33,7 +34,7 @@ export const ApiKeySettings = () => {
     // Allow both "or-" and "sk-or-v1-" prefixes
     const trimmedKey = apiKey.trim();
     if (trimmedKey && !(trimmedKey.startsWith("or-") || trimmedKey.startsWith("sk-or-v1-"))) {
-      toast.error("OpenRouter API keys must start with 'or-' or 'sk-or-v1-'");
+      showErrorToast("OpenRouter API keys must start with 'or-' or 'sk-or-v1-'");
       return;
     }
 
@@ -42,13 +43,13 @@ export const ApiKeySettings = () => {
       const success = await setOpenRouterApiKey(trimmedKey);
       
       if (success) {
-        toast.success("API key saved successfully");
+        showSuccessToast("API key saved successfully");
       } else {
         throw new Error("Failed to save API key");
       }
     } catch (error) {
       console.error("Error saving API key:", error);
-      toast.error("Failed to save API key. Please check your connection and try again.");
+      showErrorToast("Failed to save API key", "Please check your connection and try again.");
     } finally {
       setIsSaving(false);
     }
