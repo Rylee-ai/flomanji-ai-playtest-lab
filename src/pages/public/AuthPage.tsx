@@ -39,9 +39,7 @@ const AuthPage = () => {
       
       if (!error) {
         console.log("Sign-in successful");
-        showSuccessToast("Welcome back!", {
-          description: "You have successfully signed in"
-        });
+        showSuccessToast("Welcome back!", "You have successfully signed in");
         
         // Delay navigation slightly to ensure profile is loaded
         setTimeout(() => {
@@ -91,9 +89,7 @@ const AuthPage = () => {
                   className="p-0 h-auto text-xs text-muted-foreground"
                   type="button"
                   onClick={() => {
-                    showInfoToast("Reset Password", {
-                      description: "Please contact an admin for password reset assistance"
-                    });
+                    showInfoToast("Reset Password", "Please contact an admin for password reset assistance");
                   }}
                   disabled={isLoading}
                 >

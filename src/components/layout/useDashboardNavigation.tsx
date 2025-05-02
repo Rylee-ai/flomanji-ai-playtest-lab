@@ -33,18 +33,14 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
     
     // If profile is loading, show a loading message
     if (isLoading) {
-      showInfoToast("Loading your profile", {
-        description: "Please wait a moment while we load your information"
-      });
+      showInfoToast("Loading your profile", "Please wait a moment while we load your information");
       return;
     }
 
     // If not logged in (shouldn't happen due to UI hiding), redirect to auth
     if (!user) {
       console.error("Dashboard click attempted without login");
-      showInfoToast("Not signed in", {
-        description: "Please sign in to access your dashboard"
-      });
+      showInfoToast("Not signed in", "Please sign in to access your dashboard");
       navigate('/auth');
       return;
     }
@@ -53,9 +49,7 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
       // If no profile, try to refresh it before navigation
       if (!profile) {
         console.warn("Profile not loaded yet. Attempting refresh before navigation.");
-        showInfoToast("Loading your profile", {
-          description: "Please wait while we access your information"
-        });
+        showInfoToast("Loading your profile", "Please wait while we access your information");
         
         // Try to refresh the profile and navigate on success
         refreshProfile().then(success => {
