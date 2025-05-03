@@ -78,7 +78,7 @@ export function CardImportTabs({
           </div>
         </div>
 
-        {validationErrors.length > 0 && (
+        {(validationErrors.length > 0 || transformedCards.length > 0) && (
           <ValidationSummary 
             validationErrors={validationErrors} 
             transformedCards={transformedCards} 
@@ -114,7 +114,6 @@ export function CardImportTabs({
               />
               <TemplateDownloader 
                 cardType={cardType}
-                setCardType={setCardType}
               />
             </div>
 

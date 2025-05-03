@@ -1,4 +1,3 @@
-
 import { CardType } from "@/types/cards";
 
 /**
@@ -6,32 +5,58 @@ import { CardType } from "@/types/cards";
  * @param cardType The type of card to generate a template for
  * @returns A markdown string template
  */
-export const getMarkdownTemplateForType = (cardType: CardType): string => {
-  const baseTemplate = `# Flomanji ${capitalizeCardType(cardType)} Cards Import Template
+export function getMarkdownTemplateForType(cardType: string): string {
+  switch (cardType.toLowerCase()) {
+    case 'gear':
+      return `* **Title:** EXAMPLE GEAR ITEM
+* **Type:** GEAR – Tool
+* **Icon(s):** [Tool Icon] [Utility Icon]
+* **Keywords:** utility, durable, multi-use
+* **Rules:** This item provides a specific advantage when used in appropriate situations.
+* **Flavor:** *"Goblet: 'A reliable tool for any adventurer in the wilds of Flomanji.'"*
+* **Image Prompt:** A well-crafted handheld tool with wooden handle and metal parts
 
-*Brief description of this card type goes here.*
-
-**1. EXAMPLE ${cardType.toUpperCase()} CARD NAME**
-
-* **Type:** ${getTypeLabel(cardType)}
-${getCardTypeSpecificFields(cardType)}* **Icon(s):** [Primary Icon] [Secondary Icon]
-* **Keywords:** keyword1, keyword2, keyword3
-* **Rules:** Place the card rules text here. This is what the card does when played or encountered.
-* **Flavor:** "Goblet: 'A quote or flavor text that brings the card to life. Always in Goblet's voice.'"
-* **Image Prompt:** A detailed description for generating an image for this card.
-
-**2. ANOTHER ${cardType.toUpperCase()} EXAMPLE**
-
-* **Type:** ${getTypeLabel(cardType)}
-${getCardTypeSpecificFields(cardType)}* **Icon(s):** [Different Icon] [Another Icon]
-* **Keywords:** keyword1, keyword2
-* **Rules:** Another example of rules text for this card type. Be specific about game mechanics.
-* **Flavor:** "Goblet: 'More witty or thematic flavor text goes here, written as if from Goblet.'"
-* **Image Prompt:** Another detailed image description that would work well as an AI generation prompt.
+* **Title:** EXAMPLE CONSUMABLE
+* **Type:** GEAR – Consumable
+* **Icon(s):** [Healing Icon] [One-Use Icon]
+* **Keywords:** healing, single-use, emergency
+* **Rules:** Discard to use. Declare "Healing Up!" Restore 1 Health point to any character.
+* **Flavor:** *"Goblet: 'Apply liberally to wounds. Results may vary.'"*
+* **Image Prompt:** A small vial with glowing green liquid inside, cork slightly askew
 `;
-  
-  return baseTemplate;
-};
+    
+    case 'treasure':
+      return `* **Title:** EXAMPLE TREASURE
+* **Type:** TREASURE
+* **Icon(s):** [Value Icon] [Mystery Icon]
+* **Keywords:** valuable, tradeable, collectible
+* **Rules:** This item can be traded for valuable resources or information.
+* **Flavor:** *"Goblet: 'Worth more than its weight in nostalgia.'"*
+* **Image Prompt:** A gleaming artifact partially covered in swamp moss
+`;
+    
+    case 'hazard':
+      return `* **Title:** EXAMPLE HAZARD
+* **Type:** HAZARD – Environmental
+* **Icon(s):** [Danger Icon] [Environment Icon]
+* **Keywords:** obstacle, threatening, challenging
+* **Rules:** Players must make a DC 4 Grit check when encountering this hazard. Failure results in 1 damage.
+* **Flavor:** *"Goblet: 'Nature's way of saying 'keep out' in the most painful manner possible.'"*
+* **Image Prompt:** A dangerous environmental feature looming menacingly
+`;
+
+    // Add templates for other card types
+    default:
+      return `* **Title:** EXAMPLE CARD
+* **Type:** ${cardType.toUpperCase()}
+* **Icon(s):** [Icon1] [Icon2]
+* **Keywords:** keyword1, keyword2
+* **Rules:** Description of how this card works in the game.
+* **Flavor:** *"Goblet: 'A flavorful quote about this card.'"*
+* **Image Prompt:** A vivid description for generating an image of this card
+`;
+  }
+}
 
 /**
  * Capitalizes the first letter of a card type and handles special cases

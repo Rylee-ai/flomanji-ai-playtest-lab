@@ -43,10 +43,14 @@ export const parseCardSection = (title: string, content: string): CardFormValues
       card.type = 'gear';
       
       // Extract the gear category
-      if (typeText.includes('–')) {
-        const category = typeText.split('–')[1].trim();
-        card.category = mapGearCategory(category);
-        console.log(`Extracted gear category: ${card.category}`);
+      if (typeText.includes('–') || typeText.includes('-')) {
+        const separator = typeText.includes('–') ? '–' : '-';
+        const parts = typeText.split(separator);
+        if (parts.length > 1) {
+          const category = parts[1].trim();
+          card.category = mapGearCategory(category);
+          console.log(`Extracted gear category: ${card.category}`);
+        }
       }
     } else if (typeText.includes('treasure')) {
       card.type = 'treasure';
@@ -76,8 +80,8 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     console.log("No type found, defaulting to 'gear'");
     card.type = 'gear';
   }
-  
-  // Icons - declare iconMatch before using it
+
+  // Icons - Define iconMatch variable before using it
   const iconMatch = content.match(/\*\s*\*\*Icon\(s\):\*\*\s*([^\n]+)/i) || content.match(/Icon\(s\):\s*([^\n]+)/i);
   if (iconMatch) {
     const iconsText = iconMatch[1].trim();
@@ -124,7 +128,7 @@ export const parseCardSection = (title: string, content: string): CardFormValues
                     .replace(/\n+/g, ' ');       // Join multiple lines
     
     // Clean up quotes and asterisks if present
-    flavorText = flavorText.replace(/^["']|["']$/g, '').trim();
+    flavorText = flavorText.replace(/^\*|^\"|\"$|\*$/g, '').trim();
     
     console.log(`Found flavor text: "${flavorText.substring(0, 50)}..."`);
     card.flavor = flavorText;

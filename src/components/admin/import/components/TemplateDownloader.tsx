@@ -11,7 +11,7 @@ interface TemplateDownloaderProps {
   setCardType?: (type: CardType) => void;
 }
 
-export function TemplateDownloader({ cardType, setCardType }: TemplateDownloaderProps) {
+export function TemplateDownloader({ cardType }: TemplateDownloaderProps) {
   const handleDownload = () => {
     // Generate the template content based on card type
     const templateContent = getMarkdownTemplateForType(cardType);
