@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { ChevronLeft, Download, Clipboard, FileText, FilePdf } from "lucide-react";
+import { ChevronLeft, Download, Clipboard, FileText, File } from "lucide-react";
 import { showSuccessToast } from "@/lib/toast";
 import {
   DropdownMenu,
@@ -80,7 +80,7 @@ const SimulationDetailsControls = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handleExportPdf}>
-              <FilePdf className="mr-2 h-4 w-4" />
+              <File className="mr-2 h-4 w-4" />
               Export as PDF
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleExportMarkdown}>
