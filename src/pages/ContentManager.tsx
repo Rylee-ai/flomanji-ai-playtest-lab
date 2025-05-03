@@ -4,45 +4,48 @@ import GameContentManager from "@/components/admin/GameContentManager";
 import { CardBulkImport } from "@/components/admin/forms/CardBulkImport";
 import { CardExporter } from "@/components/admin/cards/CardExporter";
 import { useCardManagement } from "@/components/admin/hooks/useCardManagement";
-import { CardType } from "@/types/cards";
+import { CardDataTransformer } from "@/components/admin/forms/card-transformer/CardDataTransformer";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Download, Upload, History, FileJson } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { CardDataTransformer } from "@/components/admin/forms/CardDataTransformer";
+import { Download, Upload, FilePlus2 } from "lucide-react";
 
 const ContentManager = () => {
-  const navigate = useNavigate();
-  
   const {
     handleImport,
     activeTab,
   } = useCardManagement();
 
   return (
-    <div className="container py-6 space-y-6">
-      <div className="flex flex-col border-b pb-4">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Flomanji Content Manager</h1>
-            <div className="text-sm text-muted-foreground mt-1">
-              Create and manage game cards, characters, missions, and content
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <CardDataTransformer onTransformed={handleImport} />
-            <CardBulkImport onImport={handleImport} />
-            <CardExporter cardType={activeTab as CardType} />
-          </div>
+    <div className="container max-w-7xl py-6 space-y-6">
+      <div className="flex items-center justify-between border-b pb-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Content Manager</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Create, manage, and organize game card content
+          </p>
         </div>
         
-        <p className="mt-2">
-          Use the tabs below to view and edit different card types. The system supports all card types 
-          from the Flomanji game, including player characters, NPCs, hazards, treasures, and more.
-        </p>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="gap-2">
+            <Download className="h-4 w-4" />
+            <CardExporter cardType={activeTab} />
+          </Button>
+          <Button variant="outline" size="sm" className="gap-2">
+            <Upload className="h-4 w-4" />
+            <CardBulkImport onImport={handleImport} />
+          </Button>
+          <Button variant="default" size="sm" className="gap-2">
+            <FilePlus2 className="h-4 w-4" />
+            <CardDataTransformer onTransformed={handleImport} />
+          </Button>
+        </div>
       </div>
       
-      <GameContentManager />
+      <Tabs defaultValue="content" className="space-y-4">
+        <TabsContent value="content" className="space-y-4 p-0 mt-0">
+          <GameContentManager />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

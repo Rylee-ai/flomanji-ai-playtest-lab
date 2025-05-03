@@ -12,6 +12,8 @@ export const useCardSelection = (cards: GameCard[]) => {
   const [cardToDelete, setCardToDelete] = useState<GameCard | null>(null);
   const [selectedCards, setSelectedCards] = useState<GameCard[]>([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredCards, setFilteredCards] = useState<GameCard[]>([]);
 
   const handleDeleteCard = (card: GameCard) => {
     // Prevent deletion of cards with protected brand assets
@@ -48,6 +50,23 @@ export const useCardSelection = (cards: GameCard[]) => {
     showSuccessToast(`Updated ${updatedCards.length} cards`);
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim() === "") {
+      setFilteredCards([]);
+      return;
+    }
+    
+    // Filter cards by name, type, or keywords
+    const filtered = cards.filter((card) => 
+      card.name.toLowerCase().includes(query.toLowerCase()) || 
+      card.type.toLowerCase().includes(query.toLowerCase()) || 
+      (card.keywords && card.keywords.some(k => k.toLowerCase().includes(query.toLowerCase())))
+    );
+    
+    setFilteredCards(filtered);
+  };
+
   const handleImageUpload = async (cardId: string, imageUrl: string) => {
     // Brand protection check - prevent modifications to brand assets
     const cardToUpdate = cards.find(card => card.id === cardId);
@@ -56,7 +75,6 @@ export const useCardSelection = (cards: GameCard[]) => {
       return;
     }
     
-    // This is just logging - the actual update would happen in the parent component
     console.log('Image uploaded for card:', cardId, imageUrl);
   };
 
@@ -65,10 +83,13 @@ export const useCardSelection = (cards: GameCard[]) => {
     setCardToDelete,
     selectedCards,
     selectAll,
+    searchQuery, 
+    filteredCards,
     handleDeleteCard,
     handleSelectCard,
     handleSelectAll,
     handleBulkEditComplete,
-    handleImageUpload
+    handleImageUpload,
+    handleSearch
   };
 };
