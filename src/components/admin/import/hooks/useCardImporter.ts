@@ -21,7 +21,7 @@ interface UseCardImporterProps {
 export function useCardImporter({ onImportComplete, initialCardType = "gear" }: UseCardImporterProps) {
   // Use the specialized hooks for different aspects of card importing
   const { 
-    isProcessing,
+    isProcessing: isFileProcessing,
     fileFormat,
     fileExtension,
     analyzeFile,
@@ -44,7 +44,7 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
     resetResults
   } = useCardImportResults();
 
-  // New AI processing state
+  // AI processing state
   const [enableAIProcessing, setEnableAIProcessing] = useState(false);
   const {
     isProcessing: isAIProcessing,
@@ -52,8 +52,12 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
     enhancedCards,
     processCardsWithAI,
     applySuggestion,
-    resetAIProcessing
+    resetAIProcessing,
+    processingError
   } = useAICardProcessing();
+
+  // Overall processing state
+  const isProcessing = isFileProcessing || isAIProcessing;
 
   // Helper to ignore a suggestion
   const handleIgnoreSuggestion = (index: number) => {
@@ -75,48 +79,57 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
     resetResults();
     resetAIProcessing();
 
-    // Auto-detect format
-    await analyzeFile(file);
-    
-    // Process the file
-    const { processedCards, errors } = await processFile(file, typeToUse);
-    
-    // Update state with results
-    setTransformedCards(processedCards);
-    setValidationErrors(errors);
-    
-    // If errors, don't proceed with AI processing
-    if (errors.length > 0) {
-      // Create and set import results
-      const results = createImportResults(processedCards, errors);
-      setImportResults(results);
-      return;
-    }
-    
-    // If AI processing is enabled, process the cards with AI
-    if (enableAIProcessing && processedCards.length > 0) {
-      try {
-        console.log("Processing cards with AI...");
-        const aiProcessedCards = await processCardsWithAI(processedCards, typeToUse);
-        
-        // Update state with AI processed cards
-        setTransformedCards(aiProcessedCards);
-        
+    try {
+      // Auto-detect format
+      await analyzeFile(file);
+      
+      // Process the file
+      const { processedCards, errors } = await processFile(file, typeToUse);
+      
+      console.log(`File processed with ${processedCards.length} cards and ${errors.length} errors`);
+      
+      // Update state with results
+      setTransformedCards(processedCards);
+      setValidationErrors(errors);
+      
+      // If errors, don't proceed with AI processing
+      if (errors.length > 0) {
+        console.log("Validation errors found, skipping AI processing");
         // Create and set import results
-        const results = createImportResults(aiProcessedCards, errors);
+        const results = createImportResults(processedCards, errors);
         setImportResults(results);
-      } catch (error) {
-        console.error("Error processing cards with AI:", error);
-        toast.error("AI processing failed. Using original cards instead.");
-        
-        // Create and set import results with original cards
+        return;
+      }
+      
+      // If AI processing is enabled, process the cards with AI
+      if (enableAIProcessing && processedCards.length > 0) {
+        try {
+          console.log("Processing cards with AI...");
+          const aiProcessedCards = await processCardsWithAI(processedCards, typeToUse);
+          
+          // Update state with AI processed cards
+          setTransformedCards(aiProcessedCards);
+          
+          // Create and set import results
+          const results = createImportResults(aiProcessedCards, errors);
+          setImportResults(results);
+        } catch (error) {
+          console.error("Error processing cards with AI:", error);
+          toast.error("AI processing failed. Using original cards instead.");
+          
+          // Create and set import results with original cards
+          const results = createImportResults(processedCards, errors);
+          setImportResults(results);
+        }
+      } else {
+        // Create and set import results with processed cards
         const results = createImportResults(processedCards, errors);
         setImportResults(results);
       }
-    } else {
-      // Create and set import results
-      const results = createImportResults(processedCards, errors);
-      setImportResults(results);
+    } catch (error) {
+      console.error("Error during file processing:", error);
+      toast.error(`Error processing file: ${error.message || "Unknown error"}`);
+      setValidationErrors([`Failed to process file: ${error.message || "Unknown error"}`]);
     }
   };
 
@@ -124,12 +137,17 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
    * Apply an AI suggestion to the cards
    */
   const handleApplySuggestion = (index: number) => {
-    const updatedCards = applySuggestion(index);
-    setTransformedCards(updatedCards);
-    
-    // Update import results
-    const results = createImportResults(updatedCards, validationErrors);
-    setImportResults(results);
+    try {
+      const updatedCards = applySuggestion(index);
+      setTransformedCards(updatedCards);
+      
+      // Update import results
+      const results = createImportResults(updatedCards, validationErrors);
+      setImportResults(results);
+    } catch (error) {
+      console.error("Error applying suggestion:", error);
+      toast.error(`Failed to apply suggestion: ${error.message}`);
+    }
   };
 
   /**
@@ -142,7 +160,7 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
   };
 
   return {
-    isProcessing: isProcessing || isAIProcessing,
+    isProcessing,
     fileType: fileFormat, // Keep the name fileType for backward compatibility
     cardType,
     setCardType,
@@ -157,6 +175,7 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
     setEnableAIProcessing,
     aiSuggestions,
     handleApplySuggestion,
-    handleIgnoreSuggestion
+    handleIgnoreSuggestion,
+    processingError
   };
 }

@@ -7,15 +7,25 @@ import { AICardProcessorService, CardSuggestion } from "@/utils/ai-processing/AI
 
 /**
  * Hook for managing AI-powered card processing
+ * Provides state and methods for handling AI analysis of imported cards
  */
 export function useAICardProcessing() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [suggestions, setSuggestions] = useState<CardSuggestion[]>([]);
   const [enhancedCards, setEnhancedCards] = useState<CardFormValues[]>([]);
   const [originalCards, setOriginalCards] = useState<CardFormValues[]>([]);
+  const [processingError, setProcessingError] = useState<string | null>(null);
+  const [processingStats, setProcessingStats] = useState<{
+    totalCards: number;
+    improvedCards: number;
+    totalSuggestions: number;
+  }>({ totalCards: 0, improvedCards: 0, totalSuggestions: 0 });
 
   /**
    * Process cards with AI to enhance and validate them
+   * @param cards Array of cards to process
+   * @param cardType Type of cards being processed
+   * @returns Array of processed cards (enhanced or original if processing fails)
    */
   const processCardsWithAI = async (cards: CardFormValues[], cardType: CardType): Promise<CardFormValues[]> => {
     if (!cards.length) {
@@ -23,16 +33,30 @@ export function useAICardProcessing() {
     }
 
     setIsProcessing(true);
+    setProcessingError(null);
     setOriginalCards(cards);
     
     try {
+      console.log(`useAICardProcessing: Processing ${cards.length} cards of type ${cardType}`);
       const { enhancedCards, suggestions } = await AICardProcessorService.processCards(cards, cardType);
+      
+      // Calculate processing stats
+      const improvedCards = enhancedCards.filter((card, index) => 
+        JSON.stringify(card) !== JSON.stringify(cards[index])
+      ).length;
       
       setEnhancedCards(enhancedCards);
       setSuggestions(suggestions);
+      setProcessingStats({
+        totalCards: cards.length,
+        improvedCards: improvedCards,
+        totalSuggestions: suggestions.length
+      });
       
       if (suggestions.length > 0) {
         toast.success(`AI found ${suggestions.length} potential improvements for your cards`);
+      } else if (improvedCards > 0) {
+        toast.success(`AI enhanced ${improvedCards} cards with no additional suggestions`);
       } else {
         toast.success(`AI has validated your cards with no issues found`);
       }
@@ -40,6 +64,7 @@ export function useAICardProcessing() {
       return enhancedCards;
     } catch (error) {
       console.error("Error in AI card processing:", error);
+      setProcessingError(error.message || "Unknown error during AI processing");
       toast.error("AI processing failed. Using original cards instead.");
       return cards;
     } finally {
@@ -49,6 +74,8 @@ export function useAICardProcessing() {
 
   /**
    * Apply a specific suggestion to a card
+   * @param suggestionIndex Index of the suggestion to apply
+   * @returns Updated array of cards with the suggestion applied
    */
   const applySuggestion = (suggestionIndex: number): CardFormValues[] => {
     if (!suggestions[suggestionIndex] || !enhancedCards.length) {
@@ -57,26 +84,48 @@ export function useAICardProcessing() {
 
     const suggestion = suggestions[suggestionIndex];
     
-    // Create a copy of the enhanced cards
-    const updatedCards = enhancedCards.map(card => {
-      if (card.name === suggestion.cardName) {
-        // Apply the suggestion based on the field
-        return {
-          ...card,
-          [suggestion.field]: suggestion.suggestion
-        };
-      }
-      return card;
-    });
-    
-    // Update the state
-    setEnhancedCards(updatedCards);
-    
-    // Remove the applied suggestion
-    const updatedSuggestions = suggestions.filter((_, index) => index !== suggestionIndex);
-    setSuggestions(updatedSuggestions);
-    
-    return updatedCards;
+    try {
+      console.log(`Applying suggestion for ${suggestion.cardName}, field: ${suggestion.field}`);
+      
+      // Create a copy of the enhanced cards
+      const updatedCards = enhancedCards.map(card => {
+        if (card.name === suggestion.cardName) {
+          // Apply the suggestion based on the field
+          const updatedCard = { ...card };
+          
+          // Handle array fields differently
+          if (Array.isArray(updatedCard[suggestion.field as keyof CardFormValues])) {
+            // For array fields like rules or keywords, add the suggestion as a new item
+            const currentValue = updatedCard[suggestion.field as keyof CardFormValues] as any[];
+            updatedCard[suggestion.field as keyof CardFormValues] = [
+              ...currentValue, 
+              suggestion.suggestion
+            ] as any;
+          } else {
+            // For string fields, replace the value
+            updatedCard[suggestion.field as keyof CardFormValues] = suggestion.suggestion as any;
+          }
+          
+          return updatedCard;
+        }
+        return card;
+      });
+      
+      // Update the state
+      setEnhancedCards(updatedCards);
+      
+      // Remove the applied suggestion
+      const updatedSuggestions = suggestions.filter((_, index) => index !== suggestionIndex);
+      setSuggestions(updatedSuggestions);
+      
+      toast.success(`Applied suggestion for ${suggestion.cardName}`);
+      
+      return updatedCards;
+    } catch (error) {
+      console.error("Error applying suggestion:", error);
+      toast.error(`Failed to apply suggestion: ${error.message}`);
+      return enhancedCards;
+    }
   };
 
   /**
@@ -86,6 +135,24 @@ export function useAICardProcessing() {
     setSuggestions([]);
     setEnhancedCards([]);
     setOriginalCards([]);
+    setProcessingError(null);
+    setProcessingStats({ totalCards: 0, improvedCards: 0, totalSuggestions: 0 });
+  };
+
+  /**
+   * Get a card comparison to see what changed in a specific card
+   * @param cardIndex Index of the card to compare
+   * @returns An object with original and enhanced card
+   */
+  const getCardComparison = (cardIndex: number) => {
+    if (!originalCards[cardIndex] || !enhancedCards[cardIndex]) {
+      return null;
+    }
+    
+    return {
+      original: originalCards[cardIndex],
+      enhanced: enhancedCards[cardIndex]
+    };
   };
 
   return {
@@ -93,8 +160,11 @@ export function useAICardProcessing() {
     suggestions,
     enhancedCards,
     originalCards,
+    processingError,
+    processingStats,
     processCardsWithAI,
     applySuggestion,
-    resetAIProcessing
+    resetAIProcessing,
+    getCardComparison
   };
 }

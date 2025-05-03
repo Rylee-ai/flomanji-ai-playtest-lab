@@ -47,7 +47,8 @@ describe('AICardProcessorService', () => {
         type: "gear",
         keywords: ["keyword"],
         rules: ["Original rule text"],
-        flavor: "Original flavor text"
+        flavor: "Original flavor text",
+        icons: []
       }
     ];
 
@@ -78,7 +79,8 @@ describe('AICardProcessorService', () => {
         type: "gear",
         keywords: ["keyword"],
         rules: ["Original rule text"],
-        flavor: "Original flavor text"
+        flavor: "Original flavor text",
+        icons: []
       }
     ];
 
@@ -116,7 +118,8 @@ describe('AICardProcessorService', () => {
         type: "gear",
         keywords: ["keyword"],
         rules: ["Original rule text"],
-        flavor: "Original flavor text"
+        flavor: "Original flavor text",
+        icons: []
       }
     ];
 
@@ -128,5 +131,60 @@ describe('AICardProcessorService', () => {
     
     // Check that we got no suggestions
     expect(result.suggestions).toHaveLength(0);
+  });
+
+  it('should clean and parse JSON responses with code blocks', async () => {
+    // Mock AI response with JSON wrapped in markdown code blocks
+    const mockResponse = `
+Here's the analysis of your cards:
+
+\`\`\`json
+{
+  "enhancedCards": [
+    {
+      "name": "Enhanced Card Name",
+      "type": "gear",
+      "keywords": ["enhanced", "keyword"],
+      "rules": ["Enhanced rule text"],
+      "flavor": "Enhanced flavor text"
+    }
+  ],
+  "suggestions": [
+    {
+      "cardName": "Sample Card",
+      "field": "rules",
+      "suggestion": "Clarify the rule text for better understanding",
+      "reason": "Current text is ambiguous"
+    }
+  ]
+}
+\`\`\`
+`;
+
+    vi.mocked(openrouterChat.createChatCompletion).mockResolvedValue(mockResponse);
+
+    // Sample input cards
+    const inputCards: CardFormValues[] = [
+      {
+        id: "1",
+        name: "Sample Card",
+        type: "gear",
+        keywords: ["keyword"],
+        rules: ["Original rule text"],
+        flavor: "Original flavor text",
+        icons: []
+      }
+    ];
+
+    // Process the cards
+    const result = await AICardProcessorService.processCards(inputCards, "gear");
+
+    // Check that we got the enhanced cards from inside the code block
+    expect(result.enhancedCards).toHaveLength(1);
+    expect(result.enhancedCards[0].name).toBe("Enhanced Card Name");
+    
+    // Check that we got the suggestions from inside the code block
+    expect(result.suggestions).toHaveLength(1);
+    expect(result.suggestions[0].cardName).toBe("Sample Card");
   });
 });

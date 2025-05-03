@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
+import { Loader2 } from "lucide-react";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
 
@@ -11,6 +12,7 @@ interface CardImportActionsProps {
   validationErrors: string[];
   importResults: CardImportResult | null;
   onImport: (cards: CardFormValues[], results: CardImportResult) => void;
+  isProcessing?: boolean;
 }
 
 export const CardImportActions = ({
@@ -19,6 +21,7 @@ export const CardImportActions = ({
   validationErrors,
   importResults,
   onImport,
+  isProcessing = false,
 }: CardImportActionsProps) => {
   const handleImport = () => {
     // Create a default import result if none exists
@@ -41,13 +44,24 @@ export const CardImportActions = ({
   console.log("CardImportActions - Showing import button:", showImportButton);
   console.log("CardImportActions - Cards count:", transformedCards.length);
   console.log("CardImportActions - Validation errors:", validationErrors.length);
+  console.log("CardImportActions - Is processing:", isProcessing);
 
   return (
     <DialogFooter className="flex justify-between mt-4 pt-4 border-t">
-      <Button variant="outline" onClick={onClose}>
+      <Button 
+        variant="outline" 
+        onClick={onClose}
+        disabled={isProcessing}
+      >
         Cancel
       </Button>
-      {showImportButton ? (
+      
+      {isProcessing ? (
+        <Button disabled>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Processing...
+        </Button>
+      ) : showImportButton ? (
         <Button 
           onClick={handleImport} 
           variant="default" 
@@ -62,4 +76,4 @@ export const CardImportActions = ({
       ) : null}
     </DialogFooter>
   );
-};
+}

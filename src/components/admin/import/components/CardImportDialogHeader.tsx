@@ -1,18 +1,43 @@
 
 import React from "react";
-import {
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Loader2, Robot } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
-export const CardImportDialogHeader = () => {
+interface CardImportDialogHeaderProps {
+  enableAIProcessing?: boolean;
+  isProcessing?: boolean;
+}
+
+export function CardImportDialogHeader({ 
+  enableAIProcessing = false,
+  isProcessing = false
+}: CardImportDialogHeaderProps) {
   return (
-    <DialogHeader>
-      <DialogTitle>Import Cards</DialogTitle>
+    <DialogHeader className="space-y-2">
+      <DialogTitle className="text-2xl flex items-center gap-2">
+        Import Cards
+        {enableAIProcessing && (
+          <Badge variant="outline" className="ml-2 bg-primary/10">
+            <Robot className="h-3 w-3 mr-1" /> 
+            AI Assisted
+          </Badge>
+        )}
+        {isProcessing && (
+          <Badge variant="outline" className="ml-2 bg-muted/20">
+            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+            Processing...
+          </Badge>
+        )}
+      </DialogTitle>
       <DialogDescription>
-        Import cards from JSON or Markdown files, or transform external card data.
+        Upload JSON or Markdown files to import cards into your game.
+        {enableAIProcessing && (
+          <span className="block mt-1 text-xs">
+            AI processing will analyze cards for consistency, quality, and game balance.
+          </span>
+        )}
       </DialogDescription>
     </DialogHeader>
   );
-};
+}

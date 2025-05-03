@@ -28,6 +28,7 @@ interface CardImportDialogProps {
   enableAIProcessing?: boolean;
   setEnableAIProcessing?: (enable: boolean) => void;
   aiSuggestions?: CardSuggestion[];
+  processingError?: string | null;
   onApplySuggestion?: (index: number) => void;
   onIgnoreSuggestion?: (index: number) => void;
 }
@@ -49,6 +50,7 @@ export function CardImportDialog({
   enableAIProcessing = false,
   setEnableAIProcessing = () => {},
   aiSuggestions = [],
+  processingError = null,
   onApplySuggestion = () => {},
   onIgnoreSuggestion = () => {},
 }: CardImportDialogProps) {
@@ -60,9 +62,12 @@ export function CardImportDialog({
   }, [isOpen, defaultCardType, setCardType, cardType]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={isProcessing ? undefined : onClose}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <CardImportDialogHeader />
+        <CardImportDialogHeader 
+          enableAIProcessing={enableAIProcessing}
+          isProcessing={isProcessing}
+        />
 
         <CardImportTabs
           cardType={cardType}
@@ -77,6 +82,7 @@ export function CardImportDialog({
           enableAIProcessing={enableAIProcessing}
           setEnableAIProcessing={setEnableAIProcessing}
           aiSuggestions={aiSuggestions}
+          processingError={processingError}
           onApplySuggestion={onApplySuggestion}
           onIgnoreSuggestion={onIgnoreSuggestion}
         />
@@ -87,6 +93,7 @@ export function CardImportDialog({
           validationErrors={validationErrors}
           importResults={importResults}
           onImport={onImport}
+          isProcessing={isProcessing}
         />
       </DialogContent>
     </Dialog>

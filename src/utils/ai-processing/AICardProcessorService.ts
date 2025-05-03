@@ -2,6 +2,7 @@
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { createChatCompletion } from "@/lib/openrouterChat";
+import { toast } from "sonner";
 
 /**
  * Service for AI-powered card processing and enhancement
@@ -22,13 +23,15 @@ export class AICardProcessorService {
   }> {
     try {
       if (!cards.length) {
+        console.log("AICardProcessorService: No cards to process");
         return { enhancedCards: [], suggestions: [] };
       }
 
-      console.log(`Processing ${cards.length} ${cardType} cards with AI`);
+      console.log(`AICardProcessorService: Processing ${cards.length} ${cardType} cards with AI`);
       
       // Create a simplified version of the cards for the AI prompt
       const simplifiedCards = cards.map(card => ({
+        id: card.id || "", // Include ID if available
         name: card.name,
         type: card.type,
         keywords: card.keywords || [],
@@ -43,14 +46,19 @@ export class AICardProcessorService {
       // Generate the AI prompt based on card type and content
       const prompt = this.generatePrompt(simplifiedCards, cardType);
       
+      console.log("AICardProcessorService: Sending request to AI service");
       // Process with AI
       const aiResponse = await createChatCompletion(
         this.getSystemPrompt(cardType),
         [{ role: "user", content: prompt }]
       );
       
+      console.log("AICardProcessorService: Received response from AI service");
+      
       // Parse AI response
       const { enhancedCards, suggestions } = this.parseAIResponse(aiResponse, cards);
+      
+      console.log(`AICardProcessorService: Processed ${enhancedCards.length} cards with ${suggestions.length} suggestions`);
       
       return { 
         enhancedCards: enhancedCards || cards,
@@ -58,6 +66,7 @@ export class AICardProcessorService {
       };
     } catch (error) {
       console.error("Error processing cards with AI:", error);
+      toast.error(`AI processing error: ${error.message || "Unknown error"}`);
       // Return original cards if AI processing fails
       return { enhancedCards: cards, suggestions: [] };
     }
@@ -82,7 +91,8 @@ Your response should be formatted as valid JSON with two sections:
 1. "enhancedCards": An array of the improved card data
 2. "suggestions": An array of improvement suggestions with cardName, field, suggestion, and reason
 
-DO NOT completely rewrite cards unless absolutely necessary - focus on small improvements and enhancement suggestions.`;
+DO NOT completely rewrite cards unless absolutely necessary - focus on small improvements and enhancement suggestions.
+CRITICALLY IMPORTANT: Your response must be valid JSON that can be parsed with JSON.parse()`;
   }
 
   /**
@@ -109,7 +119,7 @@ Please return:
 1. The enhanced cards (with minimal changes)
 2. Specific suggestions for improvements
 
-Respond in JSON format with "enhancedCards" and "suggestions" keys.`;
+Respond in JSON format with "enhancedCards" and "suggestions" keys. Don't include any text outside the JSON object.`;
   }
 
   /**
@@ -123,38 +133,87 @@ Respond in JSON format with "enhancedCards" and "suggestions" keys.`;
     suggestions: CardSuggestion[];
   } {
     try {
+      // Clean the response to ensure we only have valid JSON
+      const cleanedResponse = this.cleanJsonResponse(aiResponse);
+      console.log("AICardProcessorService: Parsing AI response");
+      
       // Try to parse the AI response as JSON
-      const parsedResponse = JSON.parse(aiResponse);
+      const parsedResponse = JSON.parse(cleanedResponse);
       
       // Extract enhanced cards, falling back to originals
       let enhancedCards = originalCards;
       if (parsedResponse.enhancedCards && Array.isArray(parsedResponse.enhancedCards)) {
+        console.log("AICardProcessorService: Processing enhanced cards from AI");
         // Merge enhanced cards with originals to ensure no data is lost
         enhancedCards = originalCards.map((originalCard, index) => {
-          const enhancedCard = parsedResponse.enhancedCards[index];
-          if (!enhancedCard) return originalCard;
+          // If we don't have a matching enhanced card, return the original
+          if (!parsedResponse.enhancedCards[index]) return originalCard;
           
-          return {
+          const enhancedCard = parsedResponse.enhancedCards[index];
+          
+          // Maintain the original structure while updating specific fields
+          const mergedCard = { 
             ...originalCard,
-            // Only update text fields that the AI has enhanced
-            name: enhancedCard.name || originalCard.name,
-            keywords: enhancedCard.keywords || originalCard.keywords,
-            rules: enhancedCard.rules || originalCard.rules,
-            flavor: enhancedCard.flavor || originalCard.flavor,
+            // Only update these fields from the AI response if they exist
+            ...(enhancedCard.name && { name: enhancedCard.name }),
+            ...(enhancedCard.keywords && { keywords: enhancedCard.keywords }),
+            ...(enhancedCard.rules && { rules: enhancedCard.rules }),
+            ...(enhancedCard.flavor && { flavor: enhancedCard.flavor }),
           };
+          
+          // Ensure that keywords and rules are always arrays
+          if (!Array.isArray(mergedCard.keywords)) {
+            mergedCard.keywords = mergedCard.keywords ? [mergedCard.keywords] : [];
+          }
+          
+          if (!Array.isArray(mergedCard.rules)) {
+            mergedCard.rules = mergedCard.rules ? [mergedCard.rules] : [];
+          }
+          
+          return mergedCard;
         });
+      } else {
+        console.warn("AICardProcessorService: No enhanced cards found in AI response");
       }
       
       // Extract suggestions
       let suggestions: CardSuggestion[] = [];
       if (parsedResponse.suggestions && Array.isArray(parsedResponse.suggestions)) {
-        suggestions = parsedResponse.suggestions;
+        console.log(`AICardProcessorService: Processing ${parsedResponse.suggestions.length} suggestions from AI`);
+        suggestions = parsedResponse.suggestions.map(suggestion => ({
+          cardName: suggestion.cardName || "Unknown Card",
+          field: suggestion.field || "general",
+          suggestion: suggestion.suggestion || "No suggestion provided",
+          reason: suggestion.reason || "No reason provided"
+        }));
+      } else {
+        console.warn("AICardProcessorService: No suggestions found in AI response");
       }
       
       return { enhancedCards, suggestions };
     } catch (error) {
-      console.error("Error parsing AI response:", error);
+      console.error("Error parsing AI response:", error, "Response:", aiResponse);
       return { enhancedCards: originalCards, suggestions: [] };
+    }
+  }
+
+  /**
+   * Clean the AI response to ensure we have valid JSON
+   */
+  private static cleanJsonResponse(response: string): string {
+    try {
+      // Try to find JSON content within markdown code blocks or regular text
+      const jsonMatch = response.match(/```(?:json)?([\s\S]*?)```/) || response.match(/(\{[\s\S]*\})/);
+      
+      if (jsonMatch && jsonMatch[1]) {
+        return jsonMatch[1].trim();
+      }
+      
+      // If no JSON blocks found, just return the original response
+      return response;
+    } catch (error) {
+      console.error("Error cleaning JSON response:", error);
+      return response;
     }
   }
 }

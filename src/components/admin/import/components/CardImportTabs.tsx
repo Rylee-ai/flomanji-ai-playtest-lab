@@ -1,17 +1,20 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CardType } from "@/types/cards";
-import { CardFormValues } from "@/types/forms/card-form";
-import { CardTypeSelector } from "./CardTypeSelector";
-import { FileUploader } from "./FileUploader";
-import { CardPreviewTab } from "./CardPreviewTab";
-import { ValidationSummary } from "./ValidationSummary";
-import { TemplateDownloader } from "./TemplateDownloader";
-import { AISuggestions } from "./AISuggestions";
-import { CardSuggestion } from "@/utils/ai-processing/AICardProcessorService";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { AlertCircle, FileSymlink, Robot } from "lucide-react";
+import { CardType } from "@/types/cards";
+import { CardFormValues } from "@/types/forms/card-form";
+import { CardSuggestion } from "@/utils/ai-processing/AICardProcessorService";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+import { FileUploader } from "./FileUploader";
+import { CardTypeSelector } from "./CardTypeSelector";
+import { CardPreview } from "./CardPreview";
+import { ValidationSummary } from "./ValidationSummary";
+import { AISuggestions } from "./AISuggestions";
 
 interface CardImportTabsProps {
   cardType: CardType;
@@ -22,9 +25,11 @@ interface CardImportTabsProps {
   transformedCards: CardFormValues[];
   defaultCardType: CardType;
   fileType: string | null;
+  // AI-related props
   enableAIProcessing?: boolean;
   setEnableAIProcessing?: (enable: boolean) => void;
   aiSuggestions?: CardSuggestion[];
+  processingError?: string | null;
   onApplySuggestion?: (index: number) => void;
   onIgnoreSuggestion?: (index: number) => void;
 }
@@ -38,149 +43,98 @@ export function CardImportTabs({
   transformedCards,
   defaultCardType,
   fileType,
+  // AI-related props
   enableAIProcessing = false,
   setEnableAIProcessing = () => {},
   aiSuggestions = [],
+  processingError = null,
   onApplySuggestion = () => {},
   onIgnoreSuggestion = () => {},
 }: CardImportTabsProps) {
-  const [activeTab, setActiveTab] = useState<string>("upload");
-  const [selectedCard, setSelectedCard] = useState<CardFormValues | undefined>();
-
   return (
-    <Tabs
-      value={activeTab}
-      onValueChange={setActiveTab}
-      className="w-full mt-4"
-    >
-      <TabsList className="grid grid-cols-4 mb-4">
-        <TabsTrigger value="upload">Upload</TabsTrigger>
-        <TabsTrigger
-          value="preview"
-          disabled={transformedCards.length === 0}
-        >
-          Preview ({transformedCards.length})
+    <Tabs defaultValue="upload" className="mt-4">
+      <TabsList className="mb-4">
+        <TabsTrigger value="upload" className="flex items-center gap-2">
+          <FileSymlink className="h-4 w-4" />
+          <span>Upload</span>
         </TabsTrigger>
-        <TabsTrigger 
-          value="ai"
-          disabled={transformedCards.length === 0}
-        >
-          AI Analysis
+        <TabsTrigger value="preview" className="flex items-center gap-2" disabled={transformedCards.length === 0}>
+          <FileSymlink className="h-4 w-4" />
+          <span>Preview</span>
         </TabsTrigger>
-        <TabsTrigger value="templates">Templates</TabsTrigger>
+        {aiSuggestions && aiSuggestions.length > 0 && (
+          <TabsTrigger value="ai" className="flex items-center gap-2">
+            <Robot className="h-4 w-4" />
+            <span>AI Suggestions</span>
+            <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs">
+              {aiSuggestions.length}
+            </span>
+          </TabsTrigger>
+        )}
       </TabsList>
 
-      <TabsContent value="upload" className="space-y-4">
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-          <div className="col-span-1 md:col-span-2">
-            <FileUploader
-              onFileSelected={onFileSelected}
-              isProcessing={isProcessing}
-              className="h-full"
-            />
-          </div>
-          <div className="space-y-4">
-            <CardTypeSelector
-              cardType={cardType}
-              setCardType={setCardType}
-              defaultCardType={defaultCardType}
-            />
-
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Switch 
-                  id="ai-processing" 
-                  checked={enableAIProcessing}
-                  onCheckedChange={setEnableAIProcessing}
-                />
-                <Label htmlFor="ai-processing">Enable AI processing</Label>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                AI will analyze your cards and suggest improvements
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">File Format</label>
-              <div className="p-2 bg-muted rounded-md text-sm">
-                {fileType ? fileType : "No file detected"}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Detected format will be shown here after upload
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {(validationErrors.length > 0 || transformedCards.length > 0) && (
-          <ValidationSummary 
-            validationErrors={validationErrors} 
-            transformedCards={transformedCards} 
-            fileType={fileType} 
+      <TabsContent value="upload">
+        <div className="space-y-6">
+          <CardTypeSelector 
+            value={cardType} 
+            onChange={setCardType} 
+            disabled={isProcessing}
           />
-        )}
-      </TabsContent>
 
-      <TabsContent value="preview">
-        <CardPreviewTab
-          cards={transformedCards}
-          selectedCard={selectedCard}
-          onSelectCard={setSelectedCard}
-        />
-      </TabsContent>
-      
-      <TabsContent value="ai">
-        <div className="space-y-4">
-          <div className="text-sm text-muted-foreground mb-4">
-            <p>AI has analyzed your cards and found potential improvements. Review and apply suggestions below.</p>
-          </div>
-          
-          <AISuggestions 
-            suggestions={aiSuggestions}
-            onApplySuggestion={onApplySuggestion}
-            onIgnoreSuggestion={onIgnoreSuggestion}
-          />
-          
-          {aiSuggestions.length === 0 && (
-            <div className="p-4 text-center text-muted-foreground border rounded-md">
-              <p>No AI suggestions available. Upload cards and enable AI processing to get recommendations.</p>
+          <div className="flex flex-col gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Switch 
+                id="ai-processing"
+                checked={enableAIProcessing}
+                onCheckedChange={setEnableAIProcessing}
+                disabled={isProcessing}
+              />
+              <Label htmlFor="ai-processing" className="cursor-pointer flex items-center gap-1">
+                <Robot className="h-4 w-4 text-muted-foreground" />
+                <span>Enable AI Processing</span>
+              </Label>
             </div>
-          )}
-        </div>
-      </TabsContent>
-
-      <TabsContent value="templates" className="space-y-4">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <h3 className="text-lg font-medium">Download Template</h3>
-            <p className="text-sm text-muted-foreground">
-              Download a template for the selected card type to help you create
-              your own cards.
+            <p className="text-xs text-muted-foreground ml-7">
+              AI will analyze your cards for consistency, suggest improvements, and help standardize terminology.
             </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <CardTypeSelector
-                cardType={cardType}
-                setCardType={setCardType}
-                defaultCardType={defaultCardType}
-              />
-              <TemplateDownloader 
-                cardType={cardType}
-              />
-            </div>
-
-            <div className="p-4 bg-muted/50 rounded-md">
-              <h4 className="text-sm font-medium mb-2">Template Information</h4>
-              <p className="text-xs text-muted-foreground">
-                Templates are provided in Markdown format. Each card should have a
-                title, type, and other attributes as shown in the template.
-                Icons, keywords, and other fields should follow the format shown.
-              </p>
-            </div>
-          </div>
+          {enableAIProcessing && (
+            <Alert variant="outline" className="bg-primary/5">
+              <Robot className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-xs text-muted-foreground">
+                AI processing is enabled. The AI will analyze your cards after import to suggest improvements 
+                and ensure consistency across your card data.
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          <Separator />
+          
+          <FileUploader 
+            onFileSelected={onFileSelected} 
+            isProcessing={isProcessing} 
+          />
+          
+          <ValidationSummary 
+            validationErrors={validationErrors} 
+            transformedCards={transformedCards}
+            fileType={fileType}
+          />
         </div>
+      </TabsContent>
+
+      <TabsContent value="preview">
+        <CardPreview cards={transformedCards} />
+      </TabsContent>
+
+      <TabsContent value="ai">
+        <AISuggestions 
+          suggestions={aiSuggestions || []}
+          onApplySuggestion={onApplySuggestion}
+          onIgnoreSuggestion={onIgnoreSuggestion}
+          processingError={processingError}
+        />
       </TabsContent>
     </Tabs>
   );
