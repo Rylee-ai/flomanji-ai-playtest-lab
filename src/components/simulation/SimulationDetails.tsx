@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -92,6 +91,7 @@ const SimulationDetails = ({ simulation, onBack }: SimulationDetailsProps) => {
     <div className="container mx-auto p-4 space-y-6">
       <SimulationDetailsControls 
         simulationId={simulation.id}
+        simulation={simulation}
         showPrompts={showPrompts}
         onTogglePrompts={() => setShowPrompts(!showPrompts)}
         onExportData={handleExportData}
