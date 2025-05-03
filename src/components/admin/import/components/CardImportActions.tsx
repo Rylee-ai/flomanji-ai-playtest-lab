@@ -21,18 +21,29 @@ export const CardImportActions = ({
   onImport,
 }: CardImportActionsProps) => {
   const handleImport = () => {
-    if (transformedCards.length > 0 && importResults) {
-      onImport(transformedCards, importResults);
-      onClose();
+    // Create a default import result if none exists
+    const resultsToUse = importResults || {
+      imported: transformedCards.length,
+      updated: 0,
+      failed: 0,
+      errors: []
+    };
+    
+    if (transformedCards.length > 0 && validationErrors.length === 0) {
+      console.log("Importing cards:", transformedCards.length);
+      onImport(transformedCards, resultsToUse);
     }
   };
+
+  // Show the import button only when we have valid cards
+  const showImportButton = transformedCards.length > 0 && validationErrors.length === 0;
 
   return (
     <DialogFooter>
       <Button variant="outline" onClick={onClose}>
         Cancel
       </Button>
-      {transformedCards.length > 0 && validationErrors.length === 0 && (
+      {showImportButton && (
         <Button onClick={handleImport}>
           Import {transformedCards.length} Cards
         </Button>

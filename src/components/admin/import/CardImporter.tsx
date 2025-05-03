@@ -30,6 +30,7 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
     resetState,
   } = useCardImporter({
     onImportComplete: (cards, results) => {
+      console.log("Import complete callback triggered with", cards.length, "cards");
       onImport(cards, results);
       setIsDialogOpen(false);
       toast.success(`Successfully imported ${cards.length} cards`);
@@ -40,13 +41,23 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
     if (!file) return;
     
     try {
+      console.log("Processing file:", file.name);
       // Auto-detect format and card type
       const detectedFormat = await detectFileFormat(file);
+      console.log("Detected format:", detectedFormat);
       await processFile(file);
     } catch (error) {
       console.error("Error importing file:", error);
       toast.error("Failed to process file. Please check the format and try again.");
     }
+  };
+
+  const handleImport = (cards: CardFormValues[], results: CardImportResult) => {
+    console.log("Manual import triggered with", cards.length, "cards");
+    onImport(cards, results);
+    setIsDialogOpen(false);
+    resetState();
+    toast.success(`Successfully imported ${cards.length} cards`);
   };
 
   const closeDialog = () => {
@@ -78,7 +89,7 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
         validationErrors={validationErrors}
         importResults={importResults}
         defaultCardType={activeCardType}
-        onImport={onImport}
+        onImport={handleImport}
       />
     </>
   );

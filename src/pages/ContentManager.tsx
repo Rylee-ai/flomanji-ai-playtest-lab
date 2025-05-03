@@ -7,12 +7,27 @@ import { useCardManagement } from "@/components/admin/hooks/useCardManagement";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Download, Upload } from "lucide-react";
+import { toast } from "sonner";
 
 const ContentManager = () => {
   const {
     handleImport,
     activeTab,
+    loadCards,
   } = useCardManagement();
+
+  const handleCardImport = async (cards, results) => {
+    console.log("ContentManager: Import triggered with", cards.length, "cards");
+    try {
+      await handleImport(cards, results);
+      toast.success(`Successfully imported ${cards.length} cards`);
+      // Reload cards to reflect the new imports
+      loadCards();
+    } catch (error) {
+      console.error("Error during import:", error);
+      toast.error("Failed to import cards. Please try again.");
+    }
+  };
 
   return (
     <div className="container max-w-7xl py-6 space-y-6">
@@ -33,7 +48,7 @@ const ContentManager = () => {
             </label>
           </Button>
           
-          <CardImporter onImport={handleImport} activeCardType={activeTab} />
+          <CardImporter onImport={handleCardImport} activeCardType={activeTab} />
         </div>
       </div>
       

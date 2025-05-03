@@ -69,6 +69,7 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
           }
         }
         
+        console.log("Detected format:", detectedFormat, "Detected type:", detectedType);
         setFileType(detectedFormat);
         if (detectedType) {
           setCardType(detectedType);
@@ -96,6 +97,7 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
     setValidationErrors([]);
 
     try {
+      console.log("Processing file:", file.name);
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
       
       if (!['json', 'md'].includes(fileExtension || '')) {
@@ -110,6 +112,7 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
       // Process based on file type
       if (fileExtension === 'md') {
         // Process Markdown file
+        console.log("Processing Markdown file for card type:", cardType);
         processedCards = transformMarkdownToCards(text, cardType);
       } else {
         // Process JSON file
@@ -126,12 +129,16 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
         // Process the cards based on file type
         if (fileType === "transform") {
           // Transform external format to our format
+          console.log("Transforming external data format for card type:", cardType);
           processedCards = transformCardData(jsonData, cardType);
         } else {
           // Process standard format
+          console.log("Processing standard data format for card type:", cardType);
           processedCards = processImportedCards(jsonData, cardType) as CardFormValues[];
         }
       }
+      
+      console.log("Processed cards:", processedCards.length);
       
       // Validate cards
       const errors: string[] = [];
@@ -153,10 +160,10 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
       setImportResults(results);
       setTransformedCards(processedCards);
       
-      // Auto complete import if no errors
-      if (errors.length === 0 && processedCards.length > 0) {
-        onImportComplete(processedCards, results);
-      }
+      // DO NOT Auto complete import if no errors - let the user trigger the import
+      // if (errors.length === 0 && processedCards.length > 0) {
+      //   onImportComplete(processedCards, results);
+      // }
     } catch (error) {
       console.error('Error processing file:', error);
       toast.error(`Failed to process ${cardType} cards. Please check the file format.`);

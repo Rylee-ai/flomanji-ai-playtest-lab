@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
@@ -39,6 +39,13 @@ export function CardImportDialog({
   defaultCardType,
   onImport,
 }: CardImportDialogProps) {
+  // Auto-select the default card type when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      setCardType(defaultCardType);
+    }
+  }, [isOpen, setCardType, defaultCardType]);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-xl">
