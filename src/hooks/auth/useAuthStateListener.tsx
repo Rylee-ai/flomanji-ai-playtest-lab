@@ -66,7 +66,7 @@ export function useAuthStateListener({
               
               // Keep previous profile if we have one to avoid logout loops
               if (event !== 'SIGNED_OUT') {
-                setProfile(prev => prev);
+                // Do nothing to keep the existing profile value
               } else {
                 setProfile(null);
               }
@@ -75,7 +75,7 @@ export function useAuthStateListener({
             console.error("Profile fetch error:", err);
             // Keep previous profile if we have one to avoid logout loops
             if (event !== 'SIGNED_OUT') {
-              setProfile(prev => prev);
+              // Do nothing to keep the existing profile value
             } else {
               setProfile(null);
             }

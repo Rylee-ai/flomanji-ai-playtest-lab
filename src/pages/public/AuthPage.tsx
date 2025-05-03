@@ -42,7 +42,9 @@ const AuthPage = () => {
       
       if (!error) {
         console.log("Sign-in successful");
-        toast.success("Welcome back!", "You have successfully signed in");
+        toast.success("Welcome back!", {
+          description: "You have successfully signed in"
+        });
         setIsRedirecting(true);
         
         // Delay navigation slightly to ensure profile is loaded
@@ -107,7 +109,9 @@ const AuthPage = () => {
                   className="p-0 h-auto text-xs text-muted-foreground"
                   type="button"
                   onClick={() => {
-                    toast.info("Reset Password", "Please contact an admin for password reset assistance");
+                    toast.info("Reset Password", {
+                      description: "Please contact an admin for password reset assistance"
+                    });
                   }}
                   disabled={isLoading}
                 >
