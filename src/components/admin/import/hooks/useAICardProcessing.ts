@@ -112,7 +112,9 @@ export function useAICardProcessing() {
                   console.warn('Cannot directly add string suggestion to icons array, requires proper icon object');
                 }
               } else if (typeof suggestion.suggestion === 'object' && fieldKey === 'icons') {
-                updatedCard.icons = [...(updatedCard.icons || []), suggestion.suggestion];
+                // Type assertion to handle the icons array case
+                const iconSuggestion = suggestion.suggestion as {symbol: string, name: string};
+                updatedCard.icons = [...(updatedCard.icons || []), iconSuggestion];
               }
             }
           } else {
