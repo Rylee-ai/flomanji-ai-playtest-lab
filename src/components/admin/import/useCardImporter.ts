@@ -6,6 +6,7 @@ import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
 import { processImportedCards } from "@/utils/cardImport";
 import { transformCardData } from "@/utils/card-data-transformer";
+import { transformMarkdownToCards } from "@/utils/markdownCardParser";
 
 interface UseCardImporterProps {
   onImportComplete: (cards: CardFormValues[], results: CardImportResult) => void;
@@ -22,48 +23,62 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
   // Detect file format and card type if possible
   const detectFileFormat = async (file: File): Promise<string> => {
     try {
-      const text = await file.text();
-      const data = JSON.parse(text);
+      // Check file extension first
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
       
-      // Check if this is standard format or needs transformation
-      let detectedFormat = "standard";
-      let detectedType: CardType | null = null;
+      if (fileExtension === 'md') {
+        setFileType("markdown");
+        return "markdown";
+      }
       
-      // Try to detect card type from the data
-      if (Array.isArray(data) && data.length > 0) {
-        const firstItem = data[0];
+      // For JSON files, analyze content to determine format
+      if (fileExtension === 'json') {
+        const text = await file.text();
+        const data = JSON.parse(text);
         
-        // If it has a type field that matches our CardType, use that
-        if (firstItem.type && typeof firstItem.type === 'string') {
-          const possibleType = firstItem.type.toLowerCase();
-          const validTypes: CardType[] = [
-            "player-character", "npc", "flomanjified", "treasure", 
-            "gear", "hazard", "chaos", "region", "mission", "secret", "automa"
-          ];
+        // Check if this is standard format or needs transformation
+        let detectedFormat = "standard";
+        let detectedType: CardType | null = null;
+        
+        // Try to detect card type from the data
+        if (Array.isArray(data) && data.length > 0) {
+          const firstItem = data[0];
           
-          if (validTypes.includes(possibleType as CardType)) {
-            detectedType = possibleType as CardType;
-          } else if (possibleType === "gear" || 
-                    possibleType.includes("consumable") || 
-                    possibleType.includes("tool") || 
-                    possibleType.includes("weapon")) {
-            detectedType = "gear";
+          // If it has a type field that matches our CardType, use that
+          if (firstItem.type && typeof firstItem.type === 'string') {
+            const possibleType = firstItem.type.toLowerCase();
+            const validTypes: CardType[] = [
+              "player-character", "npc", "flomanjified", "treasure", 
+              "gear", "hazard", "chaos", "region", "mission", "secret", "automa"
+            ];
+            
+            if (validTypes.includes(possibleType as CardType)) {
+              detectedType = possibleType as CardType;
+            } else if (possibleType === "gear" || 
+                      possibleType.includes("consumable") || 
+                      possibleType.includes("tool") || 
+                      possibleType.includes("weapon")) {
+              detectedType = "gear";
+              detectedFormat = "transform";
+            }
+          }
+          
+          // Check structure to see if it needs transformation
+          if (!firstItem.id && firstItem.title) {
             detectedFormat = "transform";
           }
         }
         
-        // Check structure to see if it needs transformation
-        if (!firstItem.id && firstItem.title) {
-          detectedFormat = "transform";
+        setFileType(detectedFormat);
+        if (detectedType) {
+          setCardType(detectedType);
         }
+        
+        return detectedFormat;
       }
       
-      setFileType(detectedFormat);
-      if (detectedType) {
-        setCardType(detectedType);
-      }
-      
-      return detectedFormat;
+      setFileType("unknown");
+      return "unknown";
     } catch (error) {
       console.error("Error detecting file format:", error);
       setFileType("unknown");
@@ -81,33 +96,41 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
     setValidationErrors([]);
 
     try {
-      if (!file.name.endsWith('.json')) {
-        toast.error('Only JSON files are supported');
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      
+      if (!['json', 'md'].includes(fileExtension || '')) {
+        toast.error('Only JSON and Markdown files are supported');
         setIsProcessing(false);
         return;
       }
 
       const text = await file.text();
-      let jsonData;
-      
-      try {
-        jsonData = JSON.parse(text);
-      } catch (error) {
-        toast.error('Invalid JSON file format');
-        setIsProcessing(false);
-        return;
-      }
-
-      // Process the cards based on file type
       let processedCards: CardFormValues[];
       
-      if (fileType === "transform") {
-        // Transform external format to our format
-        processedCards = transformCardData(jsonData, cardType);
+      // Process based on file type
+      if (fileExtension === 'md') {
+        // Process Markdown file
+        processedCards = transformMarkdownToCards(text, cardType);
       } else {
-        // Process standard format
-        // Fix: Cast the result to CardFormValues[] to ensure the correct type
-        processedCards = processImportedCards(jsonData, cardType) as CardFormValues[];
+        // Process JSON file
+        let jsonData;
+        
+        try {
+          jsonData = JSON.parse(text);
+        } catch (error) {
+          toast.error('Invalid JSON file format');
+          setIsProcessing(false);
+          return;
+        }
+        
+        // Process the cards based on file type
+        if (fileType === "transform") {
+          // Transform external format to our format
+          processedCards = transformCardData(jsonData, cardType);
+        } else {
+          // Process standard format
+          processedCards = processImportedCards(jsonData, cardType) as CardFormValues[];
+        }
       }
       
       // Validate cards

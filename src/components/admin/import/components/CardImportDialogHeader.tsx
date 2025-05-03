@@ -11,7 +11,7 @@ export const CardImportDialogHeader = () => {
     <DialogHeader>
       <DialogTitle>Import Cards</DialogTitle>
       <DialogDescription>
-        Import cards from JSON files or transform external card data.
+        Import cards from JSON or Markdown files, or transform external card data.
       </DialogDescription>
     </DialogHeader>
   );

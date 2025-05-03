@@ -52,6 +52,7 @@ export function CardImportDialog({
           validationErrors={validationErrors}
           transformedCards={transformedCards}
           defaultCardType={defaultCardType}
+          fileType={fileType}
         />
 
         <CardImportActions

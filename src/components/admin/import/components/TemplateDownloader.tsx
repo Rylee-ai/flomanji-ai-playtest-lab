@@ -1,11 +1,13 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CardType } from "@/types/cards";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getCardTemplateForType } from "@/utils/card-templates";
+import { getMarkdownTemplateForType } from "@/utils/markdown-templates";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TemplateDownloaderProps {
   cardType: CardType;
@@ -16,15 +18,29 @@ export const TemplateDownloader = ({
   cardType,
   setCardType,
 }: TemplateDownloaderProps) => {
+  const [formatType, setFormatType] = useState<"json" | "markdown">("json");
+
   const handleDownloadTemplate = () => {
-    const template = getCardTemplateForType(cardType);
-    const blob = new Blob([JSON.stringify(template, null, 2)], {
-      type: "application/json",
-    });
+    let template: any;
+    let fileName: string;
+    let fileType: string;
+    
+    if (formatType === "json") {
+      template = getCardTemplateForType(cardType);
+      fileName = `${cardType}-template.json`;
+      fileType = "application/json";
+      template = JSON.stringify(template, null, 2);
+    } else {
+      template = getMarkdownTemplateForType(cardType);
+      fileName = `${cardType}-template.md`;
+      fileType = "text/markdown";
+    }
+    
+    const blob = new Blob([template], { type: fileType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${cardType}-template.json`;
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -35,6 +51,26 @@ export const TemplateDownloader = ({
       <p className="text-sm text-muted-foreground">
         Download a template for the selected card type to help you create valid card data.
       </p>
+      
+      <Tabs defaultValue="json" value={formatType} onValueChange={(value) => setFormatType(value as "json" | "markdown")}>
+        <TabsList className="mb-4">
+          <TabsTrigger value="json">JSON Format</TabsTrigger>
+          <TabsTrigger value="markdown">Markdown Format</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="json">
+          <p className="text-sm text-muted-foreground mb-4">
+            Download a JSON template with the required fields for the selected card type.
+          </p>
+        </TabsContent>
+        
+        <TabsContent value="markdown">
+          <p className="text-sm text-muted-foreground mb-4">
+            Download a Markdown template with sections for each card property. 
+            Markdown templates are easier to read and edit in text editors.
+          </p>
+        </TabsContent>
+      </Tabs>
       
       <div className="flex items-center space-x-4">
         <Select 
@@ -61,7 +97,7 @@ export const TemplateDownloader = ({
         
         <Button onClick={handleDownloadTemplate} className="gap-2">
           <Download className="h-4 w-4" />
-          Download Template
+          Download {formatType === "json" ? "JSON" : "Markdown"} Template
         </Button>
       </div>
       
@@ -69,11 +105,14 @@ export const TemplateDownloader = ({
         <AlertTitle>Template Format</AlertTitle>
         <AlertDescription className="space-y-2">
           <p>
-            The template contains the minimum required fields for the selected card type.
-            You can add additional fields as needed based on the card type.
+            {formatType === "json" 
+              ? "The JSON template contains the minimum required fields for the selected card type."
+              : "The Markdown template provides a structured format with sections for each card property, making it easy to create multiple cards in a single file."}
           </p>
           <p className="text-sm text-muted-foreground mt-2">
-            Save your completed template as a JSON file and upload it using the Upload tab.
+            {formatType === "json"
+              ? "Save your completed template as a JSON file and upload it using the Upload tab."
+              : "Fill in the template in any text editor and save it as a .md file for uploading."}
           </p>
         </AlertDescription>
       </Alert>

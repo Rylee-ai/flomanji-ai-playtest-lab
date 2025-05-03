@@ -1,10 +1,8 @@
 
 import React from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
-
-// Import components
 import { FileUploader } from "./FileUploader";
 import { TemplateDownloader } from "./TemplateDownloader";
 import { ValidationSummary } from "./ValidationSummary";
@@ -18,6 +16,7 @@ interface CardImportTabsProps {
   validationErrors: string[];
   transformedCards: CardFormValues[];
   defaultCardType: CardType;
+  fileType?: string | null;
 }
 
 export const CardImportTabs = ({
@@ -28,41 +27,46 @@ export const CardImportTabs = ({
   validationErrors,
   transformedCards,
   defaultCardType,
+  fileType
 }: CardImportTabsProps) => {
   return (
-    <Tabs defaultValue="upload" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="upload">Upload File</TabsTrigger>
-        <TabsTrigger value="template">Get Template</TabsTrigger>
-      </TabsList>
+    <div className="py-4">
+      <div className="flex items-center justify-between mb-4">
+        <CardTypeSelector
+          cardType={cardType}
+          setCardType={setCardType}
+          defaultValue={defaultCardType}
+        />
+      </div>
       
-      <TabsContent value="upload" className="py-4">
-        <div className="space-y-4">
-          <CardTypeSelector 
+      <Tabs defaultValue="upload">
+        <TabsList>
+          <TabsTrigger value="upload">Upload File</TabsTrigger>
+          <TabsTrigger value="template">Download Template</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="upload" className="py-4">
+          <FileUploader
+            onFileSelected={onFileSelected}
+            isProcessing={isProcessing}
+          />
+          
+          <div className="mt-4">
+            <ValidationSummary
+              transformedCards={transformedCards}
+              validationErrors={validationErrors}
+              fileType={fileType}
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="template" className="py-4">
+          <TemplateDownloader
             cardType={cardType}
             setCardType={setCardType}
-            defaultValue={defaultCardType}
           />
-
-          <FileUploader 
-            onFileSelected={onFileSelected} 
-            isProcessing={isProcessing} 
-          />
-
-          <ValidationSummary
-            validationErrors={validationErrors}
-            transformedCards={transformedCards}
-            cardType={cardType}
-          />
-        </div>
-      </TabsContent>
-      
-      <TabsContent value="template" className="py-4">
-        <TemplateDownloader 
-          cardType={cardType} 
-          setCardType={setCardType} 
-        />
-      </TabsContent>
-    </Tabs>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
