@@ -485,7 +485,7 @@ export class SimulationOrchestrator {
     );
     
     treasureEvents.forEach(event => {
-      keyEvents.push(`Treasure Found: ${event.metadata?.treasureCard}`);
+      keyEvents.push(`Treasure Found: ${event.metadata?.treasureCardName || "Unknown treasure"}`);
     });
     
     // Extract chaos card events
@@ -494,7 +494,7 @@ export class SimulationOrchestrator {
     );
     
     chaosEvents.forEach(event => {
-      keyEvents.push(`Chaos Effect: ${event.metadata?.chaosCard}`);
+      keyEvents.push(`Chaos Effect: ${event.metadata?.chaosCardName || "Unknown chaos effect"}`);
     });
     
     // Extract major hazard events

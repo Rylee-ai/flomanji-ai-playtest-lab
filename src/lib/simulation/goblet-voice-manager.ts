@@ -1,8 +1,7 @@
-
 import { GameCard } from "@/types/cards";
 
 type GobletVoiceType = 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';
-type NarrationEventType = 'hazard' | 'chaos' | 'treasure' | 'objective' | 'intro' | 'conclusion';
+type NarrationEventType = 'hazard' | 'chaos' | 'treasure' | 'objective' | 'intro' | 'conclusion' | 'result' | 'round-end';
 
 /**
  * Get an appropriate narration style for the current Goblet voice
@@ -58,6 +57,14 @@ export const getGobletNarration = (
       
     case 'conclusion':
       narration += `Conclude the mission with ${voiceTraits.conclusionStyle}. `;
+      break;
+      
+    case 'result':
+      narration += `Announce the result with ${voiceTraits.conclusionStyle}. `;
+      break;
+      
+    case 'round-end':
+      narration += `Conclude the round with ${voiceTraits.hazardStyle}. `;
       break;
   }
   

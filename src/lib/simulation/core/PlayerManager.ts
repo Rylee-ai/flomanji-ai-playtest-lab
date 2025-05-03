@@ -1,178 +1,164 @@
 
-import { SimulationConfig, AgentMessage } from "@/types";
+import { AgentMessage } from "@/types";
 import { createChatCompletion } from "@/lib/openrouterChat";
-import { simulateDiceRoll } from "../game-mechanics";
+import { rollDice, checkSuccess } from "../game-mechanics";
+import { getGobletNarration } from "../goblet-voice-manager";
 
 /**
- * Manages player actions and turns within the simulation
+ * Manages player actions and profiles
  */
 export class PlayerManager {
   /**
-   * Gets the number of players in the simulation
+   * Initialize player profiles with system prompts
    */
-  public getPlayerCount(config: SimulationConfig): number {
-    return config.fullCharacters?.length || config.players || 1;
-  }
-  
-  /**
-   * Processes all player turns for the current round
-   */
-  public async processPlayerTurns(
-    config: SimulationConfig,
+  public async initializePlayerProfiles(
+    config: any,
     gameState: any,
-    conversationLog: AgentMessage[],
-    playerSystemPrompts: string[]
-  ): Promise<AgentMessage[]> {
-    const playerResponses: AgentMessage[] = [];
-    const actualPlayerCount = this.getPlayerCount(config);
-
-    for (let playerIdx = 0; playerIdx < actualPlayerCount; playerIdx++) {
-      console.log(`Processing player ${playerIdx + 1}'s turn`);
+    systemPrompt: string
+  ): Promise<any[]> {
+    const playerSystemPrompts = [];
+    
+    // For each player, create a system prompt
+    for (let i = 0; i < (config.players || 3); i++) {
+      const character = gameState.selectedCharacters[i];
       
-      gameState.currentGobletHolder = playerIdx;
-      
-      const playerResponse = await this.processPlayerTurn(
-        playerIdx,
-        playerSystemPrompts[playerIdx],
-        gameState,
-        conversationLog
-      );
-      
-      playerResponses.push(playerResponse);
-    }
-    
-    return playerResponses;
-  }
-  
-  /**
-   * Processes a single player's turn
-   */
-  private async processPlayerTurn(
-    playerIdx: number,
-    playerSystemPrompt: string,
-    gameState: any,
-    conversationLog: AgentMessage[]
-  ): Promise<AgentMessage> {
-    const playerMessages = conversationLog.map(entry => {
-      const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
-      return {
-        role: entry.role === 'Player' ? 'assistant' : 'user',
-        content: entry.role === 'Player' 
-          ? `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
-          : `GM: ${cleanContent}`
-      };
-    });
-    
-    const playerStatePrompt = this.generatePlayerStatePrompt(playerIdx, gameState);
-    
-    playerMessages.push({ 
-      role: 'user', 
-      content: playerStatePrompt 
-    });
-
-    const playerResponse = await createChatCompletion(
-      playerSystemPrompt,
-      playerMessages
-    );
-
-    const cleanPlayerResponse = playerResponse.replace(/^(Player \d+): /g, '');
-    const rollResult = this.detectAndProcessRolls(cleanPlayerResponse, playerIdx, gameState);
-    
-    return {
-      role: 'Player',
-      content: cleanPlayerResponse,
-      playerIndex: playerIdx,
-      timestamp: new Date().toISOString(),
-      metadata: {
-        roundNumber: gameState.currentRound,
-        phase: "player-action",
-        playerNumber: playerIdx + 1,
-        playerName: gameState.characters?.[playerIdx]?.name || `Player ${playerIdx+1}`,
-        roll: rollResult,
-        inventory: gameState.playerInventories[playerIdx],
-        gameState: {...gameState},
-        isGobletHolder: true
+      if (!character) {
+        continue;
       }
-    };
-  }
-  
-  /**
-   * Generates a prompt describing the player's current state
-   */
-  private generatePlayerStatePrompt(playerIdx: number, gameState: any): string {
-    return `
-    [System Information - Your Current State]
-    - Health: ${gameState.playerInventories[playerIdx]?.health || 5}
-    - Weirdness: ${gameState.playerInventories[playerIdx]?.weirdness || 0}
-    - Luck: ${gameState.playerInventories[playerIdx]?.luck || 3}
-    - Gear: ${gameState.playerInventories[playerIdx]?.gear.join(", ") || "None"}
-    - Treasures: ${gameState.playerInventories[playerIdx]?.treasures.join(", ") || "None"}
-    
-    The Flomanji Goblet has been passed to you - it's your turn! You have 2 actions from: Move, Use Gear, Interact, Team-Up, Rest, or Mission.
-    If responding to a hazard, clearly state if you choose to Fight, Flee, Negotiate, or Outsmart it.
-    Please make your decision and specify which stats you will use for any necessary checks. To roll dice, say you are "shaking the Goblet" to determine the outcome.`;
-  }
-  
-  /**
-   * Detects and processes dice rolls in player response
-   */
-  private detectAndProcessRolls(
-    playerResponse: string, 
-    playerIdx: number, 
-    gameState: any
-  ): any {
-    const rollPatterns = [
-      /roll(?:s|ing)?\s+(?:for)?\s*(\w+)/i,
-      /(\w+)\s+(?:check|roll|test)/i,
-      /check(?:s|ing)?\s+(?:with)?\s*(\w+)/i,
-      /test(?:s|ing)?\s+(?:with)?\s*(\w+)/i
-    ];
-    
-    let statName = "";
-    let statValue = 0;
-    
-    for (const pattern of rollPatterns) {
-      const match = playerResponse.match(pattern);
-      if (match && match[1]) {
-        statName = match[1].toLowerCase();
-        if (statName.includes("brawn") || statName === "strength") {
-          statName = "brawn";
-          statValue = gameState.characters?.[playerIdx]?.stats.brawn || 0;
-        } else if (statName.includes("moxie") || statName === "agility") {
-          statName = "moxie";
-          statValue = gameState.characters?.[playerIdx]?.stats.moxie || 0;
-        } else if (statName.includes("charm") || statName === "social") {
-          statName = "charm";
-          statValue = gameState.characters?.[playerIdx]?.stats.charm || 0;
-        } else if (statName.includes("grit") || statName === "endurance") {
-          statName = "grit";
-          statValue = gameState.characters?.[playerIdx]?.stats.grit || 0;
-        } else if (statName.includes("weird") || statName === "sense") {
-          statName = "weirdSense";
-          statValue = gameState.characters?.[playerIdx]?.stats.weirdSense || 0;
+      
+      // Create a player-specific system prompt
+      const playerPrompt = `
+        You are playing the character ${character.name} in the role-playing game Flomanji.
+        
+        Your character has the following attributes:
+        - Health: ${character.health || 10}
+        - Luck: ${character.luck || 5}
+        - Weirdness: ${character.weirdness || 0}
+        
+        ${character.ability ? `You have a special ability: ${character.ability}` : ''}
+        ${character.starterGear && character.starterGear.length > 0 
+          ? `You start with the following gear: ${character.starterGear.join(', ')}` 
+          : 'You do not start with any special gear.'
         }
         
-        if (statName) {
-          const rollResult = simulateDiceRoll(statValue);
-          gameState.rolls.push({
-            player: playerIdx + 1,
-            type: "action",
-            value: rollResult.value,
-            stat: statName,
-            result: rollResult.result
-          });
-          
-          return {
-            stat: statName,
-            value: rollResult.value,
-            modifier: statValue,
-            total: rollResult.value + statValue,
-            result: rollResult.result
-          };
-        }
-      }
+        Your goal is to work with the other players to complete the mission objectives.
+        
+        When the Game Master (GM) describes a situation and asks what you want to do, respond
+        with your character's actions and dialogue. Stay in character and make decisions that
+        align with your character's personality and abilities.
+      `;
+      
+      playerSystemPrompts.push(playerPrompt);
     }
     
-    return undefined;
+    return playerSystemPrompts;
+  }
+  
+  /**
+   * Generate player responses to a given scenario
+   */
+  public async generatePlayerResponses(
+    gameState: any,
+    conversationLog: AgentMessage[],
+    systemPrompts: any[],
+    currentRound: number
+  ): Promise<AgentMessage[]> {
+    const messages: AgentMessage[] = [];
+    const playerCount = Object.keys(gameState.playerInventories).length;
+    
+    // Generate response for each player
+    for (let i = 0; i < playerCount; i++) {
+      const systemPrompt = systemPrompts[i];
+      
+      if (!systemPrompt) {
+        continue;
+      }
+      
+      // Create prompt for the player
+      const playerPrompt = `
+        It is now your turn to act. What do you want to do?
+        
+        Current situation:
+        - You are in the ${gameState.currentRegion || 'jungle'} region.
+        - The heat level is ${gameState.heat}/10.
+        - Your character has ${gameState.playerInventories[i]?.health || 10} health remaining.
+        
+        Respond with your character's actions and dialogue.
+      `;
+      
+      // Generate the player's response
+      const playerResponse = await createChatCompletion(
+        systemPrompt,
+        [...conversationLog.map(entry => {
+          const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
+          return {
+            role: entry.role === 'GM' ? 'assistant' : 'user',
+            content: entry.role === 'GM'
+              ? `GM: ${cleanContent}`
+              : `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
+          };
+        }), { role: "user", content: playerPrompt }]
+      );
+      
+      // Add the response to the messages array
+      messages.push({
+        role: 'Player',
+        content: playerResponse,
+        timestamp: new Date().toISOString(),
+        playerIndex: i,
+        metadata: {
+          roundNumber: currentRound,
+          phase: "player-turn",
+          playerNumber: i + 1,
+          isGobletHolder: gameState.currentGobletHolder === i,
+          gameState: {...gameState}
+        }
+      });
+    }
+    
+    return messages;
+  }
+  
+  /**
+   * Simulate a dice roll for a player
+   * @param playerIndex The index of the player making the roll
+   * @param stat The stat being used for the roll (e.g., "luck", "health")
+   * @param gameState The current game state
+   */
+  public simulateDiceRoll(
+    playerIndex: number,
+    stat: string,
+    gameState: any
+  ): { value: number; modifier: number; total: number; result: string } {
+    // Get the player's stat value
+    const statValue = gameState.playerInventories[playerIndex]?.[stat.toLowerCase()] || 5;
+    
+    // Calculate the modifier based on the stat
+    const modifier = Math.floor(statValue / 2) - 5;
+    
+    // Roll the dice
+    const diceValue = rollDice();
+    const total = diceValue + modifier;
+    
+    // Check the result
+    const result = checkSuccess(total);
+    
+    // Track the roll in game state
+    gameState.rolls = gameState.rolls || [];
+    gameState.rolls.push({
+      playerIndex,
+      stat,
+      value: diceValue,
+      modifier,
+      total,
+      result
+    });
+    
+    return {
+      value: diceValue,
+      modifier,
+      total,
+      result
+    };
   }
 }

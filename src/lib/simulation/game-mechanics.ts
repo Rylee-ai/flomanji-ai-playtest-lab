@@ -87,3 +87,45 @@ export const checkSuccess = (roll: number): "failure" | "partial" | "success" =>
   if (roll <= 7) return "partial";
   return "success";
 };
+
+/**
+ * Select a goblet voice based on configuration or randomly
+ * @param config Configuration with optional gobletVoice
+ * @returns The selected goblet voice
+ */
+export const selectGobletVoice = (config: any): string => {
+  const voices = ['swamp-prophet', 'pirate-radio-dj', 'park-ranger', 'theme-park-mascot'];
+  
+  if (config.gobletVoice && voices.includes(config.gobletVoice)) {
+    return config.gobletVoice;
+  }
+  
+  // Return a random voice
+  return voices[Math.floor(Math.random() * voices.length)];
+};
+
+/**
+ * Initialize player inventories based on configuration and characters
+ * @param config The simulation configuration
+ * @param gameState The current game state
+ * @returns The game state with initialized player inventories
+ */
+export const initializePlayerInventories = (config: any, gameState: any): any => {
+  const playerCount = config.players || 3;
+  
+  gameState.playerInventories = {};
+  
+  for (let i = 0; i < playerCount; i++) {
+    const character = gameState.selectedCharacters?.[i];
+    
+    gameState.playerInventories[i] = {
+      gear: character?.starterGear || [],
+      treasures: [],
+      health: character?.health || 10,
+      weirdness: character?.weirdness || 0,
+      luck: character?.luck || 5
+    };
+  }
+  
+  return gameState;
+};
