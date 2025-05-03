@@ -1,41 +1,55 @@
 
-import React from "react";
 import { CardType } from "@/types/cards";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CardTypeSelectorProps {
   cardType: CardType;
-  setCardType: (type: CardType) => void;
-  defaultValue?: CardType;
+  onCardTypeChange: (value: CardType) => void;
+  defaultCardType: CardType;
 }
 
-export const CardTypeSelector = ({
+export function CardTypeSelector({
   cardType,
-  setCardType,
-  defaultValue,
-}: CardTypeSelectorProps) => {
+  onCardTypeChange,
+  defaultCardType
+}: CardTypeSelectorProps) {
+  const cardTypes: { value: CardType; label: string }[] = [
+    { value: "gear", label: "Gear Cards" },
+    { value: "treasure", label: "Treasure Cards" },
+    { value: "hazard", label: "Hazard Cards" },
+    { value: "npc", label: "NPC Cards" },
+    { value: "region", label: "Region Cards" },
+    { value: "chaos", label: "Chaos Cards" },
+    { value: "flomanjified", label: "Flomanjified Cards" },
+    { value: "player-character", label: "Player Character Cards" },
+    { value: "secret", label: "Secret Objective Cards" },
+    { value: "mission", label: "Mission Cards" },
+    { value: "automa", label: "Automa Cards" },
+  ];
+
   return (
-    <Select 
-      value={cardType} 
-      onValueChange={(value: CardType) => setCardType(value)}
-      defaultValue={defaultValue || cardType}
-    >
-      <SelectTrigger className="w-[220px]">
-        <SelectValue placeholder="Select Card Type" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="player-character">Player Characters</SelectItem>
-        <SelectItem value="npc">NPC Characters</SelectItem>
-        <SelectItem value="flomanjified">Flomanjified Roles</SelectItem>
-        <SelectItem value="treasure">Treasure Cards</SelectItem>
-        <SelectItem value="gear">Gear Cards</SelectItem>
-        <SelectItem value="hazard">Hazard Cards</SelectItem>
-        <SelectItem value="chaos">Chaos Cards</SelectItem>
-        <SelectItem value="region">Region Cards</SelectItem>
-        <SelectItem value="mission">Mission Sheets</SelectItem>
-        <SelectItem value="secret">Secret Objectives</SelectItem>
-        <SelectItem value="automa">Automa Cards</SelectItem>
-      </SelectContent>
-    </Select>
+    <div className="space-y-2">
+      <label htmlFor="card-type" className="text-sm font-medium">
+        Card Type
+      </label>
+      <Select 
+        value={cardType} 
+        onValueChange={value => onCardTypeChange(value as CardType)}
+      >
+        <SelectTrigger id="card-type">
+          <SelectValue placeholder="Select card type" />
+        </SelectTrigger>
+        <SelectContent>
+          {cardTypes.map((type) => (
+            <SelectItem key={type.value} value={type.value}>
+              {type.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <p className="text-xs text-muted-foreground mt-1">
+        Select the type of cards you're importing
+      </p>
+    </div>
   );
-};
+}

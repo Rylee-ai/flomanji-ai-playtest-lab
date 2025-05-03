@@ -47,27 +47,30 @@ export function CardImportTabs({
         </TabsList>
 
         {currentTab === "upload" && (
-          <TemplateDownloader cardType={cardType} />
+          <TemplateDownloader 
+            cardType={cardType} 
+            setCardType={setCardType}
+          />
         )}
       </div>
 
       <TabsContent value="upload" className="pt-2">
         <div className="space-y-4">
           <CardTypeSelector
-            value={cardType}
-            onChange={(value) => setCardType(value as CardType)}
-            defaultValue={defaultCardType}
+            cardType={cardType}
+            onCardTypeChange={(value) => setCardType(value as CardType)}
+            defaultCardType={defaultCardType}
           />
 
           <FileUploader
             onFileSelected={onFileSelected}
             isProcessing={isProcessing}
-            fileType={fileType}
           />
 
           <ValidationSummary
             validationErrors={validationErrors}
             transformedCards={transformedCards}
+            fileType={fileType}
           />
         </div>
       </TabsContent>

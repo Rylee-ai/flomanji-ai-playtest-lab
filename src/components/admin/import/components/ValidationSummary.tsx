@@ -1,115 +1,47 @@
 
-import React from "react";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Check, AlertTriangle, FileJson, FileText, Info } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ExclamationTriangleIcon, CheckCircledIcon } from "@radix-ui/react-icons";
 import { CardFormValues } from "@/types/forms/card-form";
-import { Badge } from "@/components/ui/badge";
 
-interface ValidationSummaryProps {
-  transformedCards: CardFormValues[];
+export interface ValidationSummaryProps {
   validationErrors: string[];
+  transformedCards: CardFormValues[];
   fileType: string | null;
 }
 
-export const ValidationSummary = ({
-  transformedCards,
-  validationErrors,
-  fileType,
-}: ValidationSummaryProps) => {
-  if (!fileType) {
+export function ValidationSummary({ validationErrors, transformedCards, fileType }: ValidationSummaryProps) {
+  if (validationErrors.length === 0 && transformedCards.length === 0) {
     return null;
   }
-  
-  const getFileTypeIcon = () => {
-    if (fileType === "markdown") {
-      return <FileText className="h-4 w-4" />;
-    }
-    return <FileJson className="h-4 w-4" />;
-  };
 
-  const getFileTypeDescription = () => {
-    if (fileType === "markdown") {
-      return "Markdown";
-    } else if (fileType === "transform") {
-      return "External JSON";
-    }
-    return "JSON";
-  };
-
-  // Special handling for when a file was processed but no cards were found
-  if (transformedCards.length === 0 && fileType) {
+  if (validationErrors.length > 0) {
     return (
       <Alert variant="destructive">
-        <Info className="h-4 w-4" />
-        <AlertTitle>No Cards Found</AlertTitle>
+        <ExclamationTriangleIcon className="h-4 w-4" />
+        <AlertTitle>Validation Failed</AlertTitle>
         <AlertDescription>
-          <p className="mb-2">No valid cards were found in the uploaded {getFileTypeDescription()} file.</p>
-          <ul className="list-disc pl-5 space-y-1 text-sm">
-            <li>Check that the file format matches the expected structure</li>
-            <li>Verify that you've selected the correct card type</li>
-            <li>Make sure the file contains properly formatted card data</li>
+          <ul className="list-disc pl-5 mt-2 space-y-1">
+            {validationErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
           </ul>
         </AlertDescription>
       </Alert>
     );
   }
 
-  return (
-    <div className="space-y-4">
-      {validationErrors.length > 0 ? (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Validation Errors</AlertTitle>
-          <AlertDescription>
-            <ul className="list-disc pl-5 space-y-1 text-sm">
-              {validationErrors.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          </AlertDescription>
-        </Alert>
-      ) : transformedCards.length > 0 ? (
-        <Alert variant="default" className="border-green-500 bg-green-50 dark:bg-green-900/20">
-          <Check className="h-4 w-4 text-green-500" />
-          <AlertTitle className="text-green-600 dark:text-green-400">File Validated Successfully</AlertTitle>
-          <AlertDescription className="text-sm text-green-600 dark:text-green-400">
-            <div className="flex gap-1 items-center">
-              {getFileTypeIcon()}
-              <span>{getFileTypeDescription()} file processed successfully.</span>
-            </div>
-            <p className="mt-1">
-              Found <strong>{transformedCards.length} {transformedCards[0]?.type || 'card'} cards</strong> ready for import.
-            </p>
-            <p className="mt-1 font-medium">Click the "Import {transformedCards.length} Cards" button below to add these cards to your collection.</p>
-          </AlertDescription>
-        </Alert>
-      ) : null}
-      
-      {transformedCards.length > 0 && (
-        <div className="p-4 border rounded-md bg-muted/20">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="text-sm font-medium">Card Preview</h3>
-            <Badge variant="outline">{transformedCards[0]?.type || 'Unknown'} Cards</Badge>
-          </div>
-          <div className="space-y-2 max-h-60 overflow-y-auto">
-            {transformedCards.slice(0, 10).map((card, index) => (
-              <div key={index} className="text-xs p-2 bg-background rounded border">
-                <span className="font-semibold">{card.name}</span> - {card.type}
-                {card.keywords && card.keywords.length > 0 && (
-                  <div className="mt-1 text-muted-foreground">
-                    Keywords: {card.keywords.join(', ')}
-                  </div>
-                )}
-              </div>
-            ))}
-            {transformedCards.length > 10 && (
-              <p className="text-xs text-muted-foreground">
-                ...and {transformedCards.length - 10} more cards
-              </p>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+  if (transformedCards.length > 0) {
+    return (
+      <Alert variant="success" className="bg-green-50 border-green-200">
+        <CheckCircledIcon className="h-4 w-4 text-green-600" />
+        <AlertTitle className="text-green-800">Success</AlertTitle>
+        <AlertDescription className="text-green-700">
+          {transformedCards.length} card{transformedCards.length !== 1 ? 's' : ''} ready to import.
+          {fileType && <span className="block text-xs mt-1">File format: {fileType}</span>}
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  return null;
+}

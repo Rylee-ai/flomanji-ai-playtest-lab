@@ -3,7 +3,8 @@ import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
 import { useFileProcessor } from "./useFileProcessor";
-import { useCardImportState } from "./useCardImportState";
+import { useCardImportConfig } from "./useCardImportConfig";
+import { useCardImportResults } from "./useCardImportResults";
 
 interface UseCardImporterProps {
   onImportComplete: (cards: CardFormValues[], results: CardImportResult) => void;
@@ -12,10 +13,11 @@ interface UseCardImporterProps {
 
 /**
  * Main hook for card importing functionality
+ * Orchestrates the file processing and result management
  */
 export function useCardImporter({ onImportComplete, initialCardType = "gear" }: UseCardImporterProps) {
-  // Use the specialized hooks for file processing and state management
-  const {
+  // Use the specialized hooks for different aspects of card importing
+  const { 
     isProcessing,
     fileFormat,
     fileExtension,
@@ -25,7 +27,10 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
   
   const {
     cardType,
-    setCardType,
+    setCardType
+  } = useCardImportConfig(initialCardType);
+
+  const {
     transformedCards,
     setTransformedCards,
     validationErrors,
@@ -33,8 +38,8 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
     importResults,
     setImportResults,
     createImportResults,
-    resetState
-  } = useCardImportState(initialCardType);
+    resetResults
+  } = useCardImportResults();
 
   /**
    * Process a file and update the state with the results
@@ -47,9 +52,7 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
     console.log("Processing file for card type:", typeToUse);
 
     // Reset state before processing
-    setTransformedCards([]);
-    setValidationErrors([]);
-    setImportResults(null);
+    resetResults();
 
     // Auto-detect format
     await analyzeFile(file);
@@ -64,6 +67,13 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
     // Create and set import results
     const results = createImportResults(processedCards, errors);
     setImportResults(results);
+  };
+
+  /**
+   * Reset all import state
+   */
+  const resetState = () => {
+    resetResults();
   };
 
   return {
