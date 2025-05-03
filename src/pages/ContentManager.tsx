@@ -4,7 +4,7 @@ import GameContentManager from "@/components/admin/GameContentManager";
 import { CardBulkImport } from "@/components/admin/forms/CardBulkImport";
 import { CardExporter } from "@/components/admin/cards/CardExporter";
 import { useCardManagement } from "@/components/admin/hooks/useCardManagement";
-import { CardDataTransformer } from "@/components/admin/forms/card-transformer/CardDataTransformer";
+import { CardDataTransformer } from "@/components/admin/forms/CardDataTransformer";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Download, Upload, FilePlus2 } from "lucide-react";
