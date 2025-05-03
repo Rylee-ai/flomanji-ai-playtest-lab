@@ -8,6 +8,7 @@ import { useDebugMode } from "./useDebugMode";
 import { useProfileManagement } from "./useProfileManagement";
 import { useAuthStateListener } from "./useAuthStateListener";
 import { AuthDebugDisplay } from "./AuthDebugDisplay";
+import { ProfileRetryEffect } from "./ProfileRetryEffect";
 
 // Create the auth context with undefined as default value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,6 +56,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AuthContext.Provider value={value}>
       {children}
+      {/* Add ProfileRetryEffect to handle automatic profile retry */}
+      <ProfileRetryEffect 
+        user={user} 
+        profile={profile} 
+        profileAttempts={profileAttempts} 
+        refreshProfile={refreshCurrentProfile}
+      />
       <AuthDebugDisplay 
         debugMode={debugMode} 
         user={user} 

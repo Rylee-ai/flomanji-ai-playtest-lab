@@ -22,10 +22,10 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
         .select('*')
         .eq('id', userId)
         .maybeSingle(),
-      new Promise((_, reject) => 
+      new Promise<never>((_, reject) => 
         setTimeout(() => reject(new Error("Profile fetch timeout")), 10000)
       )
-    ]) as any;
+    ]);
 
     if (error) {
       // Handle specific error cases more gracefully
@@ -44,13 +44,13 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
       return null;
     }
 
-    // Transform the data to match our UserProfile type - FIXED snake_case to camelCase mapping
+    // Transform the data to match our UserProfile type
     const userProfile: UserProfile = {
       id: data.id,
       email: '', // Will be populated by the auth provider
-      role: data.role as "admin" | "player", // Explicitly cast to UserRole type
-      firstName: data.first_name, // Correctly map from snake_case database column
-      lastName: data.last_name,   // Correctly map from snake_case database column
+      role: data.role as "admin" | "player", 
+      firstName: data.first_name,
+      lastName: data.last_name,
       createdAt: data.created_at
     };
     
@@ -72,7 +72,16 @@ export const signInWithEmail = async (email: string, password: string) => {
     
     if (error) {
       console.error("Sign in error:", error.message);
-      toast.error(error.message);
+      
+      // Provide more user-friendly error messages
+      if (error.message.includes("Invalid login")) {
+        toast.error("Invalid email or password. Please try again.");
+      } else if (error.message.includes("Email not confirmed")) {
+        toast.error("Please confirm your email before signing in.");
+      } else {
+        toast.error(error.message);
+      }
+      
       return { error };
     }
     
