@@ -5,7 +5,6 @@ import { NarrationManager } from "./NarrationManager";
 import { HazardManager } from "./HazardManager";
 import { ChaosManager } from "./ChaosManager";
 import { TreasureManager } from "./TreasureManager";
-import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 
 /**
  * Manages the execution and progression of rounds in a simulation
@@ -179,9 +178,6 @@ export class RoundManager {
         phase: "round-summary",
         heat: gameState.heat,
         activeHazards: gameState.activeHazards,
-        activeChaosEffects: gameState.activeChaosEffects,
-        discoveredTreasures: gameState.discoveredTreasures,
-        completedObjectives: gameState.completedObjectives,
         gameState: {...gameState}
       }
     });

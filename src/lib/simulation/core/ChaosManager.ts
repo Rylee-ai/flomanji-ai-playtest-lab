@@ -74,7 +74,7 @@ export class ChaosManager {
       metadata: {
         roundNumber: gameState.currentRound,
         phase: "chaos-card",
-        chaosCardName: chaosCard.name, // Changed from chaosCard to chaosCardName to match AgentMessage metadata type
+        chaosCard: chaosCard.name,
         heatEffect: chaosCard.heatEffect,
         heat: gameState.heat,
         gameState: {...gameState}

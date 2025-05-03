@@ -55,6 +55,23 @@ export class PlayerManager {
   }
   
   /**
+   * Process turns for all players
+   */
+  public async processPlayerTurns(
+    config: any,
+    gameState: any,
+    conversationLog: AgentMessage[],
+    playerSystemPrompts: any[]
+  ): Promise<AgentMessage[]> {
+    return this.generatePlayerResponses(
+      gameState,
+      conversationLog,
+      playerSystemPrompts,
+      gameState.currentRound
+    );
+  }
+  
+  /**
    * Generate player responses to a given scenario
    */
   public async generatePlayerResponses(

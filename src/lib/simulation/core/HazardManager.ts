@@ -26,7 +26,7 @@ export class HazardManager {
     
     gameState.activeHazards.push(hazard.name);
     
-    const hazardPrompt = `A new hazard appears: ${hazard.name}. ${hazard.description || ""} 
+    const hazardPrompt = `A new hazard appears: ${hazard.name}. ${hazard.flavor || ""} 
     The rules for this hazard are: ${hazard.rules ? hazard.rules.join(", ") : "Standard hazard rules apply."}
     
     As the Flomanji Goblet, dramatically announce this hazard to the players with your unique voice. Describe how the Goblet reacts physically (glowing, trembling, changing temperature). Then call for appropriate checks. The players need to decide if they will Fight (Brawn), Flee (Moxie), Negotiate (Charm), or Outsmart (Weird Sense) this hazard.

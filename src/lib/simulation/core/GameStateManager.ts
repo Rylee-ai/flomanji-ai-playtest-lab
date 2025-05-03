@@ -1,7 +1,6 @@
 
 import { SimulationConfig, AgentMessage } from "@/types";
 import { selectGobletVoice } from "../goblet-voice-manager";
-import { initializePlayerInventories } from "../game-mechanics";
 
 /**
  * Manages game state throughout the simulation
@@ -13,20 +12,45 @@ export class GameStateManager {
   public initializeGameState(config: SimulationConfig): any {
     const selectedGobletVoice = selectGobletVoice(config);
     
-    return {
+    const gameState = {
       currentRound: 0,
       heat: config.startingHeat || 0,
       completedObjectives: [] as string[],
-      playerInventories: initializePlayerInventories(config),
+      playerInventories: this.initializePlayerInventories(config),
       regions: [] as string[],
       currentRegion: "start",
       activeHazards: [] as string[],
+      activeChaosEffects: [] as any[],
       rolls: [] as {player: number, type: string, value: number, stat: string, result: string}[],
       currentGobletHolder: 0,
       gobletVoice: selectedGobletVoice,
       gobletMood: "normal",
       characters: config.fullCharacters || []
     };
+    
+    return gameState;
+  }
+  
+  /**
+   * Initialize player inventories based on configuration and characters
+   */
+  private initializePlayerInventories(config: SimulationConfig): any {
+    const playerCount = config.players || 3;
+    const inventories: Record<number, any> = {};
+    
+    for (let i = 0; i < playerCount; i++) {
+      const character = config.fullCharacters?.[i];
+      
+      inventories[i] = {
+        gear: character?.starterGear || [],
+        treasures: [],
+        health: character?.health || 10,
+        weirdness: character?.weirdness || 0,
+        luck: character?.luck || 5
+      };
+    }
+    
+    return inventories;
   }
   
   /**
