@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
@@ -27,6 +28,12 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
     validationErrors,
     importResults,
     resetState,
+    // AI-related properties
+    enableAIProcessing,
+    setEnableAIProcessing,
+    aiSuggestions,
+    handleApplySuggestion,
+    handleIgnoreSuggestion
   } = useCardImporter({
     onImportComplete: (cards, results) => {
       console.log("Import complete callback triggered with", cards.length, "cards");
@@ -43,6 +50,7 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
     try {
       console.log("Processing file:", file.name);
       console.log("Current card type before processing:", cardType);
+      console.log("AI processing enabled:", enableAIProcessing);
       
       // Auto-detect format but respect the user's selected card type
       await detectFileFormat(file);
@@ -97,6 +105,12 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
         importResults={importResults}
         defaultCardType={activeCardType}
         onImport={handleImport}
+        // AI-related props
+        enableAIProcessing={enableAIProcessing}
+        setEnableAIProcessing={setEnableAIProcessing}
+        aiSuggestions={aiSuggestions}
+        onApplySuggestion={handleApplySuggestion}
+        onIgnoreSuggestion={handleIgnoreSuggestion}
       />
     </>
   );

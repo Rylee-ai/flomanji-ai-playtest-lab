@@ -8,6 +8,10 @@ import { FileUploader } from "./FileUploader";
 import { CardPreviewTab } from "./CardPreviewTab";
 import { ValidationSummary } from "./ValidationSummary";
 import { TemplateDownloader } from "./TemplateDownloader";
+import { AISuggestions } from "./AISuggestions";
+import { CardSuggestion } from "@/utils/ai-processing/AICardProcessorService";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface CardImportTabsProps {
   cardType: CardType;
@@ -18,6 +22,11 @@ interface CardImportTabsProps {
   transformedCards: CardFormValues[];
   defaultCardType: CardType;
   fileType: string | null;
+  enableAIProcessing?: boolean;
+  setEnableAIProcessing?: (enable: boolean) => void;
+  aiSuggestions?: CardSuggestion[];
+  onApplySuggestion?: (index: number) => void;
+  onIgnoreSuggestion?: (index: number) => void;
 }
 
 export function CardImportTabs({
@@ -29,6 +38,11 @@ export function CardImportTabs({
   transformedCards,
   defaultCardType,
   fileType,
+  enableAIProcessing = false,
+  setEnableAIProcessing = () => {},
+  aiSuggestions = [],
+  onApplySuggestion = () => {},
+  onIgnoreSuggestion = () => {},
 }: CardImportTabsProps) {
   const [activeTab, setActiveTab] = useState<string>("upload");
   const [selectedCard, setSelectedCard] = useState<CardFormValues | undefined>();
@@ -39,13 +53,19 @@ export function CardImportTabs({
       onValueChange={setActiveTab}
       className="w-full mt-4"
     >
-      <TabsList className="grid grid-cols-3 mb-4">
+      <TabsList className="grid grid-cols-4 mb-4">
         <TabsTrigger value="upload">Upload</TabsTrigger>
         <TabsTrigger
           value="preview"
           disabled={transformedCards.length === 0}
         >
           Preview ({transformedCards.length})
+        </TabsTrigger>
+        <TabsTrigger 
+          value="ai"
+          disabled={transformedCards.length === 0}
+        >
+          AI Analysis
         </TabsTrigger>
         <TabsTrigger value="templates">Templates</TabsTrigger>
       </TabsList>
@@ -65,6 +85,20 @@ export function CardImportTabs({
               setCardType={setCardType}
               defaultCardType={defaultCardType}
             />
+
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="ai-processing" 
+                  checked={enableAIProcessing}
+                  onCheckedChange={setEnableAIProcessing}
+                />
+                <Label htmlFor="ai-processing">Enable AI processing</Label>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                AI will analyze your cards and suggest improvements
+              </p>
+            </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium">File Format</label>
@@ -93,6 +127,26 @@ export function CardImportTabs({
           selectedCard={selectedCard}
           onSelectCard={setSelectedCard}
         />
+      </TabsContent>
+      
+      <TabsContent value="ai">
+        <div className="space-y-4">
+          <div className="text-sm text-muted-foreground mb-4">
+            <p>AI has analyzed your cards and found potential improvements. Review and apply suggestions below.</p>
+          </div>
+          
+          <AISuggestions 
+            suggestions={aiSuggestions}
+            onApplySuggestion={onApplySuggestion}
+            onIgnoreSuggestion={onIgnoreSuggestion}
+          />
+          
+          {aiSuggestions.length === 0 && (
+            <div className="p-4 text-center text-muted-foreground border rounded-md">
+              <p>No AI suggestions available. Upload cards and enable AI processing to get recommendations.</p>
+            </div>
+          )}
+        </div>
       </TabsContent>
 
       <TabsContent value="templates" className="space-y-4">

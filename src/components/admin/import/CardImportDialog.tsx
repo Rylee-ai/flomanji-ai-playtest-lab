@@ -4,8 +4,9 @@ import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { CardSuggestion } from "@/utils/ai-processing/AICardProcessorService";
 
-// Import our new components
+// Import our components
 import { CardImportDialogHeader } from "./components/CardImportDialogHeader";
 import { CardImportTabs } from "./components/CardImportTabs";
 import { CardImportActions } from "./components/CardImportActions";
@@ -23,6 +24,12 @@ interface CardImportDialogProps {
   importResults: CardImportResult | null;
   defaultCardType: CardType;
   onImport: (cards: CardFormValues[], results: CardImportResult) => void;
+  // AI-related props
+  enableAIProcessing?: boolean;
+  setEnableAIProcessing?: (enable: boolean) => void;
+  aiSuggestions?: CardSuggestion[];
+  onApplySuggestion?: (index: number) => void;
+  onIgnoreSuggestion?: (index: number) => void;
 }
 
 export function CardImportDialog({
@@ -38,6 +45,12 @@ export function CardImportDialog({
   importResults,
   defaultCardType,
   onImport,
+  // AI-related props
+  enableAIProcessing = false,
+  setEnableAIProcessing = () => {},
+  aiSuggestions = [],
+  onApplySuggestion = () => {},
+  onIgnoreSuggestion = () => {},
 }: CardImportDialogProps) {
   // Set the default card type when dialog opens, but don't override user selection afterwards
   useEffect(() => {
@@ -60,6 +73,12 @@ export function CardImportDialog({
           transformedCards={transformedCards}
           defaultCardType={defaultCardType}
           fileType={fileType}
+          // AI-related props
+          enableAIProcessing={enableAIProcessing}
+          setEnableAIProcessing={setEnableAIProcessing}
+          aiSuggestions={aiSuggestions}
+          onApplySuggestion={onApplySuggestion}
+          onIgnoreSuggestion={onIgnoreSuggestion}
         />
 
         <CardImportActions
