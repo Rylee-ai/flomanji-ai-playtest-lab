@@ -19,6 +19,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
   DialogFooter,
   DialogClose,
@@ -150,13 +151,12 @@ const SimulationDetailsControls = ({
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Custom {exportFormat === 'pdf' ? 'PDF' : 'Markdown'} Export</DialogTitle>
+              <DialogDescription>
+                Select content sections to include in your {exportFormat === 'pdf' ? 'PDF' : 'Markdown'} export file.
+              </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-5 py-4">
-              <div className="text-sm text-muted-foreground mb-4">
-                Select which content to include in your export:
-              </div>
-              
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <Checkbox 
