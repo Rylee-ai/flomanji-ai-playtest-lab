@@ -70,5 +70,6 @@ export const useCardManagement = () => {
     loading,
     cards,
     versionHistory,
+    loadCards, // Added loadCards to the return object
   };
 };
