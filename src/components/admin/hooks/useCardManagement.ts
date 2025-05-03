@@ -1,101 +1,138 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CardType, GameCard } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
-import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
-import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
-import { AUTOMA_CARDS } from "@/lib/cards/automa-cards";
-import { REGION_CARDS } from "@/lib/cards/region-cards";
-import { NPC_CARDS } from "@/lib/cards/npc-cards";
-import { MISSION_CARDS } from "@/lib/cards/mission-cards";
-import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
-import { GEAR_CARDS } from "@/lib/cards/gear-cards";
-import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
-import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
-import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
-import { showSuccessToast } from "@/lib/toast";
+import { CardService } from "@/services/CardService";
+import { CardVersion, CardImportResult } from "@/types/cards/card-version";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export const useCardManagement = () => {
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<CardType>("treasure");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<GameCard | undefined>();
+  const [cards, setCards] = useState<GameCard[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [versionHistory, setVersionHistory] = useState<CardVersion[]>([]);
+
+  // Load cards when activeTab changes
+  useEffect(() => {
+    loadCards();
+  }, [activeTab]);
+
+  const loadCards = async () => {
+    setLoading(true);
+    try {
+      const loadedCards = await CardService.getCardsByType(activeTab);
+      setCards(loadedCards);
+    } catch (error) {
+      console.error("Error loading cards:", error);
+      showErrorToast("Failed to load cards");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getCardById = (id: string): GameCard | undefined => {
-    const allCards: GameCard[] = [
-      ...TREASURE_CARDS,
-      ...SECRET_OBJECTIVES,
-      ...AUTOMA_CARDS,
-      ...REGION_CARDS,
-      ...NPC_CARDS,
-      ...MISSION_CARDS,
-      ...HAZARD_CARDS,
-      ...GEAR_CARDS,
-      ...CHAOS_CARDS,
-      ...FLOMANJIFIED_CARDS,
-      ...PLAYER_CHARACTER_CARDS
-    ];
-    return allCards.find(card => card.id === id);
+    return cards.find(card => card.id === id);
   };
 
   const handleViewCard = (id: string) => {
     setSelectedCard(id);
   };
 
-  const handleEditCard = (card: GameCard) => {
-    console.log("Editing card:", card); // Added for debugging
+  const handleEditCard = async (card: GameCard) => {
     setEditingCard(card);
     setActiveTab(card.type as CardType);
+    
+    // Load version history for the card
+    try {
+      const history = await CardService.getCardVersionHistory(card.id);
+      setVersionHistory(history);
+    } catch (error) {
+      console.error("Error loading card history:", error);
+      // Continue despite history error
+    }
+    
     setIsFormOpen(true);
   };
 
   const handleAddNew = () => {
     setEditingCard(undefined);
+    setVersionHistory([]);
     setIsFormOpen(true);
   };
 
-  const handleFormSubmit = (data: CardFormValues) => {
-    console.log("Form submitted with data:", data);
-    // Here you would typically save the data to your database
-    // For now, we just show a success message
-    showSuccessToast(`${data.name} ${editingCard ? "updated" : "created"} successfully`);
-    setIsFormOpen(false);
-    setEditingCard(undefined);
-  };
-
-  const getActiveCards = () => {
-    switch (activeTab) {
-      case "treasure":
-        return TREASURE_CARDS;
-      case "hazard":
-        return HAZARD_CARDS;
-      case "automa":
-        return AUTOMA_CARDS;
-      case "region":
-        return REGION_CARDS;
-      case "npc":
-        return NPC_CARDS;
-      case "mission":
-        return MISSION_CARDS;
-      case "gear":
-        return GEAR_CARDS;
-      case "chaos":
-        return CHAOS_CARDS;
-      case "flomanjified":
-        return FLOMANJIFIED_CARDS;
-      case "secret":
-        return SECRET_OBJECTIVES;
-      case "player-character":
-        return PLAYER_CHARACTER_CARDS;
-      default:
-        return [];
+  const handleFormSubmit = async (data: CardFormValues) => {
+    try {
+      if (editingCard) {
+        // Update existing card
+        const updatedCard = {
+          ...editingCard,
+          ...data,
+        };
+        
+        await CardService.saveCard(updatedCard);
+        showSuccessToast(`${data.name} updated successfully`);
+      } else {
+        // Create new card with a unique ID
+        const newCard = {
+          ...data,
+          id: `${activeTab}-${Date.now()}`,
+        };
+        
+        await CardService.saveCard(newCard as GameCard);
+        showSuccessToast(`${data.name} created successfully`);
+      }
+      
+      // Reload cards to update the UI
+      await loadCards();
+      
+      setIsFormOpen(false);
+      setEditingCard(undefined);
+    } catch (error) {
+      console.error("Error saving card:", error);
+      showErrorToast("Failed to save card");
     }
   };
 
-  const handleDeleteCard = (card: GameCard) => {
-    // Here you would typically delete the card from your database
-    // For now, we just show a success message
-    showSuccessToast(`${card.name} deleted successfully`);
+  const handleDeleteCard = async (card: GameCard) => {
+    try {
+      await CardService.deleteCard(card.id);
+      showSuccessToast(`${card.name} deleted successfully`);
+      
+      // Reload cards to update the UI
+      await loadCards();
+    } catch (error) {
+      console.error("Error deleting card:", error);
+      showErrorToast("Failed to delete card");
+    }
+  };
+
+  const handleImport = async (importedCards: CardFormValues[], results: CardImportResult) => {
+    try {
+      // Transform imported cards to GameCard format with unique IDs
+      const cardsToSave = importedCards.map(card => ({
+        ...card,
+        id: card.id || `${card.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      })) as GameCard[];
+      
+      // Save cards to database
+      const { success, count } = await CardService.saveCards(cardsToSave);
+      
+      if (success) {
+        showSuccessToast(`Successfully imported ${count} cards`);
+        // Reload cards
+        await loadCards();
+      }
+    } catch (error) {
+      console.error("Error importing cards:", error);
+      showErrorToast("Failed to import cards");
+    }
+  };
+
+  const getActiveCards = () => {
+    return cards.filter(card => card.type === activeTab);
   };
 
   return {
@@ -113,5 +150,9 @@ export const useCardManagement = () => {
     handleFormSubmit,
     getActiveCards,
     handleDeleteCard,
+    handleImport,
+    loading,
+    cards,
+    versionHistory,
   };
 };

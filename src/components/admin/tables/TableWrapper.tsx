@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { GameCard, CardType } from "@/types/cards";
 import { AutomaCardsTable } from "./AutomaCardsTable";
@@ -37,6 +36,8 @@ import { CardGrid } from "../cards/CardGrid";
 import { LayoutGrid, Table as TableIcon, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
+import { CardBulkEditor } from "../forms/CardBulkEditor";
+import { CardExporter } from "../cards/CardExporter";
 
 interface TableWrapperProps {
   activeTab: CardType;
@@ -54,6 +55,8 @@ const PROTECTED_BRAND_ASSETS = [
 export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDeleteCard }: TableWrapperProps) => {
   const [view, setView] = useState<'table' | 'grid'>('grid');
   const [cardToDelete, setCardToDelete] = useState<GameCard | null>(null);
+  const [selectedCards, setSelectedCards] = useState<GameCard[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
 
   const handleDeleteCard = (card: GameCard) => {
     // Prevent deletion of cards with protected brand assets
@@ -96,25 +99,75 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
     console.log('Image uploaded for card:', cardId, imageUrl);
   };
 
+  const handleSelectCard = (card: GameCard, isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedCards(prev => [...prev, card]);
+    } else {
+      setSelectedCards(prev => prev.filter(c => c.id !== card.id));
+    }
+  };
+
+  const handleSelectAll = (isSelected: boolean) => {
+    setSelectAll(isSelected);
+    if (isSelected) {
+      setSelectedCards([...cards]);
+    } else {
+      setSelectedCards([]);
+    }
+  };
+
+  const handleBulkEditComplete = (updatedCards: GameCard[]) => {
+    // Clear selection
+    setSelectedCards([]);
+    setSelectAll(false);
+    
+    // Show success message
+    showSuccessToast(`Updated ${updatedCards.length} cards`);
+    
+    // Refresh card data (this would be handled by the parent component in production)
+    // onCardsUpdated(updatedCards);
+  };
+
   const ViewToggle = () => (
-    <div className="flex justify-end mb-4">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setView(view === 'table' ? 'grid' : 'table')}
-      >
-        {view === 'table' ? (
+    <div className="flex justify-between items-center mb-4">
+      <div className="flex items-center gap-2">
+        {selectedCards.length > 0 && (
           <>
-            <LayoutGrid className="h-4 w-4 mr-2" />
-            Grid View
-          </>
-        ) : (
-          <>
-            <TableIcon className="h-4 w-4 mr-2" />
-            Table View
+            <span className="text-sm font-medium">{selectedCards.length} selected</span>
+            <CardBulkEditor 
+              selectedCards={selectedCards} 
+              onEditComplete={handleBulkEditComplete}
+            />
           </>
         )}
-      </Button>
+      </div>
+      
+      <div className="flex items-center gap-2">
+        <CardExporter 
+          cardType={activeTab} 
+          onExportComplete={(format, count) => {
+            console.log(`Exported ${count} cards in ${format} format`);
+          }}
+        />
+        
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setView(view === 'table' ? 'grid' : 'table')}
+        >
+          {view === 'table' ? (
+            <>
+              <LayoutGrid className="h-4 w-4 mr-2" />
+              Grid View
+            </>
+          ) : (
+            <>
+              <TableIcon className="h-4 w-4 mr-2" />
+              Table View
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 
@@ -160,6 +213,8 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
       {view === 'grid' ? (
         <CardGrid
           cards={cards}
+          selectedCards={selectedCards}
+          onSelectCard={handleSelectCard}
           onViewCard={onViewCard}
           onEditCard={onEditCard}
           onDeleteCard={handleDeleteCard}

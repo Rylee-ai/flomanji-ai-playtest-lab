@@ -1,4 +1,3 @@
-
 import React from "react";
 import { GameCard } from "@/types/cards";
 import { Button } from "@/components/ui/button";
@@ -8,9 +7,12 @@ import { CardDisplay } from "@/components/cards/CardDisplay";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface CardGridProps {
   cards: GameCard[];
+  selectedCards?: GameCard[];
+  onSelectCard?: (card: GameCard, isSelected: boolean) => void;
   onViewCard: (id: string) => void;
   onEditCard: (card: GameCard) => void;
   onDeleteCard: (card: GameCard) => void;
@@ -20,7 +22,15 @@ interface CardGridProps {
 // Brand protection constant - this image URL should never be changed without approval
 const FLOMANJI_CARD_BACK_IMAGE = "/lovable-uploads/e5635414-17a2-485e-86cb-feaf926b9af5.png";
 
-export const CardGrid = ({ cards, onViewCard, onEditCard, onDeleteCard, onImageUpload }: CardGridProps) => {
+export const CardGrid = ({ 
+  cards, 
+  selectedCards = [], 
+  onSelectCard,
+  onViewCard, 
+  onEditCard, 
+  onDeleteCard, 
+  onImageUpload 
+}: CardGridProps) => {
   const handleImageUpload = async (cardId: string, file: File) => {
     try {
       // Image validation
@@ -64,10 +74,28 @@ export const CardGrid = ({ cards, onViewCard, onEditCard, onDeleteCard, onImageU
     }
   };
 
+  // Check if a card is selected
+  const isSelected = (card: GameCard) => {
+    return selectedCards.some(c => c.id === card.id);
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 p-2 sm:p-4">
       {cards.map((card) => (
-        <Card key={card.id} className="overflow-hidden group relative hover:shadow-lg transition-shadow">
+        <Card key={card.id} className={cn(
+          "overflow-hidden group relative hover:shadow-lg transition-shadow",
+          isSelected(card) && "ring-2 ring-primary"
+        )}>
+          {onSelectCard && (
+            <div className="absolute top-2 left-2 z-10">
+              <Checkbox 
+                checked={isSelected(card)}
+                onCheckedChange={(checked) => onSelectCard(card, !!checked)}
+                className="h-5 w-5 bg-background/80 backdrop-blur-sm"
+              />
+            </div>
+          )}
+          
           <CardContent className="p-3 sm:p-4">
             <div className="relative aspect-[3/4] mb-3 sm:mb-4 bg-muted rounded-lg overflow-hidden">
               {card.imageUrl ? (

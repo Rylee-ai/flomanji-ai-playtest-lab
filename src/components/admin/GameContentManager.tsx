@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,12 +8,14 @@ import { CardForm } from "./CardForm";
 import { CardPreviewModal } from "./CardPreviewModal";
 import { TableWrapper } from "./tables/TableWrapper";
 import { useCardManagement } from "./hooks/useCardManagement";
+
 const GameContentManager = () => {
   const {
     selectedCard,
     activeTab,
     isFormOpen,
     editingCard,
+    versionHistory,
     setActiveTab,
     setIsFormOpen,
     setSelectedCard,
@@ -22,18 +25,23 @@ const GameContentManager = () => {
     handleAddNew,
     handleFormSubmit,
     handleDeleteCard,
-    getActiveCards
+    getActiveCards,
+    loading
   } = useCardManagement();
+
   const card = selectedCard ? getCardById(selectedCard) : null;
   const cards = getActiveCards();
-  return <Card>
+
+  return (
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Card Content Management</CardTitle>
-        <Button size="sm" onClick={handleAddNew}>
-          <Plus className="mr-2 h-4 w-4" />
+        <Button size="sm" onClick={handleAddNew} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
           Add New Card
         </Button>
       </CardHeader>
+      
       <CardContent>
         <Tabs defaultValue={activeTab} value={activeTab} onValueChange={value => setActiveTab(value as any)} className="w-full">
           <div className="mb-4">
@@ -66,14 +74,44 @@ const GameContentManager = () => {
           </div>
 
           <TabsContent value={activeTab} className="space-y-4">
-            <TableWrapper activeTab={activeTab} cards={cards} onViewCard={handleViewCard} onEditCard={handleEditCard} onDeleteCard={handleDeleteCard} />
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <p className="text-sm text-muted-foreground">Loading cards...</p>
+                </div>
+              </div>
+            ) : (
+              <TableWrapper 
+                activeTab={activeTab} 
+                cards={cards} 
+                onViewCard={handleViewCard} 
+                onEditCard={handleEditCard} 
+                onDeleteCard={handleDeleteCard} 
+              />
+            )}
           </TabsContent>
         </Tabs>
 
-        {card && <CardPreviewModal card={card} onClose={() => setSelectedCard(null)} onEdit={() => handleEditCard(card)} />}
+        {card && (
+          <CardPreviewModal 
+            card={card} 
+            onClose={() => setSelectedCard(null)} 
+            onEdit={() => handleEditCard(card)} 
+          />
+        )}
 
-        <CardForm open={isFormOpen} onClose={() => setIsFormOpen(false)} onSubmit={handleFormSubmit} initialData={editingCard} activeTab={activeTab} />
+        <CardForm 
+          open={isFormOpen} 
+          onClose={() => setIsFormOpen(false)} 
+          onSubmit={handleFormSubmit} 
+          initialData={editingCard} 
+          activeTab={activeTab}
+          versionHistory={versionHistory}
+        />
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };
+
 export default GameContentManager;
