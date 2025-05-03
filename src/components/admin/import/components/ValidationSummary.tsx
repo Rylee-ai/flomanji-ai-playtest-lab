@@ -50,7 +50,7 @@ export const ValidationSummary = ({
           </AlertDescription>
         </Alert>
       ) : (
-        <Alert variant="success" className="border-green-500 bg-green-50 dark:bg-green-900/20">
+        <Alert variant="default" className="border-green-500 bg-green-50 dark:bg-green-900/20">
           <Check className="h-4 w-4 text-green-500" />
           <AlertTitle className="text-green-600 dark:text-green-400">File Validated</AlertTitle>
           <AlertDescription className="text-sm text-green-600 dark:text-green-400">
