@@ -1,4 +1,3 @@
-
 import { 
   SimulationResult,
   SimulationTrainingData,
@@ -6,18 +5,29 @@ import {
   KeyDecisionPoint,
   AgentMessage
 } from "@/types";
+import { CriticFeedbackProcessor } from "./CriticFeedbackProcessor";
 
 /**
  * Service that processes simulation results and generates structured training data
  * for machine learning models.
  */
 export class TrainingDataGenerator {
+  private criticFeedbackProcessor: CriticFeedbackProcessor;
+  
+  constructor() {
+    this.criticFeedbackProcessor = new CriticFeedbackProcessor();
+  }
   
   /**
    * Generate training data from a completed simulation result
    */
   public generateTrainingData(simulation: SimulationResult): SimulationTrainingData {
     console.log("Generating training data for simulation:", simulation.id);
+    
+    // Process critic feedback if available
+    const criticFeedback = simulation.criticFeedback ? 
+      this.criticFeedbackProcessor.processCriticFeedback(simulation) : 
+      { gameLogicImprovements: [], keyDecisionPoints: [] };
     
     // Initialize the training data structure
     const trainingData: SimulationTrainingData = {
@@ -39,8 +49,17 @@ export class TrainingDataGenerator {
       ...this.generateGMResponseExamples(simulation),
       ...this.generatePlayerActionExamples(simulation),
       ...this.generateHazardEncounterExamples(simulation),
-      ...this.generateObjectiveCompletionExamples(simulation)
+      ...this.generateObjectiveCompletionExamples(simulation),
+      ...criticFeedback.gameLogicImprovements
     ];
+    
+    // Include critic-identified key decision points in statistics
+    if (criticFeedback.keyDecisionPoints.length > 0) {
+      trainingData.statistics.keyDecisionPoints = [
+        ...trainingData.statistics.keyDecisionPoints,
+        ...criticFeedback.keyDecisionPoints
+      ];
+    }
     
     console.log(`Generated ${trainingData.examples.length} training examples`);
     
@@ -161,6 +180,13 @@ export class TrainingDataGenerator {
       // Get the context (previous messages)
       const contextMessages = simulation.log.slice(0, i);
       
+      // Add historical context if critic feedback is available
+      const historicalContext = simulation.criticFeedback ? {
+        previousVersions: [],
+        ruleDescription: this.extractRelevantRules(currentMessage, simulation),
+        changeReasoning: ""
+      } : undefined;
+      
       // Create a training example
       examples.push({
         id: `gm-response-${simulation.id}-${i}`,
@@ -175,7 +201,8 @@ export class TrainingDataGenerator {
         expectedOutput: {
           content: currentMessage.content,
           metadata: currentMessage.metadata
-        }
+        },
+        historicalContext
       });
     }
     
@@ -294,5 +321,24 @@ export class TrainingDataGenerator {
     }
     
     return examples;
+  }
+  
+  /**
+   * Extract relevant rules for a specific GM response
+   */
+  private extractRelevantRules(message: AgentMessage, simulation: SimulationResult): string {
+    // Placeholder implementation
+    // In a real implementation, this would analyze the message content
+    // to extract relevant rules that were used in making the response
+    
+    if (message.content.includes("heat")) {
+      return "Heat rules: Heat represents the increasing danger and time pressure of the mission.";
+    } else if (message.content.includes("objective")) {
+      return "Objective rules: Players must complete required objectives to succeed in the mission.";
+    } else if (message.content.includes("rest") || message.content.includes("heal")) {
+      return "Rest rules: Characters can rest to recover health points.";
+    }
+    
+    return "General game rules apply.";
   }
 }

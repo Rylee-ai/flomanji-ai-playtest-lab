@@ -1,15 +1,15 @@
 
 import { SimulationConfig, SimulationResult } from "@/types";
-import { SimulationRunner } from "./core/SimulationRunner";
+import { SimulationOrchestrator } from "./core/SimulationOrchestrator";
 
 /**
  * Factory for creating and managing simulation instances
  */
 class SimulationFactory {
-  private simulationRunner: SimulationRunner;
+  private simulationOrchestrator: SimulationOrchestrator;
   
   constructor() {
-    this.simulationRunner = new SimulationRunner();
+    this.simulationOrchestrator = new SimulationOrchestrator();
   }
   
   /**
@@ -19,7 +19,7 @@ class SimulationFactory {
     config: SimulationConfig,
     rulesContent: string
   ): Promise<SimulationResult> {
-    return this.simulationRunner.runSimulation(config, rulesContent);
+    return this.simulationOrchestrator.runSimulation(config, rulesContent);
   }
 }
 

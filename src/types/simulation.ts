@@ -73,10 +73,10 @@ export interface SimulationResult {
   characters?: FlomanjiCharacter[];
   missionOutcome?: string;
   keyEvents?: string[];
-  trainingData?: SimulationTrainingData; // New field for ML training data
+  trainingData?: SimulationTrainingData; // For ML training data
 }
 
-// New interface specifically for ML training data
+// Interface specifically for ML training data
 export interface SimulationTrainingData {
   // Core metadata for organization
   simulationId: string;
@@ -99,7 +99,7 @@ export interface SimulationTrainingData {
 // Each example represents a potential training pair
 export interface TrainingExample {
   id: string;
-  type: 'gm-response' | 'player-action' | 'hazard-encounter' | 'objective-completion';
+  type: 'gm-response' | 'player-action' | 'hazard-encounter' | 'objective-completion' | 'game-logic-improvement';
   
   // Input context (what would be fed to the model)
   context: {
@@ -122,6 +122,17 @@ export interface TrainingExample {
     consistency: number; // 0-1, how consistent with rules/lore
     engagement: number; // 0-1, how engaging the response is
     advancement: number; // 0-1, how much it advances the game state
+  };
+  
+  // New field for historical context and rule evolution
+  historicalContext?: {
+    previousVersions: Array<{
+      version: string,
+      implementation: string,
+      criticFeedback: string
+    }>,
+    ruleDescription: string,
+    changeReasoning: string
   };
 }
 
