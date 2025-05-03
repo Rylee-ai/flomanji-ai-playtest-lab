@@ -1,16 +1,16 @@
 
-import { AgentMessage } from "@/types";
+import { AgentMessage, SimulationConfig } from "@/types";
 import { createChatCompletion } from "@/lib/openrouterChat";
 
 /**
- * Manages the final outcome and conclusion of simulations
+ * Manages the outcome and results of a simulation
  */
 export class SimulationOutcomeManager {
   /**
-   * Generate the final narration
+   * Generate the final narration for a simulation
    */
   public async generateFinalNarration(
-    config: any,
+    config: SimulationConfig,
     gameState: any,
     conversationLog: AgentMessage[],
     systemPrompt: string
@@ -44,7 +44,7 @@ export class SimulationOutcomeManager {
   }
   
   /**
-   * Generate critic feedback
+   * Generate critic feedback on the simulation
    */
   public async generateCriticFeedback(
     conversationLog: AgentMessage[],
@@ -79,7 +79,7 @@ export class SimulationOutcomeManager {
   }
   
   /**
-   * Extract key events from the simulation
+   * Extract key events from the simulation to highlight important moments
    */
   public extractKeyEvents(gameState: any, log: AgentMessage[]): string[] {
     const keyEvents: string[] = [];
@@ -87,7 +87,7 @@ export class SimulationOutcomeManager {
     // Extract objective completions
     const objectiveEvents = log.filter(entry => 
       entry.metadata?.phase === "objective-completed" || 
-      entry.content.includes("objective") && entry.content.includes("complet")
+      (entry.content.includes("objective") && entry.content.includes("complet"))
     );
     
     objectiveEvents.forEach(event => {
@@ -95,35 +95,32 @@ export class SimulationOutcomeManager {
     });
     
     // Extract treasure discoveries
-    const treasureEvents = log.filter(entry => 
-      entry.metadata?.phase === "treasure-discovery"
-    );
-    
+    const treasureEvents = log.filter(entry => entry.metadata?.phase === "treasure-discovery");
     treasureEvents.forEach(event => {
-      keyEvents.push(`Treasure Found: ${event.metadata?.treasureCard || "Unknown treasure"}`);
+      if (event.metadata?.discoveredTreasure) {
+        keyEvents.push(`Treasure Found: ${event.metadata.discoveredTreasure}`);
+      }
     });
     
     // Extract chaos card events
-    const chaosEvents = log.filter(entry =>
-      entry.metadata?.phase === "chaos-card"
-    );
-    
+    const chaosEvents = log.filter(entry => entry.metadata?.phase === "chaos-card");
     chaosEvents.forEach(event => {
-      keyEvents.push(`Chaos Effect: ${event.metadata?.chaosCard || "Unknown chaos effect"}`);
+      if (event.metadata?.drawnChaosCard) {
+        keyEvents.push(`Chaos Effect: ${event.metadata.drawnChaosCard}`);
+      }
     });
     
     // Extract major hazard events
-    const hazardEvents = log.filter(entry =>
-      entry.metadata?.phase === "hazard-introduction"
-    );
-    
+    const hazardEvents = log.filter(entry => entry.metadata?.phase === "hazard-introduction");
     hazardEvents.forEach(event => {
       keyEvents.push(`Hazard Encountered: ${event.metadata?.hazard}`);
     });
     
     // Add game outcome
     if (gameState.missionOutcome) {
-      keyEvents.push(`Mission ${gameState.missionOutcome === 'success' ? 'Success' : 'Failure'}: ${gameState.gameOverReason || 'Mission completed'}`);
+      keyEvents.push(
+        `Mission ${gameState.missionOutcome === 'success' ? 'Success' : 'Failure'}: ${gameState.gameOverReason || 'Mission completed'}`
+      );
     }
     
     return keyEvents;

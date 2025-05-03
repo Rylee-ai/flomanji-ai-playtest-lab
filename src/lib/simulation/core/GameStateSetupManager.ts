@@ -19,7 +19,7 @@ export class GameStateSetupManager {
    */
   public async setupGameState(config: SimulationConfig): Promise<any> {
     // Set up game state
-    const gameState = {
+    const gameState: any = {
       currentRound: 0,
       heat: config.startingHeat || 0,
       activeHazards: [],
@@ -30,11 +30,13 @@ export class GameStateSetupManager {
       currentGobletHolder: Math.floor(Math.random() * (config.players || 3)),
       gobletVoice: config.gobletVoice || 'swamp-prophet',
       gobletMood: 'neutral',
-      gameOver: false
+      gameOver: false,
+      playerInventories: {},
+      selectedCharacters: [],
+      objectives: []
     };
     
     // Initialize player inventories
-    gameState.playerInventories = {};
     for (let i = 0; i < (config.players || 3); i++) {
       gameState.playerInventories[i] = {
         gear: [],
@@ -66,7 +68,7 @@ export class GameStateSetupManager {
     }
     
     // If no mission was selected, set default objectives
-    if (!gameState.objectives) {
+    if (!gameState.objectives || gameState.objectives.length === 0) {
       gameState.objectives = [
         {
           id: "obj1",

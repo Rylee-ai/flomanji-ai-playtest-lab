@@ -145,7 +145,6 @@ export class SimulationOrchestrator {
         regions: gameState.regions?.map((r: any) => r.name) || [],
         currentRegion: gameState.currentRegion || "start",
         activeHazards: gameState.activeHazards || [],
-        activeChaosEffects: gameState.activeChaosEffects || [],
         discoveredTreasures: gameState.discoveredTreasures || [],
         rolls: gameState.rolls || [],
         currentGobletHolder: gameState.currentGobletHolder || 0,
