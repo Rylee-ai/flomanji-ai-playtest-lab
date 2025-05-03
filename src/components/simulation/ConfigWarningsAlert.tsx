@@ -10,7 +10,7 @@ interface ConfigWarningsAlertProps {
 const ConfigWarningsAlert: React.FC<ConfigWarningsAlertProps> = ({ validationErrors }) => {
   if (validationErrors.length === 0) return null;
   return (
-    <Alert variant="warning">
+    <Alert variant="destructive">
       <AlertTriangle className="h-4 w-4" />
       <AlertTitle>Configuration Warnings</AlertTitle>
       <AlertDescription>

@@ -3,8 +3,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
-import { detectFileFormat, isValidFileType } from "@/utils/file-format/fileFormatDetector";
-import { processFileContent, validateFile } from "@/utils/file-processors/fileProcessor";
+import { useFileFormat } from "./useFileFormat";
+import { FileProcessingService } from "@/utils/file-processing/FileProcessingService";
 
 export interface FileProcessingResult {
   processedCards: CardFormValues[];
@@ -17,26 +17,7 @@ export interface FileProcessingResult {
  */
 export function useFileProcessor() {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [fileFormat, setFileFormat] = useState<"markdown" | "json-standard" | "json-transform" | "unknown" | null>(null);
-  const [fileExtension, setFileExtension] = useState<string | null>(null);
-
-  /**
-   * Analyze a file and detect its format
-   */
-  const analyzeFile = async (file: File): Promise<string> => {
-    if (!file) return "unknown";
-    
-    try {
-      const { format, fileExtension } = await detectFileFormat(file);
-      setFileFormat(format);
-      setFileExtension(fileExtension);
-      return format;
-    } catch (error) {
-      console.error("Error analyzing file:", error);
-      setFileFormat("unknown");
-      return "unknown";
-    }
-  };
+  const { fileFormat, fileExtension, analyzeFile } = useFileFormat();
 
   /**
    * Process a file and convert it to card data
@@ -44,7 +25,7 @@ export function useFileProcessor() {
    */
   const processFile = async (file: File, cardType: CardType): Promise<FileProcessingResult> => {
     // Validate file exists
-    const validation = validateFile(file);
+    const validation = FileProcessingService.validateFile(file);
     if (!validation.valid) {
       toast.error(validation.error || "Invalid file");
       return { processedCards: [], errors: [validation.error || "Invalid file"] };
@@ -59,7 +40,7 @@ export function useFileProcessor() {
       const format = fileFormat || await analyzeFile(file);
       
       // Process the file content
-      const result = await processFileContent(file, cardType, format as any);
+      const result = await FileProcessingService.processFileContent(file, cardType, format as any);
       
       return result;
     } catch (error) {

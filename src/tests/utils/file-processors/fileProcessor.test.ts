@@ -1,6 +1,7 @@
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { processFileContent, validateFile } from '@/utils/file-processors/fileProcessor';
+import { FileProcessingService } from '@/utils/file-processing/FileProcessingService';
 import * as markdownUtils from '@/utils/markdown';
 import * as cardImport from '@/utils/cardImport';
 import * as cardTransformers from '@/utils/card-transformers';
