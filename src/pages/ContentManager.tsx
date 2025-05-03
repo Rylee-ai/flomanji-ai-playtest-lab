@@ -1,13 +1,12 @@
 
 import React from "react";
 import GameContentManager from "@/components/admin/GameContentManager";
-import { CardBulkImport } from "@/components/admin/forms/CardBulkImport";
+import { CardImporter } from "@/components/admin/import/CardImporter";
 import { CardExporter } from "@/components/admin/cards/CardExporter";
 import { useCardManagement } from "@/components/admin/hooks/useCardManagement";
-import { CardDataTransformer } from "@/components/admin/forms/CardDataTransformer";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Download, Upload, FilePlus2 } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 
 const ContentManager = () => {
   const {
@@ -26,18 +25,15 @@ const ContentManager = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="h-4 w-4" />
-            <CardExporter cardType={activeTab} />
+          <Button variant="outline" size="sm" className="gap-2" asChild>
+            <label>
+              <Download className="h-4 w-4" />
+              <span>Export</span>
+              <CardExporter cardType={activeTab} />
+            </label>
           </Button>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Upload className="h-4 w-4" />
-            <CardBulkImport onImport={handleImport} />
-          </Button>
-          <Button variant="default" size="sm" className="gap-2">
-            <FilePlus2 className="h-4 w-4" />
-            <CardDataTransformer onTransformed={handleImport} />
-          </Button>
+          
+          <CardImporter onImport={handleImport} activeCardType={activeTab} />
         </div>
       </div>
       
