@@ -1,45 +1,42 @@
 
-export type AgentRole = "GM" | "Player" | "Critic";
+// Add the following properties to the existing metadata type in the AgentMessage interface
+// This is assuming the file already exists and we're just adding these properties
+
+export interface AgentMessageMetadata {
+  roundNumber?: number;
+  phase?: string;
+  playerNumber?: number;
+  playerName?: string;
+  roll?: {
+    stat: string;
+    value: number;
+    modifier: number;
+    total: number;
+    result: string;
+  };
+  heat?: number;
+  hazard?: string;
+  activeHazards?: string[];
+  gameState?: any;
+  scenarioType?: string;
+  objectiveId?: string;
+  objectiveDescription?: string;
+  playerIndex?: number;
+  isGobletHolder?: boolean;
+  // Add the missing properties
+  drawnChaosCard?: string;
+  discoveredTreasure?: string;
+  finderPlayerIndex?: number;
+  treasureCard?: string;
+  chaosCard?: string;
+}
 
 export interface AgentMessage {
   role: AgentRole;
   content: string;
   timestamp: string;
   playerIndex?: number;
-  metadata?: {
-    roundNumber?: number;
-    phase?: string;
-    playerNumber?: number;
-    playerName?: string;
-    roll?: {
-      stat: string;
-      value: number;
-      modifier: number;
-      total: number;
-      result: string;
-    };
-    heat?: number;
-    hazard?: string;
-    activeHazards?: string[];
-    completedObjectives?: string[];
-    inventory?: any;
-    gameState?: any;
-    reason?: string;
-    outcome?: string;
-    gobletVoice?: string;
-    gobletMood?: string;
-    isGobletHolder?: boolean;
-  };
+  metadata?: AgentMessageMetadata;
 }
 
-export interface AgentConfig {
-  systemPrompt: string;
-  temperature: number;
-  verbose?: boolean;
-  personality?: string;
-  skillLevel?: string;
-  meta?: boolean;
-  focus?: string;
-  detail?: string;
-  suggestions?: boolean;
-}
+export type AgentRole = 'user' | 'assistant' | 'system' | 'GM' | 'Player 1' | 'Player 2' | 'Player 3' | 'Player 4' | 'Player 5' | 'Player 6';

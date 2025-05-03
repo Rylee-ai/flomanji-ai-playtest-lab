@@ -65,6 +65,7 @@ export interface SimulationResult {
     regions: string[];
     currentRegion: string;
     activeHazards: string[];
+    discoveredTreasures: string[]; // Added this explicitly
     rolls: {player: number, type: string, value: number, stat: string, result: string}[];
     currentGobletHolder: number;
     gobletVoice: 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';

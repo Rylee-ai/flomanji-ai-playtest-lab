@@ -83,7 +83,7 @@ export class TreasureManager {
       metadata: {
         roundNumber: gameState.currentRound,
         phase: "treasure-discovery",
-        discoveredTreasure: treasureCard.name,
+        treasureCard: treasureCard.name,  // Changed from discoveredTreasure to treasureCard
         finderPlayerIndex: finderIndex,
         gameState: {...gameState}
       }

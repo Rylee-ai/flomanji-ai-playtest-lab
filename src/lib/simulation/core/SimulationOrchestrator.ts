@@ -145,6 +145,7 @@ export class SimulationOrchestrator {
         regions: gameState.regions?.map((r: any) => r.name) || [],
         currentRegion: gameState.currentRegion || "start",
         activeHazards: gameState.activeHazards || [],
+        // Make sure the property names match those used in the metadata type
         discoveredTreasures: gameState.discoveredTreasures || [],
         rolls: gameState.rolls || [],
         currentGobletHolder: gameState.currentGobletHolder || 0,
