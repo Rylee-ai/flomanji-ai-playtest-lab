@@ -106,7 +106,8 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
         processedCards = transformCardData(jsonData, cardType);
       } else {
         // Process standard format
-        processedCards = processImportedCards(jsonData, cardType);
+        // Fix: Cast the result to CardFormValues[] to ensure the correct type
+        processedCards = processImportedCards(jsonData, cardType) as CardFormValues[];
       }
       
       // Validate cards
