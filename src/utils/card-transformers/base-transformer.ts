@@ -57,3 +57,41 @@ export const transformBaseCardData = (cardData: BaseCardInput): Partial<CardForm
     imagePrompt: cardData.image_prompt || ""
   };
 };
+
+/**
+ * Generate a valid ID from a card name
+ * @param name The card name
+ * @param prefix Optional prefix for the ID (default: 'card')
+ * @returns A valid ID string
+ */
+export const generateCardId = (name: string, prefix: string = 'card'): string => {
+  if (!name) return `${prefix}-unknown-${Date.now()}`;
+  
+  // Convert to lowercase, replace spaces and special chars with hyphens
+  const baseId = name.toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, ''); // Trim hyphens from start/end
+    
+  return `${prefix}-${baseId}`;
+};
+
+/**
+ * Ensure all cards have valid IDs
+ * @param cards Array of cards
+ * @param typePrefix Prefix for auto-generated IDs
+ * @returns Cards with valid IDs
+ */
+export const ensureCardIds = (
+  cards: Partial<CardFormValues>[], 
+  typePrefix: string = 'card'
+): Partial<CardFormValues>[] => {
+  return cards.map(card => {
+    if (!card.id && card.name) {
+      return {
+        ...card,
+        id: generateCardId(card.name, typePrefix)
+      };
+    }
+    return card;
+  });
+};

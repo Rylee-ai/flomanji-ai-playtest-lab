@@ -12,43 +12,52 @@ export const parseMarkdownCards = (markdownContent: string): CardFormValues[] =>
   const cards: CardFormValues[] = [];
   console.log("Parsing markdown content, length:", markdownContent.length);
   
-  // Split the markdown content by major card sections
-  // We're looking for sections that begin with a number followed by a period and space
-  let cardSections: string[] = [];
-  
   // Try different patterns for splitting cards
-  if (markdownContent.includes("**1.")) {
-    // Format: **1. Card Name**
-    cardSections = markdownContent.split(/\n\s*\*\*\d+\.\s*(.+?)\*\*/);
-    console.log("Using numbered card format with ** markers, found sections:", cardSections.length);
-  } else if (markdownContent.includes("# ")) {
-    // Format: # Card Name
-    cardSections = markdownContent.split(/\n\s*#\s+(.+?)(?:\n|$)/);
-    console.log("Using # header format, found sections:", cardSections.length);
-  } else {
-    // Format: Card Name
-    // Last resort - try to split on double newlines
+  
+  // First try: Look for section headers with ## or # patterns
+  let cardSections = markdownContent.split(/(?=#{1,3}\s+[^#\n]+)/g);
+  console.log("Using header format, found sections:", cardSections.length);
+  
+  // If we didn't find multiple sections with headers, try numbered format
+  if (cardSections.length <= 1) {
+    // Format: 1. Card Name
+    cardSections = markdownContent.split(/(?=\d+\.\s+[^\n]+)/g);
+    console.log("Using numbered format, found sections:", cardSections.length);
+  }
+  
+  // If we still didn't find multiple sections, try bullet format 
+  if (cardSections.length <= 1) {
+    // Format: * Card Name or - Card Name
+    cardSections = markdownContent.split(/(?=[\*\-]\s+[^\n]+)/g);
+    console.log("Using bullet format, found sections:", cardSections.length);
+  }
+  
+  // If we still don't have sections, try double newlines
+  if (cardSections.length <= 1) {
     cardSections = markdownContent.split(/\n\n+/);
     console.log("Using paragraph breaks, found sections:", cardSections.length);
   }
   
-  // Filter out empty sections and process each card section
-  for (let i = 1; i < cardSections.length; i += 2) {
-    if (!cardSections[i]) continue;
+  // Process each card section
+  for (let i = 0; i < cardSections.length; i++) {
+    const section = cardSections[i].trim();
+    if (!section) continue;
     
-    const cardTitle = cardSections[i].trim();
-    const cardContent = cardSections[i+1] || '';
+    // Extract card title - look for a header pattern
+    const titleMatch = section.match(/^(?:#{1,3}|\d+\.|\*|\-)\s+([^\n]+)/);
+    const cardTitle = titleMatch ? titleMatch[1].trim() : "Unnamed Card";
     
     console.log("Processing card:", cardTitle);
     
     // Parse the card content into an object
-    const card = parseCardSection(cardTitle, cardContent);
+    const card = parseCardSection(cardTitle, section);
     if (card) {
       cards.push(card);
     }
   }
   
   console.log("Total cards parsed:", cards.length);
+  
   // If we failed to parse cards with the standard method, try a fallback approach
   if (cards.length === 0) {
     console.log("Falling back to alternate parsing method");

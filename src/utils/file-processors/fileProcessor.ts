@@ -4,6 +4,7 @@ import { CardFormValues } from "@/types/forms/card-form";
 import { transformMarkdownToCards } from "@/utils/markdown";
 import { processImportedCards } from "@/utils/cardImport";
 import { transformCardData } from "@/utils/card-transformers";
+import { ensureCardIds } from "@/utils/card-transformers/base-transformer";
 
 /**
  * Process a file and transform its content into card data
@@ -50,6 +51,9 @@ export const processFileContent = async (
       }
     }
     
+    // Ensure all cards have valid IDs
+    processedCards = ensureCardIds(processedCards, cardType) as CardFormValues[];
+    
     console.log("Processed cards:", processedCards.length);
     
     // Validate cards
@@ -60,6 +64,12 @@ export const processFileContent = async (
       processedCards.forEach((card, index) => {
         if (!card.name) errors.push(`Card #${index + 1}: Missing name`);
         if (!card.type) errors.push(`Card #${index + 1}: Missing type`);
+        
+        // For gear cards, check category
+        if (card.type === 'gear' && !card.category) {
+          // Auto-assign tool category instead of showing error
+          card.category = 'tool';
+        }
       });
     }
     

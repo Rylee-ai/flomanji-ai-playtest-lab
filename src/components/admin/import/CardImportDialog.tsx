@@ -48,7 +48,7 @@ export function CardImportDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <CardImportDialogHeader />
 
         <CardImportTabs

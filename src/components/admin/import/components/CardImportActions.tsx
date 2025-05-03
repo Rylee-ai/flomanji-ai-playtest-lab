@@ -51,7 +51,7 @@ export const CardImportActions = ({
         <Button 
           onClick={handleImport} 
           variant="default" 
-          className="bg-green-600 hover:bg-green-700 font-medium"
+          className="bg-green-600 hover:bg-green-700 font-medium text-lg px-6 py-2"
         >
           Import {transformedCards.length} Cards
         </Button>
