@@ -11,20 +11,40 @@ export const mapGearCategory = (categoryText: string): 'consumable' | 'tool' | '
   const lowerText = categoryText.toLowerCase().trim();
   
   // Match by keyword patterns for each category
-  if (lowerText.includes('consumable') || lowerText.includes('one-time') || lowerText.includes('one time')) {
+  if (lowerText.includes('consumable') || 
+      lowerText.includes('one-time') || 
+      lowerText.includes('one time')) {
     return 'consumable';
   }
-  if (lowerText.includes('weapon') || lowerText.includes('gun') || lowerText.includes('knife') || lowerText.includes('sword')) {
+  
+  if (lowerText.includes('weapon') || 
+      lowerText.includes('gun') || 
+      lowerText.includes('knife') || 
+      lowerText.includes('sword') || 
+      lowerText.includes('dagger')) {
     return 'weapon';
   }
-  if (lowerText.includes('vehicle') || lowerText.includes('car') || lowerText.includes('boat') || lowerText.includes('transportation')) {
+  
+  if (lowerText.includes('vehicle') || 
+      lowerText.includes('car') || 
+      lowerText.includes('boat') || 
+      lowerText.includes('transportation')) {
     return 'vehicle';
   }
-  if (lowerText.includes('supply') || lowerText.includes('supplies') || lowerText.includes('resource')) {
+  
+  if (lowerText.includes('supply') || 
+      lowerText.includes('supplies') || 
+      lowerText.includes('resource')) {
     return 'supply';
   }
-  if (lowerText.includes('passive') || lowerText.includes('tool') || lowerText.includes('combo')) {
-    return 'tool'; // Map "Passive" and "Combo" to "Tool"
+  
+  // Map these special categories to "tool"
+  if (lowerText.includes('passive') || 
+      lowerText.includes('tool') || 
+      lowerText.includes('combo') ||
+      lowerText.includes('one-time use') ||
+      lowerText.includes('one time use')) {
+    return 'tool';
   }
   
   // Default to tool for other categories
@@ -51,9 +71,12 @@ export const cleanupTitle = (title: string): string => {
   if (!title) return "Unnamed Card";
   
   return title
-    .replace(/\*\*\d+\.?\s+/g, '') // Remove "**1. " format
-    .replace(/\d+\.?\s+/g, '')     // Remove "1. " format
-    .replace(/\*\*/g, '')          // Remove any remaining asterisks
-    .replace(/^\s+|\s+$/g, '')     // Trim whitespace
+    .replace(/\*\*\d+\.?\s+/g, '')     // Remove "**1. " format
+    .replace(/\d+\.?\s+/g, '')         // Remove "1. " format
+    .replace(/\*\*Title:\*\*/gi, '')   // Remove "**Title:**" format
+    .replace(/^\*\s+/, '')             // Remove leading "* " bullet
+    .replace(/\*\*/g, '')              // Remove any remaining asterisks
+    .replace(/\*+$/, '')               // Remove trailing asterisks
+    .replace(/^\s+|\s+$/g, '')         // Trim whitespace
     .trim();
 };

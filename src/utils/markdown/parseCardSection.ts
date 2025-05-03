@@ -1,10 +1,11 @@
 
 import { CardFormValues } from "@/types/forms/card-form";
 import { v4 as uuidv4 } from 'uuid';
-import { mapGearCategory } from "./cardTypeMappers";
+import { mapGearCategory, cleanupTitle } from "./cardTypeMappers";
 
 /**
  * Parse a specific section of markdown text into a card object
+ * Specialized for Flomanji card format with trailing asterisks and specific formatting
  * @param title The card title extracted from the section
  * @param content The full section content
  * @returns A card object with extracted data
@@ -16,9 +17,9 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     console.log("Empty content provided");
     return null;
   }
-
-  // Clean the title - remove any trailing asterisks which are common in the user's format
-  const cleanTitle = title.replace(/\*+$/, '').trim();
+  
+  // Clean up all possible formats of title including trailing asterisks
+  const cleanTitle = cleanupTitle(title);
   
   // Generate a unique ID
   const cardId = `card-${cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${uuidv4().slice(0, 8)}`;
@@ -32,13 +33,12 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     icons: []
   };
   
-  // Extract card data with improved regex patterns
+  // Extract card data with improved regex patterns that handle the specific Flomanji format
 
-  // Type/Category - handle various formats including "GEAR – Consumable" format
-  // Use more flexible patterns - handle both dash types and variations in spacing
+  // Type/Category - handle various formats including "GEAR – Consumable" and "GEAR - Passive"
   const typeMatch = content.match(/\*\s*\*\*Type:\*\*\s*([^\n]+)/i) || 
-                    content.match(/Type:\s*([^\n]+)/i) || 
-                    content.match(/\*\s*Type:\s*([^\n]+)/i);
+                   content.match(/Type:\s*([^\n]+)/i) || 
+                   content.match(/\*\s*Type:\s*([^\n]+)/i);
   
   if (typeMatch) {
     const typeText = typeMatch[1].trim().toLowerCase();
@@ -58,6 +58,13 @@ export const parseCardSection = (title: string, content: string): CardFormValues
         // Default passive gear to "tool" category
         card.category = 'tool';
         console.log(`Set default category 'tool' for Passive gear`);
+      } else if (typeText.includes('combo')) {
+        // Default combo gear to "tool" category
+        card.category = 'tool';
+        console.log(`Set default category 'tool' for Combo gear`);
+      } else if (typeText.includes('one-time use') || typeText.includes('one time')) {
+        card.category = 'consumable';
+        console.log(`Set category 'consumable' for One-Time Use gear`);
       } else if (typeText.includes('consumable')) {
         card.category = 'consumable';
         console.log(`Set category 'consumable' from type text`);
@@ -104,33 +111,39 @@ export const parseCardSection = (title: string, content: string): CardFormValues
 
   // Icons - Handle the format [Icon Name] [Icon Name] with more flexible spacing
   const iconMatch = content.match(/\*\s*\*\*Icon\(s\):\*\*\s*([^\n]+)/i) || 
-                    content.match(/Icon\(s\):\s*([^\n]+)/i) || 
-                    content.match(/\*\s*Icons?:\s*([^\n]+)/i);
+                   content.match(/Icon\(s\):\s*([^\n]+)/i) || 
+                   content.match(/\*\s*Icons?:\s*([^\n]+)/i);
   
   if (iconMatch) {
     const iconsText = iconMatch[1].trim();
     console.log(`Found icons: "${iconsText}"`);
     
-    // Extract icons in [Icon Name] format
-    const iconRegex = /\[([^\]]+)\]/g;
+    // Extract icons in [Icon Name] format - handle escaped brackets \[Icon Name\]
+    const iconRegex = /\\\[([^\\\]]+)\\\]|\[([^\]]+)\]/g;
     let match;
     const extractedIcons = [];
+    
     while ((match = iconRegex.exec(iconsText)) !== null) {
-      const iconName = match[1].trim();
-      extractedIcons.push({
-        symbol: iconName,
-        meaning: iconName
-      });
+      // Either use the first capture group (escaped brackets) or second (normal brackets)
+      const iconName = match[1] || match[2];
+      if (iconName && iconName.trim()) {
+        extractedIcons.push({
+          symbol: iconName.trim(),
+          meaning: iconName.trim()
+        });
+      }
     }
     
     // If no bracketed icons found, try splitting by commas or spaces
     if (extractedIcons.length === 0 && iconsText) {
       const plainIcons = iconsText.split(/,|\s+/).filter(i => i.trim());
       plainIcons.forEach(icon => {
-        extractedIcons.push({
-          symbol: icon.trim(),
-          meaning: icon.trim()
-        });
+        if (icon.trim()) {
+          extractedIcons.push({
+            symbol: icon.trim(),
+            meaning: icon.trim()
+          });
+        }
       });
     }
     
@@ -142,8 +155,8 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   
   // Keywords - handle more variations of formatting
   const keywordMatch = content.match(/\*\s*\*\*Keywords:\*\*\s*([^\n]+)/i) || 
-                       content.match(/Keywords:\s*([^\n]+)/i) || 
-                       content.match(/\*\s*Keywords:\s*([^\n]+)/i);
+                      content.match(/Keywords:\s*([^\n]+)/i) || 
+                      content.match(/\*\s*Keywords:\s*([^\n]+)/i);
   
   if (keywordMatch) {
     const keywordsText = keywordMatch[1].trim();
@@ -155,13 +168,13 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   
   // Rules Text - improved multi-line content handling
   const rulesMatch = content.match(/\*\s*\*\*Rules:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Rules)|$)/i) || 
-                     content.match(/Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
-                     content.match(/\*\s*Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
+                    content.match(/Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
+                    content.match(/\*\s*Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
   
   if (rulesMatch) {
     let rulesText = rulesMatch[1].trim()
-                     .replace(/^\s*\*\s*/gm, '') // Remove bullet points
-                     .replace(/\n+/g, ' ');      // Join multiple lines
+                    .replace(/^\s*\*\s*/gm, '') // Remove bullet points
+                    .replace(/\n+/g, ' ');      // Join multiple lines
     
     // Clean up any markdown formatting artifacts
     rulesText = rulesText.replace(/\*\*/g, '').trim();
@@ -172,13 +185,13 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   
   // Flavor Text - improved multi-line handling
   const flavorMatch = content.match(/\*\s*\*\*Flavor:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Flavor)|$)/i) || 
-                      content.match(/Flavor:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
-                      content.match(/\*\s*Flavor:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
+                     content.match(/Flavor:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
+                     content.match(/\*\s*Flavor:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
   
   if (flavorMatch) {
     let flavorText = flavorMatch[1].trim()
-                    .replace(/^\s*\*\s*/gm, '')  // Remove bullet points
-                    .replace(/\n+/g, ' ');       // Join multiple lines
+                   .replace(/^\s*\*\s*/gm, '')  // Remove bullet points
+                   .replace(/\n+/g, ' ');       // Join multiple lines
     
     // Clean up quotes and asterisks if present
     flavorText = flavorText.replace(/^\*|^\"|\"$|\*$/g, '').trim();
@@ -190,14 +203,14 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   
   // Image Prompt - improved multi-line handling
   const imagePromptMatch = content.match(/\*\s*\*\*Image\s*Prompt:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Image)|$)/i) || 
-                           content.match(/Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
-                           content.match(/\*\s*Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
+                          content.match(/Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
+                          content.match(/\*\s*Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
   
   if (imagePromptMatch) {
     const imagePrompt = imagePromptMatch[1].trim()
-                       .replace(/^\s*\*\s*/gm, '') // Remove bullet points
-                       .replace(/\n+/g, ' ')       // Join multiple lines
-                       .replace(/\*\*/g, '');      // Remove any remaining markdown
+                      .replace(/^\s*\*\s*/gm, '') // Remove bullet points
+                      .replace(/\n+/g, ' ')       // Join multiple lines
+                      .replace(/\*\*/g, '');      // Remove any remaining markdown
     
     console.log(`Found image prompt: "${imagePrompt.substring(0, Math.min(50, imagePrompt.length))}..."`);
     card.imagePrompt = imagePrompt;
@@ -209,12 +222,18 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     if (content.toLowerCase().includes('passive')) {
       card.category = 'tool';
       console.log(`Setting 'tool' category for Passive gear card: ${card.name}`);
+    } else if (content.toLowerCase().includes('combo')) {
+      card.category = 'tool';
+      console.log(`Setting 'tool' category for Combo gear card: ${card.name}`);
+    } else if (content.toLowerCase().includes('one-time use') || content.toLowerCase().includes('one time use')) {
+      card.category = 'consumable';
+      console.log(`Setting 'consumable' category for One-Time Use gear card: ${card.name}`);
     } else {
       console.log(`Setting default category 'tool' for gear card: ${card.name}`);
       card.category = 'tool';
     }
   }
   
-  console.log(`Successfully parsed card: ${card.name}, type: ${card.type}`);
+  console.log(`Successfully parsed card: ${card.name}, type: ${card.type}, category: ${(card as any).category || 'N/A'}`);
   return card as CardFormValues;
 };
