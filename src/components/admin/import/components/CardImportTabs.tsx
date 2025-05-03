@@ -6,6 +6,7 @@ import { CardTypeSelector } from "./CardTypeSelector";
 import { FileUploader } from "./FileUploader";
 import { ValidationSummary } from "./ValidationSummary";
 import { CardFormValues } from "@/types/forms/card-form";
+import { Label } from "@/components/ui/label";
 
 interface CardImportTabsProps {
   cardType: CardType;
@@ -36,6 +37,18 @@ export const CardImportTabs = ({
       </TabsList>
       
       <TabsContent value="file-upload" className="space-y-4">
+        <div className="mb-4">
+          <Label className="text-sm font-medium mb-1 block">Importing as Card Type:</Label>
+          <CardTypeSelector 
+            cardType={cardType} 
+            setCardType={setCardType}
+            defaultValue={defaultCardType}
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            You can change the card type before uploading a file
+          </p>
+        </div>
+        
         <FileUploader 
           onFileSelected={onFileSelected}
           isProcessing={isProcessing} 
@@ -49,11 +62,17 @@ export const CardImportTabs = ({
       </TabsContent>
       
       <TabsContent value="settings" className="space-y-4">
-        <CardTypeSelector 
-          cardType={cardType}
-          setCardType={setCardType}
-          defaultValue={defaultCardType}
-        />
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Card Type</Label>
+          <CardTypeSelector 
+            cardType={cardType}
+            setCardType={setCardType}
+            defaultValue={defaultCardType}
+          />
+          <p className="text-xs text-muted-foreground">
+            Select the type of cards you wish to import
+          </p>
+        </div>
       </TabsContent>
     </Tabs>
   );

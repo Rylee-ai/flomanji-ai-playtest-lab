@@ -39,12 +39,12 @@ export function CardImportDialog({
   defaultCardType,
   onImport,
 }: CardImportDialogProps) {
-  // Auto-select the default card type when dialog opens
+  // Set the default card type when dialog opens, but don't override user selection afterwards
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !cardType) {
       setCardType(defaultCardType);
     }
-  }, [isOpen, setCardType, defaultCardType]);
+  }, [isOpen, defaultCardType, setCardType, cardType]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

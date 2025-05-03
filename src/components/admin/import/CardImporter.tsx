@@ -35,7 +35,7 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
       setIsDialogOpen(false);
       toast.success(`Successfully imported ${cards.length} cards`);
     },
-    initialCardType: activeCardType // Pass the active card type here
+    initialCardType: activeCardType
   });
 
   const handleFileSelected = async (file: File) => {
@@ -43,10 +43,14 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
     
     try {
       console.log("Processing file:", file.name);
-      // Auto-detect format and card type
+      console.log("Current card type before processing:", cardType);
+      
+      // Auto-detect format but respect the user's selected card type
       const detectedFormat = await detectFileFormat(file);
       console.log("Detected format:", detectedFormat);
-      await processFile(file);
+      
+      // Process the file using the current cardType (which might have been set by the user)
+      await processFile(file, cardType);
     } catch (error) {
       console.error("Error importing file:", error);
       toast.error("Failed to process file. Please check the format and try again.");
@@ -74,7 +78,7 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
         className="gap-2"
         onClick={() => {
           setIsDialogOpen(true);
-          // Reset card type to the active tab type whenever opening the dialog
+          // Set the initial card type to the active tab type but don't force reset it later
           setCardType(activeCardType);
         }}
       >

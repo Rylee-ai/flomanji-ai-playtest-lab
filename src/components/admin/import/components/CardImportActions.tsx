@@ -43,12 +43,16 @@ export const CardImportActions = ({
   console.log("CardImportActions - Validation errors:", validationErrors.length);
 
   return (
-    <DialogFooter className="flex justify-between">
+    <DialogFooter className="flex justify-between mt-4 pt-4 border-t">
       <Button variant="outline" onClick={onClose}>
         Cancel
       </Button>
       {showImportButton ? (
-        <Button onClick={handleImport} variant="success">
+        <Button 
+          onClick={handleImport} 
+          variant="default" 
+          className="bg-green-600 hover:bg-green-700 font-medium"
+        >
           Import {transformedCards.length} Cards
         </Button>
       ) : transformedCards.length > 0 ? (

@@ -43,11 +43,12 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
         let detectedFormat = "standard";
         let detectedType: CardType | null = null;
         
-        // Try to detect card type from the data
+        // Try to detect card type from the data, but don't override user selection
+        // unless auto-detection is clearly better
         if (Array.isArray(data) && data.length > 0) {
           const firstItem = data[0];
           
-          // If it has a type field that matches our CardType, use that
+          // If it has a type field that matches our CardType, suggest that type
           if (firstItem.type && typeof firstItem.type === 'string') {
             const possibleType = firstItem.type.toLowerCase();
             const validTypes: CardType[] = [
@@ -55,8 +56,10 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
               "gear", "hazard", "chaos", "region", "mission", "secret", "automa"
             ];
             
+            // Only suggest detected type if it's valid
             if (validTypes.includes(possibleType as CardType)) {
               detectedType = possibleType as CardType;
+              console.log("Detected card type from JSON:", detectedType);
             } else if (possibleType === "gear" || 
                       possibleType.includes("consumable") || 
                       possibleType.includes("tool") || 
@@ -72,10 +75,13 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
           }
         }
         
-        console.log("Detected format:", detectedFormat, "Detected type:", detectedType);
+        console.log("Detected format:", detectedFormat);
         setFileType(detectedFormat);
+        
+        // Only suggest the detected type to the user, don't automatically change it
         if (detectedType) {
-          setCardType(detectedType);
+          console.log("Suggesting card type:", detectedType);
+          // Don't override user selection automatically
         }
         
         return detectedFormat;
@@ -90,8 +96,12 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
     }
   };
 
-  const processFile = async (file: File) => {
+  const processFile = async (file: File, selectedCardType?: CardType) => {
     if (!file) return;
+    
+    // Use passed in card type if available, otherwise use the state
+    const typeToUse = selectedCardType || cardType;
+    console.log("Processing file for card type:", typeToUse);
 
     // Reset state
     setIsProcessing(true);
@@ -115,8 +125,8 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
       // Process based on file type
       if (fileExtension === 'md') {
         // Process Markdown file - crucial to use the current cardType
-        console.log("Processing Markdown file for card type:", cardType);
-        processedCards = transformMarkdownToCards(text, cardType);
+        console.log("Processing Markdown file for card type:", typeToUse);
+        processedCards = transformMarkdownToCards(text, typeToUse);
       } else {
         // Process JSON file
         let jsonData;
@@ -132,12 +142,12 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
         // Process the cards based on file type
         if (fileType === "transform") {
           // Transform external format to our format
-          console.log("Transforming external data format for card type:", cardType);
-          processedCards = transformCardData(jsonData, cardType);
+          console.log("Transforming external data format for card type:", typeToUse);
+          processedCards = transformCardData(jsonData, typeToUse);
         } else {
           // Process standard format
-          console.log("Processing standard data format for card type:", cardType);
-          processedCards = processImportedCards(jsonData, cardType) as CardFormValues[];
+          console.log("Processing standard data format for card type:", typeToUse);
+          processedCards = processImportedCards(jsonData, typeToUse) as CardFormValues[];
         }
       }
       
@@ -168,7 +178,7 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
       setTransformedCards(processedCards);
     } catch (error) {
       console.error('Error processing file:', error);
-      toast.error(`Failed to process ${cardType} cards. Please check the file format.`);
+      toast.error(`Failed to process ${typeToUse} cards. Please check the file format.`);
       setValidationErrors([`Failed to process file: ${error}`]);
     } finally {
       setIsProcessing(false);

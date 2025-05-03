@@ -3,6 +3,7 @@ import React from "react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Check, AlertTriangle, FileJson, FileText, Info } from "lucide-react";
 import { CardFormValues } from "@/types/forms/card-form";
+import { Badge } from "@/components/ui/badge";
 
 interface ValidationSummaryProps {
   transformedCards: CardFormValues[];
@@ -70,21 +71,26 @@ export const ValidationSummary = ({
       ) : transformedCards.length > 0 ? (
         <Alert variant="default" className="border-green-500 bg-green-50 dark:bg-green-900/20">
           <Check className="h-4 w-4 text-green-500" />
-          <AlertTitle className="text-green-600 dark:text-green-400">File Validated</AlertTitle>
+          <AlertTitle className="text-green-600 dark:text-green-400">File Validated Successfully</AlertTitle>
           <AlertDescription className="text-sm text-green-600 dark:text-green-400">
             <div className="flex gap-1 items-center">
               {getFileTypeIcon()}
               <span>{getFileTypeDescription()} file processed successfully.</span>
             </div>
-            <p className="mt-1">Found {transformedCards.length} valid cards ready for import.</p>
-            <p className="mt-1 font-medium">Click the "Import Cards" button below to add these cards to your collection.</p>
+            <p className="mt-1">
+              Found <strong>{transformedCards.length} {transformedCards[0]?.type || 'card'} cards</strong> ready for import.
+            </p>
+            <p className="mt-1 font-medium">Click the "Import {transformedCards.length} Cards" button below to add these cards to your collection.</p>
           </AlertDescription>
         </Alert>
       ) : null}
       
       {transformedCards.length > 0 && (
         <div className="p-4 border rounded-md bg-muted/20">
-          <h3 className="text-sm font-medium mb-2">Card Preview</h3>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-sm font-medium">Card Preview</h3>
+            <Badge variant="outline">{transformedCards[0]?.type || 'Unknown'} Cards</Badge>
+          </div>
           <div className="space-y-2 max-h-60 overflow-y-auto">
             {transformedCards.slice(0, 10).map((card, index) => (
               <div key={index} className="text-xs p-2 bg-background rounded border">
