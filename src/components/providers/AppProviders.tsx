@@ -1,7 +1,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/hooks/auth";
+import { AuthProvider } from "@/hooks/auth/AuthContext"; // Import directly from the source
 import { Toaster } from "sonner"; 
 import { BrowserRouter } from "react-router-dom";
 import React from "react";

@@ -1,7 +1,7 @@
 
 import React, { ReactNode, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/auth/AuthContext"; // Import directly from the source
 import { UserRole } from "@/types";
 import { isAdminUser, isProfileLoaded } from "@/utils/auth-helpers";
 import { Loader2, AlertTriangle } from "lucide-react";
