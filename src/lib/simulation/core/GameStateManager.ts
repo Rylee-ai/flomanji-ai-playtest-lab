@@ -1,3 +1,4 @@
+
 import { SimulationConfig, AgentMessage } from "@/types";
 import { selectGobletVoice } from "../goblet-voice-manager";
 import { createChatCompletion } from "@/lib/openrouterChat";
@@ -17,8 +18,8 @@ export class GameStateManager {
       heat: config.startingHeat || 0,
       completedObjectives: [] as string[],
       playerInventories: this.initializePlayerInventories(config),
-      regions: config.regions || ['Beach', 'Swamp', 'Urban'],
-      currentRegion: config.regions?.[0] || 'Beach',
+      regions: config.regions || ['Beach', 'Swamp', 'Urban'], // Using optional chaining and default value
+      currentRegion: config.regions?.[0] || 'Beach', // Using optional chaining and default value
       activeHazards: [] as string[],
       discoveredTreasures: [], // Added this explicitly
       activeChaosEffects: [] as any[],

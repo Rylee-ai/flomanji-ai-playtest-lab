@@ -1,5 +1,5 @@
 
-import { AgentMessage } from "@/types";
+import { AgentMessage, AgentRole } from "@/types"; // Added AgentRole import
 import { createChatCompletion } from "@/lib/openrouterChat";
 import { rollDice, checkSuccess } from "../game-mechanics";
 import { getGobletNarration } from "../goblet-voice-manager";

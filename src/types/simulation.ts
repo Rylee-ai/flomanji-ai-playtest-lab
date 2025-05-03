@@ -1,4 +1,3 @@
-
 import { FlomanjiCharacter } from "./character";
 import { MissionSheet } from "./cards/mission";
 import { AgentRole, AgentMessage } from "./agent";
@@ -22,6 +21,7 @@ export interface SimulationConfig {
   competitiveMode?: boolean;
   gobletVoice?: 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';
   missionType?: string;
+  regions?: string[]; // Added this property to fix GameStateManager.ts errors
 }
 
 export interface SimulationResult {
