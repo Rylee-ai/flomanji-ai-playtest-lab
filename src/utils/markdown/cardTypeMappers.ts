@@ -8,10 +8,12 @@ export const mapGearCategory = (categoryText: string): 'consumable' | 'tool' | '
   const lowerText = categoryText.toLowerCase();
   
   if (lowerText.includes('consumable')) return 'consumable';
+  if (lowerText.includes('one-time') || lowerText.includes('one time')) return 'consumable';
   if (lowerText.includes('weapon')) return 'weapon';
   if (lowerText.includes('vehicle')) return 'vehicle';
   if (lowerText.includes('supply')) return 'supply';
   if (lowerText.includes('passive')) return 'tool'; // Map "Passive" to "Tool"
+  if (lowerText.includes('combo')) return 'tool'; // Map "Combo" to "Tool"
   
   // Default to tool for other categories
   return 'tool';
@@ -40,4 +42,3 @@ export const cleanupTitle = (title: string): string => {
     .replace(/\*\*/g, '')          // Remove any remaining asterisks
     .trim();
 };
-

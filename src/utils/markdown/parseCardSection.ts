@@ -10,20 +10,23 @@ import { mapGearCategory } from "./cardTypeMappers";
  * @returns A card object with extracted data
  */
 export const parseCardSection = (title: string, content: string): CardFormValues | null => {
-  console.log(`Parsing card section for ${title}`);
+  console.log(`Parsing card section for "${title}"`);
   
   if (!content) {
     console.log("Empty content provided");
     return null;
   }
 
+  // Clean the title - remove any trailing asterisks which are common in the user's format
+  const cleanTitle = title.replace(/\*+$/, '').trim();
+  
   // Generate a unique ID
-  const cardId = `card-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${uuidv4().slice(0, 8)}`;
+  const cardId = `card-${cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${uuidv4().slice(0, 8)}`;
   
   // Initialize card with basic data
   const card: Partial<CardFormValues> = {
     id: cardId,
-    name: title,
+    name: cleanTitle,
     keywords: [],
     rules: [],
     icons: []
@@ -31,7 +34,7 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   
   // Extract card data with improved regex patterns
 
-  // Type/Category
+  // Type/Category - handle various formats including the user's "GEAR – Consumable" format
   const typeMatch = content.match(/\*\s*\*\*Type:\*\*\s*([^\n]+)/i) || content.match(/Type:\s*([^\n]+)/i);
   if (typeMatch) {
     console.log(`Found type: "${typeMatch[1].trim()}"`);
@@ -42,7 +45,7 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     if (typeText.includes('gear')) {
       card.type = 'gear';
       
-      // Extract the gear category
+      // Extract the gear category - handle both "–" (em-dash) and "-" (hyphen)
       if (typeText.includes('–') || typeText.includes('-')) {
         const separator = typeText.includes('–') ? '–' : '-';
         const parts = typeText.split(separator);
@@ -81,7 +84,7 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     card.type = 'gear';
   }
 
-  // Icons - Define iconMatch variable before using it
+  // Icons - Handle the format [Icon Name] [Icon Name]
   const iconMatch = content.match(/\*\s*\*\*Icon\(s\):\*\*\s*([^\n]+)/i) || content.match(/Icon\(s\):\s*([^\n]+)/i);
   if (iconMatch) {
     const iconsText = iconMatch[1].trim();
@@ -90,13 +93,18 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     // Extract icons in [Icon Name] format
     const iconRegex = /\[([^\]]+)\]/g;
     let match;
+    const extractedIcons = [];
     while ((match = iconRegex.exec(iconsText)) !== null) {
       const iconName = match[1].trim();
-      card.icons = card.icons || [];
-      card.icons.push({
+      extractedIcons.push({
         symbol: iconName,
         meaning: iconName
       });
+    }
+    
+    if (extractedIcons.length > 0) {
+      card.icons = extractedIcons;
+      console.log(`Extracted ${extractedIcons.length} icons`);
     }
   }
   
@@ -106,11 +114,12 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     const keywordsText = keywordMatch[1].trim();
     console.log(`Found keywords: "${keywordsText}"`);
     card.keywords = keywordsText.split(/,\s*/).map(k => k.trim());
+    console.log(`Extracted ${card.keywords.length} keywords`);
   }
   
   // Rules Text - handle multi-line content
   const rulesMatch = content.match(/\*\s*\*\*Rules:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Rules)|$)/i) || 
-                     content.match(/Rules:\s*([\s\S]*?)(?=\*\s*(?!Rules)|$)/i);
+                     content.match(/Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
   if (rulesMatch) {
     const rulesText = rulesMatch[1].trim()
                       .replace(/^\s*\*\s*/gm, '') // Remove bullet points
@@ -121,7 +130,7 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   
   // Flavor Text - also multi-line
   const flavorMatch = content.match(/\*\s*\*\*Flavor:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Flavor)|$)/i) || 
-                      content.match(/Flavor:\s*([\s\S]*?)(?=\*\s*(?!Flavor)|$)/i);
+                      content.match(/Flavor:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
   if (flavorMatch) {
     let flavorText = flavorMatch[1].trim()
                     .replace(/^\s*\*\s*/gm, '')  // Remove bullet points
@@ -136,7 +145,7 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   
   // Image Prompt
   const imagePromptMatch = content.match(/\*\s*\*\*Image\s*Prompt:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Image)|$)/i) || 
-                           content.match(/Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*(?!Image)|$)/i);
+                           content.match(/Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
   if (imagePromptMatch) {
     const imagePrompt = imagePromptMatch[1].trim()
                        .replace(/^\s*\*\s*/gm, '') // Remove bullet points
@@ -147,8 +156,14 @@ export const parseCardSection = (title: string, content: string): CardFormValues
 
   // For gear cards, ensure they have a category
   if (card.type === 'gear' && !card.category) {
-    console.log(`Setting default category 'tool' for gear card: ${card.name}`);
-    card.category = 'tool';
+    // Map "passive" to "tool" as per the user's format
+    if (content.toLowerCase().includes('passive')) {
+      card.category = 'tool';
+      console.log(`Setting 'tool' category for Passive gear card: ${card.name}`);
+    } else {
+      console.log(`Setting default category 'tool' for gear card: ${card.name}`);
+      card.category = 'tool';
+    }
   }
   
   console.log(`Successfully parsed card: ${card.name}, type: ${card.type}`);

@@ -1,3 +1,4 @@
+
 import { CardType } from "@/types/cards";
 
 /**
@@ -23,6 +24,14 @@ export function getMarkdownTemplateForType(cardType: string): string {
 * **Rules:** Discard to use. Declare "Healing Up!" Restore 1 Health point to any character.
 * **Flavor:** *"Goblet: 'Apply liberally to wounds. Results may vary.'"*
 * **Image Prompt:** A small vial with glowing green liquid inside, cork slightly askew
+
+* **Title:** EXAMPLE PASSIVE GEAR
+* **Type:** GEAR – Passive
+* **Icon(s):** [Passive Icon] [Protection Icon]
+* **Keywords:** protective, equipped, permanent
+* **Rules:** While equipped: Gain +1 Grit on Stat Checks involving physical challenges.
+* **Flavor:** *"Goblet: 'A permanent boon to your physical prowess.'"*
+* **Image Prompt:** A sturdy wristband with swamp-proof materials
 `;
     
     case 'treasure':
@@ -33,6 +42,14 @@ export function getMarkdownTemplateForType(cardType: string): string {
 * **Rules:** This item can be traded for valuable resources or information.
 * **Flavor:** *"Goblet: 'Worth more than its weight in nostalgia.'"*
 * **Image Prompt:** A gleaming artifact partially covered in swamp moss
+
+* **Title:** EXAMPLE RARE TREASURE
+* **Type:** TREASURE – Rare
+* **Icon(s):** [Rare Icon] [Ancient Icon]
+* **Keywords:** ancient, powerful, unique
+* **Rules:** This treasure provides an ongoing benefit while in your possession.
+* **Flavor:** *"Goblet: 'The ancients knew its value, and now, so do you.'"*
+* **Image Prompt:** A mysterious artifact with glowing runes from a lost civilization
 `;
     
     case 'hazard':
@@ -43,14 +60,42 @@ export function getMarkdownTemplateForType(cardType: string): string {
 * **Rules:** Players must make a DC 4 Grit check when encountering this hazard. Failure results in 1 damage.
 * **Flavor:** *"Goblet: 'Nature's way of saying 'keep out' in the most painful manner possible.'"*
 * **Image Prompt:** A dangerous environmental feature looming menacingly
+
+* **Title:** EXAMPLE CREATURE HAZARD
+* **Type:** HAZARD – Creature
+* **Icon(s):** [Animal Icon] [Threat Icon]
+* **Keywords:** predator, aggressive, territorial
+* **Rules:** When encountered, all players must make a DC 5 Fight or Flee check. Failure results in 2 damage.
+* **Flavor:** *"Goblet: 'Teeth, claws, and a very bad attitude. Proceed with caution... or better yet, don't.'"*
+* **Image Prompt:** A menacing creature with glowing eyes lurking in the shadows
+`;
+
+    case 'npc':
+      return `* **Title:** EXAMPLE NPC
+* **Type:** NPC – Vendor
+* **Icon(s):** [Character Icon] [Commerce Icon]
+* **Keywords:** helpful, knowledgeable, trade
+* **Rules:** This NPC offers useful items for trade or purchase. Players can gain information with a successful DC 3 Charm check.
+* **Flavor:** *"Goblet: 'They've seen things you wouldn't believe... and they're willing to talk for the right price.'"*
+* **Image Prompt:** A weathered individual with knowing eyes surrounded by unusual merchandise
+`;
+
+    case 'player-character':
+      return `* **Title:** EXAMPLE CHARACTER
+* **Type:** PLAYER-CHARACTER
+* **Icon(s):** [Hero Icon] [Specialty Icon]
+* **Keywords:** versatile, resourceful, determined
+* **Rules:** Starting Stats: Brawn 3, Moxie 4, Charm 2, Grit 3, Weird Sense 3. Special Ability: Once per game, automatically succeed on any Weird Sense check.
+* **Flavor:** *"Goblet: 'Born for adventure, destined for... well, let's find out together, shall we?'"*
+* **Image Prompt:** A determined character with practical survival gear and a confident stance
 `;
 
     // Add templates for other card types
     default:
-      return `* **Title:** EXAMPLE CARD
+      return `* **Title:** EXAMPLE ${cardType.toUpperCase()} CARD
 * **Type:** ${cardType.toUpperCase()}
 * **Icon(s):** [Icon1] [Icon2]
-* **Keywords:** keyword1, keyword2
+* **Keywords:** keyword1, keyword2, keyword3
 * **Rules:** Description of how this card works in the game.
 * **Flavor:** *"Goblet: 'A flavorful quote about this card.'"*
 * **Image Prompt:** A vivid description for generating an image of this card
