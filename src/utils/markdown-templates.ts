@@ -7,25 +7,27 @@ import { CardType } from "@/types/cards";
  * @returns A markdown string template
  */
 export const getMarkdownTemplateForType = (cardType: CardType): string => {
-  const baseTemplate = `### **Flomanji ${capitalizeCardType(cardType)} Cards**
+  const baseTemplate = `# Flomanji ${capitalizeCardType(cardType)} Cards Import Template
 
 *Brief description of this card type goes here.*
 
-**1. TITLE: Example Card Name**
+**1. EXAMPLE ${cardType.toUpperCase()} CARD NAME**
 
 * **Type:** ${getTypeLabel(cardType)}
-${getCardTypeSpecificFields(cardType)}* **Keywords:** keyword1, keyword2, keyword3
-* **Rules:** Place the card rules text here. This is what the card does when played.
-* **Flavor:** *"Goblet: 'A quote or flavor text that brings the card to life.'"*
+${getCardTypeSpecificFields(cardType)}* **Icon(s):** [Primary Icon] [Secondary Icon]
+* **Keywords:** keyword1, keyword2, keyword3
+* **Rules:** Place the card rules text here. This is what the card does when played or encountered.
+* **Flavor:** "Goblet: 'A quote or flavor text that brings the card to life. Always in Goblet's voice.'"
 * **Image Prompt:** A detailed description for generating an image for this card.
 
-**2. TITLE: Another Example Card**
+**2. ANOTHER ${cardType.toUpperCase()} EXAMPLE**
 
 * **Type:** ${getTypeLabel(cardType)}
-${getCardTypeSpecificFields(cardType)}* **Keywords:** keyword1, keyword2
-* **Rules:** Another example of rules text for this card type.
-* **Flavor:** *"Goblet: 'More witty or thematic flavor text goes here.'"*
-* **Image Prompt:** Another detailed image description.
+${getCardTypeSpecificFields(cardType)}* **Icon(s):** [Different Icon] [Another Icon]
+* **Keywords:** keyword1, keyword2
+* **Rules:** Another example of rules text for this card type. Be specific about game mechanics.
+* **Flavor:** "Goblet: 'More witty or thematic flavor text goes here, written as if from Goblet.'"
+* **Image Prompt:** Another detailed image description that would work well as an AI generation prompt.
 `;
   
   return baseTemplate;
@@ -82,8 +84,6 @@ const getTypeLabel = (cardType: CardType): string => {
  */
 const getCardTypeSpecificFields = (cardType: CardType): string => {
   switch (cardType) {
-    case 'gear':
-      return '* **Icon(s):** [Tool Icon] [Utility Icon]\n';
     case 'hazard':
       return '* **Icon(s):** [Danger Icon] [Environment Icon]\n* **Difficulty:** Fight 7, Flee 5\n';
     case 'npc':
@@ -97,6 +97,6 @@ const getCardTypeSpecificFields = (cardType: CardType): string => {
     case 'mission':
       return '* **Icon(s):** [Mission Icon] [Difficulty Icon]\n* **Objectives:** Primary and secondary objectives\n* **Heat:** Starting heat level\n';
     default:
-      return '* **Icon(s):** [Appropriate Icon] [Another Icon]\n';
+      return '* **Icon(s):** [Primary Icon] [Secondary Icon]\n';
   }
 };

@@ -1,13 +1,13 @@
 
 import React, { useState } from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardTypeSelector } from "./CardTypeSelector";
 import { FileUploader } from "./FileUploader";
+import { CardPreviewTab } from "./CardPreviewTab";
 import { ValidationSummary } from "./ValidationSummary";
 import { TemplateDownloader } from "./TemplateDownloader";
-import { CardPreviewTab } from "./CardPreviewTab";
 
 interface CardImportTabsProps {
   cardType: CardType;
@@ -28,72 +28,99 @@ export function CardImportTabs({
   validationErrors,
   transformedCards,
   defaultCardType,
-  fileType
+  fileType,
 }: CardImportTabsProps) {
   const [activeTab, setActiveTab] = useState<string>("upload");
-  const [selectedCard, setSelectedCard] = useState<CardFormValues | undefined>(
-    transformedCards.length > 0 ? transformedCards[0] : undefined
-  );
-
-  // Update selected card when transformedCards changes
-  React.useEffect(() => {
-    if (transformedCards.length > 0) {
-      setSelectedCard(transformedCards[0]);
-      // If cards were loaded and we're still on upload tab, switch to preview
-      if (activeTab === "upload") {
-        setActiveTab("preview");
-      }
-    } else {
-      setSelectedCard(undefined);
-    }
-  }, [transformedCards, activeTab]);
+  const [selectedCard, setSelectedCard] = useState<CardFormValues | undefined>();
 
   return (
-    <Tabs 
-      value={activeTab} 
+    <Tabs
+      value={activeTab}
       onValueChange={setActiveTab}
-      className="w-full"
+      className="w-full mt-4"
     >
       <TabsList className="grid grid-cols-3 mb-4">
         <TabsTrigger value="upload">Upload</TabsTrigger>
-        <TabsTrigger 
-          value="preview" 
+        <TabsTrigger
+          value="preview"
           disabled={transformedCards.length === 0}
         >
           Preview ({transformedCards.length})
         </TabsTrigger>
-        <TabsTrigger value="template">Templates</TabsTrigger>
+        <TabsTrigger value="templates">Templates</TabsTrigger>
       </TabsList>
 
-      <ValidationSummary 
-        validationErrors={validationErrors} 
-        transformedCards={transformedCards}
-        fileType={fileType}
-      />
+      <TabsContent value="upload" className="space-y-4">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+          <div className="col-span-1 md:col-span-2">
+            <FileUploader
+              onFileSelected={onFileSelected}
+              isProcessing={isProcessing}
+              className="h-full"
+            />
+          </div>
+          <div className="space-y-4">
+            <CardTypeSelector
+              cardType={cardType}
+              setCardType={setCardType}
+              defaultCardType={defaultCardType}
+            />
 
-      <TabsContent value="upload" className="space-y-4 mt-4">
-        <CardTypeSelector
-          cardType={cardType}
-          setCardType={setCardType}
-          defaultCardType={defaultCardType}
-        />
-        <FileUploader
-          onFileSelected={onFileSelected}
-          isProcessing={isProcessing}
-          className="mt-4"
-        />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">File Format</label>
+              <div className="p-2 bg-muted rounded-md text-sm">
+                {fileType ? fileType : "No file detected"}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Detected format will be shown here after upload
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {validationErrors.length > 0 && (
+          <ValidationSummary errors={validationErrors} />
+        )}
       </TabsContent>
 
-      <TabsContent value="preview" className="space-y-4 mt-4">
-        <CardPreviewTab 
-          cards={transformedCards} 
+      <TabsContent value="preview">
+        <CardPreviewTab
+          cards={transformedCards}
           selectedCard={selectedCard}
           onSelectCard={setSelectedCard}
         />
       </TabsContent>
 
-      <TabsContent value="template" className="space-y-4 mt-4">
-        <TemplateDownloader cardType={cardType} />
+      <TabsContent value="templates" className="space-y-4">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <h3 className="text-lg font-medium">Download Template</h3>
+            <p className="text-sm text-muted-foreground">
+              Download a template for the selected card type to help you create
+              your own cards.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <CardTypeSelector
+                cardType={cardType}
+                setCardType={setCardType}
+                defaultCardType={defaultCardType}
+              />
+              <TemplateDownloader cardType={cardType} />
+            </div>
+
+            <div className="p-4 bg-muted/50 rounded-md">
+              <h4 className="text-sm font-medium mb-2">Template Information</h4>
+              <p className="text-xs text-muted-foreground">
+                Templates are provided in Markdown format. Each card should have a
+                title, type, and other attributes as shown in the template.
+                Icons, keywords, and other fields should follow the format shown.
+              </p>
+            </div>
+          </div>
+        </div>
       </TabsContent>
     </Tabs>
   );

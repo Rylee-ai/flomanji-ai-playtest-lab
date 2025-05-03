@@ -2,6 +2,7 @@
 import { CardFormValues } from "@/types/forms/card-form";
 import { parseCardSection } from "./parseCardSection";
 import { parseMarkdownCardsAlternate } from "./parseMarkdownCardsAlternate";
+import { cleanupTitle } from "./cardTypeMappers";
 
 /**
  * Parses a Markdown file containing card data and converts it to our internal card format
@@ -13,20 +14,33 @@ export const parseMarkdownCards = (markdownContent: string): CardFormValues[] =>
   console.log("Parsing markdown content, length:", markdownContent.length);
   
   // Attempt to parse using different patterns
-  // First try with the Flomanji gear cards format: "**X\. CARD NAME**"
-  let cardSections = markdownContent.split(/(?=\*\*\d+\\?\.\s+[A-Z0-9\s\(\)\-\'\"]+\*\*)/g);
-  console.log(`Flomanji format found ${cardSections.length} card sections`);
+  // First try with numbered format without bold - "1. CARD NAME"
+  let cardSections = markdownContent.split(/(?=\d+\.\s+[A-Z0-9\s\(\)\-\'\"]+)/g);
+  console.log(`Numbered format found ${cardSections.length} card sections`);
   
-  // If that didn't work, try with regular numbered formats - "1. CARD NAME"
+  // If that didn't work, try with the Flomanji gear cards format: "**X\. CARD NAME**" 
+  // (note: the backslash may or may not be present)
   if (cardSections.length <= 1) {
-    cardSections = markdownContent.split(/(?=\*?\*?\d+\.\s+[A-Z\"\'])/g);
-    console.log(`Numbered format found ${cardSections.length} card sections`);
+    cardSections = markdownContent.split(/(?=\*\*\d+\\?\.\s+[A-Z0-9\s\(\)\-\'\"]+\*\*)/g);
+    console.log(`Flomanji format found ${cardSections.length} card sections`);
+  }
+  
+  // Try with simpler bold format - "**NUMBER. CARD NAME**"
+  if (cardSections.length <= 1) {
+    cardSections = markdownContent.split(/(?=\*\*\d+\.\s+[A-Z0-9\s\(\)\-\'\"]+\*\*)/g);
+    console.log(`Bold numbered format found ${cardSections.length} card sections`);
   }
   
   // Next try with header formats - "## CARD NAME" or "# CARD NAME"
   if (cardSections.length <= 1) {
     cardSections = markdownContent.split(/(?=#{1,3}\s+[^#\n]+)/g);
     console.log(`Header format found ${cardSections.length} card sections`);
+  }
+  
+  // Try with bold card names without numbers - "**CARD NAME**"
+  if (cardSections.length <= 1) {
+    cardSections = markdownContent.split(/(?=\*\*[A-Z0-9\s\(\)\-\'\"]+\*\*)/g);
+    console.log(`Bold name format found ${cardSections.length} card sections`);
   }
 
   // If we found multiple sections with any method, process them
@@ -39,14 +53,19 @@ export const parseMarkdownCards = (markdownContent: string): CardFormValues[] =>
       
       console.log(`Processing section ${i+1}/${cardSections.length}:`, section.substring(0, 50) + "...");
       
-      // Extract card title - try different patterns based on format
+      // Try all possible title formats
       
       // Try Flomanji format: "**X\. CARD NAME**"
-      let titleMatch = section.match(/^\*\*\d+\\?\.\s+([A-Z0-9\s\(\)\-\'\"]+)\*\*/);
+      let titleMatch = section.match(/^\*\*(\d+\\?\.\s+[A-Z0-9\s\(\)\-\'\"]+)\*\*/);
+      
+      // If no match, try bold numbered pattern: "**X. CARD NAME**"
+      if (!titleMatch) {
+        titleMatch = section.match(/^\*\*(\d+\.\s+[A-Z0-9\s\(\)\-\'\"]+)\*\*/);
+      }
       
       // If no match, try numbered pattern: "X. CARD NAME"
       if (!titleMatch) {
-        titleMatch = section.match(/^(?:\*?\*?)?(?:\d+\.\s+)([^\n]+)/);
+        titleMatch = section.match(/^(\d+\.\s+[A-Z0-9\s\(\)\-\'\"]+)/);
       }
       
       // If still no match, try header pattern: "## CARD NAME"
@@ -54,12 +73,20 @@ export const parseMarkdownCards = (markdownContent: string): CardFormValues[] =>
         titleMatch = section.match(/^(?:#{1,3})\s+([^\n]+)/);
       }
       
+      // If still no match, try bold pattern: "**CARD NAME**" 
+      if (!titleMatch) {
+        titleMatch = section.match(/^\*\*([A-Z0-9\s\(\)\-\'\"]+)\*\*/);
+      }
+      
       // Fall back to first line if no specific pattern matches
       if (!titleMatch) {
         titleMatch = section.match(/^([^\n]+)/);
       }
       
-      const cardTitle = titleMatch ? titleMatch[1].trim() : "Unnamed Card";
+      let cardTitle = titleMatch ? titleMatch[1].trim() : "Unnamed Card";
+      
+      // Clean up the title
+      cardTitle = cleanupTitle(cardTitle);
       
       console.log(`Found card title: "${cardTitle}"`);
       
