@@ -36,10 +36,12 @@ export const transformGearCardData = (cardData: GearCardInput[]): CardFormValues
     // Extract gear category from type field
     const category = extractGearCategory(card.type);
     
+    // Return a fully formed CardFormValues with the required name property
     return {
       ...baseCard,
       type: 'gear' as const,
-      category
+      category,
+      name: baseCard.name || "Unnamed Gear", // Ensure name is always defined
     };
   });
 };

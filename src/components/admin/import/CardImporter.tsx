@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
-import { useCardImporter } from "./useCardImporter";
+import { useCardImporter } from "./hooks/useCardImporter";
 import { CardImportDialog } from "./CardImportDialog";
 
 interface CardImporterProps {

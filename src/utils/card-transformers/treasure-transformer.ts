@@ -20,8 +20,9 @@ export const transformTreasureCardData = (cardData: TreasureCardInput[]): CardFo
     return {
       ...baseCard,
       type: 'treasure' as const,
-      value: card.value,
-      consumable: card.consumable
+      value: card.value || 0, // Default value if not provided
+      consumable: card.consumable || false, // Default to non-consumable if not specified
+      name: baseCard.name || "Unnamed Treasure", // Ensure name is always defined
     };
   });
 };

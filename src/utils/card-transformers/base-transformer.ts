@@ -45,15 +45,15 @@ export const transformBaseCardData = (cardData: BaseCardInput): Partial<CardForm
     : cardData.rules;
   
   // Process icons
-  const icons = processIcons(cardData.icons);
+  const icons = processIcons(cardData.icons || []);
   
   return {
     id: `card-${cardData.id}`,
     name: cardData.title,
     icons,
-    keywords: cardData.keywords,
+    keywords: cardData.keywords || [],
     rules,
-    flavor: cardData.flavor,
-    imagePrompt: cardData.image_prompt
+    flavor: cardData.flavor || "",
+    imagePrompt: cardData.image_prompt || ""
   };
 };
