@@ -22,16 +22,16 @@ const SimulationLogDisplay = ({ messages, showPrompts }: SimulationLogDisplayPro
   };
 
   const getRoleBadgeVariant = (role: string) => {
-    switch (role) {
-      case "GM":
-        return "default"; // Keep default styling but we'll ensure text is visible
-      case "Player":
-        return "outline";
-      case "Critic":
-        return "secondary";
-      default:
-        return "outline";
+    if (role === "GM") {
+      return "default"; // Keep default styling but we'll ensure text is visible
+    } 
+    if (role === "Critic") {
+      return "secondary";
     }
+    if (role.startsWith("Player")) {
+      return "outline";
+    }
+    return "outline";
   };
 
   const getRoleTextColor = (role: string) => {
@@ -74,7 +74,6 @@ const SimulationLogDisplay = ({ messages, showPrompts }: SimulationLogDisplayPro
               
               <Badge variant={getRoleBadgeVariant(message.role)} className={getRoleTextColor(message.role)}>
                 {message.role}
-                {message.role === "Player" && message.playerIndex !== undefined && ` ${message.playerIndex + 1}`}
               </Badge>
               
               {message.metadata?.phase && (

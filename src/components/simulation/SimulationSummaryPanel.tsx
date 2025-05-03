@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -75,6 +74,7 @@ const SimulationSummaryPanel = ({ simulation }: SimulationSummaryPanelProps) => 
   const missionOutcome = getMissionOutcome();
   const gameOverReason = missionOutcome !== "success" ? getGameOverReason() : "";
 
+  
   return (
     <Card className="mb-6">
       <CardHeader className="pb-2">

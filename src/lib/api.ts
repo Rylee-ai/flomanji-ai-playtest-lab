@@ -43,7 +43,7 @@ export const mockStartSimulation = async (
         timestamp: new Date().toISOString() 
       },
       { 
-        role: "Player", 
+        role: "Player 1", 
         content: "Example simulation log entry", 
         timestamp: new Date().toISOString() 
       }

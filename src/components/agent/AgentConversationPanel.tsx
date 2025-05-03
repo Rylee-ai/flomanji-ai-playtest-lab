@@ -40,7 +40,7 @@ const AgentConversationPanel = ({ configs }) => {
       
       if (selectedAgent === "GM") {
         simulatedResponse = `[Game Master Response]\nThe humid Florida air clings to your skin as you approach the abandoned gas station. The neon sign flickers erratically, casting an eerie glow across the cracked pavement. What's your next move?`;
-      } else if (selectedAgent === "Player") {
+      } else if (selectedAgent === "Player 1") {
         simulatedResponse = `[Player Response]\nI'll cautiously approach the gas station entrance, keeping my flashlight low. Before entering, I'll check the windows for any movement inside and listen for unusual sounds. I'm conserving my luck points in case we encounter something dangerous.`;
       } else if (selectedAgent === "Critic") {
         simulatedResponse = `[Critic Analysis]\nThe scenario presents an appropriate level of tension while maintaining the Florida setting atmosphere. The GM has effectively established the scene with sensory details. Consider adding more explicit decision points to guide less experienced players.`;
@@ -72,7 +72,7 @@ const AgentConversationPanel = ({ configs }) => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="GM">Game Master</SelectItem>
-              <SelectItem value="Player">Player</SelectItem>
+              <SelectItem value="Player 1">Player</SelectItem>
               <SelectItem value="Critic">Critic</SelectItem>
             </SelectContent>
           </Select>

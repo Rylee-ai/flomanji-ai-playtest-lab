@@ -1,6 +1,6 @@
-
 import { SimulationConfig, AgentMessage } from "@/types";
 import { selectGobletVoice } from "../goblet-voice-manager";
+import { createChatCompletion } from "@/lib/openrouterChat";
 
 /**
  * Manages game state throughout the simulation
@@ -17,9 +17,10 @@ export class GameStateManager {
       heat: config.startingHeat || 0,
       completedObjectives: [] as string[],
       playerInventories: this.initializePlayerInventories(config),
-      regions: [] as string[],
-      currentRegion: "start",
+      regions: config.regions || ['Beach', 'Swamp', 'Urban'],
+      currentRegion: config.regions?.[0] || 'Beach',
       activeHazards: [] as string[],
+      discoveredTreasures: [], // Added this explicitly
       activeChaosEffects: [] as any[],
       rolls: [] as {player: number, type: string, value: number, stat: string, result: string}[],
       currentGobletHolder: 0,
@@ -117,5 +118,88 @@ export class GameStateManager {
       ...gameState,
       ...update
     };
+  }
+  
+  /**
+   * Generate a game over message based on the outcome
+   */
+  public async generateGameOverMessage(
+    gameState: any,
+    conversationLog: AgentMessage[],
+    systemPrompt: string,
+    success: boolean,
+    reason: string
+  ): Promise<AgentMessage> {
+    const outcome = success ? 'success' : 'failure';
+    const gameOverPrompt = `
+      The mission has ended in ${outcome}.
+      Reason: ${reason}
+      
+      As the Game Master, provide a dramatic conclusion to the adventure.
+      Describe the fate of each character and the outcome of their mission.
+      Make this feel significant and memorable.
+    `;
+    
+    const gmFinalMessage = await createChatCompletion(
+      systemPrompt,
+      [...conversationLog.map(entry => {
+        const cleanContent = entry.content.replace(/^(GM|Player \d+): /g, '');
+        return {
+          role: entry.role === 'GM' ? 'assistant' : 'user',
+          content: entry.role === 'GM'
+            ? `GM: ${cleanContent}`
+            : `Player ${entry.playerIndex !== undefined ? entry.playerIndex + 1 : ''}: ${cleanContent}`
+        };
+      }), { role: "user", content: gameOverPrompt }]
+    );
+    
+    return {
+      role: 'GM',
+      content: gmFinalMessage,
+      timestamp: new Date().toISOString(),
+      metadata: {
+        roundNumber: gameState.currentRound,
+        phase: "game-over",
+        heat: gameState.heat,
+        outcome: outcome,
+        reason: reason,
+        gameState: {...gameState}
+      }
+    };
+  }
+  
+  /**
+   * Generate a victory message
+   */
+  public async generateVictoryMessage(
+    gameState: any,
+    conversationLog: AgentMessage[],
+    systemPrompt: string
+  ): Promise<AgentMessage> {
+    return this.generateGameOverMessage(
+      gameState,
+      conversationLog,
+      systemPrompt,
+      true,
+      "All objectives completed"
+    );
+  }
+  
+  /**
+   * Generate a defeat message
+   */
+  public async generateDefeatMessage(
+    gameState: any,
+    conversationLog: AgentMessage[],
+    systemPrompt: string,
+    reason: string
+  ): Promise<AgentMessage> {
+    return this.generateGameOverMessage(
+      gameState,
+      conversationLog,
+      systemPrompt,
+      false,
+      reason
+    );
   }
 }

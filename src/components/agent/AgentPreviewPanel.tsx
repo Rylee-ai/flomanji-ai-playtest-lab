@@ -14,7 +14,8 @@ const AgentPreviewPanel = ({ configs }) => {
   };
   
   const renderPreview = (role: AgentRole) => {
-    const config = configs[role.toLowerCase()];
+    const roleKey = role === "Player 1" ? "player" : role.toLowerCase();
+    const config = configs[roleKey];
     if (!config) return null;
     
     return (
@@ -34,7 +35,7 @@ const AgentPreviewPanel = ({ configs }) => {
             <p>{config.verbose ? "Enabled" : "Disabled"}</p>
           </div>
           
-          {role === "Player" && (
+          {(role === "Player 1") && (
             <>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Personality:</p>
@@ -51,7 +52,7 @@ const AgentPreviewPanel = ({ configs }) => {
             </>
           )}
           
-          {role === "Critic" && (
+          {(role === "Critic") && (
             <>
               <div className="space-y-1">
                 <p className="text-xs text-muted-foreground">Focus Area:</p>
@@ -84,7 +85,7 @@ const AgentPreviewPanel = ({ configs }) => {
         <Tabs value={activeAgentTab} onValueChange={handleTabChange}>
           <TabsList className="mb-4 grid w-full grid-cols-3">
             <TabsTrigger value="GM">Game Master</TabsTrigger>
-            <TabsTrigger value="Player">Player</TabsTrigger>
+            <TabsTrigger value="Player 1">Player</TabsTrigger>
             <TabsTrigger value="Critic">Critic</TabsTrigger>
           </TabsList>
           
@@ -92,8 +93,8 @@ const AgentPreviewPanel = ({ configs }) => {
             {renderPreview("GM")}
           </TabsContent>
           
-          <TabsContent value="Player" className="space-y-4">
-            {renderPreview("Player")}
+          <TabsContent value="Player 1" className="space-y-4">
+            {renderPreview("Player 1")}
           </TabsContent>
           
           <TabsContent value="Critic" className="space-y-4">

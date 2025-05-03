@@ -63,7 +63,7 @@ const AgentManager = () => {
 
   const handleResetAllConfigs = async () => {
     try {
-      const roles: AgentRole[] = ["GM", "Player", "Critic"];
+      const roles: AgentRole[] = ["GM", "Player 1", "Critic"] as AgentRole[];
       const promises = roles.map(role => resetAgentConfig(role));
       
       await Promise.all(promises);

@@ -97,16 +97,16 @@ export class SimulationOutcomeManager {
     // Extract treasure discoveries
     const treasureEvents = log.filter(entry => entry.metadata?.phase === "treasure-discovery");
     treasureEvents.forEach(event => {
-      if (event.metadata?.treasureCard) {  // Changed from discoveredTreasure to treasureCard
-        keyEvents.push(`Treasure Found: ${event.metadata.treasureCard}`);  // Changed from discoveredTreasure to treasureCard
+      if (event.metadata?.treasureCard) {
+        keyEvents.push(`Treasure Found: ${event.metadata.treasureCard}`);
       }
     });
     
     // Extract chaos card events
     const chaosEvents = log.filter(entry => entry.metadata?.phase === "chaos-card");
     chaosEvents.forEach(event => {
-      if (event.metadata?.chaosCard) {  // Changed from drawnChaosCard to chaosCard
-        keyEvents.push(`Chaos Effect: ${event.metadata.chaosCard}`);  // Changed from drawnChaosCard to chaosCard
+      if (event.metadata?.chaosCard) {
+        keyEvents.push(`Chaos Effect: ${event.metadata.chaosCard}`);
       }
     });
     

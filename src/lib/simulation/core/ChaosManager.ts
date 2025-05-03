@@ -74,7 +74,7 @@ export class ChaosManager {
       metadata: {
         roundNumber: gameState.currentRound,
         phase: "chaos-card",
-        chaosCard: chaosCard.name,  // Changed from drawnChaosCard to chaosCard
+        chaosCard: chaosCard.name,
         heatEffect: chaosCard.heatEffect,
         heat: gameState.heat,
         gameState: {...gameState}

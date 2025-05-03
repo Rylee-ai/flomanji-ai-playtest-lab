@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { AgentRole, AgentConfig } from "@/types";
@@ -16,7 +15,7 @@ export const getDefaultConfigs = async (): Promise<Record<AgentRole, AgentConfig
       temperature: 0.7,
       verbose: true,
     },
-    Player: {
+    'Player 1': {
       systemPrompt: getPlayerSystemPrompt(exampleRules, 0), // Index 0 for default player
       temperature: 0.7,
       personality: "balanced",
@@ -32,13 +31,13 @@ export const getDefaultConfigs = async (): Promise<Record<AgentRole, AgentConfig
       suggestions: true,
       verbose: false,
     }
-  };
+  } as Record<AgentRole, AgentConfig>;
 };
 
 // Storage keys for persistence
 const CONFIG_STORAGE_KEYS = {
   GM: "flomanji-agent-gm",
-  Player: "flomanji-agent-player",
+  'Player 1': "flomanji-agent-player",
   Critic: "flomanji-agent-critic"
 };
 
@@ -61,7 +60,7 @@ export const useAgentConfig = () => {
         const loadedConfigs: Record<string, AgentConfig> = {};
         
         for (const [role, defaultConfig] of Object.entries(defaultConfigs)) {
-          const storageKey = CONFIG_STORAGE_KEYS[role as AgentRole];
+          const storageKey = CONFIG_STORAGE_KEYS[role as keyof typeof CONFIG_STORAGE_KEYS];
           const savedConfig = localStorage.getItem(storageKey);
           
           loadedConfigs[role.toLowerCase()] = savedConfig 
@@ -146,7 +145,7 @@ export const useAgentConfig = () => {
         setTimeout(() => {
           const responseTemplates = {
             GM: `[Game Master Response]\nThe humid Florida air clings to your skin as you approach the abandoned gas station. The neon sign flickers erratically, casting an eerie glow across the cracked pavement. What's your next move?`,
-            Player: `[Player Response]\nI'll cautiously approach the gas station entrance, keeping my flashlight low. Before entering, I'll check the windows for any movement inside and listen for unusual sounds. I'm conserving my luck points in case we encounter something dangerous.`,
+            'Player 1': `[Player Response]\nI'll cautiously approach the gas station entrance, keeping my flashlight low. Before entering, I'll check the windows for any movement inside and listen for unusual sounds. I'm conserving my luck points in case we encounter something dangerous.`,
             Critic: `[Critic Analysis]\nThe scenario presents an appropriate level of tension while maintaining the Florida setting atmosphere. The GM has effectively established the scene with sensory details. Consider adding more explicit decision points to guide less experienced players.`
           };
           

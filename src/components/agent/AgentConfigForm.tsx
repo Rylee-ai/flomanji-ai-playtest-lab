@@ -132,7 +132,7 @@ const AgentConfigForm: React.FC<AgentConfigFormProps> = ({
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => handleResetClick('Player')}
+              onClick={() => handleResetClick('Player 1' as AgentRole)}
               title="Reset to default configuration"
             >
               <RefreshCw className="h-4 w-4" />
@@ -222,7 +222,7 @@ const AgentConfigForm: React.FC<AgentConfigFormProps> = ({
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => handleResetClick('Critic')}
+              onClick={() => handleResetClick('Critic' as AgentRole)}
               title="Reset to default configuration"
             >
               <RefreshCw className="h-4 w-4" />

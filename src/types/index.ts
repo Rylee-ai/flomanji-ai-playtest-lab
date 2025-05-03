@@ -14,6 +14,19 @@ export * from './cards/chaos';
 export * from './cards/flomanjified';
 export * from './cards/gear';
 
+// Define the AgentConfig interface
+export interface AgentConfig {
+  systemPrompt: string;
+  temperature: number;
+  verbose?: boolean;
+  personality?: string;
+  skillLevel?: string;
+  meta?: boolean;
+  focus?: string;
+  detail?: string;
+  suggestions?: boolean;
+}
+
 // Explicitly handle any potential naming conflicts
 import { AgentMessage as SimulationAgentMessage } from './agent';
 export type { SimulationAgentMessage };

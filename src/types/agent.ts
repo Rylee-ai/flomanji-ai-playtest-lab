@@ -29,6 +29,11 @@ export interface AgentMessageMetadata {
   finderPlayerIndex?: number;
   treasureCard?: string;
   chaosCard?: string;
+  // Additional properties needed for other components
+  heatEffect?: number;
+  reason?: string;
+  outcome?: string;
+  gobletVoice?: string;
 }
 
 export interface AgentMessage {
@@ -39,4 +44,4 @@ export interface AgentMessage {
   metadata?: AgentMessageMetadata;
 }
 
-export type AgentRole = 'user' | 'assistant' | 'system' | 'GM' | 'Player 1' | 'Player 2' | 'Player 3' | 'Player 4' | 'Player 5' | 'Player 6';
+export type AgentRole = 'user' | 'assistant' | 'system' | 'GM' | 'Player' | 'Critic' | 'Player 1' | 'Player 2' | 'Player 3' | 'Player 4' | 'Player 5' | 'Player 6';

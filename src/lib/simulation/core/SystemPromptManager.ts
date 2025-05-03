@@ -1,145 +1,103 @@
 
-import { SimulationConfig, AgentMessage } from "@/types";
+import { AgentMessage } from "@/types";
 
 /**
- * Manages system prompts and instructions for different agents in the simulation
+ * This class manages the system prompts for all agents in the simulation.
  */
 export class SystemPromptManager {
-  /**
-   * Prepare system prompts and instructions for a scenario
-   */
-  public async prepareScenario(
+  // Method to generate the GM system prompt based on rules and scenario
+  public generateGMSystemPrompt(
     rulesContent: string,
-    config: SimulationConfig,
+    scenarioPrompt: string,
     gameState: any
-  ): Promise<{ systemPrompts: any, playerSystemPrompts: any }> {
-    // Create base system prompt with game rules
-    const baseSystemPrompt = this.createBaseSystemPrompt(rulesContent, config);
+  ): string {
+    return `You are the Game Master for a tabletop role-playing adventure called FLOMANJI. 
+    You will be narrating a Florida-themed weird adventure for a group of players.
     
-    // Create scenario-specific prompts
-    const scenarioSystemPrompt = this.createScenarioPrompt(config, gameState);
+    # Game Rules
+    ${rulesContent}
     
-    // Create goblet voice prompt
-    const gobletVoicePrompt = this.createGobletVoicePrompt(gameState.gobletVoice);
+    # Your Role:
+    - Narrate the story, describe the setting, and respond to player actions
+    - Set appropriate difficulty for challenges based on heat level
+    - Track heat level (currently ${gameState.heat}/10)
+    - Introduce appropriate hazards when needed
+    - Guide players through the mission objectives
     
-    // Combine all prompts
-    const systemPrompts = {
-      base: baseSystemPrompt,
-      scenario: scenarioSystemPrompt,
-      gobletVoice: gobletVoicePrompt
-    };
+    # Current Scenario:
+    ${scenarioPrompt}
     
-    // Create player-specific prompts
-    const playerSystemPrompts = await this.createPlayerSystemPrompts(
-      config,
-      gameState,
-      baseSystemPrompt
-    );
+    # Current Situation:
+    - Heat Level: ${gameState.heat}/10
+    - Active Hazards: ${gameState.activeHazards?.join(', ') || 'None'}
+    - Completed Objectives: ${gameState.completedObjectives?.join(', ') || 'None'}
     
-    return { systemPrompts, playerSystemPrompts };
+    Maintain the tone of a weird Florida adventure with supernatural elements.
+    Be dramatic and evocative in your descriptions.`;
   }
-  
-  /**
-   * Generate introduction message by the Goblet
-   */
-  public async generateIntroduction(
-    config: SimulationConfig,
-    gameState: any,
-    systemPrompts: any
-  ): Promise<AgentMessage> {
-    // In a real implementation, this would call an AI agent to generate text
-    // For now, we'll create a basic introduction message
-    const introduction = `Welcome, dungeon divers, to the mysterious world of Flomanji! 
-I am the Goblet, your guide and game master. Today, you embark on a perilous journey through ${config.scenarioPrompt || "an unknown land"}.
-Your mission, should you choose to accept it: ${this.getObjectivesDescription(config)}.
-The heat level is currently at ${gameState.heat}/10. Be careful, as it will increase by ${config.heatPerRound || 0} each round.
-Let the adventure begin!`;
 
+  // Method to generate a player system prompt
+  public generatePlayerSystemPrompt(
+    rulesContent: string, 
+    character: any,
+    playerIndex: number
+  ): string {
+    return `You are playing as ${character.name}, a character in the tabletop role-playing game FLOMANJI.
+    
+    # Your Character:
+    - Role: ${character.role}
+    - Personality: ${character.personality || 'Adaptable and resourceful'}
+    - Health: ${character.health}/10
+    - Luck Points: ${character.luck}/5
+    - Weirdness: ${character.weirdness}/10
+    - Inventory: ${character.inventory?.join(', ') || 'None'}
+    - Special Ability: ${character.ability || 'None'}
+    
+    # Game Rules (Summary):
+    ${rulesContent.substring(0, 1000)}... (abbreviated)
+    
+    # Your Role:
+    - Act as your character would, making choices consistent with their personality
+    - Describe your actions and dialogue
+    - Look for creative ways to overcome obstacles
+    - Work with your team to complete objectives
+    
+    Respond in first person as your character. Be descriptive but concise.`;
+  }
+
+  // Method to generate the critic system prompt
+  public generateCriticSystemPrompt(
+    rulesContent: string
+  ): string {
+    return `You are a Game Design Critic analyzing a playtest of the tabletop RPG FLOMANJI.
+    
+    # Your Task:
+    - Analyze how well the game mechanics were implemented
+    - Identify potential improvements to game balance
+    - Evaluate player engagement and satisfaction
+    - Comment on the overall narrative flow and pacing
+    - Suggest specific improvements to rules or mechanics
+    
+    # Game Rules (Reference):
+    ${rulesContent.substring(0, 1000)}... (abbreviated)
+    
+    Provide detailed, constructive feedback focused on improving the game experience.
+    Be specific about what worked well and what could be improved.`;
+  }
+
+  // Generate a GM message announcing the start of the game
+  public async generateGMStartMessage(gameState: any): Promise<AgentMessage> {
     return {
       role: 'GM',
-      content: introduction,
+      content: `Welcome to FLOMANJI! The game is about to begin. Prepare yourselves for a weird adventure in the Florida wilds.`,
       timestamp: new Date().toISOString(),
       metadata: {
         roundNumber: 0,
-        phase: "introduction",
+        phase: "game-start",
         heat: gameState.heat,
-        gameState: {...gameState},
         gobletVoice: gameState.gobletVoice,
-        gobletMood: gameState.gobletMood
+        gameState: {...gameState}
       }
     };
-  }
-  
-  /**
-   * Create base system prompt with game rules
-   */
-  private createBaseSystemPrompt(rulesContent: string, config: SimulationConfig): string {
-    return `You are the Game Master for the tabletop game Flomanji. 
-Your role is to narrate the adventure, control NPCs, and adjudicate rules.
-Use these core rules for reference:
-${rulesContent?.substring(0, 2000) || "Standard Flomanji rules apply."}
-${config.nightmareDifficulty ? "This game is running in NIGHTMARE difficulty!" : ""}`;
-  }
-  
-  /**
-   * Create scenario-specific prompt
-   */
-  private createScenarioPrompt(config: SimulationConfig, gameState: any): string {
-    return `SCENARIO: ${config.scenarioPrompt || "Standard mission"}
-OBJECTIVES: ${this.getObjectivesDescription(config)}
-STARTING HEAT: ${gameState.heat}/10
-EXTRACTION REGION: ${config.extractionRegion || "exit"}`;
-  }
-  
-  /**
-   * Create goblet voice prompt
-   */
-  private createGobletVoicePrompt(gobletVoice: string): string {
-    switch (gobletVoice) {
-      case 'swamp-prophet':
-        return "Speak like an ancient, mysterious swamp prophet with cryptic warnings and old-world wisdom.";
-      case 'pirate-radio-dj':
-        return "Speak like an energetic pirate radio DJ, with slang, sound effects, and constant enthusiasm.";
-      case 'park-ranger':
-        return "Speak like a cheerful but stern national park ranger, educational but cautious about dangers.";
-      case 'theme-park-mascot':
-        return "Speak like an overly enthusiastic theme park mascot, with catchphrases and boundless positivity.";
-      default:
-        return "Use a balanced, mysterious tone as the magical Goblet guiding the players.";
-    }
-  }
-  
-  /**
-   * Create player system prompts
-   */
-  private async createPlayerSystemPrompts(
-    config: SimulationConfig,
-    gameState: any,
-    baseSystemPrompt: string
-  ): Promise<any[]> {
-    // Return an array of player prompts based on characters
-    return (config.fullCharacters || []).map((character, index) => {
-      return {
-        characterId: character.id,
-        prompt: `You are playing as ${character.name}, a ${character.role} in the tabletop game Flomanji.
-Your character has the following stats: Health ${character.health}/10, Weirdness ${character.weirdness}/10, Luck ${character.luck}/10.
-Your special ability is: ${character.ability}
-Your starting gear: ${character.starterGear?.join(", ") || "None"}
-${config.secretTraitor && index === 0 ? "SECRET INSTRUCTION: You are the traitor! Subtly work against the group while appearing helpful." : ""}
-Make decisions and take actions as this character would.`
-      };
-    });
-  }
-  
-  /**
-   * Get objectives description from config
-   */
-  private getObjectivesDescription(config: SimulationConfig): string {
-    if (config.objectives && config.objectives.length > 0) {
-      return config.objectives.map((obj: any) => 
-        `${obj.required ? "[Required]" : "[Optional]"} ${obj.description}`
-      ).join("; ");
-    }
-    return "Complete your mission and extract safely";
   }
 }

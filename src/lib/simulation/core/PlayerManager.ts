@@ -117,9 +117,12 @@ export class PlayerManager {
         }), { role: "user", content: playerPrompt }]
       );
       
+      // Changed from 'Player' to 'Player 1' or appropriate player number
+      const playerRole = `Player ${i + 1}` as AgentRole;
+      
       // Add the response to the messages array
       messages.push({
-        role: 'Player',
+        role: playerRole,
         content: playerResponse,
         timestamp: new Date().toISOString(),
         playerIndex: i,
