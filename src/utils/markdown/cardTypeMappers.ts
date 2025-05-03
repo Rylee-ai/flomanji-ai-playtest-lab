@@ -5,15 +5,27 @@
  * @returns A valid gear category
  */
 export const mapGearCategory = (categoryText: string): 'consumable' | 'tool' | 'weapon' | 'vehicle' | 'supply' => {
-  const lowerText = categoryText.toLowerCase();
+  // Handle null or empty input case
+  if (!categoryText) return 'tool';
   
-  if (lowerText.includes('consumable')) return 'consumable';
-  if (lowerText.includes('one-time') || lowerText.includes('one time')) return 'consumable';
-  if (lowerText.includes('weapon')) return 'weapon';
-  if (lowerText.includes('vehicle')) return 'vehicle';
-  if (lowerText.includes('supply')) return 'supply';
-  if (lowerText.includes('passive')) return 'tool'; // Map "Passive" to "Tool"
-  if (lowerText.includes('combo')) return 'tool'; // Map "Combo" to "Tool"
+  const lowerText = categoryText.toLowerCase().trim();
+  
+  // Match by keyword patterns for each category
+  if (lowerText.includes('consumable') || lowerText.includes('one-time') || lowerText.includes('one time')) {
+    return 'consumable';
+  }
+  if (lowerText.includes('weapon') || lowerText.includes('gun') || lowerText.includes('knife') || lowerText.includes('sword')) {
+    return 'weapon';
+  }
+  if (lowerText.includes('vehicle') || lowerText.includes('car') || lowerText.includes('boat') || lowerText.includes('transportation')) {
+    return 'vehicle';
+  }
+  if (lowerText.includes('supply') || lowerText.includes('supplies') || lowerText.includes('resource')) {
+    return 'supply';
+  }
+  if (lowerText.includes('passive') || lowerText.includes('tool') || lowerText.includes('combo')) {
+    return 'tool'; // Map "Passive" and "Combo" to "Tool"
+  }
   
   // Default to tool for other categories
   return 'tool';
@@ -36,9 +48,12 @@ export const extractCardNumber = (text: string): number | null => {
  * @returns Clean title string
  */
 export const cleanupTitle = (title: string): string => {
+  if (!title) return "Unnamed Card";
+  
   return title
     .replace(/\*\*\d+\.?\s+/g, '') // Remove "**1. " format
     .replace(/\d+\.?\s+/g, '')     // Remove "1. " format
     .replace(/\*\*/g, '')          // Remove any remaining asterisks
+    .replace(/^\s+|\s+$/g, '')     // Trim whitespace
     .trim();
 };

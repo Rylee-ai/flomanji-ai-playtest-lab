@@ -1,6 +1,7 @@
 
 import { CardFormValues } from "@/types/forms/card-form";
 import { mapGearCategory } from "./cardTypeMappers";
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Alternative parsing method for different markdown formats
@@ -10,137 +11,139 @@ import { mapGearCategory } from "./cardTypeMappers";
 export const parseMarkdownCardsAlternate = (markdownContent: string): CardFormValues[] => {
   const cards: CardFormValues[] = [];
   
-  console.log("Attempting alternate parsing method for Flomanji format");
+  console.log("Attempting alternate parsing method");
   
   // Clean up the content - standardize line endings
   const cleanedContent = markdownContent
     .replace(/\r\n/g, '\n')  // Normalize line endings
     .replace(/\n{3,}/g, '\n\n');  // Standardize multiple blank lines
   
-  // Try splitting by double newlines followed by an asterisk - works well for the user's format
-  let sections = cleanedContent.split(/\n\n(?=\*)/);
-  console.log(`Double newline with asterisk format found ${sections.length} sections`);
+  // Try a very aggressive approach - split by empty lines followed by asterisks
+  // This targets the format with "* **Title:** CARD NAME**" 
+  const titleFieldPattern = /\n\n\*\s*\*\*Title:/gi;
   
-  // If that doesn't work well, try with the format "* **Title:** CARD NAME"
-  if (sections.length <= 1) {
-    sections = cleanedContent.split(/(?=\*\s*\*\*Title:\*\*)/i);
-    console.log(`Title format found ${sections.length} sections`);
+  // Find all positions of the pattern in the content
+  const positions = [];
+  let match;
+  while ((match = titleFieldPattern.exec(cleanedContent)) !== null) {
+    positions.push(match.index + 2); // +2 to skip the newlines
   }
   
-  // Try with the format "* **Title:** CARD NAME**" - note the extra asterisks at the end
-  if (sections.length <= 1) {
-    sections = cleanedContent.split(/(?=\*\s*\*\*Title:\*\*\s*[^\n\*]+\*\*)/i);
-    console.log(`Title format with trailing asterisks found ${sections.length} sections`);
-  }
+  console.log(`Found ${positions.length} potential card boundaries using title field pattern`);
   
-  // Regular expression to find cards with Flomanji format - with or without escaped backslash
-  if (sections.length <= 1) {
-    const flomanjiCardRegex = /\*\*\d+\\?\.\s+([A-Z0-9\s\(\)\-\'\"]+)\*\*/g;
+  // If we found patterns, split the content at these positions
+  if (positions.length > 0) {
+    const sections = [];
     
-    let match;
-    const matches = [];
-    
-    // Find all potential card matches
-    while ((match = flomanjiCardRegex.exec(cleanedContent)) !== null) {
-      matches.push({
-        title: match[1].trim(),
-        position: match.index,
-        fullMatch: match[0]
-      });
+    // Add the first section (from start to the first match)
+    if (positions[0] > 0) {
+      sections.push(cleanedContent.substring(0, positions[0]));
     }
     
-    console.log(`Found ${matches.length} card matches using Flomanji gear card pattern`);
-    
-    // Process each card by extracting the text between current match and next match
-    for (let i = 0; i < matches.length; i++) {
-      const currentMatch = matches[i];
-      const nextMatch = i < matches.length - 1 ? matches[i + 1] : null;
-      
-      // Get the full card text
-      const endPos = nextMatch ? nextMatch.position : cleanedContent.length;
-      const cardText = cleanedContent.substring(currentMatch.position, endPos);
-      
-      console.log(`Processing Flomanji card: "${currentMatch.title}" from position ${currentMatch.position} to ${endPos}`);
-      
-      // Parse the card data
-      const card = parseFlomanjiCard(currentMatch.title, cardText);
-      if (card) {
-        cards.push(card);
-        console.log(`Successfully added Flomanji card: ${card.name}, ID: ${card.id}`);
-      } else {
-        console.log(`Failed to parse Flomanji card: ${currentMatch.title}`);
-      }
+    // Add middle sections
+    for (let i = 0; i < positions.length; i++) {
+      const start = positions[i];
+      const end = i < positions.length - 1 ? positions[i + 1] : cleanedContent.length;
+      sections.push(cleanedContent.substring(start, end));
     }
-  }
-  
-  // If sections were found, process each section
-  if (sections.length > 1 && cards.length === 0) {
-    console.log(`Processing ${sections.length} sections`);
     
+    console.log(`Split content into ${sections.length} sections`);
+    
+    // Process each section
     for (let i = 0; i < sections.length; i++) {
       const section = sections[i].trim();
       if (!section) continue;
       
-      // Extract the title using * **Title:** pattern
-      let titleMatch = section.match(/\*\s*\*\*Title:\*\*\s*([^\n\*]+)(\*\*)?/i);
-      let cardTitle = "";
+      console.log(`Processing alternate section ${i+1}/${sections.length}`);
+      
+      // Extract the title using "* **Title:" pattern
+      const titleMatch = section.match(/\*\s*\*\*Title:\*\*\s*([^\n]+)/i);
       
       if (titleMatch) {
-        cardTitle = titleMatch[1].trim();
-        console.log(`Found alternate card title: "${cardTitle}"`);
-        
         // Clean title - remove trailing asterisks if present
-        cardTitle = cardTitle.replace(/\*+$/, '').trim();
+        const title = titleMatch[1].replace(/\*+$/g, '').trim();
+        console.log(`Found alternate card title: "${title}"`);
         
         // Parse the card
-        const card = parseFlomanjiCard(cardTitle, section);
+        const card = parseAlternateCardSection(title, section);
         if (card) {
           cards.push(card);
           console.log(`Successfully added alternate card: ${card.name}, ID: ${card.id}`);
         } else {
-          console.log(`Failed to parse alternate card: ${cardTitle}`);
+          console.log(`Failed to parse alternate card: ${title}`);
         }
+      } else {
+        console.log(`No title found in section ${i+1}`);
       }
     }
+  } else {
+    console.log("No title field patterns found, trying other methods");
   }
   
-  // Try to split by standard numbered sections (without double asterisks)
+  // If no cards found yet, try with blank lines
   if (cards.length === 0) {
-    console.log("Trying numbered sections pattern");
-    const numberedSections = cleanedContent.split(/(?=\d+\.\s+[A-Z\s\(\)\-\'\"]+)/g);
+    // Try splitting by double newlines
+    const blankLineSections = cleanedContent.split(/\n\n/);
+    console.log(`Split by blank lines found ${blankLineSections.length} sections`);
     
-    if (numberedSections.length > 1) {
-      console.log(`Found ${numberedSections.length} numbered sections`);
+    // Group sections that belong to the same card
+    let currentCardSections: string[] = [];
+    const groupedSections: string[] = [];
+    
+    for (const section of blankLineSections) {
+      const trimmed = section.trim();
+      if (!trimmed) continue;
       
-      for (const section of numberedSections) {
-        const titleMatch = section.match(/\d+\.\s+([A-Z0-9\s\(\)\-\'\"]+)/);
-        if (titleMatch) {
-          const title = titleMatch[1].trim();
-          console.log(`Found numbered section: "${title}"`);
-          const card = parseFlomanjiCard(title, section);
-          if (card) {
-            cards.push(card);
-            console.log(`Successfully added card from numbered section: ${card.name}`);
-          }
+      // If this looks like the start of a new card, start a new group
+      if (trimmed.match(/^\*\s*\*\*Title:/i) || 
+          trimmed.match(/^\*\s*\*\*Type:/i) || 
+          trimmed.match(/^\d+\.\s+[A-Z]/)) {
+        
+        // Save the previous card if we have sections
+        if (currentCardSections.length > 0) {
+          groupedSections.push(currentCardSections.join('\n\n'));
+          currentCardSections = [];
         }
       }
+      
+      // Add this section to the current card
+      currentCardSections.push(trimmed);
     }
-  }
-  
-  // Try to split by bold section headers
-  if (cards.length === 0) {
-    console.log("Trying bold sections without numbers");
-    const boldSections = cleanedContent.split(/(?=\*\*[A-Z0-9\s\(\)\-\'\"]+\*\*)/g);
     
-    for (const section of boldSections) {
-      const titleMatch = section.match(/\*\*([A-Z0-9\s\(\)\-\'\"]+)\*\*/);
+    // Add the last card if there's one being built
+    if (currentCardSections.length > 0) {
+      groupedSections.push(currentCardSections.join('\n\n'));
+    }
+    
+    console.log(`Grouped into ${groupedSections.length} potential cards`);
+    
+    // Process each grouped section
+    for (const groupedSection of groupedSections) {
+      // Try to find a title
+      let title = '';
+      
+      // Check for "* **Title:" format
+      const titleMatch = groupedSection.match(/\*\s*\*\*Title:\*\*\s*([^\n]+)/i);
       if (titleMatch) {
-        const title = titleMatch[1].trim();
-        console.log(`Found bold section: "${title}"`);
-        const card = parseFlomanjiCard(title, section);
+        title = titleMatch[1].replace(/\*+$/g, '').trim();
+      } else {
+        // Try numbered format: "1. CARD NAME"
+        const numberedMatch = groupedSection.match(/^\d+\.\s+([A-Z0-9\s\(\)\-\'\"]+)/);
+        if (numberedMatch) {
+          title = numberedMatch[1].trim();
+        } else {
+          // Try to use the first line as title
+          const firstLine = groupedSection.split('\n')[0].trim();
+          title = firstLine.replace(/^\*+|\*+$/g, '').trim();
+        }
+      }
+      
+      if (title) {
+        console.log(`Identified card with title: ${title}`);
+        const card = parseAlternateCardSection(title, groupedSection);
         if (card) {
           cards.push(card);
-          console.log(`Successfully added card from bold section: ${card.name}`);
+          console.log(`Added grouped card: ${card.name}`);
         }
       }
     }
@@ -151,13 +154,18 @@ export const parseMarkdownCardsAlternate = (markdownContent: string): CardFormVa
 };
 
 /**
- * Parse an individual card from the Flomanji Gear Cards format
+ * Parse an individual card section using the alternate method
  */
-function parseFlomanjiCard(title: string, content: string): CardFormValues | null {
-  if (!content || !title) return null;
+function parseAlternateCardSection(title: string, content: string): CardFormValues | null {
+  if (!content || !title) {
+    console.log("Missing content or title for alternate parsing");
+    return null;
+  }
   
   // Generate a unique ID for the card
-  const uniqueId = `gear-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now().toString(36).substring(4)}`;
+  const uniqueId = `card-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${uuidv4().slice(0, 8)}`;
+  
+  console.log(`Alternate parsing for card: "${title}", ID: ${uniqueId}`);
   
   // Initialize card with safe defaults
   const card: Partial<CardFormValues> = {
@@ -166,54 +174,76 @@ function parseFlomanjiCard(title: string, content: string): CardFormValues | nul
     icons: [],
     keywords: [],
     rules: [],
-    type: 'gear', // Default to gear for Flomanji cards
+    type: 'gear', // Default to gear
     category: 'tool', // Default category
   };
   
-  // Extract card properties using regex patterns
+  // Extract card properties using more flexible regex patterns
   
-  // Type and category
+  // Type and category with improved pattern matching
   const typeMatch = content.match(/\*\s*\*\*Type:\*\*\s*([^\n]+)/i) || 
-                    content.match(/Type:\s*([^\n]+)/i);
+                    content.match(/Type:\s*([^\n]+)/i) ||
+                    content.match(/\*\s*Type:\s*([^\n]+)/i);
   
   if (typeMatch) {
     const typeText = typeMatch[1].trim().toLowerCase();
+    console.log(`Alternate parsing found type: "${typeText}"`);
     
-    // Detect gear category - handle both "–" (em-dash) and "-" (hyphen)
+    // Detect card type and gear category
     if (typeText.includes('gear')) {
       card.type = 'gear';
       
-      if (typeText.includes('–') || typeText.includes('-')) {
-        const separator = typeText.includes('–') ? '–' : '-';
-        const parts = typeText.split(separator);
-        if (parts.length > 1) {
-          const category = parts[1].trim();
-          card.category = mapGearCategory(category);
-          console.log(`Extracted gear category: ${card.category}`);
-        }
+      // Extract category with a more flexible pattern
+      const categoryMatch = typeText.match(/(?:gear|passive)(?:\s*[-–]\s*|\s+)(\w+)/i);
+      if (categoryMatch) {
+        const category = categoryMatch[1].trim();
+        card.category = mapGearCategory(category);
+        console.log(`Extracted gear category: ${card.category}`);
+      } else if (typeText.includes('passive')) {
+        card.category = 'tool';
+        console.log(`Set category 'tool' for Passive gear`);
+      } else if (typeText.includes('consumable')) {
+        card.category = 'consumable';
+        console.log(`Set category 'consumable' from type text`);
+      } else if (typeText.includes('weapon')) {
+        card.category = 'weapon';
+      } else if (typeText.includes('vehicle')) {
+        card.category = 'vehicle';
+      } else {
+        card.category = 'tool';
       }
-    } else if (typeText.includes('consumable')) {
-      card.type = 'gear';
-      card.category = 'consumable';
-    } else if (typeText.includes('passive')) {
-      card.type = 'gear';
-      card.category = 'tool';
-    } else if (typeText.includes('combo')) {
-      card.type = 'gear';
-      card.category = 'tool';
     } else if (typeText.includes('treasure')) {
       card.type = 'treasure';
     } else if (typeText.includes('hazard')) {
       card.type = 'hazard';
+    } else if (typeText.includes('npc')) {
+      card.type = 'npc';
+    } else if (typeText.includes('region')) {
+      card.type = 'region';
+    } else if (typeText.includes('chaos')) {
+      card.type = 'chaos';
+    } else if (typeText.includes('flomanjified')) {
+      card.type = 'flomanjified';
+    } else if (typeText.includes('secret')) {
+      card.type = 'secret';
+    } else if (typeText.includes('mission')) {
+      card.type = 'mission';
+    } else if (typeText.includes('player')) {
+      card.type = 'player-character';
+    } else if (typeText.includes('automa')) {
+      card.type = 'automa';
     }
   }
   
-  // Icons - extract from [Icon Name] format
+  // Icons - extract from [Icon Name] format or other variants
   const iconMatch = content.match(/\*\s*\*\*Icon\(s\):\*\*\s*([^\n]+)/i) || 
-                    content.match(/Icon\(s\):\s*([^\n]+)/i);
+                    content.match(/Icon\(s\):\s*([^\n]+)/i) || 
+                    content.match(/\*\s*Icons?:\s*([^\n]+)/i);
   
   if (iconMatch) {
     const iconsText = iconMatch[1].trim();
+    console.log(`Found icons text: "${iconsText}"`);
+    
     // Extract icons in [Icon Name] format
     const bracketedIcons = iconsText.match(/\[([^\]]+)\]/g);
     
@@ -225,60 +255,80 @@ function parseFlomanjiCard(title: string, content: string): CardFormValues | nul
           meaning: icon
         };
       });
+      console.log(`Extracted ${card.icons.length} bracketed icons`);
     } else {
       // If no bracketed format, split by commas or other separators
-      card.icons = iconsText.split(/[,;|]/).map(i => ({
-        symbol: i.trim(),
-        meaning: i.trim()
-      }));
+      const plainIcons = iconsText.split(/[,;|]/).filter(i => i.trim());
+      if (plainIcons.length > 0) {
+        card.icons = plainIcons.map(i => ({
+          symbol: i.trim(),
+          meaning: i.trim()
+        }));
+        console.log(`Extracted ${card.icons.length} plain icons`);
+      }
     }
   }
   
-  // Keywords
+  // Keywords with flexible pattern matching
   const keywordMatch = content.match(/\*\s*\*\*Keywords:\*\*\s*([^\n]+)/i) || 
-                        content.match(/Keywords:\s*([^\n]+)/i);
+                        content.match(/Keywords:\s*([^\n]+)/i) ||
+                        content.match(/\*\s*Keywords:\s*([^\n]+)/i);
   
   if (keywordMatch) {
     const keywordsText = keywordMatch[1].trim();
-    card.keywords = keywordsText.split(/[,;|]/).map(k => k.trim());
+    card.keywords = keywordsText.split(/[,;|]/).map(k => k.trim()).filter(k => k);
+    console.log(`Extracted ${card.keywords.length} keywords`);
   }
   
-  // Rules - these are multi-line and need special handling
+  // Rules - improved multi-line handling
   const rulesMatch = content.match(/\*\s*\*\*Rules:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Rules)|$)/i) || 
-                     content.match(/Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
+                     content.match(/Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
+                     content.match(/\*\s*Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
   
   if (rulesMatch) {
-    // Clean up the rules text - remove bullet points, trim lines
-    const rulesText = rulesMatch[1].trim()
-                      .replace(/^\s*\*\s*/gm, '') // Remove bullet points
-                      .replace(/\n+/g, ' ')       // Join multiple lines
-                      .trim();
+    // Clean up the rules text
+    let rulesText = rulesMatch[1].trim()
+                     .replace(/^\s*\*\s*/gm, '') // Remove bullet points
+                     .replace(/\n+/g, ' ')       // Join multiple lines
+                     .replace(/\*\*/g, '')       // Remove markdown formatting
+                     .trim();
     
     card.rules = [rulesText];
+    console.log(`Extracted rules: "${rulesText.substring(0, Math.min(50, rulesText.length))}..."`);
   }
   
-  // Flavor text - also multi-line
+  // Flavor text - improved multi-line handling
   const flavorMatch = content.match(/\*\s*\*\*Flavor:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Flavor)|$)/i) || 
-                      content.match(/Flavor:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
+                      content.match(/Flavor:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
+                      content.match(/\*\s*Flavor:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
   
   if (flavorMatch) {
     // Clean and format flavor text
-    card.flavor = flavorMatch[1].trim()
-                 .replace(/^\s*\*\s*/gm, '')  // Remove bullet points
-                 .replace(/^\*|^\"|\"$|\*$/g, '') // Remove leading/trailing asterisks and quotes
-                 .replace(/\n+/g, ' ')       // Join multiple lines
-                 .trim();
+    let flavorText = flavorMatch[1].trim()
+                     .replace(/^\s*\*\s*/gm, '')  // Remove bullet points
+                     .replace(/^\*|^\"|\"$|\*$/g, '') // Remove leading/trailing asterisks and quotes
+                     .replace(/\n+/g, ' ')       // Join multiple lines
+                     .replace(/\*\*/g, '')       // Remove markdown formatting
+                     .trim();
+    
+    card.flavor = flavorText;
+    console.log(`Extracted flavor: "${flavorText.substring(0, Math.min(50, flavorText.length))}..."`);
   }
   
-  // Image prompt
+  // Image prompt - improved multi-line handling
   const imagePromptMatch = content.match(/\*\s*\*\*Image\s*Prompt:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Image)|$)/i) || 
-                           content.match(/Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
+                           content.match(/Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
+                           content.match(/\*\s*Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
   
   if (imagePromptMatch) {
-    card.imagePrompt = imagePromptMatch[1].trim()
-                      .replace(/^\s*\*\s*/gm, '') // Remove bullet points
-                      .replace(/\n+/g, ' ')       // Join multiple lines
-                      .trim();
+    const imagePrompt = imagePromptMatch[1].trim()
+                         .replace(/^\s*\*\s*/gm, '') // Remove bullet points
+                         .replace(/\n+/g, ' ')       // Join multiple lines
+                         .replace(/\*\*/g, '')       // Remove markdown formatting
+                         .trim();
+    
+    card.imagePrompt = imagePrompt;
+    console.log(`Extracted image prompt: "${imagePrompt.substring(0, Math.min(50, imagePrompt.length))}..."`);
   }
   
   return card as CardFormValues;
