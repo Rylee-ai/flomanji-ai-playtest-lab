@@ -6,6 +6,7 @@ import { GameStateManager } from "./GameStateManager";
 import { NarrationManager } from "./NarrationManager";
 import { ScenarioManager } from "./ScenarioManager";
 import { HazardManager } from "./HazardManager";
+import { TrainingDataGenerator } from "../training/TrainingDataGenerator";
 
 /**
  * Core simulation runner that orchestrates the simulation flow
@@ -16,6 +17,7 @@ export class SimulationRunner {
   private narrationManager: NarrationManager;
   private scenarioManager: ScenarioManager;
   private hazardManager: HazardManager;
+  private trainingDataGenerator: TrainingDataGenerator;
 
   constructor() {
     this.playerManager = new PlayerManager();
@@ -23,6 +25,7 @@ export class SimulationRunner {
     this.narrationManager = new NarrationManager();
     this.scenarioManager = new ScenarioManager();
     this.hazardManager = new HazardManager();
+    this.trainingDataGenerator = new TrainingDataGenerator();
   }
 
   /**
@@ -191,6 +194,15 @@ export class SimulationRunner {
         characters: config.fullCharacters || [],
         missionOutcome: "pending"
       };
+      
+      // Generate training data
+      try {
+        console.log("Generating training data...");
+        result.trainingData = this.trainingDataGenerator.generateTrainingData(result);
+        console.log(`Generated ${result.trainingData.examples.length} training examples`);
+      } catch (error) {
+        console.error("Error generating training data:", error);
+      }
 
       // Save the result
       saveSimulationResult(result);

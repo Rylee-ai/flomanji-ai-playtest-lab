@@ -73,6 +73,65 @@ export interface SimulationResult {
   characters?: FlomanjiCharacter[];
   missionOutcome?: string;
   keyEvents?: string[];
+  trainingData?: SimulationTrainingData; // New field for ML training data
+}
+
+// New interface specifically for ML training data
+export interface SimulationTrainingData {
+  // Core metadata for organization
+  simulationId: string;
+  timestamp: string;
+  missionType: string;
+  
+  // Training examples derived from the simulation
+  examples: TrainingExample[];
+  
+  // Aggregated statistics for training
+  statistics: {
+    successRate: number;
+    averageRounds: number;
+    completedObjectives: string[];
+    heatProgression: number[];
+    keyDecisionPoints: KeyDecisionPoint[];
+  };
+}
+
+// Each example represents a potential training pair
+export interface TrainingExample {
+  id: string;
+  type: 'gm-response' | 'player-action' | 'hazard-encounter' | 'objective-completion';
+  
+  // Input context (what would be fed to the model)
+  context: {
+    previousMessages: AgentMessage[];
+    gameState: any;
+    currentRound: number;
+    characters: FlomanjiCharacter[];
+    heat: number;
+  };
+  
+  // Expected output (what we'd want the model to generate)
+  expectedOutput: {
+    content: string;
+    metadata?: any;
+    reasoning?: string; // Optional explanation of why this is the correct response
+  };
+  
+  // For reinforcement learning approaches
+  feedbackSignals?: {
+    consistency: number; // 0-1, how consistent with rules/lore
+    engagement: number; // 0-1, how engaging the response is
+    advancement: number; // 0-1, how much it advances the game state
+  };
+}
+
+// Capture important decision points for focused training
+export interface KeyDecisionPoint {
+  round: number;
+  description: string;
+  decision: string;
+  outcome: string;
+  impact: 'positive' | 'negative' | 'neutral';
 }
 
 export interface SimulationSummary {
