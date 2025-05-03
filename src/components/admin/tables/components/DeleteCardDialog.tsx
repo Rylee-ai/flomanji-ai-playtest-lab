@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { showSuccessToast } from "@/lib/toast";
+import { Trash2 } from "lucide-react";
 
 interface DeleteCardDialogProps {
   cardToDelete: GameCard | null;
@@ -35,14 +36,24 @@ export const DeleteCardDialog = ({
     <AlertDialog open={!!cardToDelete} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete Card</AlertDialogTitle>
+          <AlertDialogTitle className="flex items-center gap-2">
+            <Trash2 className="h-5 w-5 text-destructive" />
+            Delete {cardToDelete?.name}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete {cardToDelete?.name}? This action cannot be undone.
+            Are you sure you want to delete this card? This action cannot be undone.
+            <div className="mt-2 p-3 bg-muted rounded-md">
+              <div className="font-medium">{cardToDelete?.name}</div>
+              <div className="text-sm text-muted-foreground">Type: {cardToDelete?.type}</div>
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+          <AlertDialogAction 
+            onClick={confirmDelete} 
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -6,8 +6,9 @@ import { CardExporter } from "@/components/admin/cards/CardExporter";
 import { useCardManagement } from "@/components/admin/hooks/useCardManagement";
 import { CardType } from "@/types/cards";
 import { Button } from "@/components/ui/button";
-import { Download, Upload, History } from "lucide-react";
+import { Download, Upload, History, FileJson } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CardDataTransformer } from "@/components/admin/forms/CardDataTransformer";
 
 const ContentManager = () => {
   const navigate = useNavigate();
@@ -29,6 +30,7 @@ const ContentManager = () => {
           </div>
           
           <div className="flex items-center gap-2">
+            <CardDataTransformer onTransformed={handleImport} />
             <CardBulkImport onImport={handleImport} />
             <CardExporter cardType={activeTab as CardType} />
           </div>

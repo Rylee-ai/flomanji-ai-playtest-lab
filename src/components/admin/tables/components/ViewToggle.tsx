@@ -1,10 +1,11 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Table as TableIcon } from "lucide-react";
+import { LayoutGrid, Table as TableIcon, FileJson } from "lucide-react";
 import { CardType, GameCard } from "@/types/cards";
 import { CardExporter } from "../../cards/CardExporter";
 import { CardBulkEditor } from "../../forms/CardBulkEditor";
+import { CardDataTransformer } from "../../forms/CardDataTransformer";
 
 interface ViewToggleProps {
   view: "table" | "grid";
