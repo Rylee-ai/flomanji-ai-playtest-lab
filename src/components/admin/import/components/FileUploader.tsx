@@ -51,6 +51,11 @@ export const FileUploader = ({ onFileSelected, isProcessing }: FileUploaderProps
     onFileSelected(file);
   };
 
+  // Function to programmatically click the hidden file input
+  const triggerFileInput = () => {
+    document.getElementById('file-upload')?.click();
+  };
+
   return (
     <div 
       className="space-y-4"
@@ -68,6 +73,7 @@ export const FileUploader = ({ onFileSelected, isProcessing }: FileUploaderProps
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
+        onClick={triggerFileInput}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
           <Upload className="w-8 h-8 mb-2 text-gray-500" />
@@ -111,17 +117,17 @@ export const FileUploader = ({ onFileSelected, isProcessing }: FileUploaderProps
       </Alert>
       
       <div className="flex justify-center">
-        <label htmlFor="file-upload">
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="gap-2" 
-            disabled={isProcessing}
-          >
-            <Upload className="h-4 w-4" />
-            <span>Select File</span>
-          </Button>
-        </label>
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="gap-2" 
+          disabled={isProcessing}
+          onClick={triggerFileInput}
+          type="button"
+        >
+          <Upload className="h-4 w-4" />
+          <span>Select File</span>
+        </Button>
       </div>
     </div>
   );
