@@ -89,7 +89,7 @@ const getCardTypeSpecificFields = (cardType: CardType): string => {
     case 'npc':
       return '* **Icon(s):** [Character Icon] [Vendor Icon]\n* **Interaction:** Charm 6\n';
     case 'player-character':
-      return '* **Stats:** Brawn 3, Moxie 2, Charm 4, Grit 3, WeirdSense 2\n* **Special Ability:** Description of character's unique ability\n';
+      return '* **Stats:** Brawn 3, Moxie 2, Charm 4, Grit 3, Weird Sense 2\n* **Special Ability:** Description of character\'s unique ability\n';
     case 'treasure':
       return '* **Icon(s):** [Treasure Icon] [Value Icon]\n* **Value:** 3\n';
     case 'region':
