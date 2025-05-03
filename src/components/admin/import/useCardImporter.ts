@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
 import { processImportedCards } from "@/utils/cardImport";
-import { transformCardData } from "@/utils/card-data-transformer";
+import { transformCardData } from "@/utils/card-transformers";
 import { transformMarkdownToCards } from "@/utils/markdown";
 
 interface UseCardImporterProps {
