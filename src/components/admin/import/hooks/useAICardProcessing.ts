@@ -97,14 +97,31 @@ export function useAICardProcessing() {
           // Handle array fields differently
           if (Array.isArray(updatedCard[fieldKey])) {
             // For array fields like rules or keywords, add the suggestion as a new item
-            const currentValue = updatedCard[fieldKey] as unknown as any[];
-            updatedCard[fieldKey] = [
-              ...currentValue, 
-              suggestion.suggestion
-            ] as unknown as any;
+            const currentArray = updatedCard[fieldKey] as unknown[];
+            
+            // Create a properly typed array with the suggestion
+            if (fieldKey === 'rules' || fieldKey === 'keywords' || fieldKey === 'icons') {
+              // For known array fields, correctly type the arrays
+              if (typeof suggestion.suggestion === 'string') {
+                if (fieldKey === 'rules') {
+                  updatedCard.rules = [...(updatedCard.rules || []), suggestion.suggestion];
+                } else if (fieldKey === 'keywords') {
+                  updatedCard.keywords = [...(updatedCard.keywords || []), suggestion.suggestion];
+                } else if (fieldKey === 'icons') {
+                  // Icons are objects with symbol and name properties
+                  console.warn('Cannot directly add string suggestion to icons array, requires proper icon object');
+                }
+              } else if (typeof suggestion.suggestion === 'object' && fieldKey === 'icons') {
+                updatedCard.icons = [...(updatedCard.icons || []), suggestion.suggestion];
+              }
+            }
           } else {
-            // For string fields, replace the value
-            updatedCard[fieldKey] = suggestion.suggestion as any;
+            // For string fields, replace the value if compatible types
+            if (typeof updatedCard[fieldKey] === typeof suggestion.suggestion) {
+              updatedCard[fieldKey] = suggestion.suggestion as any;
+            } else {
+              console.warn(`Type mismatch: Cannot apply suggestion of type ${typeof suggestion.suggestion} to field ${fieldKey} of type ${typeof updatedCard[fieldKey]}`);
+            }
           }
           
           return updatedCard;
