@@ -79,7 +79,14 @@ export class FileProcessingService {
       // Ensure all cards have valid IDs
       processedCards = ensureCardIds(processedCards, cardType) as CardFormValues[];
       
-      console.log("Processed cards:", processedCards.length);
+      // Add logging to check what we've extracted
+      console.log(`Processed ${processedCards.length} cards:`);
+      if (processedCards.length > 0) {
+        console.log(`First card: ${processedCards[0].name}`);
+        if (processedCards.length > 1) {
+          console.log(`Second card: ${processedCards[1].name}`);
+        }
+      }
       
       // Validate cards
       const errors: string[] = [];

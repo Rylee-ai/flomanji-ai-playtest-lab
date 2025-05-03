@@ -1,3 +1,4 @@
+
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { mapGearCategory } from "./cardTypeMappers";
@@ -13,8 +14,8 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   
   console.log(`Parsing card section: "${title}"`);
   
-  // Clean up the title (remove markdown markers)
-  const cleanTitle = title.replace(/^[#\d\.\*\-\s]+/, '').trim();
+  // Clean up the title (remove markdown markers, numbers, asterisks)
+  const cleanTitle = title.replace(/^[#\d\.\*\-\s]+/, '').trim().replace(/\*\*$/, '').replace(/^\*\*/, '');
   
   // Initialize default card values
   const card: Partial<CardFormValues> = {
@@ -32,7 +33,7 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   // Extract properties using various patterns
   // Try multiple patterns for each property to increase matching chances
   
-  // Type patterns
+  // Type patterns - handle both "Type:" and "**Type:**" formats
   const typePatterns = [
     /\*\s*\*\*Type:\*\*\s*(.*?)(?:\n|$)/i,
     /Type:\s*(.*?)(?:\n|$)/i,
@@ -56,23 +57,23 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   
   // Rules patterns - these need to capture multi-line content
   const rulesPatterns = [
-    /\*\s*\*\*Rules:\*\*\s*([\s\S]*?)(?:\n\n|\n\*|\n#|$)/i,
-    /Rules:\s*([\s\S]*?)(?:\n\n|\n\*|\n#|$)/i,
-    /\*\s*Rules:\s*([\s\S]*?)(?:\n\n|\n\*|\n#|$)/i,
+    /\*\s*\*\*Rules:\*\*\s*([\s\S]*?)(?:\n\s*\n|\n\*|\n#|$)/i,
+    /Rules:\s*([\s\S]*?)(?:\n\s*\n|\n\*|\n#|$)/i,
+    /\*\s*Rules:\s*([\s\S]*?)(?:\n\s*\n|\n\*|\n#|$)/i,
   ];
   
   // Flavor patterns - these may also be multi-line
   const flavorPatterns = [
-    /\*\s*\*\*Flavor(?:\s*Text)?:\*\*\s*([\s\S]*?)(?:\n\n|\n\*|\n#|$)/i,
-    /Flavor(?:\s*Text)?:\s*([\s\S]*?)(?:\n\n|\n\*|\n#|$)/i,
-    /\*\s*Flavor(?:\s*Text)?:\s*([\s\S]*?)(?:\n\n|\n\*|\n#|$)/i,
+    /\*\s*\*\*Flavor(?:\s*Text)?:\*\*\s*([\s\S]*?)(?:\n\s*\n|\n\*|\n#|$)/i,
+    /Flavor(?:\s*Text)?:\s*([\s\S]*?)(?:\n\s*\n|\n\*|\n#|$)/i,
+    /\*\s*Flavor(?:\s*Text)?:\s*([\s\S]*?)(?:\n\s*\n|\n\*|\n#|$)/i,
   ];
   
   // Image prompt patterns
   const imagePromptPatterns = [
-    /\*\s*\*\*Image(?:\s*Prompt)?:\*\*\s*([\s\S]*?)(?:\n\n|\n\*|\n#|$)/i,
-    /Image(?:\s*Prompt)?:\s*([\s\S]*?)(?:\n\n|\n\*|\n#|$)/i,
-    /\*\s*Image(?:\s*Prompt)?:\s*([\s\S]*?)(?:\n\n|\n\*|\n#|$)/i,
+    /\*\s*\*\*Image(?:\s*Prompt)?:\*\*\s*([\s\S]*?)(?:\n\s*\n|\n\*|\n#|$)/i,
+    /Image(?:\s*Prompt)?:\s*([\s\S]*?)(?:\n\s*\n|\n\*|\n#|$)/i,
+    /\*\s*Image(?:\s*Prompt)?:\s*([\s\S]*?)(?:\n\s*\n|\n\*|\n#|$)/i,
   ];
   
   // Try each pattern until we find a match
@@ -87,11 +88,11 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   if (typeMatch) {
     const typeText = typeMatch.trim();
     
-    // Basic card type determination
+    // For gear cards, extract the category
     if (typeText.toLowerCase().includes('gear')) {
       card.type = 'gear';
       
-      // For gear cards, extract the category
+      // Extract category for gear cards
       if (typeText.toLowerCase().includes('consumable')) {
         card.category = 'consumable';
       } else if (typeText.toLowerCase().includes('weapon')) {
@@ -102,6 +103,12 @@ export const parseCardSection = (title: string, content: string): CardFormValues
         card.category = 'supply';
       } else if (typeText.toLowerCase().includes('tool')) {
         card.category = 'tool';
+      } else if (typeText.toLowerCase().includes('passive')) {
+        card.category = 'tool'; // Default passive items to tool category
+      } else if (typeText.toLowerCase().includes('one-time')) {
+        card.category = 'consumable'; // Default one-time use to consumable
+      } else if (typeText.toLowerCase().includes('combo')) {
+        card.category = 'tool'; // Default combo items to tool category
       }
     } else if (typeText.toLowerCase().includes('treasure')) {
       card.type = 'treasure';
@@ -110,15 +117,24 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     }
   }
   
-  // Process icons
+  // Process icons - handle [IconName] format
   if (iconsMatch) {
     const iconsText = iconsMatch.trim();
-    const iconSymbols = extractIcons(iconsText);
+    const bracketedIcons = iconsText.match(/\[([^\]]+)\]/g);
     
-    if (iconSymbols.length > 0) {
-      card.icons = iconSymbols.map(symbol => ({
-        symbol,
-        meaning: symbol
+    if (bracketedIcons && bracketedIcons.length > 0) {
+      card.icons = bracketedIcons.map(match => {
+        const icon = match.replace(/[\[\]]/g, '').trim();
+        return {
+          symbol: icon,
+          meaning: icon
+        };
+      });
+    } else {
+      // If no bracketed icons, split by commas
+      card.icons = iconsText.split(/[,;|]/).map(i => ({
+        symbol: i.trim(),
+        meaning: i.trim()
       }));
     }
   }
@@ -132,22 +148,12 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   // Process rules text
   if (rulesMatch) {
     const rulesText = rulesMatch.trim();
-    
-    // Try to split rules into bullet points if they exist
-    const ruleBullets = rulesText.split(/\n\s*[\*\-]\s*|\n\s*\d+\.\s*/);
-    
-    if (ruleBullets.length > 1) {
-      card.rules = ruleBullets
-        .map(rule => rule.trim())
-        .filter(rule => rule.length > 0);
-    } else {
-      card.rules = [rulesText];
-    }
+    card.rules = [rulesText];
   }
   
-  // Process flavor text
+  // Process flavor text - remove quotes and asterisks
   if (flavorMatch) {
-    card.flavor = flavorMatch.trim().replace(/^["']|["']$/g, '');
+    card.flavor = flavorMatch.trim().replace(/^\*|^\"|\"$|\*$/g, '');
   }
   
   // Process image prompt
@@ -169,26 +175,4 @@ function findFirstMatch(content: string, patterns: RegExp[]): string | null {
     }
   }
   return null;
-}
-
-/**
- * Helper function to extract icon symbols from text
- */
-function extractIcons(iconsText: string): string[] {
-  // Try to find emoji or icon descriptions
-  const emojiRegex = /[\p{Emoji}]/gu;
-  const emojiMatches = iconsText.match(emojiRegex);
-  
-  if (emojiMatches && emojiMatches.length > 0) {
-    return emojiMatches;
-  }
-  
-  // Try to find bracketed icons like [Fire]
-  const bracketedIcons = iconsText.match(/\[([^\]]+)\]/g);
-  if (bracketedIcons) {
-    return bracketedIcons.map(match => match.replace(/[\[\]]/g, ''));
-  }
-  
-  // Otherwise split by commas or other separators
-  return iconsText.split(/[,;|]/).map(i => i.trim());
 }
