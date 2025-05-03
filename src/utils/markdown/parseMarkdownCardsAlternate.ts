@@ -10,22 +10,23 @@ import { mapGearCategory } from "./cardTypeMappers";
 export const parseMarkdownCardsAlternate = (markdownContent: string): CardFormValues[] => {
   const cards: CardFormValues[] = [];
   
-  // Strategy for parsing numbered gear cards in the Flomanji format
+  console.log("Attempting alternate parsing method for Flomanji format");
+  
+  // Strategy for parsing Flomanji Gear Cards format:
   // This handles formats like:
-  // **1. CARD NAME**
+  // **1\. CARD NAME**
   // * **Type:** GEAR - Category
   // * **Icon(s):** [Icon]
   // ...
   
-  // Regular expression to find cards with numbered format
-  const cardRegex = /\*?\*?\d+\.\s+([A-Z0-9\s\(\)\-\'\"]+)\*?\*?[\s\n]*(?:\*\s+\*\*Type:\*\*\s*([^\n]*)|Type:\s*([^\n]*))/g;
+  // Regular expression to find cards with Flomanji format - with or without escaped backslash
+  const flomanjiCardRegex = /\*\*\d+\\?\.\s+([A-Z0-9\s\(\)\-\'\"]+)\*\*/g;
   
   let match;
-  let startPos = 0;
   const matches = [];
   
   // Find all potential card matches
-  while ((match = cardRegex.exec(markdownContent)) !== null) {
+  while ((match = flomanjiCardRegex.exec(markdownContent)) !== null) {
     matches.push({
       title: match[1].trim(),
       position: match.index,
@@ -33,7 +34,7 @@ export const parseMarkdownCardsAlternate = (markdownContent: string): CardFormVa
     });
   }
   
-  console.log(`Found ${matches.length} card matches using gear card pattern`);
+  console.log(`Found ${matches.length} card matches using Flomanji gear card pattern`);
   
   // Process each card by extracting the text between current match and next match
   for (let i = 0; i < matches.length; i++) {
@@ -44,81 +45,119 @@ export const parseMarkdownCardsAlternate = (markdownContent: string): CardFormVa
     const endPos = nextMatch ? nextMatch.position : markdownContent.length;
     const cardText = markdownContent.substring(currentMatch.position, endPos);
     
-    console.log(`Processing card: "${currentMatch.title}"`);
+    console.log(`Processing Flomanji card: "${currentMatch.title}" from position ${currentMatch.position} to ${endPos}`);
     
     // Parse the card data
-    const card = parseCardFromDetailed(currentMatch.title, cardText);
+    const card = parseFlomanjiCard(currentMatch.title, cardText);
     if (card) {
       cards.push(card);
+      console.log(`Successfully added Flomanji card: ${card.name}, ID: ${card.id}`);
+    } else {
+      console.log(`Failed to parse Flomanji card: ${currentMatch.title}`);
     }
   }
   
-  // If we still have no cards, try to split by bold section indicators
+  // If we still have no cards, try to split by other patterns
   if (cards.length === 0) {
-    console.log("Trying alternate pattern with bold section headers");
-    const boldSections = markdownContent.split(/(?=\*\*\d+\.\s+[A-Z\s\(\)\-\'\"]+\*\*)/g);
+    console.log("Trying alternative patterns for card sections");
     
-    for (const section of boldSections) {
-      const titleMatch = section.match(/\*\*\d+\.\s+([A-Z0-9\s\(\)\-\'\"]+)\*\*/);
-      if (titleMatch) {
-        const title = titleMatch[1].trim();
-        console.log(`Found bold section: "${title}"`);
-        const card = parseCardFromDetailed(title, section);
-        if (card) {
-          cards.push(card);
+    // Try to split by standard numbered sections (without double asterisks)
+    const numberedSections = markdownContent.split(/(?=\d+\.\s+[A-Z\s\(\)\-\'\"]+)/g);
+    
+    if (numberedSections.length > 1) {
+      console.log(`Found ${numberedSections.length} numbered sections`);
+      
+      for (const section of numberedSections) {
+        const titleMatch = section.match(/\d+\.\s+([A-Z0-9\s\(\)\-\'\"]+)/);
+        if (titleMatch) {
+          const title = titleMatch[1].trim();
+          console.log(`Found numbered section: "${title}"`);
+          const card = parseFlomanjiCard(title, section);
+          if (card) {
+            cards.push(card);
+            console.log(`Successfully added card from numbered section: ${card.name}`);
+          }
+        }
+      }
+    }
+    
+    // Try to split by bold section headers
+    if (cards.length === 0) {
+      console.log("Trying bold sections without numbers");
+      const boldSections = markdownContent.split(/(?=\*\*[A-Z0-9\s\(\)\-\'\"]+\*\*)/g);
+      
+      for (const section of boldSections) {
+        const titleMatch = section.match(/\*\*([A-Z0-9\s\(\)\-\'\"]+)\*\*/);
+        if (titleMatch) {
+          const title = titleMatch[1].trim();
+          console.log(`Found bold section: "${title}"`);
+          const card = parseFlomanjiCard(title, section);
+          if (card) {
+            cards.push(card);
+            console.log(`Successfully added card from bold section: ${card.name}`);
+          }
         }
       }
     }
   }
   
-  console.log(`Alternative parsing found ${cards.length} cards`);
+  console.log(`Alternative parsing found ${cards.length} total cards`);
   return cards;
 };
 
 /**
- * Parse an individual card from a detailed markdown section
- * Specifically designed for the Flomanji Gear Cards format
+ * Parse an individual card from the Flomanji Gear Cards format
  */
-function parseCardFromDetailed(title: string, content: string): CardFormValues | null {
+function parseFlomanjiCard(title: string, content: string): CardFormValues | null {
   if (!content || !title) return null;
   
+  // Generate a unique ID for the card
+  const uniqueId = `gear-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${Date.now().toString(36).substring(4)}`;
+  
+  // Initialize card with safe defaults
   const card: Partial<CardFormValues> = {
+    id: uniqueId,
     name: title,
     icons: [],
     keywords: [],
     rules: [],
-    type: 'gear', // Default to gear based on current context
+    type: 'gear', // Default to gear for Flomanji cards
     category: 'tool', // Default category
   };
   
-  // Generate an ID based on the name
-  card.id = `gear-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  // Extract card properties using regex patterns
   
-  // Extract card type and category
-  const typeMatch = content.match(/\*?\s*\*?\*?Type:\*?\*?\s*([^\n]+)/i);
+  // Type and category
+  const typeMatch = content.match(/\*\s*\*\*Type:\*\*\s*([^\n]+)/i) || 
+                    content.match(/Type:\s*([^\n]+)/i);
+  
   if (typeMatch) {
-    const typeText = typeMatch[1].trim();
+    const typeText = typeMatch[1].trim().toLowerCase();
     
-    if (typeText.toLowerCase().includes('consumable')) {
+    // Detect gear category
+    if (typeText.includes('consumable')) {
       card.category = 'consumable';
-    } else if (typeText.toLowerCase().includes('weapon')) {
+    } else if (typeText.includes('weapon')) {
       card.category = 'weapon';
-    } else if (typeText.toLowerCase().includes('vehicle')) {
+    } else if (typeText.includes('vehicle')) {
       card.category = 'vehicle';
-    } else if (typeText.toLowerCase().includes('supply')) {
+    } else if (typeText.includes('supply')) {
       card.category = 'supply';
+    } else if (typeText.includes('one-time') || typeText.includes('single use')) {
+      card.category = 'consumable';
     }
-    
-    // If no specific category was found, it stays as 'tool'
   }
   
-  // Extract icons
-  const iconMatch = content.match(/\*?\s*\*?\*?Icon\(s\):\*?\*?\s*([^\n]+)/i);
+  // Icons
+  const iconMatch = content.match(/\*\s*\*\*Icon\(s\):\*\*\s*([^\n]+)/i) || 
+                    content.match(/Icon\(s\):\s*([^\n]+)/i);
+  
   if (iconMatch) {
     const iconsText = iconMatch[1].trim();
-    // Look for bracketed icons like [Fire Icon]
+    // Extract icons in [Icon Name] format
     const bracketedIcons = iconsText.match(/\[([^\]]+)\]/g);
-    if (bracketedIcons) {
+    
+    if (bracketedIcons && bracketedIcons.length > 0) {
       card.icons = bracketedIcons.map(match => {
         const icon = match.replace(/[\[\]]/g, '').trim();
         return {
@@ -126,32 +165,58 @@ function parseCardFromDetailed(title: string, content: string): CardFormValues |
           meaning: icon
         };
       });
+    } else {
+      // If no bracketed format, split by commas or other separators
+      card.icons = iconsText.split(/[,;|]/).map(i => ({
+        symbol: i.trim(),
+        meaning: i.trim()
+      }));
     }
   }
   
-  // Extract keywords
-  const keywordMatch = content.match(/\*?\s*\*?\*?Keywords:\*?\*?\s*([^\n]+)/i);
+  // Keywords
+  const keywordMatch = content.match(/\*\s*\*\*Keywords:\*\*\s*([^\n]+)/i) || 
+                        content.match(/Keywords:\s*([^\n]+)/i);
+  
   if (keywordMatch) {
-    card.keywords = keywordMatch[1].split(/[,\s]+/).map(k => k.trim());
+    const keywordsText = keywordMatch[1].trim();
+    card.keywords = keywordsText.split(/[,;|]/).map(k => k.trim());
   }
   
-  // Extract rules
-  const rulesMatch = content.match(/\*?\s*\*?\*?Rules:\*?\*?\s*([\s\S]*?)(?=\*\s+\*\*|$)/i);
+  // Rules - these are multi-line and need special handling
+  const rulesMatch = content.match(/\*\s*\*\*Rules:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Rules)|$)/i) || 
+                     content.match(/Rules:\s*([\s\S]*?)(?=\*\s*(?!Rules)|$)/i);
+  
   if (rulesMatch) {
-    const rulesText = rulesMatch[1].trim();
+    // Clean up the rules text - remove bullet points, trim lines
+    const rulesText = rulesMatch[1].trim()
+                      .replace(/^\s*\*\s*/gm, '') // Remove bullet points
+                      .replace(/\n+/g, ' ')       // Join multiple lines
+                      .trim();
+    
     card.rules = [rulesText];
   }
   
-  // Extract flavor text
-  const flavorMatch = content.match(/\*?\s*\*?\*?Flavor:\*?\*?\s*([\s\S]*?)(?=\*\s+\*\*|$)/i);
+  // Flavor text - also multi-line
+  const flavorMatch = content.match(/\*\s*\*\*Flavor:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Flavor)|$)/i) || 
+                      content.match(/Flavor:\s*([\s\S]*?)(?=\*\s*(?!Flavor)|$)/i);
+  
   if (flavorMatch) {
-    card.flavor = flavorMatch[1].trim().replace(/^\*|^\"|\"$|\*$/g, '');
+    // Clean and format flavor text
+    card.flavor = flavorMatch[1].trim()
+                 .replace(/^\s*\*\s*/gm, '')  // Remove bullet points
+                 .replace(/^\*|^\"|\"$|\*$/g, '') // Remove leading/trailing asterisks and quotes
+                 .trim();
   }
   
-  // Extract image prompt
-  const imagePromptMatch = content.match(/\*?\s*\*?\*?Image Prompt:\*?\*?\s*([\s\S]*?)(?=\*\s+\*\*|$)/i);
+  // Image prompt
+  const imagePromptMatch = content.match(/\*\s*\*\*Image\s*Prompt:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Image)|$)/i) || 
+                           content.match(/Image\s*Prompt:\s*([\s\S]*?)(?=\*\s*(?!Image)|$)/i);
+  
   if (imagePromptMatch) {
-    card.imagePrompt = imagePromptMatch[1].trim();
+    card.imagePrompt = imagePromptMatch[1].trim()
+                      .replace(/^\s*\*\s*/gm, '') // Remove bullet points
+                      .trim();
   }
   
   return card as CardFormValues;

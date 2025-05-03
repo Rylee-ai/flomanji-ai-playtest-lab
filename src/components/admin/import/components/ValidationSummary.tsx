@@ -1,15 +1,8 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle, CheckCircle } from "lucide-react";
-import { CardFormValues } from "@/types/forms/card-form";
+import { AlertCircle, CheckCircle } from "lucide-react";
 
-export interface ValidationSummaryProps {
-  validationErrors: string[];
-  transformedCards: CardFormValues[];
-  fileType: string | null;
-}
-
-export function ValidationSummary({ validationErrors, transformedCards, fileType }: ValidationSummaryProps) {
+export function ValidationSummary({ validationErrors, transformedCards, fileType }) {
   if (validationErrors.length === 0 && transformedCards.length === 0) {
     return null;
   }
@@ -17,7 +10,7 @@ export function ValidationSummary({ validationErrors, transformedCards, fileType
   if (validationErrors.length > 0) {
     return (
       <Alert variant="destructive">
-        <AlertTriangle className="h-4 w-4" />
+        <AlertCircle className="h-4 w-4" />
         <AlertTitle>Validation Failed</AlertTitle>
         <AlertDescription>
           <ul className="list-disc pl-5 mt-2 space-y-1">
