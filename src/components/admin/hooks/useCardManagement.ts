@@ -78,7 +78,7 @@ export const useCardManagement = () => {
         // Create new card with a unique ID
         const newCard = {
           ...data,
-          id: `${activeTab}-${Date.now()}`,
+          id: data.id || `${activeTab}-${Date.now()}`,
         };
         
         await CardService.saveCard(newCard as GameCard);

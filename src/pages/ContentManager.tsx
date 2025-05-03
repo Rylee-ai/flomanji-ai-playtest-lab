@@ -6,9 +6,12 @@ import { CardExporter } from "@/components/admin/cards/CardExporter";
 import { useCardManagement } from "@/components/admin/hooks/useCardManagement";
 import { CardType } from "@/types/cards";
 import { Button } from "@/components/ui/button";
-import { Download, Upload } from "lucide-react";
+import { Download, Upload, History } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ContentManager = () => {
+  const navigate = useNavigate();
+  
   const {
     handleImport,
     activeTab,

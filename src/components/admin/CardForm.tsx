@@ -1,13 +1,15 @@
+
 import React from "react";
-import { GameCard } from "@/types/cards";
+import { GameCard, CardType } from "@/types/cards";
 import { useCardForm } from "./hooks/useCardForm";
 import { CardFormDialog } from "./CardFormDialog";
 import { CardFormBody } from "./CardFormBody";
-import { CardFormProps } from "@/types/forms/card-form";
+import { CardFormValues } from "@/types/forms/card-form";
 import { useCardFormInit } from "./hooks/useCardFormInit";
 import { CardVersion } from "@/types/cards/card-version";
+import { formatDateTime } from "@/utils/date";
 
-interface CardFormProps {
+interface CardFormComponentProps {
   initialData?: GameCard;
   activeTab: CardType;
   onSubmit: (data: CardFormValues) => void;
@@ -23,7 +25,7 @@ export const CardForm = ({
   open,
   onClose,
   versionHistory,
-}: CardFormProps) => {
+}: CardFormComponentProps) => {
   const form = useCardForm(initialData);
   const isEditing = !!initialData;
   const type = form.watch("type");

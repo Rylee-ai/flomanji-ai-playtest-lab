@@ -10,11 +10,15 @@ export class CardService {
   static async saveCard<T extends GameCard>(card: T): Promise<T> {
     try {
       // Check if card exists
-      const { data: existingCard } = await supabase
+      const { data: existingCard, error: checkError } = await supabase
         .from('cards')
         .select('*')
         .eq('id', card.id)
         .single();
+
+      if (checkError && checkError.code !== 'PGRST116') { // Not 'no rows returned'
+        throw checkError;
+      }
 
       if (existingCard) {
         // Update existing card
@@ -35,7 +39,7 @@ export class CardService {
         // Create version record
         await this.createCardVersion(card);
         
-        return data.data;
+        return data?.data;
       } else {
         // Create new card
         const { data, error } = await supabase
@@ -54,7 +58,7 @@ export class CardService {
         // Create initial version record
         await this.createCardVersion(card);
         
-        return data.data;
+        return data?.data;
       }
     } catch (error) {
       console.error('Error saving card:', error);
@@ -85,7 +89,7 @@ export class CardService {
       // Create version records for all cards
       await Promise.all(cards.map(card => this.createCardVersion(card)));
 
-      return { success: true, count: data.length };
+      return { success: true, count: data?.length || 0 };
     } catch (error) {
       console.error('Error saving cards in bulk:', error);
       throw error;
@@ -128,7 +132,7 @@ export class CardService {
 
       if (error) throw error;
 
-      return data.map(item => item.data as T);
+      return data?.map(item => item.data as T) || [];
     } catch (error) {
       console.error(`Error fetching ${type} cards:`, error);
       throw error;
@@ -147,7 +151,7 @@ export class CardService {
 
       if (error) throw error;
 
-      return data.map(item => item.data as GameCard);
+      return data?.map(item => item.data as GameCard) || [];
     } catch (error) {
       console.error('Error fetching all cards:', error);
       throw error;
@@ -223,7 +227,7 @@ export class CardService {
 
       if (error) throw error;
 
-      return data.map(version => ({
+      return data?.map(version => ({
         id: version.id,
         cardId: version.card_id,
         versionNumber: version.version_number,
@@ -231,7 +235,7 @@ export class CardService {
         data: version.data,
         changedBy: version.changed_by,
         notes: version.notes
-      }));
+      })) || [];
     } catch (error) {
       console.error('Error fetching card version history:', error);
       throw error;
@@ -256,7 +260,7 @@ export class CardService {
 
       if (error) throw error;
       
-      return data.id;
+      return data?.id;
     } catch (error) {
       console.error('Error recording bulk edit operation:', error);
       throw error;
@@ -275,15 +279,22 @@ export class CardService {
    */
   static async searchCards(query: string): Promise<GameCard[]> {
     try {
-      // Basic search implementation
-      const { data, error } = await supabase
-        .from('cards')
-        .select('data')
-        .or(`name.ilike.%${query}%,data->>'rules'.ilike.%${query}%,data->>'flavor'.ilike.%${query}%`);
+      // Basic search implementation using wildcards
+      const { data, error } = await supabase.rpc('search_cards', { search_term: `%${query}%` });
 
-      if (error) throw error;
+      if (error) {
+        console.error('RPC search_cards failed:', error);
+        // Fallback to direct select if the RPC call fails
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('cards')
+          .select('data')
+          .ilike('name', `%${query}%`);
 
-      return data.map(item => item.data as GameCard);
+        if (fallbackError) throw fallbackError;
+        return fallbackData?.map(item => item.data as GameCard) || [];
+      }
+
+      return data?.map(item => item.data as GameCard) || [];
     } catch (error) {
       console.error('Error searching cards:', error);
       throw error;

@@ -9,6 +9,101 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      card_bulk_edits: {
+        Row: {
+          affected_cards: string[]
+          applied_at: string | null
+          changes: Json
+          created_at: string
+          id: string
+          notes: string | null
+          status: string
+        }
+        Insert: {
+          affected_cards: string[]
+          applied_at?: string | null
+          changes: Json
+          created_at?: string
+          id?: string
+          notes?: string | null
+          status: string
+        }
+        Update: {
+          affected_cards?: string[]
+          applied_at?: string | null
+          changes?: Json
+          created_at?: string
+          id?: string
+          notes?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      card_versions: {
+        Row: {
+          card_id: string
+          changed_by: string
+          created_at: string
+          data: Json
+          id: string
+          notes: string | null
+          version_number: number
+        }
+        Insert: {
+          card_id: string
+          changed_by: string
+          created_at?: string
+          data: Json
+          id?: string
+          notes?: string | null
+          version_number: number
+        }
+        Update: {
+          card_id?: string
+          changed_by?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          notes?: string | null
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "card_versions_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cards: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          name: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id: string
+          name: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          name?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mailing_addresses: {
         Row: {
           apartment: string | null
@@ -181,6 +276,38 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      set_limit: {
+        Args: { "": number }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
       }
     }
     Enums: {
