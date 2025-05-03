@@ -17,8 +17,9 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
   // Use the specialized hooks for file processing and state management
   const {
     isProcessing,
-    fileType,
-    detectFileFormat,
+    fileFormat,
+    fileExtension,
+    analyzeFile,
     processFile
   } = useFileProcessor();
   
@@ -51,7 +52,7 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
     setImportResults(null);
 
     // Auto-detect format
-    await detectFileFormat(file);
+    await analyzeFile(file);
     
     // Process the file
     const { processedCards, errors } = await processFile(file, typeToUse);
@@ -67,13 +68,13 @@ export function useCardImporter({ onImportComplete, initialCardType = "gear" }: 
 
   return {
     isProcessing,
-    fileType,
+    fileType: fileFormat, // Keep the name fileType for backward compatibility
     cardType,
     setCardType,
     transformedCards,
     validationErrors,
     importResults,
-    detectFileFormat,
+    detectFileFormat: analyzeFile, // Keep the name detectFileFormat for backward compatibility
     processFile: handleFileProcess,
     resetState,
   };
