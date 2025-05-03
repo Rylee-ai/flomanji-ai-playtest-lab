@@ -6,6 +6,7 @@ import { useFileProcessor } from '@/components/admin/import/hooks/useFileProcess
 import { useCardImportResults } from '@/components/admin/import/hooks/useCardImportResults';
 import { useAICardProcessing } from '@/components/admin/import/hooks/useAICardProcessing';
 import { CardFormValues } from '@/types/forms/card-form';
+import { CardSuggestion } from '@/utils/ai-processing/AICardProcessorService';
 
 // Mock the dependent hooks
 vi.mock('@/components/admin/import/hooks/useFileProcessor', () => ({
@@ -63,15 +64,18 @@ describe('useCardImporter', () => {
       resetResults: mockResetResults
     });
     
-    // Mock useAICardProcessing implementation
+    // Mock useAICardProcessing implementation with all required properties
     vi.mocked(useAICardProcessing).mockReturnValue({
       isProcessing: false,
-      suggestions: [],
-      enhancedCards: [],
-      originalCards: [],
+      suggestions: [] as CardSuggestion[],
+      enhancedCards: [] as CardFormValues[],
+      originalCards: [] as CardFormValues[],
+      processingError: null,
+      processingStats: { totalCards: 0, improvedCards: 0, totalSuggestions: 0 },
       processCardsWithAI: mockProcessCardsWithAI,
       applySuggestion: vi.fn().mockReturnValue([]),
-      resetAIProcessing: mockResetAIProcessing
+      resetAIProcessing: mockResetAIProcessing,
+      getCardComparison: vi.fn()
     });
   });
 

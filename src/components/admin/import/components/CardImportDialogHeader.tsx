@@ -1,7 +1,7 @@
 
 import React from "react";
 import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2, Robot } from "lucide-react";
+import { Loader2, Bot } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface CardImportDialogHeaderProps {
@@ -19,7 +19,7 @@ export function CardImportDialogHeader({
         Import Cards
         {enableAIProcessing && (
           <Badge variant="outline" className="ml-2 bg-primary/10">
-            <Robot className="h-3 w-3 mr-1" /> 
+            <Bot className="h-3 w-3 mr-1" /> 
             AI Assisted
           </Badge>
         )}

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { AlertCircle, FileSymlink, Robot } from "lucide-react";
+import { AlertCircle, FileSymlink, Bot } from "lucide-react";
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardSuggestion } from "@/utils/ai-processing/AICardProcessorService";
@@ -64,7 +64,7 @@ export function CardImportTabs({
         </TabsTrigger>
         {aiSuggestions && aiSuggestions.length > 0 && (
           <TabsTrigger value="ai" className="flex items-center gap-2">
-            <Robot className="h-4 w-4" />
+            <Bot className="h-4 w-4" />
             <span>AI Suggestions</span>
             <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs">
               {aiSuggestions.length}
@@ -76,8 +76,8 @@ export function CardImportTabs({
       <TabsContent value="upload">
         <div className="space-y-6">
           <CardTypeSelector 
-            value={cardType} 
-            onChange={setCardType} 
+            cardType={cardType} 
+            setCardType={setCardType} 
             disabled={isProcessing}
           />
 
@@ -90,7 +90,7 @@ export function CardImportTabs({
                 disabled={isProcessing}
               />
               <Label htmlFor="ai-processing" className="cursor-pointer flex items-center gap-1">
-                <Robot className="h-4 w-4 text-muted-foreground" />
+                <Bot className="h-4 w-4 text-muted-foreground" />
                 <span>Enable AI Processing</span>
               </Label>
             </div>
@@ -100,8 +100,8 @@ export function CardImportTabs({
           </div>
 
           {enableAIProcessing && (
-            <Alert variant="outline" className="bg-primary/5">
-              <Robot className="h-4 w-4 text-primary" />
+            <Alert>
+              <Bot className="h-4 w-4 text-primary" />
               <AlertDescription className="text-xs text-muted-foreground">
                 AI processing is enabled. The AI will analyze your cards after import to suggest improvements 
                 and ensure consistency across your card data.

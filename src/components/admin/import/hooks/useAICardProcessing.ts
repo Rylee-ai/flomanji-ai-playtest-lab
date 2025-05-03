@@ -62,7 +62,7 @@ export function useAICardProcessing() {
       }
       
       return enhancedCards;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error in AI card processing:", error);
       setProcessingError(error.message || "Unknown error during AI processing");
       toast.error("AI processing failed. Using original cards instead.");
@@ -92,18 +92,19 @@ export function useAICardProcessing() {
         if (card.name === suggestion.cardName) {
           // Apply the suggestion based on the field
           const updatedCard = { ...card };
+          const fieldKey = suggestion.field as keyof CardFormValues;
           
           // Handle array fields differently
-          if (Array.isArray(updatedCard[suggestion.field as keyof CardFormValues])) {
+          if (Array.isArray(updatedCard[fieldKey])) {
             // For array fields like rules or keywords, add the suggestion as a new item
-            const currentValue = updatedCard[suggestion.field as keyof CardFormValues] as any[];
-            updatedCard[suggestion.field as keyof CardFormValues] = [
+            const currentValue = updatedCard[fieldKey] as unknown as any[];
+            updatedCard[fieldKey] = [
               ...currentValue, 
               suggestion.suggestion
-            ] as any;
+            ] as unknown as any;
           } else {
             // For string fields, replace the value
-            updatedCard[suggestion.field as keyof CardFormValues] = suggestion.suggestion as any;
+            updatedCard[fieldKey] = suggestion.suggestion as any;
           }
           
           return updatedCard;
@@ -121,7 +122,7 @@ export function useAICardProcessing() {
       toast.success(`Applied suggestion for ${suggestion.cardName}`);
       
       return updatedCards;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error applying suggestion:", error);
       toast.error(`Failed to apply suggestion: ${error.message}`);
       return enhancedCards;

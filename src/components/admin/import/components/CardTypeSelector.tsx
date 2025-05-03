@@ -3,16 +3,26 @@ import { CardType } from "@/types/cards";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CardTypeSelectorProps {
-  cardType: CardType;
-  setCardType: (value: CardType) => void;
-  defaultCardType: CardType;
+  value?: CardType;
+  cardType?: CardType;
+  onChange?: (value: CardType) => void;
+  setCardType?: (value: CardType) => void;
+  defaultCardType?: CardType;
+  disabled?: boolean;
 }
 
 export function CardTypeSelector({
+  value,
+  onChange,
   cardType,
   setCardType,
-  defaultCardType
+  defaultCardType,
+  disabled = false
 }: CardTypeSelectorProps) {
+  // Use either the direct props or the legacy props
+  const effectiveValue = value || cardType;
+  const handleChange = onChange || setCardType;
+  
   const cardTypes: { value: CardType; label: string }[] = [
     { value: "gear", label: "Gear Cards" },
     { value: "treasure", label: "Treasure Cards" },
@@ -33,8 +43,9 @@ export function CardTypeSelector({
         Card Type
       </label>
       <Select 
-        value={cardType} 
-        onValueChange={value => setCardType(value as CardType)}
+        value={effectiveValue} 
+        onValueChange={value => handleChange && handleChange(value as CardType)}
+        disabled={disabled}
       >
         <SelectTrigger id="card-type">
           <SelectValue placeholder="Select card type" />
