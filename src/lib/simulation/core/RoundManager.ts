@@ -3,6 +3,9 @@ import { SimulationConfig, AgentMessage } from "@/types";
 import { PlayerManager } from "./PlayerManager";
 import { NarrationManager } from "./NarrationManager";
 import { HazardManager } from "./HazardManager";
+import { ChaosManager } from "./ChaosManager";
+import { TreasureManager } from "./TreasureManager";
+import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 
 /**
  * Manages the execution and progression of rounds in a simulation
@@ -11,11 +14,15 @@ export class RoundManager {
   private playerManager: PlayerManager;
   private narrationManager: NarrationManager;
   private hazardManager: HazardManager;
+  private chaosManager: ChaosManager;
+  private treasureManager: TreasureManager;
   
   constructor() {
     this.playerManager = new PlayerManager();
     this.narrationManager = new NarrationManager();
     this.hazardManager = new HazardManager();
+    this.chaosManager = new ChaosManager();
+    this.treasureManager = new TreasureManager();
   }
 
   /**
@@ -28,6 +35,11 @@ export class RoundManager {
     systemPrompts: any,
     playerSystemPrompts: any
   ): Promise<void> {
+    // Initialize active cards tracking if not present
+    gameState.activeHazards = gameState.activeHazards || [];
+    gameState.activeChaosEffects = gameState.activeChaosEffects || [];
+    gameState.discoveredTreasures = gameState.discoveredTreasures || [];
+    
     // Run all rounds
     for (let round = 0; round < config.rounds; round++) {
       gameState.currentRound = round + 1;
@@ -79,6 +91,22 @@ export class RoundManager {
       });
     }
     
+    // Check if we should draw a Chaos Card this round
+    // Draw on round 1, then every 2-3 rounds depending on heat level
+    const shouldDrawChaosCard = round === 0 || 
+      ((round + 1) % (gameState.heat >= 7 ? 2 : 3) === 0);
+    
+    if (shouldDrawChaosCard) {
+      const chaosMessages = await this.chaosManager.drawChaosCard(
+        gameState, 
+        conversationLog,
+        systemPrompts
+      );
+      
+      // Add chaos messages to log
+      conversationLog.push(...chaosMessages);
+    }
+    
     // Generate hazard encounter
     const hazardMessages = await this.hazardManager.generateHazardEncounter(
       gameState,
@@ -99,6 +127,19 @@ export class RoundManager {
     
     // Add player responses to log
     conversationLog.push(...playerResponses);
+    
+    // Check for treasure discoveries based on player actions
+    const treasureMessages = await this.treasureManager.checkForTreasureDiscovery(
+      gameState,
+      conversationLog,
+      playerResponses,
+      systemPrompts
+    );
+    
+    // Add treasure discovery messages to log if any
+    if (treasureMessages.length > 0) {
+      conversationLog.push(...treasureMessages);
+    }
     
     // Generate GM response to all player actions
     const gmResponse = await this.narrationManager.generateActionResults(
@@ -138,6 +179,8 @@ export class RoundManager {
         phase: "round-summary",
         heat: gameState.heat,
         activeHazards: gameState.activeHazards,
+        activeChaosEffects: gameState.activeChaosEffects,
+        discoveredTreasures: gameState.discoveredTreasures,
         completedObjectives: gameState.completedObjectives,
         gameState: {...gameState}
       }

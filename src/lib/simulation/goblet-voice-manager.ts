@@ -1,100 +1,139 @@
 
-import { SimulationConfig } from "@/types";
+import { GameCard } from "@/types/cards";
 
-export type GobletVoiceType = 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';
+type GobletVoiceType = 'swamp-prophet' | 'pirate-radio-dj' | 'park-ranger' | 'theme-park-mascot' | 'random';
+type NarrationEventType = 'hazard' | 'chaos' | 'treasure' | 'objective' | 'intro' | 'conclusion';
 
+/**
+ * Get an appropriate narration style for the current Goblet voice
+ */
 export const getGobletNarration = (
-  type: 'intro' | 'hazard' | 'result' | 'round-end',
-  gobletVoice: GobletVoiceType,
-  heat: number,
-  context?: any
+  eventType: NarrationEventType,
+  gobletVoice: GobletVoiceType = 'random',
+  heatLevel: number = 0,
+  card?: GameCard
 ): string => {
-  let narration = '';
-  let gobletMood = heat >= 8 ? "malfunctioning" : heat >= 5 ? "excited" : "normal";
+  // If random, select one of the voices
+  if (gobletVoice === 'random') {
+    const voices: GobletVoiceType[] = ['swamp-prophet', 'pirate-radio-dj', 'park-ranger', 'theme-park-mascot'];
+    gobletVoice = voices[Math.floor(Math.random() * voices.length)] as GobletVoiceType;
+  }
   
-  switch(gobletVoice) {
-    case 'swamp-prophet':
-      switch(type) {
-        case 'intro':
-          narration = "The Goblet speaks in hushed, mystical tones: \"The waters stir with portents, travelers. The path ahead is fraught with whispers from beyond. Heed the signs, for they speak of what shadows lie ahead.\"";
-          break;
-        case 'hazard':
-          narration = "The Goblet's surface ripples unnaturally: \"The veil grows thin. An omen approaches. The spirits warn of danger.\"";
-          break;
-        case 'result':
-          narration = "The Goblet hums with spiritual energy: \"The fates have spoken through the trembling waters. Their judgment is revealed.\"";
-          break;
-        case 'round-end':
-          narration = "The Goblet's voice deepens: \"Another cycle completes. The moon shifts, the waters rise. What waits beyond the next bend?\"";
-          break;
+  // Get voice personality traits
+  const voiceTraits = getVoiceTraits(gobletVoice, heatLevel);
+  
+  // Build narration guidelines
+  let narration = `Speak in the voice of the Goblet as a ${voiceTraits.description}. ${voiceTraits.speechPattern} `;
+  
+  // Add event-specific instructions
+  switch (eventType) {
+    case 'hazard':
+      narration += `Announce the hazard with ${voiceTraits.hazardStyle}. `;
+      if (card) {
+        narration += `This hazard is "${card.name}" and should be presented in a way that feels threatening yet thrilling. `;
       }
       break;
       
-    case 'pirate-radio-dj':
-      switch(type) {
-        case 'intro':
-          narration = "The Goblet crackles like an old radio: \"GOOOOOD EVENING SURVIVORS! You're tuned to 87.9 FM - DOOM on the dial! We're coming at you LIVE from the edge of sanity! Stay tuned for weather, traffic, and imminent threats to your existence!\"";
-          break;
-        case 'hazard':
-          narration = "Static bursts from the Goblet: \"BREAKING NEWS! We've got a situation developing! This is NOT a drill, folks! I repeat, this is NOT a drill!\"";
-          break;
-        case 'result':
-          narration = "The Goblet makes a record scratch sound: \"And the results are IN! Let's go to our correspondent in the field - ME!\"";
-          break;
-        case 'round-end':
-          narration = "The Goblet's voice fades like a radio signal: \"And that's all the time we have for this segment, folks! Stay tuned after these messages from our sponsor - CERTAIN DOOM!\"";
-          break;
+    case 'chaos':
+      narration += `Announce the chaos effect with ${voiceTraits.chaosStyle}. `;
+      if (card) {
+        narration += `This chaos effect "${card.name}" changes the game state significantly and should feel impactful. `;
       }
       break;
       
-    case 'park-ranger':
-      switch(type) {
-        case 'intro':
-          narration = "The Goblet speaks with a tired drawl: \"Welcome to Florida State Emergency Zone 42. Please keep your limbs inside the designated safe areas at all times. No, I cannot give refunds if you get bit. Yes, everything here can and will try to kill you.\"";
-          break;
-        case 'hazard':
-          narration = "The Goblet sighs audibly: \"Folks, we've got another situation. I'm required by state law to inform you of the approaching danger, but honestly, you signed the waiver.\"";
-          break;
-        case 'result':
-          narration = "The Goblet's voice is flat: \"I've seen this outcome about a hundred times. You might want to write this down for future reference.\"";
-          break;
-        case 'round-end':
-          narration = "The Goblet sounds exhausted: \"That concludes our scheduled programming for this section of the tour. Please proceed to the next area, and remember - I told you not to touch that.\"";
-          break;
+    case 'treasure':
+      narration += `Announce the treasure discovery with ${voiceTraits.treasureStyle}. `;
+      if (card) {
+        narration += `This treasure "${card.name}" should feel rewarding and special when described. `;
       }
       break;
       
-    case 'theme-park-mascot':
-      switch(type) {
-        case 'intro':
-          narration = "The Goblet's voice is unnervingly cheerful: \"HI THERE HAPPY FRIENDS! Welcome to the MOST SPECTACULAR adventure of your LIVES! I'm your host, the MAGICAL GOBLET, and we're going to have SO MUCH FUN today! *giggles manically*\"";
-          break;
-        case 'hazard':
-          narration = "The Goblet's cheeriness becomes strained: \"OH MY GOODNESS! Look what's coming our way! Isn't this EXCITING? Don't you just LOVE surprises? *laughs nervously*\"";
-          break;
-        case 'result':
-          narration = "The Goblet bounces with glee: \"And now for my FAVORITE part! Let's see how you did! Remember, in this park, EVERYONE'S a winner... until they're not! HAHAHA!\"";
-          break;
-        case 'round-end':
-          narration = "The Goblet's voice drops an octave before returning to normal: \"That's the end of this attraction, friends. *deep voice* But not the end of you... *normal voice* YET! On to the next THRILLING experience!\"";
-          break;
-      }
+    case 'objective':
+      narration += `Announce the objective completion with ${voiceTraits.objectiveStyle}. `;
+      break;
+      
+    case 'intro':
+      narration += `Introduce the mission with ${voiceTraits.introStyle}. `;
+      break;
+      
+    case 'conclusion':
+      narration += `Conclude the mission with ${voiceTraits.conclusionStyle}. `;
       break;
   }
-
-  if (heat >= 8) {
-    narration += " The Goblet's surface is dangerously hot to the touch, glowing with an ominous red light.";
-  } else if (heat >= 5) {
-    narration += " The Goblet feels warm, pulsing with increasing energy.";
+  
+  // Add heat-specific instructions
+  if (heatLevel >= 8) {
+    narration += `The situation is extremely tense with Heat at ${heatLevel}/10. Your narration should reflect the extreme danger. `;
+  } else if (heatLevel >= 5) {
+    narration += `The situation is getting dangerous with Heat at ${heatLevel}/10. Your narration should convey rising tension. `;
   }
   
   return narration;
 };
 
-export const selectGobletVoice = (config: SimulationConfig): GobletVoiceType => {
-  if (config.gobletVoice === 'random') {
-    const voices: GobletVoiceType[] = ['swamp-prophet', 'pirate-radio-dj', 'park-ranger', 'theme-park-mascot'];
-    return voices[Math.floor(Math.random() * voices.length)];
+/**
+ * Get personality traits for a specific Goblet voice
+ */
+const getVoiceTraits = (voice: GobletVoiceType, heatLevel: number) => {
+  switch (voice) {
+    case 'swamp-prophet':
+      return {
+        description: "mysterious swamp prophet who speaks in riddles and omens",
+        speechPattern: "Use cryptic metaphors, reference ancient wisdom, and speak with slow, deliberate pacing.",
+        hazardStyle: "ominous warnings and dire predictions",
+        chaosStyle: "apocalyptic proclamations and mystical interpretations",
+        treasureStyle: "reverent awe and hushed tones about cosmic significance",
+        objectiveStyle: "solemn acknowledgment of fate's design",
+        introStyle: "cryptic prophecies and dark warnings",
+        conclusionStyle: "reflective wisdom and hints at future challenges"
+      };
+      
+    case 'pirate-radio-dj':
+      return {
+        description: "energetic pirate radio DJ broadcasting the adventure as it happens",
+        speechPattern: "Use upbeat slang, frequent call signs, music references, and speak with dynamic energy.",
+        hazardStyle: "breaking news alerts and dramatic 'we interrupt this broadcast'",
+        chaosStyle: "frantic reports and exaggerated reactions",
+        treasureStyle: "excited exclusive scoops and celebratory announcements",
+        objectiveStyle: "highlight reel commentary and enthusiastic congratulations",
+        introStyle: "pumped-up introductions and setting the scene like a radio drama",
+        conclusionStyle: "sign-off catchphrases and teasing the next adventure"
+      };
+      
+    case 'park-ranger':
+      return {
+        description: "knowledgeable but increasingly stressed park ranger guiding visitors",
+        speechPattern: "Use educational facts, safety warnings, and speak with professional courtesy that frays as Heat increases.",
+        hazardStyle: "formal safety protocols and species information",
+        chaosStyle: "barely contained panic masked by procedural announcements",
+        treasureStyle: "scientific fascination and cataloging of discoveries",
+        objectiveStyle: "professional acknowledgment with a touch of pride",
+        introStyle: "welcoming orientation with educational context",
+        conclusionStyle: "debriefing summary with lessons learned"
+      };
+      
+    case 'theme-park-mascot':
+      return {
+        description: "overly cheerful theme park mascot whose sanity slips as things get worse",
+        speechPattern: "Use excessive enthusiasm, child-friendly euphemisms for danger, and forced positivity that becomes unsettling as Heat increases.",
+        hazardStyle: "sugar-coated warnings presented as 'special attractions'",
+        chaosStyle: "manic 'surprise events' announcements with hysterical undertones",
+        treasureStyle: "exaggerated celebration and prize-winning fanfare",
+        objectiveStyle: "achievement ceremonies and congratulatory songs",
+        introStyle: "over-the-top welcome performance and attraction previews",
+        conclusionStyle: "farewell show that maintains the façade despite everything"
+      };
+      
+    default:
+      return {
+        description: "mystical artifact with a personality of its own",
+        speechPattern: "Use varied speech patterns reflecting your magical nature.",
+        hazardStyle: "appropriate gravity and drama",
+        chaosStyle: "suitable intensity and urgency",
+        treasureStyle: "deserved celebration and excitement",
+        objectiveStyle: "proper acknowledgment of achievements",
+        introStyle: "setting-appropriate scene setting",
+        conclusionStyle: "fitting wrap-up to the adventure"
+      };
   }
-  return config.gobletVoice || 'swamp-prophet';
 };
