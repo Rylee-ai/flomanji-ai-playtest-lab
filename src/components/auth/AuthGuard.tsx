@@ -1,10 +1,12 @@
-import React, { ReactNode, useEffect } from "react";
+
+import React, { ReactNode, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { UserRole } from "@/types";
 import { isAdminUser, isProfileLoaded } from "@/utils/auth-helpers";
 import { Loader2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+import NavigationError from "@/components/layout/NavigationError";
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -22,6 +24,8 @@ const AuthGuard = ({
 }: AuthGuardProps) => {
   const { user, isLoading, profile, refreshProfile, debugMode } = useAuth();
   const location = useLocation();
+  const [refreshAttempts, setRefreshAttempts] = useState(0);
+  const [navigationError, setNavigationError] = useState<string | null>(null);
 
   // Show meaningful debug information
   useEffect(() => {
@@ -33,7 +37,8 @@ const AuthGuard = ({
       userEmail: user?.email,
       profileRole: profile?.role,
       isProfileLoaded: isProfileLoaded(profile),
-      currentPath: location.pathname
+      currentPath: location.pathname,
+      refreshAttempts
     };
     
     // Always log basic info
@@ -45,20 +50,23 @@ const AuthGuard = ({
     }
     
     // If we have a user but no profile, try to refresh the profile
-    if (user && !isProfileLoaded(profile) && !isLoading) {
+    if (user && !isProfileLoaded(profile) && !isLoading && refreshAttempts < 3) {
       console.log("User exists but profile not loaded, attempting refresh");
+      setRefreshAttempts(prev => prev + 1);
+      
       refreshProfile().then(success => {
         if (success) {
           console.log("Profile refresh successful in AuthGuard");
+          setNavigationError(null);
         } else {
           console.warn("Profile refresh failed in AuthGuard");
-          if (requireAuth && allowedRoles) {
-            toast.error("Could not verify your access permissions. Please try again.");
+          if (requireAuth && allowedRoles && refreshAttempts >= 2) {
+            setNavigationError("Your profile information couldn't be loaded. Please try signing out and back in.");
           }
         }
       });
     }
-  }, [user, profile, isLoading, requireAuth, allowedRoles, location.pathname, refreshProfile, debugMode]);
+  }, [user, profile, isLoading, requireAuth, allowedRoles, location.pathname, refreshProfile, debugMode, refreshAttempts]);
 
   // While checking authentication status, show a loading state
   if (isLoading) {
@@ -87,6 +95,17 @@ const AuthGuard = ({
 
   // Special case: If we need role-based access but profile isn't loaded yet
   if (requireAuth && user && allowedRoles && !isProfileLoaded(profile)) {
+    if (refreshAttempts >= 3) {
+      // After multiple attempts, show error but still let them view the page
+      // This prevents them from being completely stuck
+      return (
+        <>
+          <NavigationError errorMessage={navigationError} />
+          {children}
+        </>
+      );
+    }
+    
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
@@ -94,6 +113,7 @@ const AuthGuard = ({
         <button 
           className="text-sm text-blue-500 hover:underline mt-4 flex items-center gap-1"
           onClick={() => {
+            setRefreshAttempts(0); // Reset attempts
             refreshProfile();
             toast("Refreshing profile", {
               description: "Attempting to load your profile data again"
@@ -117,9 +137,14 @@ const AuthGuard = ({
     }
   }
 
-  // If all checks pass, render the children
+  // If all checks pass, render the children, possibly with an error banner
   console.log("Access granted");
-  return <>{children}</>;
+  return (
+    <>
+      <NavigationError errorMessage={navigationError} />
+      {children}
+    </>
+  );
 };
 
 export default AuthGuard;

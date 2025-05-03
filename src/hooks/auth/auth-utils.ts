@@ -15,12 +15,17 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
       return null;
     }
     
-    // Query the profiles table from our database with a short timeout to prevent hanging
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
+    // Query the profiles table from our database with a timeout to prevent hanging
+    const { data, error } = await Promise.race([
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle(),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Profile fetch timeout")), 10000)
+      )
+    ]) as any;
 
     if (error) {
       // Handle specific error cases more gracefully
@@ -31,7 +36,6 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
         console.warn('Permission denied error. This might be an RLS policy issue.');
       }
       
-      toast.error("Could not load your profile. Please try again or contact support.");
       return null;
     }
 
@@ -54,7 +58,6 @@ export const fetchUserProfile = async (userId: string): Promise<UserProfile | nu
     return userProfile;
   } catch (error) {
     console.error('Error in fetchUserProfile:', error);
-    toast.error("An unexpected error occurred while loading your profile.");
     return null;
   }
 };

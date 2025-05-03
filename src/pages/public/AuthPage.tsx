@@ -8,12 +8,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { showSuccessToast, showErrorToast, showInfoToast } from "@/lib/toast";
+import { toast } from "sonner";
+import { isAdminUser } from "@/utils/auth-helpers";
 
 const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const { signIn, user, profile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,7 +26,8 @@ const AuthPage = () => {
   useEffect(() => {
     if (user && profile) {
       console.log("User already authenticated:", user.email, "Role:", profile.role);
-      const redirectPath = profile.role === 'admin' ? '/dashboard' : '/player';
+      setIsRedirecting(true);
+      const redirectPath = isAdminUser(profile) ? '/dashboard' : '/player';
       navigate(redirectPath, { replace: true });
     }
   }, [user, profile, navigate]);
@@ -39,23 +42,38 @@ const AuthPage = () => {
       
       if (!error) {
         console.log("Sign-in successful");
-        showSuccessToast("Welcome back!", "You have successfully signed in");
+        toast.success("Welcome back!", "You have successfully signed in");
+        setIsRedirecting(true);
         
         // Delay navigation slightly to ensure profile is loaded
         setTimeout(() => {
-          // The auth state listener will handle redirection based on role
-          console.log("Sign-in complete, auth state listener will handle redirection");
-        }, 200);
+          if (profile) {
+            const redirectPath = isAdminUser(profile) ? '/dashboard' : '/player';
+            console.log(`Redirecting authenticated user to ${redirectPath}`);
+            navigate(redirectPath, { replace: true });
+          } else {
+            console.log("Profile not loaded yet, the auth state listener will handle redirection");
+          }
+        }, 300);
       } else {
         console.error("Sign-in error:", error);
+        setIsLoading(false);
       }
     } catch (err) {
       console.error("Unexpected error during sign in:", err);
-      showErrorToast("An unexpected error occurred during sign in");
-    } finally {
+      toast.error("An unexpected error occurred during sign in");
       setIsLoading(false);
     }
   };
+  
+  if (isRedirecting) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mr-2" />
+        <span className="ml-2">Redirecting to dashboard...</span>
+      </div>
+    );
+  }
   
   return (
     <div className="container max-w-md mx-auto py-12">
@@ -89,7 +107,7 @@ const AuthPage = () => {
                   className="p-0 h-auto text-xs text-muted-foreground"
                   type="button"
                   onClick={() => {
-                    showInfoToast("Reset Password", "Please contact an admin for password reset assistance");
+                    toast.info("Reset Password", "Please contact an admin for password reset assistance");
                   }}
                   disabled={isLoading}
                 >

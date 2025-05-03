@@ -1,5 +1,5 @@
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { UserProfile } from "@/types";
 import { AuthContextType } from "./types";
@@ -24,6 +24,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     debugMode
   });
 
+  // Create a memoized refreshProfile function that uses the current user
+  const refreshCurrentProfile = useCallback(async (): Promise<boolean> => {
+    if (!user) {
+      return false;
+    }
+    return refreshProfile(user.id);
+  }, [user, refreshProfile]);
+
   // Helper function for sign in that also fetches the profile
   const signIn = async (email: string, password: string) => {
     const result = await signInWithEmail(email, password);
@@ -39,7 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signUp: signUpWithEmail,
     signOut: signOutUser,
     resetPassword: resetUserPassword,
-    refreshProfile,
+    refreshProfile: refreshCurrentProfile,
     debugMode,
     toggleDebugMode
   };

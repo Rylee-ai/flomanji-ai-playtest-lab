@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { UserProfile } from "@/types";
@@ -57,18 +56,36 @@ export function useAuthStateListener({
               setProfileAttempts(0); // Reset attempts counter on success
             } else {
               console.warn("No profile found for logged in user");
-              setProfile(null);
               
               // Don't show toast on first attempt to avoid flickering
-              if (event !== 'INITIAL_SESSION') {
+              if (event !== 'INITIAL_SESSION' && event !== 'SIGNED_IN') {
                 toast.error("Your user profile could not be loaded");
               }
+              
               setProfileAttempts(prev => prev + 1);
+              
+              // Keep previous profile if we have one to avoid logout loops
+              if (event !== 'SIGNED_OUT') {
+                setProfile(prev => prev);
+              } else {
+                setProfile(null);
+              }
             }
           } catch (err) {
             console.error("Profile fetch error:", err);
-            setProfile(null);
-            toast.error("Error loading your profile");
+            // Keep previous profile if we have one to avoid logout loops
+            if (event !== 'SIGNED_OUT') {
+              setProfile(prev => prev);
+            } else {
+              setProfile(null);
+            }
+            
+            // Only show toast if we've tried multiple times
+            if (event !== 'INITIAL_SESSION' && event !== 'SIGNED_IN') {
+              toast.error("Error loading your profile");
+            }
+            
+            setProfileAttempts(prev => prev + 1);
           }
         } else {
           setProfile(null);
@@ -100,10 +117,12 @@ export function useAuthStateListener({
         }).catch(err => {
           console.error("Error in get session profile fetch:", err);
           setProfileAttempts(1);
+        }).finally(() => {
+          setIsLoading(false);
         });
+      } else {
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
     }).catch(err => {
       console.error("Error getting session:", err);
       setIsLoading(false);

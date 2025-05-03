@@ -21,6 +21,7 @@ export function useProfileManagement(initialUser: User | null, debugMode: boolea
     const userEmail = initialUser?.email;
     
     if (!userToRefresh) {
+      console.warn("Cannot refresh profile: no userId provided");
       return false;
     }
     
@@ -54,16 +55,23 @@ export function useProfileManagement(initialUser: User | null, debugMode: boolea
       } else {
         console.error("Failed to fetch user profile during refresh");
         
-        // Only show toast if we've attempted a few times
+        // Only show toast if we've tried multiple times to avoid flickering
         if (profileAttempts > 2) {
           toast.error("Could not load your profile data. Please try again or contact support.");
         }
+        
         setProfileAttempts(prev => prev + 1);
         return false;
       }
     } catch (error) {
       console.error("Error refreshing profile:", error);
-      toast.error("Error refreshing your profile data");
+      
+      // Only show toast if we've tried multiple times to avoid flickering
+      if (profileAttempts > 2) {
+        toast.error("Error refreshing your profile data");
+      }
+      
+      setProfileAttempts(prev => prev + 1);
       return false;
     }
   };
