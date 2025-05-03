@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Check, AlertTriangle, FileJson, FileText } from "lucide-react";
+import { Check, AlertTriangle, FileJson, FileText, Info } from "lucide-react";
 import { CardFormValues } from "@/types/forms/card-form";
 
 interface ValidationSummaryProps {
@@ -15,7 +15,7 @@ export const ValidationSummary = ({
   validationErrors,
   fileType,
 }: ValidationSummaryProps) => {
-  if (transformedCards.length === 0 && validationErrors.length === 0) {
+  if (!fileType) {
     return null;
   }
   
@@ -35,6 +35,24 @@ export const ValidationSummary = ({
     return "JSON";
   };
 
+  // Special handling for when a file was processed but no cards were found
+  if (transformedCards.length === 0 && fileType) {
+    return (
+      <Alert variant="destructive">
+        <Info className="h-4 w-4" />
+        <AlertTitle>No Cards Found</AlertTitle>
+        <AlertDescription>
+          <p className="mb-2">No valid cards were found in the uploaded {getFileTypeDescription()} file.</p>
+          <ul className="list-disc pl-5 space-y-1 text-sm">
+            <li>Check that the file format matches the expected structure</li>
+            <li>Verify that you've selected the correct card type</li>
+            <li>Make sure the file contains properly formatted card data</li>
+          </ul>
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {validationErrors.length > 0 ? (
@@ -49,7 +67,7 @@ export const ValidationSummary = ({
             </ul>
           </AlertDescription>
         </Alert>
-      ) : (
+      ) : transformedCards.length > 0 ? (
         <Alert variant="default" className="border-green-500 bg-green-50 dark:bg-green-900/20">
           <Check className="h-4 w-4 text-green-500" />
           <AlertTitle className="text-green-600 dark:text-green-400">File Validated</AlertTitle>
@@ -59,15 +77,16 @@ export const ValidationSummary = ({
               <span>{getFileTypeDescription()} file processed successfully.</span>
             </div>
             <p className="mt-1">Found {transformedCards.length} valid cards ready for import.</p>
+            <p className="mt-1 font-medium">Click the "Import Cards" button below to add these cards to your collection.</p>
           </AlertDescription>
         </Alert>
-      )}
+      ) : null}
       
       {transformedCards.length > 0 && (
         <div className="p-4 border rounded-md bg-muted/20">
           <h3 className="text-sm font-medium mb-2">Card Preview</h3>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
-            {transformedCards.slice(0, 5).map((card, index) => (
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {transformedCards.slice(0, 10).map((card, index) => (
               <div key={index} className="text-xs p-2 bg-background rounded border">
                 <span className="font-semibold">{card.name}</span> - {card.type}
                 {card.keywords && card.keywords.length > 0 && (
@@ -77,9 +96,9 @@ export const ValidationSummary = ({
                 )}
               </div>
             ))}
-            {transformedCards.length > 5 && (
+            {transformedCards.length > 10 && (
               <p className="text-xs text-muted-foreground">
-                ...and {transformedCards.length - 5} more cards
+                ...and {transformedCards.length - 10} more cards
               </p>
             )}
           </div>

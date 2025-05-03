@@ -29,7 +29,7 @@ export const CardImportActions = ({
       errors: []
     };
     
-    if (transformedCards.length > 0 && validationErrors.length === 0) {
+    if (transformedCards.length > 0) {
       console.log("Importing cards:", transformedCards.length);
       onImport(transformedCards, resultsToUse);
     }
@@ -37,17 +37,25 @@ export const CardImportActions = ({
 
   // Show the import button only when we have valid cards
   const showImportButton = transformedCards.length > 0 && validationErrors.length === 0;
+  
+  console.log("CardImportActions - Showing import button:", showImportButton);
+  console.log("CardImportActions - Cards count:", transformedCards.length);
+  console.log("CardImportActions - Validation errors:", validationErrors.length);
 
   return (
-    <DialogFooter>
+    <DialogFooter className="flex justify-between">
       <Button variant="outline" onClick={onClose}>
         Cancel
       </Button>
-      {showImportButton && (
-        <Button onClick={handleImport}>
+      {showImportButton ? (
+        <Button onClick={handleImport} variant="success">
           Import {transformedCards.length} Cards
         </Button>
-      )}
+      ) : transformedCards.length > 0 ? (
+        <Button variant="secondary" disabled>
+          Fix Errors to Import
+        </Button>
+      ) : null}
     </DialogFooter>
   );
 };

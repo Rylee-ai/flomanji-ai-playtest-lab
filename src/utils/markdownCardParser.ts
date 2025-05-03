@@ -10,10 +10,27 @@ import { marked } from "marked";
  */
 export const parseMarkdownCards = (markdownContent: string): CardFormValues[] => {
   const cards: CardFormValues[] = [];
+  console.log("Parsing markdown content, length:", markdownContent.length);
   
   // Split the markdown content by major card sections
   // We're looking for sections that begin with a number followed by a period and space
-  const cardSections = markdownContent.split(/\n\s*\*\*\d+\.\s*(.+?)\*\*/);
+  let cardSections: string[] = [];
+  
+  // Try different patterns for splitting cards
+  if (markdownContent.includes("**1.")) {
+    // Format: **1. Card Name**
+    cardSections = markdownContent.split(/\n\s*\*\*\d+\.\s*(.+?)\*\*/);
+    console.log("Using numbered card format with ** markers, found sections:", cardSections.length);
+  } else if (markdownContent.includes("# ")) {
+    // Format: # Card Name
+    cardSections = markdownContent.split(/\n\s*#\s+(.+?)(?:\n|$)/);
+    console.log("Using # header format, found sections:", cardSections.length);
+  } else {
+    // Format: Card Name
+    // Last resort - try to split on double newlines
+    cardSections = markdownContent.split(/\n\n+/);
+    console.log("Using paragraph breaks, found sections:", cardSections.length);
+  }
   
   // Filter out empty sections and process each card section
   for (let i = 1; i < cardSections.length; i += 2) {
@@ -22,6 +39,8 @@ export const parseMarkdownCards = (markdownContent: string): CardFormValues[] =>
     const cardTitle = cardSections[i].trim();
     const cardContent = cardSections[i+1] || '';
     
+    console.log("Processing card:", cardTitle);
+    
     // Parse the card content into an object
     const card = parseCardSection(cardTitle, cardContent);
     if (card) {
@@ -29,6 +48,81 @@ export const parseMarkdownCards = (markdownContent: string): CardFormValues[] =>
     }
   }
   
+  console.log("Total cards parsed:", cards.length);
+  // If we failed to parse cards with the standard method, try a fallback approach
+  if (cards.length === 0) {
+    console.log("Falling back to alternate parsing method");
+    return parseMarkdownCardsAlternate(markdownContent);
+  }
+  
+  return cards;
+};
+
+/**
+ * Alternative parsing method for different markdown formats
+ */
+const parseMarkdownCardsAlternate = (markdownContent: string): CardFormValues[] => {
+  const cards: CardFormValues[] = [];
+  
+  // Split content by what looks like card boundaries (headings or numbered items)
+  const sections = markdownContent.split(/\n(?=\d+\.\s+|#\s+|##\s+)/);
+  
+  console.log("Alternative parsing found sections:", sections.length);
+  
+  for (const section of sections) {
+    if (!section.trim()) continue;
+    
+    // Try to extract a name from the section
+    const nameMatch = section.match(/^(?:\d+\.\s+|#\s+|##\s+)?(.*?)(?:\n|$)/);
+    const name = nameMatch ? nameMatch[1].trim() : "Unnamed Card";
+    
+    // Check for common fields
+    const typeMatch = section.match(/Type:?\s*(.*?)(?:\n|$)/i);
+    const keywordsMatch = section.match(/Keywords?:?\s*(.*?)(?:\n|$)/i);
+    const rulesMatch = section.match(/Rules?:?\s*([\s\S]*?)(?:\n\n|$)/i);
+    const flavorMatch = section.match(/Flavor:?\s*(.*?)(?:\n|$)/i);
+    
+    const card: Partial<CardFormValues> = {
+      name,
+      icons: [],
+      keywords: [],
+      rules: [],
+    };
+    
+    // Extract card type
+    if (typeMatch) {
+      const typeText = typeMatch[1].trim();
+      if (typeText.toLowerCase().includes('gear')) {
+        card.type = 'gear' as CardType;
+      } else if (typeText.toLowerCase().includes('treasure')) {
+        card.type = 'treasure' as CardType;
+      } else if (typeText.toLowerCase().includes('hazard')) {
+        card.type = 'hazard' as CardType;
+      }
+    }
+    
+    // Extract keywords
+    if (keywordsMatch) {
+      card.keywords = keywordsMatch[1].split(/,\s*/).map(k => k.trim());
+    }
+    
+    // Extract rules
+    if (rulesMatch) {
+      card.rules = [rulesMatch[1].trim()];
+    }
+    
+    // Extract flavor text
+    if (flavorMatch) {
+      card.flavor = flavorMatch[1].trim();
+    }
+    
+    // Only add cards with a name
+    if (card.name) {
+      cards.push(card as CardFormValues);
+    }
+  }
+  
+  console.log("Alternative parsing found cards:", cards.length);
   return cards;
 };
 
@@ -40,6 +134,8 @@ export const parseMarkdownCards = (markdownContent: string): CardFormValues[] =>
  */
 const parseCardSection = (title: string, content: string): CardFormValues | null => {
   if (!content) return null;
+  
+  console.log("Parsing card section:", title);
   
   // Initialize default card values
   const card: Partial<CardFormValues> = {
@@ -57,15 +153,21 @@ const parseCardSection = (title: string, content: string): CardFormValues | null
   const flavorMatch = content.match(/\*\s*\*\*Flavor:\*\*\s*(.*?)(?:\n|$)/);
   const imagePromptMatch = content.match(/\*\s*\*\*Image Prompt:\*\*\s*(.*?)(?:\n|$)/);
   
+  // Fallback patterns without asterisks
+  const typeMatchAlt = !typeMatch ? content.match(/Type:\s*(.*?)(?:\n|$)/i) : null;
+  const keywordsMatchAlt = !keywordsMatch ? content.match(/Keywords:\s*(.*?)(?:\n|$)/i) : null;
+  const rulesMatchAlt = !rulesMatch ? content.match(/Rules:\s*(.*?)(?:\n|$)/i) : null;
+  const flavorMatchAlt = !flavorMatch ? content.match(/Flavor:\s*(.*?)(?:\n|$)/i) : null;
+  
   // Process card type (e.g., "GEAR – Consumable" -> "gear")
-  if (typeMatch) {
-    const typeText = typeMatch[1].trim();
+  if (typeMatch || typeMatchAlt) {
+    const typeText = (typeMatch || typeMatchAlt)[1].trim();
     const baseType = typeText.split('–')[0].trim().toLowerCase();
     
     // Map to our internal card type
-    const cardType = baseType === 'gear' ? 'gear' as CardType :
-                     baseType === 'treasure' ? 'treasure' as CardType :
-                     baseType === 'hazard' ? 'hazard' as CardType :
+    const cardType = baseType.includes('gear') ? 'gear' as CardType :
+                     baseType.includes('treasure') ? 'treasure' as CardType :
+                     baseType.includes('hazard') ? 'hazard' as CardType :
                      'gear' as CardType; // Default to gear if unknown
                      
     card.type = cardType;
@@ -94,25 +196,30 @@ const parseCardSection = (title: string, content: string): CardFormValues | null
   }
   
   // Process keywords
-  if (keywordsMatch) {
-    const keywordsText = keywordsMatch[1].trim();
+  if (keywordsMatch || keywordsMatchAlt) {
+    const keywordsText = (keywordsMatch || keywordsMatchAlt)[1].trim();
     card.keywords = keywordsText.split(/,\s*/).map(k => k.trim());
   }
   
   // Process rules text
-  if (rulesMatch) {
-    const rulesText = rulesMatch[1].trim();
+  if (rulesMatch || rulesMatchAlt) {
+    const rulesText = (rulesMatch || rulesMatchAlt)[1].trim();
     card.rules = [rulesText];
   }
   
   // Process flavor text
-  if (flavorMatch) {
-    card.flavor = flavorMatch[1].trim().replace(/^\*|\'|\"|\*$/g, '');
+  if (flavorMatch || flavorMatchAlt) {
+    card.flavor = (flavorMatch || flavorMatchAlt)[1].trim().replace(/^\*|\'|\"|\*$/g, '');
   }
   
   // Process image prompt
   if (imagePromptMatch) {
     card.imagePrompt = imagePromptMatch[1].trim();
+  }
+  
+  // Log any missing required fields
+  if (!card.type) {
+    console.warn(`Card ${title} is missing type`);
   }
   
   return card as CardFormValues;
@@ -142,13 +249,24 @@ const mapGearCategory = (categoryText: string): 'consumable' | 'tool' | 'weapon'
  * @returns Transformed card data
  */
 export const transformMarkdownToCards = (markdownContent: string, defaultCardType: CardType): CardFormValues[] => {
+  console.log("Starting markdown to card transformation with type:", defaultCardType);
   const cards = parseMarkdownCards(markdownContent);
   
   // Ensure all cards have the correct type if not properly extracted
-  return cards.map(card => {
+  const processedCards = cards.map(card => {
     if (!card.type) {
+      console.log(`Setting default type ${defaultCardType} for card: ${card.name}`);
       card.type = defaultCardType;
     }
+    
+    // For gear cards, ensure they have a category
+    if (card.type === 'gear' && !card.category) {
+      card.category = 'tool';
+    }
+    
     return card;
   });
+  
+  console.log(`Transformed ${processedCards.length} cards from markdown`);
+  return processedCards;
 };

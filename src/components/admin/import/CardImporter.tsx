@@ -34,7 +34,8 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
       onImport(cards, results);
       setIsDialogOpen(false);
       toast.success(`Successfully imported ${cards.length} cards`);
-    }
+    },
+    initialCardType: activeCardType // Pass the active card type here
   });
 
   const handleFileSelected = async (file: File) => {
@@ -71,7 +72,11 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
         variant="default" 
         size="sm" 
         className="gap-2"
-        onClick={() => setIsDialogOpen(true)}
+        onClick={() => {
+          setIsDialogOpen(true);
+          // Reset card type to the active tab type whenever opening the dialog
+          setCardType(activeCardType);
+        }}
       >
         <Upload className="h-4 w-4" />
         <span>Import Cards</span>

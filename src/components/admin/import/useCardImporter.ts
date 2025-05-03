@@ -10,12 +10,13 @@ import { transformMarkdownToCards } from "@/utils/markdownCardParser";
 
 interface UseCardImporterProps {
   onImportComplete: (cards: CardFormValues[], results: CardImportResult) => void;
+  initialCardType?: CardType;
 }
 
-export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
+export function useCardImporter({ onImportComplete, initialCardType = "gear" }: UseCardImporterProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [fileType, setFileType] = useState<string | null>(null);
-  const [cardType, setCardType] = useState<CardType>("gear");
+  const [cardType, setCardType] = useState<CardType>(initialCardType);
   const [transformedCards, setTransformedCards] = useState<CardFormValues[]>([]);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [importResults, setImportResults] = useState<CardImportResult | null>(null);
@@ -28,6 +29,8 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
       
       if (fileExtension === 'md') {
         setFileType("markdown");
+        // Don't change the card type for markdown files - use the one set by the user
+        console.log("Detected Markdown file, using selected card type:", cardType);
         return "markdown";
       }
       
@@ -107,11 +110,11 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
       }
 
       const text = await file.text();
-      let processedCards: CardFormValues[];
+      let processedCards: CardFormValues[] = [];
       
       // Process based on file type
       if (fileExtension === 'md') {
-        // Process Markdown file
+        // Process Markdown file - crucial to use the current cardType
         console.log("Processing Markdown file for card type:", cardType);
         processedCards = transformMarkdownToCards(text, cardType);
       } else {
@@ -142,10 +145,14 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
       
       // Validate cards
       const errors: string[] = [];
-      processedCards.forEach((card, index) => {
-        if (!card.name) errors.push(`Card #${index + 1}: Missing name`);
-        if (!card.type) errors.push(`Card #${index + 1}: Missing type`);
-      });
+      if (processedCards.length === 0) {
+        errors.push("No valid cards found in file. Please check the format and card type selection.");
+      } else {
+        processedCards.forEach((card, index) => {
+          if (!card.name) errors.push(`Card #${index + 1}: Missing name`);
+          if (!card.type) errors.push(`Card #${index + 1}: Missing type`);
+        });
+      }
       
       setValidationErrors(errors);
       
@@ -159,14 +166,10 @@ export function useCardImporter({ onImportComplete }: UseCardImporterProps) {
       
       setImportResults(results);
       setTransformedCards(processedCards);
-      
-      // DO NOT Auto complete import if no errors - let the user trigger the import
-      // if (errors.length === 0 && processedCards.length > 0) {
-      //   onImportComplete(processedCards, results);
-      // }
     } catch (error) {
       console.error('Error processing file:', error);
       toast.error(`Failed to process ${cardType} cards. Please check the file format.`);
+      setValidationErrors([`Failed to process file: ${error}`]);
     } finally {
       setIsProcessing(false);
     }
