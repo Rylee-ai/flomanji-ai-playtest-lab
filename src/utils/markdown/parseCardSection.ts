@@ -77,7 +77,7 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     card.type = 'gear';
   }
   
-  // Icons
+  // Icons - declare iconMatch before using it
   const iconMatch = content.match(/\*\s*\*\*Icon\(s\):\*\*\s*([^\n]+)/i) || content.match(/Icon\(s\):\s*([^\n]+)/i);
   if (iconMatch) {
     const iconsText = iconMatch[1].trim();
@@ -85,9 +85,9 @@ export const parseCardSection = (title: string, content: string): CardFormValues
     
     // Extract icons in [Icon Name] format
     const iconRegex = /\[([^\]]+)\]/g;
-    let iconMatch;
-    while ((iconMatch = iconRegex.exec(iconsText)) !== null) {
-      const iconName = iconMatch[1].trim();
+    let match;
+    while ((match = iconRegex.exec(iconsText)) !== null) {
+      const iconName = match[1].trim();
       card.icons = card.icons || [];
       card.icons.push({
         symbol: iconName,
@@ -150,4 +150,3 @@ export const parseCardSection = (title: string, content: string): CardFormValues
   console.log(`Successfully parsed card: ${card.name}, type: ${card.type}`);
   return card as CardFormValues;
 };
-

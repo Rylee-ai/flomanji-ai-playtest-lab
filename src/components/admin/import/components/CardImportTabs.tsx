@@ -79,7 +79,11 @@ export function CardImportTabs({
         </div>
 
         {validationErrors.length > 0 && (
-          <ValidationSummary errors={validationErrors} />
+          <ValidationSummary 
+            validationErrors={validationErrors} 
+            transformedCards={transformedCards} 
+            fileType={fileType} 
+          />
         )}
       </TabsContent>
 
@@ -108,7 +112,10 @@ export function CardImportTabs({
                 setCardType={setCardType}
                 defaultCardType={defaultCardType}
               />
-              <TemplateDownloader cardType={cardType} />
+              <TemplateDownloader 
+                cardType={cardType}
+                setCardType={setCardType}
+              />
             </div>
 
             <div className="p-4 bg-muted/50 rounded-md">

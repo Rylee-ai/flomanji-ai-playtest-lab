@@ -1,8 +1,19 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, CheckCircle } from "lucide-react";
+import { CardFormValues } from "@/types/forms/card-form";
 
-export function ValidationSummary({ validationErrors, transformedCards, fileType }) {
+interface ValidationSummaryProps {
+  validationErrors: string[];
+  transformedCards?: CardFormValues[];
+  fileType?: string | null;
+}
+
+export function ValidationSummary({ 
+  validationErrors, 
+  transformedCards = [], 
+  fileType = null 
+}: ValidationSummaryProps) {
   if (validationErrors.length === 0 && transformedCards.length === 0) {
     return null;
   }
