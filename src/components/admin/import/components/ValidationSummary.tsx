@@ -1,6 +1,6 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ExclamationTriangleIcon, CheckCircledIcon } from "@radix-ui/react-icons";
+import { AlertTriangle, CheckCircle } from "lucide-react";
 import { CardFormValues } from "@/types/forms/card-form";
 
 export interface ValidationSummaryProps {
@@ -17,7 +17,7 @@ export function ValidationSummary({ validationErrors, transformedCards, fileType
   if (validationErrors.length > 0) {
     return (
       <Alert variant="destructive">
-        <ExclamationTriangleIcon className="h-4 w-4" />
+        <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Validation Failed</AlertTitle>
         <AlertDescription>
           <ul className="list-disc pl-5 mt-2 space-y-1">
@@ -33,7 +33,7 @@ export function ValidationSummary({ validationErrors, transformedCards, fileType
   if (transformedCards.length > 0) {
     return (
       <Alert variant="success" className="bg-green-50 border-green-200">
-        <CheckCircledIcon className="h-4 w-4 text-green-600" />
+        <CheckCircle className="h-4 w-4 text-green-600" />
         <AlertTitle className="text-green-800">Success</AlertTitle>
         <AlertDescription className="text-green-700">
           {transformedCards.length} card{transformedCards.length !== 1 ? 's' : ''} ready to import.

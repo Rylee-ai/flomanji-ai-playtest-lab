@@ -4,6 +4,8 @@ import { renderHook, act } from '@testing-library/react';
 import { useFileProcessor } from '@/components/admin/import/hooks/useFileProcessor';
 import { useFileFormat } from '@/components/admin/import/hooks/useFileFormat';
 import { FileProcessingService } from '@/utils/file-processing/FileProcessingService';
+import { CardType } from '@/types/cards';
+import { CardFormValues } from '@/types/forms/card-form';
 
 // Mock dependencies
 vi.mock('@/components/admin/import/hooks/useFileFormat', () => ({
@@ -36,7 +38,7 @@ describe('useFileProcessor', () => {
     // Setup mocks
     const mockFile = new File(['test'], 'test.md');
     const mockResult = {
-      processedCards: [{ id: '1', name: 'Card', type: 'gear' }],
+      processedCards: [{ id: '1', name: 'Card', type: 'gear' as CardType }] as CardFormValues[],
       errors: []
     };
     
