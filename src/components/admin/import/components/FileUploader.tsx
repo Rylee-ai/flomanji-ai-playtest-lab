@@ -7,9 +7,10 @@ import { toast } from "sonner";
 export interface FileUploaderProps {
   onFileSelected: (file: File) => void;
   isProcessing: boolean;
+  className?: string; // Added className as an optional prop
 }
 
-export function FileUploader({ onFileSelected, isProcessing }: FileUploaderProps) {
+export function FileUploader({ onFileSelected, isProcessing, className }: FileUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +31,7 @@ export function FileUploader({ onFileSelected, isProcessing }: FileUploaderProps
   };
 
   return (
-    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+    <div className={`border-2 border-dashed border-gray-300 rounded-lg p-6 text-center ${className || ''}`}>
       <input
         type="file"
         className="hidden"

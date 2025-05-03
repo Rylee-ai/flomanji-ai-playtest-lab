@@ -4,13 +4,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface CardTypeSelectorProps {
   cardType: CardType;
-  onCardTypeChange: (value: CardType) => void;
+  setCardType: (value: CardType) => void;
   defaultCardType: CardType;
 }
 
 export function CardTypeSelector({
   cardType,
-  onCardTypeChange,
+  setCardType,
   defaultCardType
 }: CardTypeSelectorProps) {
   const cardTypes: { value: CardType; label: string }[] = [
@@ -34,7 +34,7 @@ export function CardTypeSelector({
       </label>
       <Select 
         value={cardType} 
-        onValueChange={value => onCardTypeChange(value as CardType)}
+        onValueChange={value => setCardType(value as CardType)}
       >
         <SelectTrigger id="card-type">
           <SelectValue placeholder="Select card type" />

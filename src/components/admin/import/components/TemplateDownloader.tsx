@@ -5,10 +5,9 @@ import { CardType } from "@/types/cards";
 
 export interface TemplateDownloaderProps {
   cardType: CardType;
-  setCardType: (type: CardType) => void;
 }
 
-export function TemplateDownloader({ cardType, setCardType }: TemplateDownloaderProps) {
+export function TemplateDownloader({ cardType }: TemplateDownloaderProps) {
   const handleDownload = () => {
     // Generate a template for the current card type
     let templateContent = "";
