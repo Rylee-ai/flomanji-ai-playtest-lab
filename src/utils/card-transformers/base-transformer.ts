@@ -11,7 +11,7 @@ export interface BaseCardInput {
   type: string;
   icons: string[];
   keywords: string[];
-  rules: string;
+  rules: string | string[];
   flavor: string;
   image_prompt: string;
 }
@@ -40,9 +40,9 @@ export const processIcons = (icons: (string | { symbol: string; meaning: string 
  */
 export const transformBaseCardData = (cardData: BaseCardInput): Partial<CardFormValues> => {
   // Process rules text - split into array if it isn't already
-  const rules = typeof cardData.rules === 'string' 
-    ? [cardData.rules] 
-    : cardData.rules;
+  const rules = Array.isArray(cardData.rules)
+    ? cardData.rules 
+    : [cardData.rules];
   
   // Process icons
   const icons = processIcons(cardData.icons || []);

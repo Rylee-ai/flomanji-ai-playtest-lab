@@ -1,5 +1,5 @@
 
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { transformTreasureCardData } from '@/utils/card-transformers/treasure-transformer';
 import * as baseTransformer from '@/utils/card-transformers/base-transformer';
 
