@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import ValidationRules from "./validation/ValidationRules";
 import ConfigValidation from "./validation/ConfigValidation";
 import { ValidationProvider, useValidation } from "./validation/ValidationContext";
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+import { logCardOperation } from "@/utils/error-handling/cardErrorHandler";
 
 interface SimulationValidationManagerProps {
   isLoading: boolean;
@@ -50,39 +52,54 @@ const ValidationManagerInner: React.FC<SimulationValidationManagerProps> = ({
   } = useValidation();
 
   const handleStartSimulation = useCallback(() => {
-    const simulationConfig: SimulationConfig = {
-      ...config,
-      missionId: selectedMission.id,
-      characters: selectedCharacters,
-      missionType: config.players === 1 ? "solo" : config.missionType,
-      extractionRegion: selectedMission.extractionRegion
-    };
+    try {
+      const simulationConfig: SimulationConfig = {
+        ...config,
+        missionId: selectedMission.id,
+        characters: selectedCharacters,
+        missionType: config.players === 1 ? "solo" : config.missionType,
+        extractionRegion: selectedMission.extractionRegion
+      };
 
-    if (!selectedMission) {
-      toast.error("Please select a mission");
-      return;
-    }
-    if (selectedCharacters.length === 0) {
-      toast.error("Please select at least one character");
-      return;
-    }
-    if (selectedCharacters.length !== config.players) {
-      if (selectedCharacters.length < config.players) {
-        toast.error(`Please select ${config.players} characters`);
+      logCardOperation("Starting simulation", {
+        missionId: selectedMission.id,
+        players: config.players,
+        characters: selectedCharacters,
+        missionType: simulationConfig.missionType
+      });
+
+      if (!selectedMission) {
+        toast.error("Please select a mission");
         return;
       }
-      simulationConfig.players = selectedCharacters.length;
-    }
-    if (validationErrors.length > 0) {
-      toast.warning("There are configuration warnings. Check your setup before proceeding.");
-    }
+      
+      if (selectedCharacters.length === 0) {
+        toast.error("Please select at least one character");
+        return;
+      }
+      
+      if (selectedCharacters.length !== config.players) {
+        if (selectedCharacters.length < config.players) {
+          toast.error(`Please select ${config.players} characters`);
+          return;
+        }
+        simulationConfig.players = selectedCharacters.length;
+      }
+      
+      if (validationErrors.length > 0) {
+        toast.warning("There are configuration warnings. Check your setup before proceeding.");
+      }
 
-    onStartSimulation(simulationConfig);
+      onStartSimulation(simulationConfig);
+    } catch (error) {
+      console.error("Error starting simulation:", error);
+      toast.error("Failed to start simulation. Please check your configuration and try again.");
+    }
   }, [config, selectedCharacters, selectedMission, validationErrors, onStartSimulation]);
 
   // Render validation components
   return (
-    <>
+    <ErrorBoundary>
       <ValidationRules
         config={config}
         selectedMission={selectedMission}
@@ -110,7 +127,7 @@ const ValidationManagerInner: React.FC<SimulationValidationManagerProps> = ({
         handleCharacterDeselect,
         handleStartSimulation,
       })}
-    </>
+    </ErrorBoundary>
   );
 };
 
@@ -125,13 +142,16 @@ const SimulationValidationManager: React.FC<SimulationValidationManagerProps> = 
     enableCritic: true,
     outputMode: "full",
     startingHeat: 2,
-    missionType: "exploration"
+    missionType: "exploration",
+    characters: [] // Initialize empty characters array for type safety
   };
 
   return (
-    <ValidationProvider initialConfig={initialConfig}>
-      <ValidationManagerInner {...props} />
-    </ValidationProvider>
+    <ErrorBoundary>
+      <ValidationProvider initialConfig={initialConfig}>
+        <ValidationManagerInner {...props} />
+      </ValidationProvider>
+    </ErrorBoundary>
   );
 };
 

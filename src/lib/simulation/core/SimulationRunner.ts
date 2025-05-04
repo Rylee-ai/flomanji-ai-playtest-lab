@@ -30,7 +30,7 @@ export class SimulationRunner {
   ): Promise<SimulationResult> {
     logCardOperation("SimulationRunner.runSimulation called", { 
       missionId: config.missionId,
-      characters: config.characters // Fixed: Use characters array instead of characterId
+      characters: config.characters // Using characters array instead of characterId
     });
     
     try {

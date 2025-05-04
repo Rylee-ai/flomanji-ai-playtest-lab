@@ -17,7 +17,7 @@ export class CardService {
    * Create or update a card in the database
    */
   static async saveCard<T extends GameCard>(card: T): Promise<T> {
-    logCardOperation('saveCard', { id: card.id, name: card.name });
+    logCardOperation('saveCard', { id: card.id, name: card.name, type: card.type });
     
     try {
       const savedCard = await BasicCardService.saveCard(card);
@@ -50,7 +50,7 @@ export class CardService {
       return { success: true, count: 0 };
     }
     
-    logCardOperation('saveCards', { count: cards.length });
+    logCardOperation('saveCards', { count: cards.length, types: [...new Set(cards.map(c => c.type))] });
     
     // For small batches, use the original method
     if (cards.length <= 50 && !options) {
@@ -119,13 +119,15 @@ export class CardService {
    * Get a card by ID with improved error handling
    */
   static async getCard<T extends GameCard>(id: string): Promise<T | null> {
-    try {
-      return await BasicCardService.getCard<T>(id);
-    } catch (error) {
-      const formattedError = formatCardError(error, `getCard(${id})`);
-      console.error(formattedError);
+    const operation = async () => BasicCardService.getCard<T>(id);
+    const { result, error } = await safeCardOperation(operation, `getCard(${id})`);
+    
+    if (error) {
+      console.error(`Failed to get card with ID ${id}:`, error);
       return null;
     }
+    
+    return result || null;
   }
 
   /**
@@ -147,7 +149,15 @@ export class CardService {
    * Get all cards
    */
   static async getAllCards(): Promise<GameCard[]> {
-    return BasicCardService.getAllCards();
+    const operation = async () => BasicCardService.getAllCards();
+    const { result, error } = await safeCardOperation(operation, 'getAllCards');
+    
+    if (error) {
+      console.error('Failed to get all cards:', error);
+      return [];
+    }
+    
+    return result || [];
   }
 
   /**
@@ -155,14 +165,28 @@ export class CardService {
    */
   static async deleteCard(id: string): Promise<boolean> {
     logCardOperation('deleteCard', { id });
-    return BasicCardService.deleteCard(id);
+    try {
+      return await BasicCardService.deleteCard(id);
+    } catch (error) {
+      const formattedError = formatCardError(error, `deleteCard(${id})`);
+      console.error(formattedError);
+      return false;
+    }
   }
 
   /**
    * Get version history for a card
    */
   static async getCardVersionHistory(cardId: string): Promise<CardVersion[]> {
-    return CardVersionService.getCardVersionHistory(cardId);
+    const operation = async () => CardVersionService.getCardVersionHistory(cardId);
+    const { result, error } = await safeCardOperation(operation, `getCardVersionHistory(${cardId})`);
+    
+    if (error) {
+      console.error(`Failed to get version history for card ${cardId}:`, error);
+      return [];
+    }
+    
+    return result || [];
   }
 
   /**
@@ -183,13 +207,27 @@ export class CardService {
    * Search cards by text
    */
   static async searchCards(query: string): Promise<GameCard[]> {
-    return CardSearchService.searchCards(query);
+    const operation = async () => CardSearchService.searchCards(query);
+    const { result, error } = await safeCardOperation(operation, `searchCards(${query})`);
+    
+    if (error) {
+      console.error(`Failed to search cards with query "${query}":`, error);
+      return [];
+    }
+    
+    return result || [];
   }
 
   /**
    * Validate card against schema
    */
   static validateCard<T extends GameCard>(card: T, type: CardType): { valid: boolean; errors: string[] } {
-    return CardValidationService.validateCard(card, type);
+    try {
+      return CardValidationService.validateCard(card, type);
+    } catch (error) {
+      const formattedError = formatCardError(error, 'validateCard');
+      console.error(formattedError);
+      return { valid: false, errors: [formattedError.message] };
+    }
   }
 }

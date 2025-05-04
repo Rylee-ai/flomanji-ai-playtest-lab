@@ -13,17 +13,26 @@ import { logCardOperation } from "@/utils/error-handling/cardErrorHandler";
 interface UseCardImporterProps {
   onImportComplete: (cards: CardFormValues[], results: CardImportResult) => void;
   initialCardType?: CardType;
+  processingOptions?: {
+    batchSize?: number;
+    continueOnError?: boolean;
+  };
 }
 
 /**
  * @deprecated Use useCardImporter from ./hooks/useCardImporter instead
  */
-export function useCardImporter({ onImportComplete, initialCardType = "gear" }: UseCardImporterProps) {
+export function useCardImporter({ 
+  onImportComplete, 
+  initialCardType = "gear",
+  processingOptions 
+}: UseCardImporterProps) {
   logCardOperation("Using deprecated useCardImporter hook", { 
     initialCardType,
-    timestamp: new Date()
+    timestamp: new Date(),
+    hasProcessingOptions: !!processingOptions
   });
   
   console.warn("This hook is deprecated. Use useCardImporter from ./hooks/useCardImporter instead");
-  return useCardImporterNew({ onImportComplete, initialCardType });
+  return useCardImporterNew({ onImportComplete, initialCardType, processingOptions });
 }

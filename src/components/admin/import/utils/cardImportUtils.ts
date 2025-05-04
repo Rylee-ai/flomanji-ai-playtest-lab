@@ -7,7 +7,8 @@ import {
   handleFileProcessingError as baseHandleFileProcessingError,
   formatCardError,
   safeCardOperation,
-  logCardOperation
+  logCardOperation,
+  CardOperationError
 } from "@/utils/error-handling/cardErrorHandler";
 
 /**
@@ -59,7 +60,10 @@ export const handleAIProcessing = async (
     
     logCardOperation("AI processing completed", { 
       cardCount: enhancedCards.length, 
-      cardType 
+      cardType,
+      enhancedCount: enhancedCards.filter((card, i) => 
+        JSON.stringify(card) !== JSON.stringify(processedCards[i])
+      ).length
     });
     
     return enhancedCards;
@@ -97,34 +101,32 @@ export const handleApplySuggestion = (
 ): CardFormValues[] => {
   logCardOperation("Applying AI suggestion", { suggestionIndex: index });
   
-  try {
-    // Apply the suggestion
-    const updatedCards = applySuggestion(index);
-    
+  const { result, error } = safeCardOperation(() => applySuggestion(index), `apply suggestion ${index}`);
+  
+  if (error) {
+    console.error("Error applying suggestion:", error);
+    logCardOperation("Error applying AI suggestion", { suggestionIndex: index, error });
+    return [];
+  }
+  
+  // If the suggestion was applied successfully
+  if (result && result.length > 0) {
     // Update state
-    setCards(updatedCards);
+    setCards(result);
     
     // Create and set import results
-    const results = createResults(updatedCards, errors);
+    const results = createResults(result, errors);
     setResults(results);
     
     logCardOperation("AI suggestion applied successfully", { 
       suggestionIndex: index,
-      updatedCardCount: updatedCards.length
+      updatedCardCount: result.length
     });
     
-    return updatedCards;
-  } catch (error) {
-    const formattedError = formatCardError(error, 'applying suggestion');
-    console.error("Error applying suggestion:", formattedError);
-    
-    logCardOperation("Error applying AI suggestion", { 
-      suggestionIndex: index,
-      error: formattedError
-    });
-    
-    return [];
+    return result;
   }
+  
+  return [];
 };
 
 /**
@@ -133,15 +135,21 @@ export const handleApplySuggestion = (
  * @param batchSize Number of cards per batch
  */
 export const createCardBatches = <T>(cards: T[], batchSize: number = 50): T[][] => {
+  if (!cards || cards.length === 0) {
+    return [];
+  }
+  
   const batches: T[][] = [];
   for (let i = 0; i < cards.length; i += batchSize) {
     batches.push(cards.slice(i, Math.min(i + batchSize, cards.length)));
   }
+  
   logCardOperation("Created card batches", { 
     totalCards: cards.length, 
     batchSize,
     batchCount: batches.length
   });
+  
   return batches;
 };
 
@@ -154,7 +162,7 @@ export const processCardBatch = async <T, R>(
   batchCount: number,
   processor: (batch: T[]) => Promise<R>,
   batchDescription: string = "cards"
-): Promise<{ result?: R, error?: string, success: boolean }> => {
+): Promise<{ result?: R, error?: CardOperationError, success: boolean }> => {
   try {
     logCardOperation(`Processing ${batchDescription} batch`, { 
       batchIndex, 
@@ -179,8 +187,54 @@ export const processCardBatch = async <T, R>(
     });
     
     return { 
-      error: formattedError.message, 
+      error: formattedError, 
       success: false 
     };
   }
+};
+
+/**
+ * Format validation errors for better user understanding
+ */
+export const formatValidationErrors = (errors: string[], cardCount: number): string[] => {
+  if (errors.length === 0) return [];
+  
+  const formattedErrors: string[] = [];
+  
+  // Group errors by type
+  const fileErrors = errors.filter(err => 
+    err.toLowerCase().includes('file') || 
+    err.toLowerCase().includes('format') ||
+    err.toLowerCase().includes('parse')
+  );
+  
+  const cardErrors = errors.filter(err => 
+    err.toLowerCase().includes('card') || 
+    err.toLowerCase().includes('missing')
+  );
+  
+  const otherErrors = errors.filter(err => 
+    !fileErrors.includes(err) && !cardErrors.includes(err)
+  );
+  
+  // Add file errors first
+  formattedErrors.push(...fileErrors);
+  
+  // Summarize card errors if there are many
+  if (cardErrors.length > 5) {
+    const cardErrorCount = cardErrors.length;
+    formattedErrors.push(
+      `Found ${cardErrorCount} card validation issues (${Math.round((cardErrorCount/cardCount)*100)}% of cards have problems)`
+    );
+    // Add a sample of errors
+    formattedErrors.push(...cardErrors.slice(0, 3));
+    formattedErrors.push('... and more card validation errors');
+  } else {
+    formattedErrors.push(...cardErrors);
+  }
+  
+  // Add other errors
+  formattedErrors.push(...otherErrors);
+  
+  return formattedErrors;
 };

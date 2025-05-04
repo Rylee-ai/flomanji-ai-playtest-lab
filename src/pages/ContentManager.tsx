@@ -8,6 +8,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
+import { ErrorBoundary } from "@/components/error/ErrorBoundary";
 import { 
   formatCardError, 
   logCardOperation, 
@@ -85,7 +86,9 @@ const ContentManager = () => {
             logCardOperation("Import batch exception", { batchIndex: i, error: formattedError });
           }
           
-          toast.info(`Progress: ${successCount}/${cards.length} cards imported, ${failedCount} failed`);
+          if (i % 2 === 0 || i === chunkedCards.length - 1) {
+            toast.info(`Progress: ${successCount}/${cards.length} cards imported, ${failedCount} failed`);
+          }
         }
         
         if (failedCount === 0) {
@@ -122,41 +125,45 @@ const ContentManager = () => {
   };
 
   return (
-    <div className="container max-w-7xl py-6 space-y-6">
-      <div className="flex items-center justify-between border-b pb-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Content Manager</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Create, manage, and organize game card content
-          </p>
+    <ErrorBoundary>
+      <div className="container max-w-7xl py-6 space-y-6">
+        <div className="flex items-center justify-between border-b pb-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Content Manager</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Create, manage, and organize game card content
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-2" asChild disabled={isImporting}>
+              <label>
+                <Download className="h-4 w-4" />
+                <span>Export</span>
+                <CardExporter cardType={activeTab} />
+              </label>
+            </Button>
+            
+            <CardImporter 
+              onImport={handleCardImport} 
+              activeCardType={activeTab} 
+              processingOptions={{
+                batchSize: 50,
+                continueOnError: true
+              }}
+            />
+          </div>
         </div>
         
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2" asChild disabled={isImporting}>
-            <label>
-              <Download className="h-4 w-4" />
-              <span>Export</span>
-              <CardExporter cardType={activeTab} />
-            </label>
-          </Button>
-          
-          <CardImporter 
-            onImport={handleCardImport} 
-            activeCardType={activeTab} 
-            processingOptions={{
-              batchSize: 50,
-              continueOnError: true
-            }}
-          />
-        </div>
+        <Tabs defaultValue="content" className="space-y-4">
+          <TabsContent value="content" className="space-y-4 p-0 mt-0">
+            <ErrorBoundary>
+              <GameContentManager />
+            </ErrorBoundary>
+          </TabsContent>
+        </Tabs>
       </div>
-      
-      <Tabs defaultValue="content" className="space-y-4">
-        <TabsContent value="content" className="space-y-4 p-0 mt-0">
-          <GameContentManager />
-        </TabsContent>
-      </Tabs>
-    </div>
+    </ErrorBoundary>
   );
 };
 
