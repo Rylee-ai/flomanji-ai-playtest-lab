@@ -3,14 +3,29 @@ import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Upload, FileUp, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { CardType } from "@/types/cards";
 
 export interface FileUploaderProps {
   onFileSelected: (file: File) => void;
   isProcessing: boolean;
-  className?: string; // Added className as an optional prop
+  className?: string;
+  // Add the missing props that were being passed
+  enableAIProcessing?: boolean;
+  setEnableAIProcessing?: (enable: boolean) => void;
+  fileType?: string | null;
+  cardType?: CardType;
 }
 
-export function FileUploader({ onFileSelected, isProcessing, className }: FileUploaderProps) {
+export function FileUploader({ 
+  onFileSelected, 
+  isProcessing, 
+  className,
+  // Include the optional props with defaults
+  enableAIProcessing = false,
+  setEnableAIProcessing = () => {},
+  fileType = null,
+  cardType
+}: FileUploaderProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

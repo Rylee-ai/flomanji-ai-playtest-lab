@@ -53,6 +53,7 @@ export class CardService {
     // For larger batches or when options are specified, use batched processing
     const { batchSize = 50, onProgress } = options || {};
     
+    // Use GameCard[] for the internal implementation to fix type compatibility
     const result = await CardBulkEditService.saveCardsBatched(
       cards,
       batchSize,
@@ -73,7 +74,15 @@ export class CardService {
       }
     }
 
-    return result;
+    // Convert the generic GameCard[] failed array to T[] for type compatibility
+    const typedFailedCards = result.failed ? result.failed.map(card => card as T) : undefined;
+
+    return { 
+      success: result.success, 
+      count: result.count,
+      failed: typedFailedCards,
+      errors: result.errors
+    };
   }
 
   /**

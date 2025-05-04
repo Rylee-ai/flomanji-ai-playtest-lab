@@ -12,19 +12,21 @@ export class CardBulkEditService {
    */
   static async recordBulkEditOperation(operation: Omit<CardBulkEditOperation, 'id' | 'timestamp'>): Promise<string> {
     try {
+      // Use the correct table name 'card_bulk_edits' instead of 'card_bulk_operations'
       const { data, error } = await supabase
-        .from('card_bulk_operations')
+        .from('card_bulk_edits')
         .insert({
-          user_id: operation.userId,
-          operation_type: operation.operationType,
+          // Use the correct field names based on the table schema
           affected_cards: operation.affectedCards,
-          metadata: operation.metadata
+          status: operation.status || 'applied',
+          notes: operation.notes,
+          changes: operation.changes || {}
         })
         .select('id')
         .single();
 
       if (error) throw error;
-      return data?.id;
+      return data?.id as string; // Cast to string to fix the type error
     } catch (error) {
       console.error('Error recording bulk edit operation:', error);
       throw error;

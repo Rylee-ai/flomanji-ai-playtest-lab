@@ -47,7 +47,7 @@ export function ValidationSummary({
       
       {/* Card-specific validation errors */}
       {hasCardSpecificErrors && (
-        <Alert variant={failedCards.length > 0 ? "warning" : "destructive"}>
+        <Alert variant="default" className={failedCards.length > 0 ? "border-yellow-500" : "border-destructive"}>
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>
             Card Validation Issues

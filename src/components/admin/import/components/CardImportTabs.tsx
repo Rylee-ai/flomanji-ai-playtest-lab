@@ -114,8 +114,8 @@ export function CardImportTabs({
             <AISuggestions
               suggestions={aiSuggestions}
               processingError={processingError}
-              onApply={onApplySuggestion}
-              onIgnore={onIgnoreSuggestion}
+              onApplySuggestion={onApplySuggestion}
+              onIgnoreSuggestion={onIgnoreSuggestion}
             />
           </TabsContent>
         )}

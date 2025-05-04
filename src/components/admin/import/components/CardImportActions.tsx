@@ -62,8 +62,8 @@ export function CardImportActions({
     
     if (hasFailedCards) {
       return (
-        <Alert variant="warning" className="mb-4">
-          <AlertCircle className="h-4 w-4" />
+        <Alert variant="default" className="mb-4 border-yellow-500">
+          <AlertCircle className="h-4 w-4 text-yellow-500" />
           <AlertTitle>Some cards could not be processed</AlertTitle>
           <AlertDescription>
             {failedCards.length} card(s) had issues. {transformedCards.length} card(s) are ready to import.

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
-interface AISuggestionsProps {
+export interface AISuggestionsProps {
   suggestions: CardSuggestion[];
   onApplySuggestion: (index: number) => void;
   onIgnoreSuggestion: (index: number) => void;
