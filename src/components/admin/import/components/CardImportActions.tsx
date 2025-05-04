@@ -1,10 +1,11 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { DialogFooter } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
+import { Separator } from "@/components/ui/separator";
+import { AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface CardImportActionsProps {
   onClose: () => void;
@@ -12,68 +13,103 @@ interface CardImportActionsProps {
   validationErrors: string[];
   importResults: CardImportResult | null;
   onImport: (cards: CardFormValues[], results: CardImportResult) => void;
-  isProcessing?: boolean;
+  isProcessing: boolean;
+  failedCards?: {index: number, name?: string, error: string}[];
 }
 
-export const CardImportActions = ({
+export function CardImportActions({
   onClose,
   transformedCards,
   validationErrors,
   importResults,
   onImport,
-  isProcessing = false,
-}: CardImportActionsProps) => {
+  isProcessing,
+  failedCards = []
+}: CardImportActionsProps) {
+  const hasCards = transformedCards.length > 0;
+  const hasErrors = validationErrors.length > 0;
+  const hasFailedCards = failedCards.length > 0;
+  
+  // Create an import result if we don't have one yet
   const handleImport = () => {
-    // Create a default import result if none exists
-    const resultsToUse = importResults || {
-      imported: transformedCards.length,
-      updated: 0,
-      failed: 0,
-      errors: []
-    };
-    
-    if (transformedCards.length > 0) {
-      console.log("Importing cards:", transformedCards.length);
-      onImport(transformedCards, resultsToUse);
+    if (!importResults) {
+      // Build an import result based on the cards and validation errors
+      const result: CardImportResult = {
+        imported: hasErrors ? 0 : transformedCards.length,
+        updated: 0,
+        failed: hasErrors ? transformedCards.length : 0,
+        errors: validationErrors.map(error => ({ name: 'Validation error', error }))
+      };
+      onImport(transformedCards, result);
+    } else {
+      onImport(transformedCards, importResults);
     }
   };
 
-  // Show the import button only when we have valid cards
-  const showImportButton = transformedCards.length > 0 && validationErrors.length === 0;
-  
-  console.log("CardImportActions - Showing import button:", showImportButton);
-  console.log("CardImportActions - Cards count:", transformedCards.length);
-  console.log("CardImportActions - Validation errors:", validationErrors.length);
-  console.log("CardImportActions - Is processing:", isProcessing);
+  // Show a summary of what will be imported
+  const renderSummary = () => {
+    if (hasErrors) {
+      return (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Import validation failed</AlertTitle>
+          <AlertDescription>
+            Please fix the validation errors before importing.
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    
+    if (hasFailedCards) {
+      return (
+        <Alert variant="warning" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Some cards could not be processed</AlertTitle>
+          <AlertDescription>
+            {failedCards.length} card(s) had issues. {transformedCards.length} card(s) are ready to import.
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    
+    if (transformedCards.length > 0) {
+      return (
+        <Alert variant="default" className="mb-4 border-green-500">
+          <CheckCircle2 className="h-4 w-4 text-green-500" />
+          <AlertTitle>Ready to import</AlertTitle>
+          <AlertDescription>
+            {transformedCards.length} card(s) are ready to import.
+          </AlertDescription>
+        </Alert>
+      );
+    }
+    
+    return null;
+  };
 
   return (
-    <DialogFooter className="flex justify-between mt-4 pt-4 border-t">
-      <Button 
-        variant="outline" 
-        onClick={onClose}
-        disabled={isProcessing}
-      >
-        Cancel
-      </Button>
+    <div className="space-y-4">
+      <Separator />
       
-      {isProcessing ? (
-        <Button disabled>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Processing...
-        </Button>
-      ) : showImportButton ? (
+      {renderSummary()}
+      
+      <div className="flex justify-end gap-2">
         <Button 
-          onClick={handleImport} 
-          variant="default" 
-          className="bg-green-600 hover:bg-green-700 font-medium text-lg px-6 py-2"
+          variant="outline" 
+          onClick={onClose} 
+          disabled={isProcessing}
         >
-          Import {transformedCards.length} Cards
+          Cancel
         </Button>
-      ) : transformedCards.length > 0 ? (
-        <Button variant="secondary" disabled>
-          Fix Errors to Import
+        
+        <Button
+          variant="default"
+          onClick={handleImport}
+          disabled={!hasCards || hasErrors || isProcessing}
+        >
+          {hasFailedCards ? "Import Valid Cards" : "Import Cards"}
         </Button>
-      ) : null}
-    </DialogFooter>
+      </div>
+    </div>
   );
 }

@@ -19,8 +19,40 @@ const ContentManager = () => {
   const handleCardImport = async (cards, results) => {
     console.log("ContentManager: Import triggered with", cards.length, "cards");
     try {
-      await handleImport(cards, results);
-      toast.success(`Successfully imported ${cards.length} cards`);
+      // Use batch size of 50 for large card sets
+      const batchSize = 50;
+      
+      if (cards.length > batchSize) {
+        // For large imports, split into chunks
+        const chunkedCards = [];
+        for (let i = 0; i < cards.length; i += batchSize) {
+          chunkedCards.push(cards.slice(i, Math.min(i + batchSize, cards.length)));
+        }
+        
+        toast.info(`Processing ${cards.length} cards in ${chunkedCards.length} batches...`);
+        
+        let successCount = 0;
+        for (let i = 0; i < chunkedCards.length; i++) {
+          const batch = chunkedCards[i];
+          const batchResults = {
+            ...results,
+            imported: batch.length
+          };
+          
+          toast.loading(`Importing batch ${i+1}/${chunkedCards.length}...`);
+          await handleImport(batch, batchResults);
+          successCount += batch.length;
+          
+          toast.success(`Batch ${i+1} complete. ${successCount}/${cards.length} cards imported`);
+        }
+        
+        toast.success(`Successfully imported ${successCount} cards in ${chunkedCards.length} batches`);
+      } else {
+        // For smaller imports, handle all at once
+        await handleImport(cards, results);
+        toast.success(`Successfully imported ${cards.length} cards`);
+      }
+      
       // Reload cards to reflect the new imports
       loadCards();
     } catch (error) {
@@ -48,7 +80,14 @@ const ContentManager = () => {
             </label>
           </Button>
           
-          <CardImporter onImport={handleCardImport} activeCardType={activeTab} />
+          <CardImporter 
+            onImport={handleCardImport} 
+            activeCardType={activeTab} 
+            processingOptions={{
+              batchSize: 50,
+              continueOnError: true
+            }}
+          />
         </div>
       </div>
       

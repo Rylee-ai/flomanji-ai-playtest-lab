@@ -10,6 +10,7 @@ import { CardSuggestion } from "@/utils/ai-processing/AICardProcessorService";
 import { CardImportDialogHeader } from "./components/CardImportDialogHeader";
 import { CardImportTabs } from "./components/CardImportTabs";
 import { CardImportActions } from "./components/CardImportActions";
+import { Progress } from "@/components/ui/progress";
 
 interface CardImportDialogProps {
   isOpen: boolean;
@@ -19,11 +20,13 @@ interface CardImportDialogProps {
   cardType: CardType;
   setCardType: (type: CardType) => void;
   isProcessing: boolean;
+  processingProgress?: number;
   transformedCards: CardFormValues[];
   validationErrors: string[];
   importResults: CardImportResult | null;
   defaultCardType: CardType;
   onImport: (cards: CardFormValues[], results: CardImportResult) => void;
+  failedCards?: {index: number, name?: string, error: string}[];
   // AI-related props
   enableAIProcessing?: boolean;
   setEnableAIProcessing?: (enable: boolean) => void;
@@ -41,11 +44,13 @@ export function CardImportDialog({
   cardType,
   setCardType,
   isProcessing,
+  processingProgress = 0,
   transformedCards,
   validationErrors,
   importResults,
   defaultCardType,
   onImport,
+  failedCards = [],
   // AI-related props
   enableAIProcessing = false,
   setEnableAIProcessing = () => {},
@@ -69,6 +74,16 @@ export function CardImportDialog({
           isProcessing={isProcessing}
         />
 
+        {isProcessing && processingProgress > 0 && (
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <p className="text-sm text-muted-foreground">Processing cards...</p>
+              <span className="text-sm font-medium">{Math.round(processingProgress)}%</span>
+            </div>
+            <Progress value={processingProgress} className="h-2" />
+          </div>
+        )}
+
         <CardImportTabs
           cardType={cardType}
           setCardType={setCardType}
@@ -78,6 +93,7 @@ export function CardImportDialog({
           transformedCards={transformedCards}
           defaultCardType={defaultCardType}
           fileType={fileType}
+          failedCards={failedCards}
           // AI-related props
           enableAIProcessing={enableAIProcessing}
           setEnableAIProcessing={setEnableAIProcessing}
@@ -94,6 +110,7 @@ export function CardImportDialog({
           importResults={importResults}
           onImport={onImport}
           isProcessing={isProcessing}
+          failedCards={failedCards}
         />
       </DialogContent>
     </Dialog>

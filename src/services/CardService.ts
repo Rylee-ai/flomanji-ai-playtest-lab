@@ -23,11 +23,55 @@ export class CardService {
   /**
    * Save multiple cards in a transaction
    */
-  static async saveCards<T extends GameCard>(cards: T[]): Promise<{ success: boolean; count: number }> {
-    const result = await BasicCardService.saveCards(cards);
+  static async saveCards<T extends GameCard>(
+    cards: T[],
+    options?: {
+      batchSize?: number;
+      onProgress?: (completed: number, total: number) => void;
+    }
+  ): Promise<{ 
+    success: boolean; 
+    count: number;
+    failed?: T[];
+    errors?: string[];
+  }> {
+    // If no cards, return early
+    if (!cards || cards.length === 0) {
+      return { success: true, count: 0 };
+    }
     
-    // Create version records for all cards
-    await Promise.all(cards.map(card => CardVersionService.createCardVersion(card)));
+    // For small batches, use the original method
+    if (cards.length <= 50 && !options) {
+      const result = await BasicCardService.saveCards(cards);
+    
+      // Create version records for all cards
+      await Promise.all(cards.map(card => CardVersionService.createCardVersion(card)));
+
+      return result;
+    }
+    
+    // For larger batches or when options are specified, use batched processing
+    const { batchSize = 50, onProgress } = options || {};
+    
+    const result = await CardBulkEditService.saveCardsBatched(
+      cards,
+      batchSize,
+      onProgress
+    );
+    
+    // Create version records for successfully saved cards
+    // We identify these by filtering out the failed ones
+    if (result.success && result.count > 0) {
+      const failedIds = new Set((result.failed || []).map(card => card.id));
+      const successfulCards = cards.filter(card => !failedIds.has(card.id));
+      
+      // Create versions in batches
+      const versionBatchSize = 20;
+      for (let i = 0; i < successfulCards.length; i += versionBatchSize) {
+        const batch = successfulCards.slice(i, i + versionBatchSize);
+        await Promise.all(batch.map(card => CardVersionService.createCardVersion(card)));
+      }
+    }
 
     return result;
   }

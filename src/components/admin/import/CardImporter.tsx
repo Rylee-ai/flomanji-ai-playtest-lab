@@ -8,13 +8,22 @@ import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
 import { useCardImporter } from "./hooks/useCardImporter";
 import { CardImportDialog } from "./CardImportDialog";
+import { FileProcessingOptions } from "./hooks/useCardFileProcessor";
 
 interface CardImporterProps {
   onImport: (cards: CardFormValues[], results: CardImportResult) => void;
   activeCardType: CardType;
+  /**
+   * Processing options for batch processing and error handling
+   */
+  processingOptions?: FileProcessingOptions;
 }
 
-export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
+export function CardImporter({ 
+  onImport, 
+  activeCardType, 
+  processingOptions 
+}: CardImporterProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [fileFormat, setFileFormat] = useState<string | null>(null);
 
@@ -22,12 +31,14 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
     detectFileFormat,
     processFile,
     isProcessing,
+    processingProgress,
     cardType,
     setCardType,
     transformedCards,
     validationErrors,
     importResults,
     resetState,
+    failedCards,
     // AI-related properties
     enableAIProcessing,
     setEnableAIProcessing,
@@ -39,9 +50,16 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
       console.log("Import complete callback triggered with", cards.length, "cards");
       onImport(cards, results);
       setIsDialogOpen(false);
-      toast.success(`Successfully imported ${cards.length} cards`);
+      
+      const failedCount = results.failed || 0;
+      if (failedCount > 0) {
+        toast.warning(`Import completed with ${failedCount} failed cards. ${cards.length} cards were imported successfully.`);
+      } else {
+        toast.success(`Successfully imported ${cards.length} cards`);
+      }
     },
-    initialCardType: activeCardType
+    initialCardType: activeCardType,
+    processingOptions
   });
 
   const handleFileSelected = async (file: File) => {
@@ -57,6 +75,7 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
       setFileFormat(format);
       
       // Process the file using the current cardType (which might have been set by the user)
+      // and pass along processing options
       await processFile(file, cardType);
     } catch (error) {
       console.error("Error importing file:", error);
@@ -69,7 +88,13 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
     onImport(cards, results);
     setIsDialogOpen(false);
     resetState();
-    toast.success(`Successfully imported ${cards.length} cards`);
+    
+    const failedCount = results.failed || 0;
+    if (failedCount > 0) {
+      toast.warning(`Import completed with ${failedCount} failed cards. ${cards.length} cards were imported successfully.`);
+    } else {
+      toast.success(`Successfully imported ${cards.length} cards`);
+    }
   };
 
   const closeDialog = () => {
@@ -101,11 +126,13 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
         cardType={cardType}
         setCardType={setCardType}
         isProcessing={isProcessing}
+        processingProgress={processingProgress}
         transformedCards={transformedCards}
         validationErrors={validationErrors}
         importResults={importResults}
         defaultCardType={activeCardType}
         onImport={handleImport}
+        failedCards={failedCards}
         // AI-related props
         enableAIProcessing={enableAIProcessing}
         setEnableAIProcessing={setEnableAIProcessing}

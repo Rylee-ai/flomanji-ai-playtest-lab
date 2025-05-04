@@ -6,12 +6,13 @@ import { CardImportResult } from "@/types/cards/card-version";
 import { useCardImportConfig } from "./useCardImportConfig";
 import { useCardImportResults } from "./useCardImportResults";
 import { useAICardProcessing } from "./useAICardProcessing";
-import { useCardFileProcessor } from "./useCardFileProcessor";
+import { useCardFileProcessor, FileProcessingOptions } from "./useCardFileProcessor";
 import { handleAIProcessing, handleApplySuggestion } from "../utils/cardImportUtils";
 
 interface UseCardImportOrchestratorProps {
   onImportComplete: (cards: CardFormValues[], results: CardImportResult) => void;
   initialCardType?: CardType;
+  processingOptions?: FileProcessingOptions;
 }
 
 /**
@@ -20,14 +21,17 @@ interface UseCardImportOrchestratorProps {
  */
 export function useCardImportOrchestrator({ 
   onImportComplete, 
-  initialCardType = "gear" 
+  initialCardType = "gear",
+  processingOptions
 }: UseCardImportOrchestratorProps) {
   // AI processing state
   const [enableAIProcessing, setEnableAIProcessing] = useState(false);
+  const [failedCards, setFailedCards] = useState<{index: number, name?: string, error: string}[]>([]);
 
   // Use specialized hooks for different aspects of card importing
   const {
     isProcessing: isFileProcessing,
+    processingProgress,
     analyzeFile,
     processFile
   } = useCardFileProcessor();
@@ -74,14 +78,17 @@ export function useCardImportOrchestrator({
     // Reset state before processing
     resetResults();
     resetAIProcessing();
+    setFailedCards([]);
 
     try {
-      // Process the file
-      const { processedCards, errors } = await processFile(file, typeToUse);
+      // Process the file with the provided options
+      const { processedCards, errors, failedCards: newFailedCards } = 
+        await processFile(file, typeToUse, processingOptions);
       
       // Update state with results
       setTransformedCards(processedCards);
       setValidationErrors(errors);
+      setFailedCards(newFailedCards);
       
       // If errors, don't proceed with AI processing
       if (errors.length > 0) {
@@ -138,15 +145,18 @@ export function useCardImportOrchestrator({
     resetResults();
     resetAIProcessing();
     setEnableAIProcessing(false);
+    setFailedCards([]);
   };
 
   return {
     isProcessing,
+    processingProgress,
     cardType,
     setCardType,
     transformedCards,
     validationErrors,
     importResults,
+    failedCards,
     detectFileFormat: analyzeFile, // Kept for backward compatibility
     processFile: handleFileProcess,
     resetState,
