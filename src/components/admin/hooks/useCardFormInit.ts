@@ -12,10 +12,12 @@ export const useCardFormInit = (
   isEditing: boolean
 ) => {
   useEffect(() => {
+    // Only reset the form when we have valid data or conditions
     if (isEditing && initialData) {
+      // For editing existing cards
       form.reset({
-        name: initialData.name,
-        type: initialData.type,
+        name: initialData.name || "",
+        type: initialData.type || "treasure",
         flavor: initialData.flavor || "",
         imagePrompt: initialData.imagePrompt || "",
         keywords: initialData.keywords || [],
@@ -24,6 +26,7 @@ export const useCardFormInit = (
         ...(initialData as any)
       });
     } else if (!isEditing && activeTab) {
+      // For new cards
       const formType = missionSubtypes.includes(activeTab as any) 
         ? "mission" 
         : activeTab as CardType;
@@ -39,4 +42,3 @@ export const useCardFormInit = (
     }
   }, [isEditing, initialData, activeTab, form]);
 };
-

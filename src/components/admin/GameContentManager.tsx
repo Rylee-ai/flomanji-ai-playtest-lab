@@ -28,24 +28,13 @@ const GameContentManager = () => {
     handleDeleteCard,
     getActiveCards,
     loading,
-    cards,
-    loadCards
+    cards
   } = useCardManagement();
-
-  // Load cards initially and set up periodic refresh
-  useEffect(() => {
-    loadCards();
-    
-    // Refresh cards every minute to ensure counts are updated
-    const refreshInterval = setInterval(() => {
-      loadCards();
-    }, 60000);
-    
-    return () => clearInterval(refreshInterval);
-  }, [loadCards]);
 
   const card = selectedCard ? getCardById(selectedCard) : null;
   const activeCards = getActiveCards();
+  
+  // Calculate card counts - always use the full cards array, not just active cards
   const cardCounts = {
     "player-character": cards.filter(card => card.type === "player-character").length,
     "npc": cards.filter(card => card.type === "npc").length,

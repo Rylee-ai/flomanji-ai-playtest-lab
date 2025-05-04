@@ -39,7 +39,7 @@ const ContentManager = () => {
             imported: batch.length
           };
           
-          toast.loading(`Importing batch ${i+1}/${chunkedCards.length}...`);
+          toast.loading(`Importing batch ${i+1}/${chunkedCards.length}...`, { id: `batch-${i}` });
           await handleImport(batch, batchResults);
           successCount += batch.length;
           
@@ -53,11 +53,18 @@ const ContentManager = () => {
         toast.success(`Successfully imported ${cards.length} cards`);
       }
       
-      // Reload cards to reflect the new imports
-      loadCards();
+      // Always reload cards to reflect the new imports
+      await loadCards();
     } catch (error) {
       console.error("Error during import:", error);
       toast.error("Failed to import cards. Please try again.");
+      
+      // Still try to reload cards to ensure UI is consistent
+      try {
+        await loadCards();
+      } catch (err) {
+        console.error("Error reloading cards after failed import:", err);
+      }
     }
   };
 
