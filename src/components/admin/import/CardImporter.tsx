@@ -44,25 +44,34 @@ export function CardImporter({
     setEnableAIProcessing,
     aiSuggestions,
     handleApplySuggestion,
-    handleIgnoreSuggestion
+    handleIgnoreSuggestion,
+    processingError
   } = useCardImporter({
-    onImportComplete: (cards, results) => {
-      console.log("Import complete callback triggered with", cards.length, "cards");
-      onImport(cards, results);
-      setIsDialogOpen(false);
-      
-      const failedCount = results.failed || 0;
-      if (failedCount > 0) {
-        toast.warning(`Import completed with ${failedCount} failed cards. ${cards.length} cards were imported successfully.`);
-      } else {
-        toast.success(`Successfully imported ${cards.length} cards`);
-      }
-    },
+    onImportComplete: handleImportComplete,
     initialCardType: activeCardType,
     processingOptions
   });
 
-  const handleFileSelected = async (file: File) => {
+  /**
+   * Handle import completion with better error reporting
+   */
+  function handleImportComplete(cards: CardFormValues[], results: CardImportResult) {
+    console.log("Import complete callback triggered with", cards.length, "cards");
+    onImport(cards, results);
+    setIsDialogOpen(false);
+    
+    const failedCount = results.failed || 0;
+    if (failedCount > 0) {
+      toast.warning(`Import completed with ${failedCount} failed cards. ${cards.length} cards were imported successfully.`);
+    } else {
+      toast.success(`Successfully imported ${cards.length} cards`);
+    }
+  }
+
+  /**
+   * Handle file selection with improved error handling
+   */
+  async function handleFileSelected(file: File) {
     if (!file) return;
     
     try {
@@ -75,15 +84,17 @@ export function CardImporter({
       setFileFormat(format);
       
       // Process the file using the current cardType (which might have been set by the user)
-      // and pass along processing options
       await processFile(file, cardType);
     } catch (error) {
       console.error("Error importing file:", error);
       toast.error("Failed to process file. Please check the format and try again.");
     }
-  };
+  }
 
-  const handleImport = (cards: CardFormValues[], results: CardImportResult) => {
+  /**
+   * Handle manual import button click
+   */
+  function handleImport(cards: CardFormValues[], results: CardImportResult) {
     console.log("Manual import triggered with", cards.length, "cards");
     onImport(cards, results);
     setIsDialogOpen(false);
@@ -95,12 +106,15 @@ export function CardImporter({
     } else {
       toast.success(`Successfully imported ${cards.length} cards`);
     }
-  };
+  }
 
-  const closeDialog = () => {
+  /**
+   * Close dialog and reset state
+   */
+  function closeDialog() {
     setIsDialogOpen(false);
     resetState();
-  };
+  }
 
   return (
     <>

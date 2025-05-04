@@ -8,6 +8,7 @@ import { useCardImportResults } from "./useCardImportResults";
 import { useAICardProcessing } from "./useAICardProcessing";
 import { useCardFileProcessor, FileProcessingOptions } from "./useCardFileProcessor";
 import { handleAIProcessing, handleApplySuggestion } from "../utils/cardImportUtils";
+import { formatCardError } from "@/utils/error-handling/cardErrorHandler";
 
 interface UseCardImportOrchestratorProps {
   onImportComplete: (cards: CardFormValues[], results: CardImportResult) => void;
@@ -18,6 +19,7 @@ interface UseCardImportOrchestratorProps {
 /**
  * Main hook for orchestrating the card import process
  * Coordinates between file processing, validation, AI enhancement, and results management
+ * with improved error handling
  */
 export function useCardImportOrchestrator({ 
   onImportComplete, 
@@ -96,11 +98,13 @@ export function useCardImportOrchestrator({
         // Create and set import results
         const results = createImportResults(processedCards, errors);
         setImportResults(results);
+        
+        // Return but don't trigger completion callback yet
         return processedCards;
       }
       
       // Process with AI if enabled
-      await handleAIProcessing(
+      const enhancedCards = await handleAIProcessing(
         processedCards,
         errors,
         typeToUse,
@@ -111,10 +115,18 @@ export function useCardImportOrchestrator({
         setImportResults
       );
       
-      return processedCards;
+      // If the import is successful and no errors, trigger completion
+      if (enhancedCards.length > 0 && validationErrors.length === 0) {
+        const results = createImportResults(enhancedCards, []);
+        // We don't call onImportComplete here because we let the user
+        // decide when to import through the UI
+      }
+      
+      return enhancedCards;
     } catch (error) {
-      console.error("Error during orchestration:", error);
-      setValidationErrors([`Failed to process file: ${error instanceof Error ? error.message : "Unknown error"}`]);
+      const formattedError = formatCardError(error, 'import orchestration');
+      console.error("Error during orchestration:", formattedError);
+      setValidationErrors([formattedError.message]);
       return [];
     }
   };
@@ -137,8 +149,8 @@ export function useCardImportOrchestrator({
    * Helper to ignore a suggestion
    */
   const handleIgnoreSuggestion = (index: number) => {
-    const updatedSuggestions = aiSuggestions.filter((_, i) => i !== index);
     // We don't update the cards, just remove the suggestion
+    console.log(`Ignoring suggestion at index ${index}`);
   };
 
   /**
@@ -151,6 +163,16 @@ export function useCardImportOrchestrator({
     setFailedCards([]);
   };
 
+  /**
+   * Manually trigger import completion
+   */
+  const triggerImportComplete = () => {
+    if (transformedCards.length > 0) {
+      const results = createImportResults(transformedCards, validationErrors);
+      onImportComplete(transformedCards, results);
+    }
+  };
+
   return {
     isProcessing,
     processingProgress,
@@ -160,9 +182,10 @@ export function useCardImportOrchestrator({
     validationErrors,
     importResults,
     failedCards,
-    detectFileFormat: analyzeFile, // Kept for backward compatibility
+    detectFileFormat: analyzeFile,
     processFile: handleFileProcess,
     resetState,
+    triggerImportComplete,
     // AI-related properties
     enableAIProcessing,
     setEnableAIProcessing,

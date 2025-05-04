@@ -3,24 +3,19 @@ import { CardFormValues } from "@/types/forms/card-form";
 import { CardType } from "@/types/cards";
 import { CardSuggestion } from "@/utils/ai-processing/AICardProcessorService";
 import { CardImportResult } from "@/types/cards/card-version";
+import { 
+  handleFileProcessingError as baseHandleFileProcessingError,
+  formatCardError,
+  safeCardOperation
+} from "@/utils/error-handling/cardErrorHandler";
 
 /**
  * Handles errors that occur during file processing and returns appropriate error messages
  */
-export const handleFileProcessingError = (error: unknown): string[] => {
-  console.error("File processing error:", error);
-  
-  if (error instanceof Error) {
-    return [`Failed to process file: ${error.message}`];
-  } else if (typeof error === 'string') {
-    return [`Failed to process file: ${error}`];
-  } else {
-    return ["Failed to process file: Unknown error"];
-  }
-};
+export const handleFileProcessingError = baseHandleFileProcessingError;
 
 /**
- * Handle AI processing for cards
+ * Handle AI processing for cards with improved error handling
  */
 export const handleAIProcessing = async (
   processedCards: CardFormValues[],
@@ -53,12 +48,13 @@ export const handleAIProcessing = async (
     
     return enhancedCards;
   } catch (error) {
-    console.error("Error during AI processing:", error);
+    const formattedError = formatCardError(error, 'AI processing');
+    console.error("Error during AI processing:", formattedError);
     
     // If AI processing fails, we still return the original cards
     const results = createResults(processedCards, [
       ...errors, 
-      `AI Processing error: ${error instanceof Error ? error.message : "Unknown error"}`
+      `AI Processing error: ${formattedError.message}`
     ]);
     setResults(results);
     
@@ -90,7 +86,8 @@ export const handleApplySuggestion = (
     
     return updatedCards;
   } catch (error) {
-    console.error("Error applying suggestion:", error);
+    const formattedError = formatCardError(error, 'applying suggestion');
+    console.error("Error applying suggestion:", formattedError);
     return [];
   }
 };

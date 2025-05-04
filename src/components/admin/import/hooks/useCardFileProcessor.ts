@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { useFileProcessor } from "./useFileProcessor";
-import { handleFileProcessingError } from "../utils/cardImportUtils";
+import { formatCardError, formatCardSpecificError } from "@/utils/error-handling/cardErrorHandler";
 
 /**
  * Configuration options for file processing
@@ -25,7 +25,17 @@ const DEFAULT_PROCESSING_OPTIONS: FileProcessingOptions = {
 };
 
 /**
+ * Result of processing a card file
+ */
+export interface CardFileProcessingResult {
+  processedCards: CardFormValues[];
+  errors: string[];
+  failedCards: {index: number, name?: string, error: string}[];
+}
+
+/**
  * Hook for managing file processing in the card import workflow
+ * with improved error handling and batch processing
  */
 export function useCardFileProcessor() {
   const [isProcessingFile, setIsProcessingFile] = useState(false);
@@ -38,20 +48,12 @@ export function useCardFileProcessor() {
 
   /**
    * Process a file and extract card data with advanced error handling and batching
-   * @param file The file to process
-   * @param cardType The type of cards to create
-   * @param options Processing options for batching and error handling
-   * @returns The processed cards and any validation errors
    */
   const processFile = async (
     file: File,
     cardType: CardType,
     options: FileProcessingOptions = DEFAULT_PROCESSING_OPTIONS
-  ): Promise<{
-    processedCards: CardFormValues[];
-    errors: string[];
-    failedCards: {index: number, name?: string, error: string}[];
-  }> => {
+  ): Promise<CardFileProcessingResult> => {
     if (!file) {
       return { 
         processedCards: [], 
@@ -82,7 +84,7 @@ export function useCardFileProcessor() {
       }
 
       // Process cards in batches if there are a lot of them
-      const { batchSize = 100 } = options;
+      const { batchSize = 100, continueOnError = true } = options;
       const processedCards: CardFormValues[] = [];
       const failedCards: {index: number, name?: string, error: string}[] = [];
       const errors: string[] = [...result.errors];
@@ -94,6 +96,7 @@ export function useCardFileProcessor() {
         // Process in batches
         for (let i = 0; i < result.processedCards.length; i += batchSize) {
           const batch = result.processedCards.slice(i, i + batchSize);
+          const batchNumber = Math.floor(i / batchSize) + 1;
           
           try {
             // Here we could perform additional validation or processing per batch
@@ -103,9 +106,10 @@ export function useCardFileProcessor() {
             const progress = Math.min(((i + batch.length) / result.processedCards.length) * 100, 100);
             setProcessingProgress(progress);
             
-            console.log(`Processed batch ${i / batchSize + 1}, cards ${i+1} to ${i+batch.length}`);
+            console.log(`Processed batch ${batchNumber}, cards ${i+1} to ${i+batch.length}`);
           } catch (batchError) {
-            console.error(`Error processing batch ${i / batchSize + 1}:`, batchError);
+            const formattedError = formatCardError(batchError, `batch ${batchNumber}`);
+            console.error(`Error processing batch ${batchNumber}:`, formattedError);
             
             // Record card-specific errors
             batch.forEach((card, batchIndex) => {
@@ -113,15 +117,15 @@ export function useCardFileProcessor() {
               failedCards.push({
                 index: cardIndex,
                 name: card.name,
-                error: `Processing error in batch ${i / batchSize + 1}: ${batchError instanceof Error ? batchError.message : String(batchError)}`
+                error: `Processing error in batch ${batchNumber}: ${formattedError.message}`
               });
             });
             
             // Add batch error to general errors
-            errors.push(`Error processing batch ${i / batchSize + 1}: ${batchError instanceof Error ? batchError.message : String(batchError)}`);
+            errors.push(`Error processing batch ${batchNumber}: ${formattedError.message}`);
             
             // If we should stop on errors, break the loop
-            if (!options.continueOnError) {
+            if (!continueOnError) {
               break;
             }
           }
@@ -139,9 +143,10 @@ export function useCardFileProcessor() {
         failedCards
       };
     } catch (error) {
+      const formattedError = formatCardError(error, 'file processing');
       return {
         processedCards: [],
-        errors: handleFileProcessingError(error),
+        errors: [formattedError.message],
         failedCards: []
       };
     } finally {
