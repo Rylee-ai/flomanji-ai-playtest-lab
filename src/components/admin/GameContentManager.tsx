@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,8 +28,21 @@ const GameContentManager = () => {
     handleDeleteCard,
     getActiveCards,
     loading,
-    cards
+    cards,
+    loadCards
   } = useCardManagement();
+
+  // Load cards initially and set up periodic refresh
+  useEffect(() => {
+    loadCards();
+    
+    // Refresh cards every minute to ensure counts are updated
+    const refreshInterval = setInterval(() => {
+      loadCards();
+    }, 60000);
+    
+    return () => clearInterval(refreshInterval);
+  }, [loadCards]);
 
   const card = selectedCard ? getCardById(selectedCard) : null;
   const activeCards = getActiveCards();

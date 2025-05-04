@@ -34,6 +34,7 @@ interface CardImportDialogProps {
   processingError?: string | null;
   onApplySuggestion?: (index: number) => void;
   onIgnoreSuggestion?: (index: number) => void;
+  showFlomanjiOptions?: boolean;
 }
 
 export function CardImportDialog({
@@ -58,6 +59,7 @@ export function CardImportDialog({
   processingError = null,
   onApplySuggestion = () => {},
   onIgnoreSuggestion = () => {},
+  showFlomanjiOptions = true,
 }: CardImportDialogProps) {
   // Set the default card type when dialog opens, but don't override user selection afterwards
   useEffect(() => {
@@ -72,6 +74,7 @@ export function CardImportDialog({
         <CardImportDialogHeader 
           enableAIProcessing={enableAIProcessing}
           isProcessing={isProcessing}
+          showFlomanjiOptions={showFlomanjiOptions}
         />
 
         {isProcessing && processingProgress > 0 && (
@@ -101,6 +104,7 @@ export function CardImportDialog({
           processingError={processingError}
           onApplySuggestion={onApplySuggestion}
           onIgnoreSuggestion={onIgnoreSuggestion}
+          showFlomanjiOptions={showFlomanjiOptions}
         />
 
         <CardImportActions

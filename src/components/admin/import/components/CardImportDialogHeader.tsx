@@ -7,11 +7,13 @@ import { Badge } from "@/components/ui/badge";
 interface CardImportDialogHeaderProps {
   enableAIProcessing?: boolean;
   isProcessing?: boolean;
+  showFlomanjiOptions?: boolean;
 }
 
 export function CardImportDialogHeader({ 
   enableAIProcessing = false,
-  isProcessing = false
+  isProcessing = false,
+  showFlomanjiOptions = true
 }: CardImportDialogHeaderProps) {
   return (
     <DialogHeader className="space-y-2">
@@ -31,7 +33,7 @@ export function CardImportDialogHeader({
         )}
       </DialogTitle>
       <DialogDescription>
-        Upload JSON or Markdown files to import cards into your game.
+        Upload JSON or Markdown files to import cards into your game, or choose from pre-defined Flomanji card sets.
         {enableAIProcessing && (
           <span className="block mt-1 text-xs">
             AI processing will analyze cards for consistency, quality, and game balance.

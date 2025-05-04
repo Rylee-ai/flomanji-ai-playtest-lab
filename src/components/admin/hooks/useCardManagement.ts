@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CardType, GameCard } from "@/types/cards";
 import { useCardLoading } from "./card-management/useCardLoading";
 import { useCardSelection } from "./card-management/useCardSelection";
@@ -56,6 +56,7 @@ export const useCardManagement = () => {
     activeTab,
     isFormOpen,
     editingCard,
+    versionHistory,
     setSelectedCard,
     setActiveTab,
     setIsFormOpen,
@@ -69,7 +70,6 @@ export const useCardManagement = () => {
     handleImport,
     loading,
     cards,
-    versionHistory,
-    loadCards, // Added loadCards to the return object
+    loadCards,
   };
 };

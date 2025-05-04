@@ -139,6 +139,7 @@ export function CardImporter({
         aiSuggestions={aiSuggestions}
         onApplySuggestion={handleApplySuggestion}
         onIgnoreSuggestion={handleIgnoreSuggestion}
+        showFlomanjiOptions={true}
       />
     </>
   );

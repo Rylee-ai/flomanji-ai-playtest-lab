@@ -26,6 +26,7 @@ interface CardImportTabsProps {
   onApplySuggestion?: (index: number) => void;
   onIgnoreSuggestion?: (index: number) => void;
   failedCards?: {index: number, name?: string, error: string}[];
+  showFlomanjiOptions?: boolean;
 }
 
 export function CardImportTabs({
@@ -44,7 +45,8 @@ export function CardImportTabs({
   processingError = null,
   onApplySuggestion = () => {},
   onIgnoreSuggestion = () => {},
-  failedCards = []
+  failedCards = [],
+  showFlomanjiOptions = true
 }: CardImportTabsProps) {
   const shouldShowAITab = enableAIProcessing && aiSuggestions.length > 0;
   const hasPreview = transformedCards.length > 0;
