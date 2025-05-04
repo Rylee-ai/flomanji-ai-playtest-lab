@@ -8,6 +8,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Download, Upload } from "lucide-react";
 import { toast } from "sonner";
+import { FlomanjiCardImporter } from "@/components/admin/import/FlomanjiCardImporter";
 
 const ContentManager = () => {
   const {
@@ -79,6 +80,8 @@ const ContentManager = () => {
               <CardExporter cardType={activeTab} />
             </label>
           </Button>
+          
+          <FlomanjiCardImporter onComplete={loadCards} />
           
           <CardImporter 
             onImport={handleCardImport} 
