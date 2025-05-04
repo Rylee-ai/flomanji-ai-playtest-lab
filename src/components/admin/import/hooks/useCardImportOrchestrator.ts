@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { CardType } from "@/types/cards";
+import { CardType, GameCard } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
 import { useCardImportConfig } from "./useCardImportConfig";
@@ -68,8 +68,8 @@ export function useCardImportOrchestrator({
   /**
    * Process a file and update the state with the results
    */
-  const handleFileProcess = async (file: File, selectedCardType?: CardType) => {
-    if (!file) return;
+  const handleFileProcess = async (file: File, selectedCardType?: CardType): Promise<CardFormValues[]> => {
+    if (!file) return [];
     
     // Use passed in card type if available, otherwise use the state
     const typeToUse = selectedCardType || cardType;
@@ -96,7 +96,7 @@ export function useCardImportOrchestrator({
         // Create and set import results
         const results = createImportResults(processedCards, errors);
         setImportResults(results);
-        return;
+        return processedCards;
       }
       
       // Process with AI if enabled
@@ -110,17 +110,20 @@ export function useCardImportOrchestrator({
         createImportResults,
         setImportResults
       );
+      
+      return processedCards;
     } catch (error) {
       console.error("Error during orchestration:", error);
       setValidationErrors([`Failed to process file: ${error instanceof Error ? error.message : "Unknown error"}`]);
+      return [];
     }
   };
 
   /**
    * Apply an AI suggestion to the cards
    */
-  const handleApplySuggestionWrapper = (index: number) => {
-    handleApplySuggestion(
+  const handleApplySuggestionWrapper = (index: number): CardFormValues[] => {
+    return handleApplySuggestion(
       index,
       applySuggestion,
       setTransformedCards,

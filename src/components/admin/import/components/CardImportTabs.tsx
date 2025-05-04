@@ -61,13 +61,13 @@ export function CardImportTabs({
         disabled={isProcessing}
       />
       
-      {hasErrors || hasFailedCards ? (
+      {(hasErrors || hasFailedCards) && (
         <ValidationSummary 
           errors={validationErrors} 
           failedCards={failedCards}
           cardCount={transformedCards.length + failedCards.length}
         />
-      ) : null}
+      )}
       
       <Tabs defaultValue="upload" className="space-y-4">
         <TabsList>

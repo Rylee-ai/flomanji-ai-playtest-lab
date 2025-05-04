@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, Ban, FileWarning } from "lucide-react";
+import { AlertCircle, FileWarning } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,8 +17,10 @@ export function ValidationSummary({
   failedCards = [],
   cardCount = 0
 }: ValidationSummaryProps) {
+  // If no errors or failed cards, don't render anything
   if (errors.length === 0 && failedCards.length === 0) return null;
   
+  // Separate errors into general errors and card-specific errors
   const generalErrors = errors.filter(error => 
     !error.includes('Card #') && !error.includes('Failed to process'));
     
