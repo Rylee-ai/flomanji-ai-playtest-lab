@@ -1,15 +1,18 @@
-
 import { GearCard } from '@/types/cards/gear';
 
+/**
+ * Complete collection of Flomanji gear cards
+ * These follow the official rule text from the Player's Guide
+ */
 export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   {
     id: "shrimp-sauce-repellent",
-    name: "SHRIMP SAUCE REPELLENT",
+    name: "Shrimp Sauce Repellent",
     type: "gear",
     category: "consumable",
     icons: [
-      { symbol: "🐛", meaning: "Bug" },
-      { symbol: "💨", meaning: "Odor" }
+      { symbol: "🐞", meaning: "Bug" },
+      { symbol: "🤢", meaning: "Odor" }
     ],
     keywords: ["One-Time Use", "Insect Repellent", "Grit Boost"],
     rules: [
@@ -21,9 +24,9 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "flip-flops-reinforced",
-    name: "FLIP-FLOPS (REINFORCED)",
+    name: "Flip-Flops (Reinforced)",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "👡", meaning: "Footwear" },
       { symbol: "🏞️", meaning: "Terrain" }
@@ -38,9 +41,9 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "duct-tape-raft-kit",
-    name: "DUCT TAPE RAFT KIT",
+    name: "Duct Tape Raft Kit",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "💧", meaning: "Water" },
       { symbol: "🔨", meaning: "Build" }
@@ -50,11 +53,12 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "If you also have 'Pool Noodles' equipped, declare \"Crafting Raft!\" Discard both cards to cross any one water-based Region freely this turn, ignoring hazards within it. The Goblet confirms raft success."
     ],
     flavor: "Goblet: 'Impressive ingenuity... or desperation. It floats. For now.'",
-    imagePrompt: "A half-wrapped raft made of pool noodles and industrial tape bobbing in swamp water."
+    imagePrompt: "A half-wrapped raft made of pool noodles and industrial tape bobbing in swamp water.",
+    consumable: true
   },
   {
     id: "emergency-sublix-wrapper",
-    name: "EMERGENCY SUBLIX WRAPPER",
+    name: "Emergency Sublix Wrapper",
     type: "gear",
     category: "consumable",
     icons: [
@@ -71,28 +75,27 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "pool-noodles",
-    name: "POOL NOODLES",
+    name: "Pool Noodles",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "🏊", meaning: "Float" },
-      { symbol: "🔧", meaning: "Improv" }
+      { symbol: "🛠️", meaning: "Improv" }
     ],
     keywords: ["Combo Piece", "Floatation", "Improvised Use"],
     rules: [
       "While equipped: Once per game, declare \"Cooling Down!\" to negate 1 Heat increase announced by the Goblet. Required for 'Duct Tape Raft Kit' combo."
     ],
     flavor: "Goblet: 'Surprisingly versatile. Less buoyant than hope, though.'",
-    imagePrompt: "Sun-faded pool noodles lashed together like a primitive raft.",
-    passive: "Negate one Heat increase once per game"
+    imagePrompt: "Sun-faded pool noodles lashed together like a primitive raft."
   },
   {
     id: "retired-fwc-badge",
-    name: "RETIRED FWC BADGE",
+    name: "Retired FWC Badge",
     type: "gear",
     category: "tool",
     icons: [
-      { symbol: "🛡️", meaning: "Authority" },
+      { symbol: "👮", meaning: "Authority" },
       { symbol: "👥", meaning: "Social" }
     ],
     keywords: ["Bluff Tool", "NPC Influence"],
@@ -100,14 +103,13 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "Once per game, declare \"Flashing the Badge!\" before a Charm Check against an NPC. The Goblet confirms automatic success. Remains equipped."
     ],
     flavor: "Goblet: 'They don't know it's expired. Confidence is key. Check passed.'",
-    imagePrompt: "A rusted badge with \"Florida Wildlife (Retired-ish)\" etched in duct tape.",
-    passive: "Auto-success on one Charm Check against NPC"
+    imagePrompt: "A rusted badge with \"Florida Wildlife (Retired-ish)\" etched in duct tape."
   },
   {
     id: "no-see-um-netting",
-    name: "NO-SEE-UM NETTING",
+    name: "No-See-Um Netting",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "🦟", meaning: "Insect" },
       { symbol: "🏕️", meaning: "Survival" }
@@ -117,16 +119,15 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped, you are immune to effects from insect-based Hazards announced by the Goblet. Occupies 1 gear slot."
     ],
     flavor: "Goblet: 'They still buzz... but their tiny wrath is thwarted. Immunity granted.'",
-    imagePrompt: "A full-body mesh suit hanging on a line next to scorched bug wings.",
-    passive: "Immune to insect-based Hazards"
+    imagePrompt: "A full-body mesh suit hanging on a line next to scorched bug wings."
   },
   {
     id: "bug-zapper-sceptre",
-    name: "BUG ZAPPER SCEPTRE",
+    name: "Bug Zapper Sceptre",
     type: "gear",
     category: "tool",
     icons: [
-      { symbol: "⚡", meaning: "Combat" },
+      { symbol: "⚔️", meaning: "Combat" },
       { symbol: "🦟", meaning: "Insect" }
     ],
     keywords: ["Hazard Modifier", "Humor", "Weapon-Like"],
@@ -135,11 +136,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'The satisfying sizzle of vengeance! Reroll granted.'",
     imagePrompt: "A glowing electric tennis racket with gator teeth marks on the handle.",
-    passive: "Reroll on failed insect Hazard check"
+    actionCost: 1
   },
   {
     id: "truck-nutz-amulet",
-    name: "TRUCK NUTZ AMULET",
+    name: "Truck Nutz Amulet",
     type: "gear",
     category: "tool",
     icons: [
@@ -151,16 +152,15 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: +1 Luck on all relevant Stat Checks (Goblet confirms bonus). Suffer -1 Charm on all relevant Stat Checks. Cannot be unequipped once used in a check. The Goblet may occasionally whisper unsettling things."
     ],
     flavor: "Goblet: 'Shiny... distracting... slightly cursed. Luck up, Charm down. Permanently.'",
-    imagePrompt: "A shimmering pair of chrome truck nuts dangling from a moss-draped branch like a talisman.",
-    passive: "+1 Luck, -1 Charm on Stat Checks"
+    imagePrompt: "A shimmering pair of chrome truck nuts dangling from a moss-draped branch like a talisman."
   },
   {
-    id: "mosquito-candle",
-    name: "MOSQUITO CANDLE (LIT)",
+    id: "mosquito-candle-lit",
+    name: "Mosquito Candle (Lit)",
     type: "gear",
     category: "consumable",
     icons: [
-      { symbol: "🔆", meaning: "Light" },
+      { symbol: "🕯️", meaning: "Light" },
       { symbol: "🦟", meaning: "Insect" }
     ],
     keywords: ["Temporary Aura", "Bug Repellent", "Area Effect"],
@@ -169,15 +169,16 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'Citronella sphere activated. A temporary truce in the war against tiny vampires.'",
     imagePrompt: "A flickering citronella candle glowing like a holy artifact in the dark.",
-    consumable: true
+    consumable: true,
+    uses: 3
   },
   {
     id: "tarp-of-invisibility",
-    name: "TARP OF INVISIBILITY(?)",
+    name: "Tarp of Invisibility(?)",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
-      { symbol: "🛡️", meaning: "Cover" },
+      { symbol: "🏕️", meaning: "Cover" },
       { symbol: "❓", meaning: "Mystery" }
     ],
     keywords: ["Shelter", "Sneak", "Escape Tool"],
@@ -185,12 +186,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "Once per game, declare \"Hiding under the tarp!\" to automatically avoid the effects of one non-combat Hazard targeting you. If used during a storm Event (announced by Goblet), also negate the next Heat increase for yourself."
     ],
     flavor: "Goblet: 'Out of sight, out of... well, still in Flomanji. Hazard avoided.'",
-    imagePrompt: "A frayed camo tarp draped over a lawn chair, with glowing eyes peeking from underneath.",
-    passive: "Auto-avoid one non-combat Hazard"
+    imagePrompt: "A frayed camo tarp draped over a lawn chair, with glowing eyes peeking from underneath."
   },
   {
     id: "gator-tooth-necklace",
-    name: "GATOR-TOOTH NECKLACE",
+    name: "Gator-Tooth Necklace",
     type: "gear",
     category: "tool",
     icons: [
@@ -203,7 +203,6 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'Channeling the apex predator... or just looking intimidating. Charm +1, if you commit to the bit.'",
     imagePrompt: "A necklace of real gator teeth glowing in humidity.",
-    passive: "+1 Charm on animal-related checks",
     statBonus: {
       stat: "charm",
       value: 1
@@ -211,7 +210,7 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "giant-styrofoam-cup",
-    name: "GIANT STYROFOAM CUP",
+    name: "Giant Styrofoam Cup",
     type: "gear",
     category: "consumable",
     icons: [
@@ -228,9 +227,9 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "croc-inspired-toes",
-    name: "CROC-INSPIRED TOES",
+    name: "Croc-Inspired Toes",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "👡", meaning: "Footwear" },
       { symbol: "🤪", meaning: "Insanity" }
@@ -241,7 +240,6 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'Aerodynamic. Hydrodynamic. Socially problematic. Move faster in swamps, Charm -1.'",
     imagePrompt: "A pair of neon crocs with gator eye decals and swamp grime.",
-    passive: "+1 Movement in swamp Regions, -1 Charm",
     statBonus: {
       stat: "charm",
       value: -1
@@ -249,9 +247,9 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "bubbas-airhorn",
-    name: "BUBBA'S AIRHORN",
+    name: "Bubba's Airhorn",
     type: "gear",
-    category: "consumable",
+    category: "tool",
     icons: [
       { symbol: "📢", meaning: "Sound" },
       { symbol: "😱", meaning: "Panic" }
@@ -266,7 +264,7 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "handheld-misting-fan",
-    name: "HANDHELD MISTING FAN",
+    name: "Handheld Misting Fan",
     type: "gear",
     category: "tool",
     icons: [
@@ -279,7 +277,6 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'A futile, yet stylish, gesture against the inevitable. Minor Heat relief, major Grit penalty.'",
     imagePrompt: "A glitter-pink misting fan spritzing itself heroically.",
-    passive: "Negate 1 Heat when not moving",
     statBonus: {
       stat: "grit",
       value: -1
@@ -287,7 +284,7 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "gas-station-taquito",
-    name: "GAS STATION TAQUITO",
+    name: "Gas Station Taquito",
     type: "gear",
     category: "consumable",
     icons: [
@@ -304,28 +301,27 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "tire-swing-shield",
-    name: "TIRE SWING SHIELD",
+    name: "Tire Swing Shield",
     type: "gear",
     category: "tool",
     icons: [
       { symbol: "🛡️", meaning: "Defense" },
-      { symbol: "🔧", meaning: "Improv" }
+      { symbol: "🛠️", meaning: "Improv" }
     ],
     keywords: ["Damage Block", "Improvised Defense", "Bulky"],
     rules: [
       "Once per game, declare \"Tire Defense!\" to completely block up to 2 points of damage from a single Hazard source. Takes up 2 gear slots while equipped."
     ],
     flavor: "Goblet: 'Recycled resilience! Damage blocked. Mobility... slightly hampered.'",
-    imagePrompt: "A sun-faded tire swing strapped to a player's back with twine and bravado.",
-    passive: "Block 2 damage once per game"
+    imagePrompt: "A sun-faded tire swing strapped to a player's back with twine and bravado."
   },
   {
     id: "dollar-store-magic-8-ball",
-    name: "DOLLAR STORE MAGIC 8-BALL",
+    name: "Dollar Store Magic 8-Ball",
     type: "gear",
-    category: "consumable",
+    category: "tool",
     icons: [
-      { symbol: "🔮", meaning: "Mystery" },
+      { symbol: "❓", meaning: "Mystery" },
       { symbol: "🍀", meaning: "Luck" }
     ],
     keywords: ["Decision Aid", "Risk Tool", "Reroll"],
@@ -338,7 +334,7 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "legendary-fanny-pack",
-    name: "LEGENDARY FANNY PACK",
+    name: "Legendary Fanny Pack",
     type: "gear",
     category: "tool",
     icons: [
@@ -350,31 +346,29 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped, your maximum hand size increases by 1 and you gain +1 passive Gear equip slot. If this item is lost or stolen, lose 1 Grit permanently (Goblet narrates the loss)."
     ],
     flavor: "Goblet: 'Behold! Maximum storage, minimum style. More stuff, more to lose.'",
-    imagePrompt: "A gleaming fanny pack stitched with \"Property of Flomanji Survivor #001.\"",
-    passive: "Increase hand size and gear slots by 1"
+    imagePrompt: "A gleaming fanny pack stitched with \"Property of Flomanji Survivor #001.\""
   },
   {
     id: "speed-shorts",
-    name: "SPEED SHORTS",
+    name: "Speed Shorts",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
-      { symbol: "🏃", meaning: "Speed" },
-      { symbol: "👖", meaning: "Fashion" }
+      { symbol: "⚡", meaning: "Speed" },
+      { symbol: "👕", meaning: "Fashion" }
     ],
     keywords: ["Movement Buff", "Combo", "Heat Vulnerable"],
     rules: [
       "While equipped: Gain +1 Movement (can take an extra Move action if desired, costing 1 action). If also wearing 'Croc-Inspired Toes', gain +1 Grit. During storm Events (announced by Goblet), take +1 Heat personally at the end of your turn."
     ],
     flavor: "Goblet: 'Less fabric, more velocity! Move faster. Suffer more in storms.'",
-    imagePrompt: "Neon-orange nylon shorts fluttering on a clothesline, glowing in the sun.",
-    passive: "+1 Movement, +1 Grit with 'Croc-Inspired Toes'"
+    imagePrompt: "Neon-orange nylon shorts fluttering on a clothesline, glowing in the sun."
   },
   {
     id: "roadshoulder-lounge-chair",
-    name: "ROADSHOULDER LOUNGE CHAIR",
+    name: "Roadshoulder Lounge Chair",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "🪑", meaning: "Comfort" },
       { symbol: "❤️‍🩹", meaning: "Recovery" }
@@ -384,12 +378,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "If you performed no Move actions on your turn, you may declare \"Lounging\" at the end of your Action Phase. If you do, negate 1 Heat increase for yourself during the next Chaos Phase and Heal 1 damage. Cannot be used if Hazards are present."
     ],
     flavor: "Goblet: 'Strategic inactivity. A rare moment of peace... probably temporary. Heal 1, reduce Heat next round.'",
-    imagePrompt: "A beat-up lawn chair reclined beside a swampy rest stop, beer can on armrest.",
-    passive: "Heal 1 and reduce Heat when not moving"
+    imagePrompt: "A beat-up lawn chair reclined beside a swampy rest stop, beer can on armrest."
   },
   {
     id: "bug-spray-triple-strength",
-    name: "BUG SPRAY (TRIPLE STRENGTH)",
+    name: "Bug Spray (Triple Strength)",
     type: "gear",
     category: "consumable",
     icons: [
@@ -403,14 +396,18 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     flavor: "Goblet: 'Chemical warfare deployed! Zone temporarily secured from the tiny buzzing menace.'",
     imagePrompt: "A red-capped aerosol can with hand-written \"MAX KILL\" label taped on it.",
     consumable: true
-  },
+  }
+];
+
+// Export additional cards in smaller batches to keep module size manageable
+export const FLOMANJI_GEAR_CARDS_PART2: GearCard[] = [
   {
     id: "gator-gripped-jaw-clamps",
-    name: "GATOR-GRIPPED JAW CLAMPS",
+    name: "Gator-Gripped Jaw Clamps",
     type: "gear",
     category: "tool",
     icons: [
-      { symbol: "🔧", meaning: "Tool" },
+      { symbol: "🛠️", meaning: "Tool" },
       { symbol: "🐊", meaning: "Animal" }
     ],
     keywords: ["Utility Tool", "Combo Enabler", "Physical Hazard Reducer"],
@@ -419,7 +416,6 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'Get a grip! Literally. Bonus Grit for physical challenges. No slipping allowed.'",
     imagePrompt: "Bright green clamp tools with faux gator jaws used as makeshift climbing hooks.",
-    passive: "+1 Grit on physical obstacle checks",
     statBonus: {
       stat: "grit",
       value: 1
@@ -427,12 +423,12 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "rv-window-shard-dagger",
-    name: "RV WINDOW SHARD DAGGER",
+    name: "RV Window Shard Dagger",
     type: "gear",
     category: "weapon",
     icons: [
-      { symbol: "🔪", meaning: "Weapon" },
-      { symbol: "🔧", meaning: "Improv" }
+      { symbol: "🗡️", meaning: "Weapon" },
+      { symbol: "🛠️", meaning: "Improv" }
     ],
     keywords: ["Improvised Weapon", "NPC Threat", "Combo Enabler"],
     rules: [
@@ -440,16 +436,16 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'A shard of someone's vacation nightmare... surprisingly persuasive. Check passed.'",
     imagePrompt: "A glass shard wrapped in duct tape, glinting with vengeance.",
-    actionCost: 0
+    actionCost: 1
   },
   {
     id: "tiki-torch-stake",
-    name: "TIKI TORCH STAKE",
+    name: "Tiki Torch Stake",
     type: "gear",
-    category: "consumable",
+    category: "tool",
     icons: [
       { symbol: "🔥", meaning: "Fire" },
-      { symbol: "👥", meaning: "Crowd Control" }
+      { symbol: "🚫", meaning: "Crowd Control" }
     ],
     keywords: ["Ritual Object", "Area Disruption", "Risk/Reward"],
     rules: [
@@ -461,11 +457,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "neon-whistle",
-    name: "NEON WHISTLE",
+    name: "Neon Whistle",
     type: "gear",
-    category: "consumable",
+    category: "tool",
     icons: [
-      { symbol: "🔊", meaning: "Sound" },
+      { symbol: "📢", meaning: "Sound" },
       { symbol: "📲", meaning: "Summon" }
     ],
     keywords: ["Summon Tool", "NPC Bait", "Random Outcome"],
@@ -478,11 +474,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "swamp-mire-cleats",
-    name: "SWAMP MIRE CLEATS",
+    name: "Swamp Mire Cleats",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
-      { symbol: "👢", meaning: "Footwear" },
+      { symbol: "👟", meaning: "Footwear" },
       { symbol: "🏕️", meaning: "Survival" }
     ],
     keywords: ["Movement Buff", "Terrain Modifier", "Region-Specific"],
@@ -490,31 +486,29 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: Gain +2 Movement in swamp Regions. Suffer -1 Movement in urban Regions. Ignore 1 Hazard effect related to slipping or mud announced by the Goblet."
     ],
     flavor: "Goblet: 'Traction achieved! Faster in swamps, slower on pavement. Less falling.'",
-    imagePrompt: "Mud-caked cleats with amphibian webbing designs, drying on a dashboard.",
-    passive: "+2 Movement in swamps, -1 in urban areas"
+    imagePrompt: "Mud-caked cleats with amphibian webbing designs, drying on a dashboard."
   },
   {
     id: "conspiracy-mug",
-    name: "CONSPIRACY MUG",
+    name: "Conspiracy Mug",
     type: "gear",
     category: "tool",
     icons: [
-      { symbol: "🤔", meaning: "Paranoia" },
-      { symbol: "🔥", meaning: "Heat" }
+      { symbol: "🕵️", meaning: "Paranoia" },
+      { symbol: "🌡️", meaning: "Heat" }
     ],
     keywords: ["Lore Item", "Conversation Starter", "Minor Buff"],
     rules: [
       "While equipped: Once per round, when targeted by a Hazard, you may declare \"It's a Conspiracy!\" Shake the Goblet for a Luck check (DC 3). Success = ignore the Hazard's effects. The Goblet might respond with paranoid whispers."
     ],
     flavor: "Goblet: 'They ARE out to get you... maybe. Luck check to see if paranoia saves you this time.'",
-    imagePrompt: "A ceramic coffee mug printed with \"I Survived Chemtrails and All I Got Was This Rash.\"",
-    passive: "Chance to ignore one Hazard per round"
+    imagePrompt: "A ceramic coffee mug printed with \"I Survived Chemtrails and All I Got Was This Rash.\""
   },
   {
     id: "pelican-beacon-flare",
-    name: "PELICAN BEACON FLARE",
+    name: "Pelican Beacon Flare",
     type: "gear",
-    category: "consumable",
+    category: "tool",
     icons: [
       { symbol: "🚨", meaning: "Signal" },
       { symbol: "⚠️", meaning: "Risk" }
@@ -529,9 +523,9 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "yard-sale-treasure-map",
-    name: "YARD SALE TREASURE MAP",
+    name: "Yard Sale Treasure Map",
     type: "gear",
-    category: "consumable",
+    category: "tool",
     icons: [
       { symbol: "🗺️", meaning: "Map" },
       { symbol: "❓", meaning: "Mystery" }
@@ -546,7 +540,7 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "florida-water",
-    name: "FLORIDA WATER",
+    name: "Florida Water",
     type: "gear",
     category: "consumable",
     icons: [
@@ -563,11 +557,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "alligator-snack-pack",
-    name: "ALLIGATOR SNACK PACK",
+    name: "Alligator Snack Pack",
     type: "gear",
     category: "consumable",
     icons: [
-      { symbol: "🍗", meaning: "Food" },
+      { symbol: "🍖", meaning: "Food" },
       { symbol: "🐊", meaning: "Animal" }
     ],
     keywords: ["Distraction Tool", "Animal Hazard Bypass"],
@@ -580,7 +574,7 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "frozen-airport-sangria",
-    name: "FROZEN AIRPORT SANGRIA",
+    name: "Frozen Airport Sangria",
     type: "gear",
     category: "consumable",
     icons: [
@@ -597,9 +591,9 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "loose-change-armor",
-    name: "LOOSE CHANGE ARMOR",
+    name: "Loose Change Armor",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "🛡️", meaning: "Defense" },
       { symbol: "🔊", meaning: "Noise" }
@@ -609,12 +603,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: The first time each round you would take 1 damage, ignore it (Goblet: \"Clink! Damage absorbed.\"). Suffer -1 on any Stat Check involving stealth or quietness (Goblet might add jangling sounds to narration)."
     ],
     flavor: "Goblet: 'Armored in low denomination currency. Protection comes at an audible price.'",
-    imagePrompt: "A duct-taped vest jangling with pennies, nickels, and arcade tokens.",
-    passive: "Ignore 1 damage per round, -1 on stealth checks"
+    imagePrompt: "A duct-taped vest jangling with pennies, nickels, and arcade tokens."
   },
   {
     id: "ejector-lawn-chair",
-    name: "EJECTOR LAWN CHAIR",
+    name: "Ejector Lawn Chair",
     type: "gear",
     category: "tool",
     icons: [
@@ -627,11 +620,14 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'For a rapid, undignified exit. Destination: adjacent. Dignity: questionable.'",
     imagePrompt: "A recliner strapped with bungee cords and fireworks, mid-launch.",
-    passive: "Escape to adjacent Region once per game"
-  },
+    actionCost: 1
+  }
+];
+
+export const FLOMANJI_GEAR_CARDS_PART3: GearCard[] = [
   {
     id: "roadside-pumpkin-patch-mask",
-    name: "ROADSIDE PUMPKIN PATCH MASK",
+    name: "Roadside Pumpkin Patch Mask",
     type: "gear",
     category: "tool",
     icons: [
@@ -643,17 +639,16 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: Once per game, automatically avoid the negative effects of one NPC encounter (declare \"Pumpkin Power!\"). If used, suffer -1 Charm permanently (Goblet: \"They won't forget the gourd.\")."
     ],
     flavor: "Goblet: 'Seasonal confusion is your shield. NPC baffled. Your reputation... slightly squash-ed.'",
-    imagePrompt: "A jack-o'-lantern mask with sunglasses resting on a beach chair.",
-    passive: "Avoid one NPC encounter per game"
+    imagePrompt: "A jack-o'-lantern mask with sunglasses resting on a beach chair."
   },
   {
     id: "diy-bless-this-mess-sign",
-    name: "DIY \"BLESS THIS MESS\" SIGN",
+    name: "DIY \"Bless This Mess\" Sign",
     type: "gear",
     category: "tool",
     icons: [
       { symbol: "🏠", meaning: "Home" },
-      { symbol: "✝️", meaning: "Moral" }
+      { symbol: "🙏", meaning: "Moral" }
     ],
     keywords: ["NPC Buff", "Environment Mod", "Charm Boost"],
     rules: [
@@ -661,7 +656,6 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'Appealing to local sentiment. Charm increased in civilized zones. Free stuff possible.'",
     imagePrompt: "A woodburned sign nailed crookedly to a mailbox post near a flamingo army.",
-    passive: "+1 Charm in suburban regions",
     statBonus: {
       stat: "charm",
       value: 1
@@ -669,7 +663,7 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "the-last-ice-cube",
-    name: "THE LAST ICE CUBE",
+    name: "The Last Ice Cube",
     type: "gear",
     category: "consumable",
     icons: [
@@ -686,9 +680,9 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "trunk-organizer-of-wonder",
-    name: "TRUNK ORGANIZER OF WONDER",
+    name: "Trunk Organizer of Wonder",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "🧳", meaning: "Storage" },
       { symbol: "🏆", meaning: "Legacy" }
@@ -698,12 +692,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped, you gain +2 passive Gear equip slots. If this item is lost or stolen, lose 1 Grit permanently and discard 1 equipped Gear of your choice (Goblet narrates the tragic loss of organization)."
     ],
     flavor: "Goblet: 'Maximum capacity achieved! More gear, more problems if lost.'",
-    imagePrompt: "A collapsible car trunk bin stuffed with flashlights, tarps, peanut butter jars, and fishing line.",
-    passive: "+2 Gear equip slots"
+    imagePrompt: "A collapsible car trunk bin stuffed with flashlights, tarps, peanut butter jars, and fishing line."
   },
   {
     id: "canned-gator-grease",
-    name: "CANNED GATOR GREASE",
+    name: "Canned Gator Grease",
     type: "gear",
     category: "consumable",
     icons: [
@@ -720,11 +713,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "souvenir-hurricane-globe",
-    name: "SOUVENIR HURRICANE GLOBE",
+    name: "Souvenir Hurricane Globe",
     type: "gear",
     category: "tool",
     icons: [
-      { symbol: "🌪️", meaning: "Weather" },
+      { symbol: "🌀", meaning: "Weather" },
       { symbol: "✨", meaning: "Charm" }
     ],
     keywords: ["Region Defense", "Passive Boost", "Combo Piece"],
@@ -732,14 +725,13 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: Once per game, negate the effects of one weather-based Chaos card announced by the Goblet affecting your Region. If also equipped with 'Conspiracy Mug', gain +1 Luck permanently."
     ],
     flavor: "Goblet: 'A tiny tempest contained. Weather immunity... once. Pairs well with paranoia.'",
-    imagePrompt: "A glitter-filled snow globe showing a trailer park being lifted into a cartoon cloud.",
-    passive: "Negate one weather Chaos card per game"
+    imagePrompt: "A glitter-filled snow globe showing a trailer park being lifted into a cartoon cloud."
   },
   {
     id: "jorts-of-immunity",
-    name: "JORTS OF IMMUNITY",
+    name: "Jorts of Immunity",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "👖", meaning: "Fashion" },
       { symbol: "🛡️", meaning: "Resistance" }
@@ -749,17 +741,16 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: You cannot suffer Charm loss from any source. You also cannot gain Charm from any source. The Goblet may make sarcastic comments about your fashion sense."
     ],
     flavor: "Goblet: 'Denim defiance! Immune to Charm loss... and gain. A bold statement.'",
-    imagePrompt: "Distressed jean shorts with patches reading \"Official Survivor\" and \"Property of Daytona.\"",
-    passive: "Immune to Charm loss and gain"
+    imagePrompt: "Distressed jean shorts with patches reading \"Official Survivor\" and \"Property of Daytona.\""
   },
   {
     id: "emergency-cigar-box",
-    name: "EMERGENCY CIGAR BOX",
+    name: "Emergency Cigar Box",
     type: "gear",
     category: "consumable",
     icons: [
       { symbol: "😌", meaning: "Calm" },
-      { symbol: "🔍", meaning: "Focus" }
+      { symbol: "🎯", meaning: "Focus" }
     ],
     keywords: ["Mental Boost", "Debuff Removal", "One-Time Use"],
     rules: [
@@ -771,9 +762,9 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "neon-koozie-of-distinction",
-    name: "NEON KOOZIE OF DISTINCTION",
+    name: "Neon Koozie of Distinction",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "✨", meaning: "Luxury" },
       { symbol: "👥", meaning: "Social" }
@@ -784,7 +775,6 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'Keeps your drink cold, and your social standing... slightly less awkward during Events. Charm +1.'",
     imagePrompt: "A lime green foam koozie branded \"World's Best Mosquito Magnet.\"",
-    passive: "+1 Charm during Events",
     statBonus: {
       stat: "charm",
       value: 1
@@ -792,11 +782,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "zip-tie-toe-spikes",
-    name: "ZIP TIE TOE SPIKES",
+    name: "Zip Tie Toe Spikes",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
-      { symbol: "🔧", meaning: "Improvised" },
+      { symbol: "🛠️", meaning: "Improvised" },
       { symbol: "⚔️", meaning: "Combat" }
     ],
     keywords: ["Terrain Mod", "Swamp Defense", "Improvised Weapon"],
@@ -804,17 +794,19 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: Ignore movement penalties in swamp/marsh Regions. Once per game, gain +1 Grit on a Stat Check involving climbing or resisting being knocked down."
     ],
     flavor: "Goblet: 'Improvised traction... and pointy bits. Move freely in muck. Grit bonus available.'",
-    imagePrompt: "Zip ties twisted into makeshift spikes strapped over dirty socks.",
-    passive: "Ignore swamp movement penalties"
-  },
+    imagePrompt: "Zip ties twisted into makeshift spikes strapped over dirty socks."
+  }
+];
+
+export const FLOMANJI_GEAR_CARDS_PART4: GearCard[] = [
   {
     id: "rusted-golf-cart-battery",
-    name: "RUSTED GOLF CART BATTERY",
+    name: "Rusted Golf Cart Battery",
     type: "gear",
-    category: "consumable",
+    category: "tool",
     icons: [
       { symbol: "⚡", meaning: "Power" },
-      { symbol: "⚡", meaning: "Shock" }
+      { symbol: "⚠️", meaning: "Shock" }
     ],
     keywords: ["Trap Trigger", "Hazard Counter", "Risk/Reward", "Goblet Interaction"],
     rules: [
@@ -826,7 +818,7 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "floribama-passport",
-    name: "FLORIBAMA PASSPORT",
+    name: "Floribama Passport",
     type: "gear",
     category: "tool",
     icons: [
@@ -838,16 +830,15 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: Once per game, upon entering a new Region, declare \"Showing My Papers!\" Ignore the effects of the first NPC or social Hazard encountered there. If used in an Urban Region, gain 1 Weirdness (Goblet: \"They see through your disguise here...\")."
     ],
     flavor: "Goblet: 'Temporary diplomatic immunity... kind of. Works better near the state line.'",
-    imagePrompt: "A laminated ID badge stamped \"Certified Between States\" with faded tan lines.",
-    passive: "Ignore first social Hazard in a new Region"
+    imagePrompt: "A laminated ID badge stamped \"Certified Between States\" with faded tan lines."
   },
   {
     id: "inflatable-crocodile-raft",
-    name: "INFLATABLE CROCODILE RAFT",
+    name: "Inflatable Crocodile Raft",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
-      { symbol: "🏊", meaning: "Float" },
+      { symbol: "🛟", meaning: "Float" },
       { symbol: "🐊", meaning: "Animal" }
     ],
     keywords: ["Water Hazard Bypass", "Distraction Tool"],
@@ -855,12 +846,11 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: Once per game, ignore movement restrictions and Hazards for crossing one water Region. If also equipped with 'Bug Spray (Triple Strength)', you may discard the spray to make all players in your region immune to the next non-combat Hazard announced by the Goblet."
     ],
     flavor: "Goblet: 'Riding the plastic beast! Water passage granted. Potential for chemical warfare combo.'",
-    imagePrompt: "A blown-up plastic crocodile missing one eye, bobbing in flood water.",
-    passive: "Bypass one water Region per game"
+    imagePrompt: "A blown-up plastic crocodile missing one eye, bobbing in flood water."
   },
   {
     id: "shrine-of-spare-keys",
-    name: "SHRINE OF SPARE KEYS",
+    name: "Shrine of Spare Keys",
     type: "gear",
     category: "tool",
     icons: [
@@ -872,30 +862,27 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
       "While equipped: Once per game, after failing any Stat Check, declare \"Checking the Shrine!\" The Goblet prompts: \"The keys jingle... Discard 1 Charm for a reroll?\" If you agree, discard 1 Charm point and reroll the check (reshake Goblet)."
     ],
     flavor: "Goblet: 'A mysterious offering... Chance favors the charmingly desperate. Reroll available, for a price.'",
-    imagePrompt: "A birdhouse filled with mismatched keys and old flyers, nestled in an overgrown fence post.",
-    passive: "Trade 1 Charm for a reroll once per game"
+    imagePrompt: "A birdhouse filled with mismatched keys and old flyers, nestled in an overgrown fence post."
   },
   {
     id: "sun-pass-transponder",
-    name: "SUN PASS TRANSPONDER (GLITCHY)",
+    name: "Sun Pass Transponder (Glitchy)",
     type: "gear",
     category: "tool",
     icons: [
       { symbol: "🚗", meaning: "Vehicle" },
-      { symbol: "🖥️", meaning: "Tech" },
-      { symbol: "⚠️", meaning: "Glitch" }
+      { symbol: "🔧", meaning: "Tech" }
     ],
     keywords: ["Movement Aid", "Risk/Reward", "Goblet Interaction"],
     rules: [
       "Once per game, declare \"Trying the Sun Pass!\" to ignore movement restrictions or tolls in an Urban or Highway Region. Shake the Goblet for a Luck check (DC 4). Success = Pass freely. Failure = Gain 1 Weirdness as the Goblet narrates a bizarre tracking error or summons a minor \"Bureaucracy\" Hazard next turn."
     ],
     flavor: "Goblet: 'Beep! Or... static? Roll for functional infrastructure...'",
-    imagePrompt: "A Sun Pass transponder cracked and sparking slightly, stuck to a dusty dashboard.",
-    passive: "Bypass urban movement restrictions once per game"
+    imagePrompt: "A Sun Pass transponder cracked and sparking slightly, stuck to a dusty dashboard."
   },
   {
     id: "bag-of-boiled-peanuts",
-    name: "BAG OF BOILED PEANUTS",
+    name: "Bag of Boiled Peanuts",
     type: "gear",
     category: "consumable",
     icons: [
@@ -912,13 +899,12 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "manatee-magnet",
-    name: "MANATEE MAGNET (Formerly Repellent)",
+    name: "Manatee Magnet (Formerly Repellent)",
     type: "gear",
-    category: "consumable",
+    category: "tool",
     icons: [
       { symbol: "🐄", meaning: "Animal" },
-      { symbol: "💧", meaning: "Water" },
-      { symbol: "🧲", meaning: "Magnetic" }
+      { symbol: "💧", meaning: "Water" }
     ],
     keywords: ["Distraction", "Hazard Manipulation", "Weird Science"],
     rules: [
@@ -930,13 +916,12 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "tourist-trap-map",
-    name: "TOURIST TRAP MAP (MISLEADING)",
+    name: "Tourist Trap Map (Misleading)",
     type: "gear",
-    category: "consumable",
+    category: "tool",
     icons: [
       { symbol: "🗺️", meaning: "Map" },
-      { symbol: "⚠️", meaning: "Trap" },
-      { symbol: "🧳", meaning: "Travel" }
+      { symbol: "⚠️", meaning: "Trap" }
     ],
     keywords: ["Risky Travel", "Hazard Trigger"],
     rules: [
@@ -948,31 +933,28 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "love-bug-windshield-wipers",
-    name: "LOVE BUG WINDSHIELD WIPERS (OVERDRIVE)",
+    name: "Love Bug Windshield Wipers (Overdrive)",
     type: "gear",
     category: "tool",
     icons: [
       { symbol: "🚗", meaning: "Vehicle" },
-      { symbol: "🐛", meaning: "Bug" },
-      { symbol: "🏃", meaning: "Speed" }
+      { symbol: "🐜", meaning: "Bug" }
     ],
     keywords: ["Hazard Immunity (Situational)", "Event Interaction"],
     rules: [
       "While equipped: During a \"Love Bug Season\" Event (announced by Goblet), ignore all negative effects related to movement or visibility Hazards caused by insects."
     ],
     flavor: "Goblet: 'Maximum squeegee power! The splatters cannot stop you... this time.'",
-    imagePrompt: "Oversized windshield wipers frantically clearing a thick swarm of love bugs from a cracked windshield.",
-    passive: "Immune to insect movement Hazards during Events"
+    imagePrompt: "Oversized windshield wipers frantically clearing a thick swarm of love bugs from a cracked windshield."
   },
   {
     id: "sandspur-sandals",
-    name: "SANDSPUR SANDALS",
+    name: "Sandspur Sandals",
     type: "gear",
-    category: "tool",
+    category: "supply",
     icons: [
       { symbol: "👡", meaning: "Footwear" },
-      { symbol: "😣", meaning: "Pain" },
-      { symbol: "🏖️", meaning: "Terrain" }
+      { symbol: "🔥", meaning: "Pain" }
     ],
     keywords: ["Terrain Buff", "Damage Risk", "Regional Gear"],
     rules: [
@@ -980,7 +962,6 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'Protection... with a price. Grit bonus on sand, pain potential leaving it.'",
     imagePrompt: "Sandals with actual spiky sandspurs embedded in the soles, looking painful yet functional.",
-    passive: "+1 Grit in sandy regions",
     statBonus: {
       stat: "grit",
       value: 1
@@ -988,13 +969,12 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "half-eaten-key-lime-pie",
-    name: "HALF-EATEN KEY LIME PIE",
+    name: "Half-Eaten Key Lime Pie",
     type: "gear",
     category: "consumable",
     icons: [
       { symbol: "🥧", meaning: "Food" },
-      { symbol: "✨", meaning: "Luxury" },
-      { symbol: "💫", meaning: "Charm" }
+      { symbol: "✨", meaning: "Luxury" }
     ],
     keywords: ["Healing", "Buff", "Single Use"],
     rules: [
@@ -1006,49 +986,47 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   },
   {
     id: "fishing-line",
-    name: "FISHING LINE (INDUSTRIAL STRENGTH)",
+    name: "Fishing Line (Industrial Strength)",
     type: "gear",
     category: "tool",
     icons: [
-      { symbol: "🔧", meaning: "Tool" },
-      { symbol: "🧵", meaning: "Rope" },
-      { symbol: "💧", meaning: "Water" }
+      { symbol: "🛠️", meaning: "Tool" },
+      { symbol: "🧵", meaning: "Rope" }
     ],
     keywords: ["Utility", "Auto-Success (Situational)", "Combo Potential"],
     rules: [
       "While equipped: Once per game, declare \"Got it Hooked!\" to automatically succeed on one Stat Check involving climbing, securing an item, or setting a simple trap (subject to Goblet's approval of 'simple'). Can be combined with other items for specific crafting combos (e.g., Makeshift Tripwire with RV Window Shard Dagger)."
     ],
     flavor: "Goblet: 'Stronger than necessary, just like everything else here. Check passed.'",
-    imagePrompt: "A large spool of thick, slightly iridescent fishing line sitting next to a rusty hook.",
-    passive: "Auto-succeed on one climbing/trapping check per game"
-  },
+    imagePrompt: "A large spool of thick, slightly iridescent fishing line sitting next to a rusty hook."
+  }
+];
+
+export const FLOMANJI_GEAR_CARDS_PART5: GearCard[] = [
   {
     id: "airboat-fan-blade",
-    name: "AIRBOAT FAN BLADE (MAKESHIFT SHIELD)",
+    name: "Airboat Fan Blade (Makeshift Shield)",
     type: "gear",
     category: "tool",
     icons: [
       { symbol: "🛡️", meaning: "Defense" },
-      { symbol: "🔊", meaning: "Noise" },
-      { symbol: "🚤", meaning: "Vehicle" }
+      { symbol: "🔊", meaning: "Noise" }
     ],
     keywords: ["Damage Block", "Bulky", "Noise Penalty"],
     rules: [
       "While equipped: Once per game, declare \"Fan Block!\" to ignore up to 2 damage from a single physical Hazard source. Takes up 2 gear slots. Suffer -1 on all stealth-related Stat Checks (Goblet plays loud fan noise when blocking and adds whooshing to stealth checks)."
     ],
     flavor: "Goblet: WHOOSH! 'Damage deflected by sheer rotational force! Sneaking... not advised.'",
-    imagePrompt: "A large, bent airboat propeller blade strapped to a player's arm with bungee cords.",
-    passive: "Block 2 damage once per game"
+    imagePrompt: "A large, bent airboat propeller blade strapped to a player's arm with bungee cords."
   },
   {
     id: "swamp-buggy-bumper-sticker",
-    name: "\"MY OTHER CAR IS A SWAMP BUGGY\" BUMPER STICKER",
+    name: "\"My Other Car Is A Swamp Buggy\" Bumper Sticker",
     type: "gear",
     category: "tool",
     icons: [
       { symbol: "👥", meaning: "Social" },
-      { symbol: "🚗", meaning: "Vehicle" },
-      { symbol: "🏮", meaning: "Cultural" }
+      { symbol: "🚗", meaning: "Vehicle" }
     ],
     keywords: ["NPC Buff (Situational)", "Charm Boost"],
     rules: [
@@ -1056,7 +1034,6 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
     ],
     flavor: "Goblet: 'Ah, a statement of cultural alignment. Charm +1 with the locals.'",
     imagePrompt: "A faded, mud-splattered bumper sticker slapped crookedly onto a backpack.",
-    passive: "+1 Charm with rural NPCs",
     statBonus: {
       stat: "charm",
       value: 1
@@ -1064,5 +1041,15 @@ export const FLOMANJI_GEAR_CARDS: GearCard[] = [
   }
 ];
 
-// Export for use in the application
-export default FLOMANJI_GEAR_CARDS;
+/**
+ * Get all Flomanji gear cards combined
+ */
+export function getAllFlomanjiGearCards(): GearCard[] {
+  return [
+    ...FLOMANJI_GEAR_CARDS,
+    ...FLOMANJI_GEAR_CARDS_PART2,
+    ...FLOMANJI_GEAR_CARDS_PART3,
+    ...FLOMANJI_GEAR_CARDS_PART4,
+    ...FLOMANJI_GEAR_CARDS_PART5
+  ];
+}

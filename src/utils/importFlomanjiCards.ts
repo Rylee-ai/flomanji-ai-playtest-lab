@@ -1,6 +1,6 @@
 
 import { CardService } from "@/services/CardService";
-import { FLOMANJI_GEAR_CARDS } from "@/lib/cards/flomanji-gear-cards";
+import { getAllFlomanjiGearCards, FLOMANJI_GEAR_CARDS } from "@/lib/cards/flomanji-gear-cards";
 import { toast } from "sonner";
 
 /**
@@ -13,9 +13,13 @@ export const importFlomanjiGearCards = async (): Promise<{
   errors?: string[];
 }> => {
   try {
+    // Get all cards from our combined collection
+    const cardsToImport = getAllFlomanjiGearCards();
+    console.log(`Preparing to import ${cardsToImport.length} Flomanji gear cards`);
+    
     // Save cards to database with batch processing
     const result = await CardService.saveCards(
-      FLOMANJI_GEAR_CARDS,
+      cardsToImport,
       {
         batchSize: 10,
         onProgress: (completed, total) => {
