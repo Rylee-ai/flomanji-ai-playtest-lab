@@ -16,12 +16,12 @@ interface CardImporterProps {
 
 export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [fileFormat, setFileFormat] = useState<string | null>(null);
 
   const {
     detectFileFormat,
     processFile,
     isProcessing,
-    fileType,
     cardType,
     setCardType,
     transformedCards,
@@ -53,7 +53,8 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
       console.log("AI processing enabled:", enableAIProcessing);
       
       // Auto-detect format but respect the user's selected card type
-      await detectFileFormat(file);
+      const format = await detectFileFormat(file);
+      setFileFormat(format);
       
       // Process the file using the current cardType (which might have been set by the user)
       await processFile(file, cardType);
@@ -96,7 +97,7 @@ export function CardImporter({ onImport, activeCardType }: CardImporterProps) {
         isOpen={isDialogOpen}
         onClose={closeDialog}
         onFileSelected={handleFileSelected}
-        fileType={fileType as string | null}
+        fileType={fileFormat}
         cardType={cardType}
         setCardType={setCardType}
         isProcessing={isProcessing}

@@ -3,34 +3,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useCardImporter } from '@/components/admin/import/hooks/useCardImporter';
 import { useCardImportOrchestrator } from '@/components/admin/import/hooks/useCardImportOrchestrator';
-import { useFileProcessor } from '@/components/admin/import/hooks/useFileProcessor';
-import { useCardImportResults } from '@/components/admin/import/hooks/useCardImportResults';
-import { useAICardProcessing } from '@/components/admin/import/hooks/useAICardProcessing';
 import { CardFormValues } from '@/types/forms/card-form';
+import { CardType } from '@/types/cards';
 import { CardSuggestion } from '@/utils/ai-processing/AICardProcessorService';
 
 // Mock the dependent hooks
 vi.mock('@/components/admin/import/hooks/useCardImportOrchestrator', () => ({
   useCardImportOrchestrator: vi.fn()
-}));
-
-vi.mock('@/components/admin/import/hooks/useFileProcessor', () => ({
-  useFileProcessor: vi.fn()
-}));
-
-vi.mock('@/components/admin/import/hooks/useCardImportResults', () => ({
-  useCardImportResults: vi.fn()
-}));
-
-vi.mock('@/components/admin/import/hooks/useCardImportConfig', () => ({
-  useCardImportConfig: vi.fn().mockReturnValue({
-    cardType: 'gear',
-    setCardType: vi.fn()
-  })
-}));
-
-vi.mock('@/components/admin/import/hooks/useAICardProcessing', () => ({
-  useAICardProcessing: vi.fn()
 }));
 
 describe('useCardImporter', () => {
@@ -46,20 +25,20 @@ describe('useCardImporter', () => {
   const mockResetAIProcessing = vi.fn();
   const mockOrchestratorResult = {
     isProcessing: false,
-    cardType: 'gear',
+    cardType: 'gear' as CardType,
     setCardType: vi.fn(),
-    transformedCards: [],
-    validationErrors: [],
+    transformedCards: [] as CardFormValues[],
+    validationErrors: [] as string[],
     importResults: null,
     detectFileFormat: mockAnalyzeFile,
     processFile: mockProcessFile,
     resetState: vi.fn(),
     enableAIProcessing: false,
     setEnableAIProcessing: vi.fn(),
-    aiSuggestions: [],
+    aiSuggestions: [] as CardSuggestion[],
     handleApplySuggestion: vi.fn(),
     handleIgnoreSuggestion: vi.fn(),
-    processingError: null
+    processingError: null as string | null
   };
 
   beforeEach(() => {

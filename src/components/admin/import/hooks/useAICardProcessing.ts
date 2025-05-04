@@ -97,30 +97,31 @@ export function useAICardProcessing() {
           // Handle array fields differently
           if (Array.isArray(updatedCard[fieldKey])) {
             // For array fields like rules or keywords, add the suggestion as a new item
-            const currentArray = updatedCard[fieldKey] as unknown[];
-            
-            // Create a properly typed array with the suggestion
-            if (fieldKey === 'rules' || fieldKey === 'keywords' || fieldKey === 'icons') {
-              // For known array fields, correctly type the arrays
+            if (fieldKey === 'rules') {
               if (typeof suggestion.suggestion === 'string') {
-                if (fieldKey === 'rules') {
-                  updatedCard.rules = [...(updatedCard.rules || []), suggestion.suggestion];
-                } else if (fieldKey === 'keywords') {
-                  updatedCard.keywords = [...(updatedCard.keywords || []), suggestion.suggestion];
-                } else if (fieldKey === 'icons') {
-                  // Icons are objects with symbol and name properties
-                  console.warn('Cannot directly add string suggestion to icons array, requires proper icon object');
+                updatedCard.rules = [...(updatedCard.rules || []), suggestion.suggestion];
+              }
+            } else if (fieldKey === 'keywords') {
+              if (typeof suggestion.suggestion === 'string') {
+                updatedCard.keywords = [...(updatedCard.keywords || []), suggestion.suggestion];
+              }
+            } else if (fieldKey === 'icons') {
+              // Icons are objects with symbol and meaning properties
+              if (typeof suggestion.suggestion === 'object' && suggestion.suggestion !== null) {
+                const iconSuggestion = suggestion.suggestion as {symbol: string, meaning: string};
+                if ('symbol' in iconSuggestion && 'meaning' in iconSuggestion) {
+                  updatedCard.icons = [...(updatedCard.icons || []), iconSuggestion];
+                } else {
+                  console.warn('Invalid icon suggestion format, requires symbol and meaning properties');
                 }
-              } else if (typeof suggestion.suggestion === 'object' && fieldKey === 'icons') {
-                // Type assertion to handle the icons array case
-                const iconSuggestion = suggestion.suggestion as {symbol: string, name: string};
-                updatedCard.icons = [...(updatedCard.icons || []), iconSuggestion];
+              } else {
+                console.warn('Cannot add non-object suggestion to icons array');
               }
             }
           } else {
-            // For string fields, replace the value if compatible types
-            if (typeof updatedCard[fieldKey] === typeof suggestion.suggestion) {
-              updatedCard[fieldKey] = suggestion.suggestion as any;
+            // For primitive fields, replace the value if compatible types
+            if (typeof suggestion.suggestion === typeof updatedCard[fieldKey]) {
+              (updatedCard[fieldKey] as unknown) = suggestion.suggestion;
             } else {
               console.warn(`Type mismatch: Cannot apply suggestion of type ${typeof suggestion.suggestion} to field ${fieldKey} of type ${typeof updatedCard[fieldKey]}`);
             }
