@@ -91,17 +91,18 @@ export const handleAIProcessing = async (
 /**
  * Apply an AI suggestion to the cards and update state
  */
-export const handleApplySuggestion = (
+export const handleApplySuggestion = async (
   index: number,
   applySuggestion: (index: number) => CardFormValues[],
   setCards: (cards: CardFormValues[]) => void,
   errors: string[],
   createResults: (cards: CardFormValues[], errors: string[]) => CardImportResult,
   setResults: (results: CardImportResult) => void
-): CardFormValues[] => {
+): Promise<CardFormValues[]> => {
   logCardOperation("Applying AI suggestion", { suggestionIndex: index });
   
-  const { result, error } = safeCardOperation(() => applySuggestion(index), `apply suggestion ${index}`);
+  // Use await to properly handle the Promise returned by safeCardOperation
+  const { result, error } = await safeCardOperation(() => applySuggestion(index), `apply suggestion ${index}`);
   
   if (error) {
     console.error("Error applying suggestion:", error);
