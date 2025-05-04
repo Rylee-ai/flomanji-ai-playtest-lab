@@ -6,22 +6,32 @@ import { CardSearchService } from './cards/CardSearchService';
 import { CardValidationService } from './cards/CardValidationService';
 import { GameCard, CardType } from '@/types/cards';
 import { CardVersion, CardChangeRecord, CardBulkEditOperation } from '@/types/cards/card-version';
+import { formatCardError, safeCardOperation, logCardOperation } from '@/utils/error-handling/cardErrorHandler';
 
 /**
  * Card Service that coordinates operations between specialized card services
+ * with improved error handling and batch processing
  */
 export class CardService {
   /**
    * Create or update a card in the database
    */
   static async saveCard<T extends GameCard>(card: T): Promise<T> {
-    const savedCard = await BasicCardService.saveCard(card);
-    await CardVersionService.createCardVersion(card);
-    return savedCard as T;
+    logCardOperation('saveCard', { id: card.id, name: card.name });
+    
+    try {
+      const savedCard = await BasicCardService.saveCard(card);
+      await CardVersionService.createCardVersion(card);
+      return savedCard as T;
+    } catch (error) {
+      const formattedError = formatCardError(error, 'saveCard');
+      console.error(`Failed to save card: ${formattedError.message}`, card);
+      throw error; // Re-throw to allow caller to handle
+    }
   }
 
   /**
-   * Save multiple cards in a transaction
+   * Save multiple cards in a transaction with improved error handling and progress tracking
    */
   static async saveCards<T extends GameCard>(
     cards: T[],
@@ -40,18 +50,34 @@ export class CardService {
       return { success: true, count: 0 };
     }
     
+    logCardOperation('saveCards', { count: cards.length });
+    
     // For small batches, use the original method
     if (cards.length <= 50 && !options) {
-      const result = await BasicCardService.saveCards(cards);
-    
-      // Create version records for all cards
-      await Promise.all(cards.map(card => CardVersionService.createCardVersion(card)));
+      try {
+        const result = await BasicCardService.saveCards(cards);
+      
+        // Create version records for all cards
+        await Promise.all(cards.map(card => CardVersionService.createCardVersion(card)));
 
-      return result;
+        return result;
+      } catch (error) {
+        const formattedError = formatCardError(error, 'saveCards (small batch)');
+        return {
+          success: false,
+          count: 0,
+          errors: [formattedError.message]
+        };
+      }
     }
     
     // For larger batches or when options are specified, use batched processing
     const { batchSize = 50, onProgress } = options || {};
+    
+    logCardOperation('saveCards (batched)', { 
+      totalCards: cards.length,
+      batchSize 
+    });
     
     // Use GameCard[] for the internal implementation to fix type compatibility
     const result = await CardBulkEditService.saveCardsBatched(
@@ -72,6 +98,10 @@ export class CardService {
         const batch = successfulCards.slice(i, i + versionBatchSize);
         await Promise.all(batch.map(card => CardVersionService.createCardVersion(card)));
       }
+      
+      logCardOperation('saveCards versions created', { 
+        count: successfulCards.length 
+      });
     }
 
     // Convert the generic GameCard[] failed array to T[] for type compatibility
@@ -86,17 +116,31 @@ export class CardService {
   }
 
   /**
-   * Get a card by ID
+   * Get a card by ID with improved error handling
    */
   static async getCard<T extends GameCard>(id: string): Promise<T | null> {
-    return BasicCardService.getCard<T>(id);
+    try {
+      return await BasicCardService.getCard<T>(id);
+    } catch (error) {
+      const formattedError = formatCardError(error, `getCard(${id})`);
+      console.error(formattedError);
+      return null;
+    }
   }
 
   /**
-   * Get cards by type
+   * Get cards by type with improved error handling
    */
   static async getCardsByType<T extends GameCard>(type: CardType): Promise<T[]> {
-    return BasicCardService.getCardsByType<T>(type);
+    const operation = async () => BasicCardService.getCardsByType<T>(type);
+    const { result, error } = await safeCardOperation(operation, `getCardsByType(${type})`);
+    
+    if (error) {
+      console.error(`Failed to get cards of type ${type}:`, error);
+      return [];
+    }
+    
+    return result || [];
   }
 
   /**
@@ -110,6 +154,7 @@ export class CardService {
    * Delete a card
    */
   static async deleteCard(id: string): Promise<boolean> {
+    logCardOperation('deleteCard', { id });
     return BasicCardService.deleteCard(id);
   }
 

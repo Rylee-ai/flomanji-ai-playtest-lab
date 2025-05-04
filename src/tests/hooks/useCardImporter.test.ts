@@ -25,7 +25,7 @@ describe('useCardImporter', () => {
   const mockResetAIProcessing = vi.fn();
   const mockOrchestratorResult = {
     isProcessing: false,
-    processingProgress: 0, // Add missing prop
+    processingProgress: 0,
     cardType: 'gear' as CardType,
     setCardType: vi.fn(),
     transformedCards: [] as CardFormValues[],
@@ -34,13 +34,14 @@ describe('useCardImporter', () => {
     detectFileFormat: mockAnalyzeFile,
     processFile: mockProcessFile,
     resetState: vi.fn(),
+    triggerImportComplete: vi.fn(),
     enableAIProcessing: false,
     setEnableAIProcessing: vi.fn(),
     aiSuggestions: [] as CardSuggestion[],
     handleApplySuggestion: vi.fn(),
     handleIgnoreSuggestion: vi.fn(),
     processingError: null as string | null,
-    failedCards: [] // Add missing prop
+    failedCards: []
   };
 
   beforeEach(() => {

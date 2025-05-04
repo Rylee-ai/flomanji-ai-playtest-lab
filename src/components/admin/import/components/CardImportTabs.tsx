@@ -111,7 +111,7 @@ export function CardImportTabs({
       
       {/* Success summary when cards are processed */}
       {hasPreview && (
-        <Alert variant="default" className="border-green-500">
+        <Alert className="border-green-500">
           <AlertTitle className="flex items-center justify-between">
             <span>Card Processing Results</span>
             <Badge variant="outline" className="ml-2">
@@ -127,7 +127,7 @@ export function CardImportTabs({
       
       {/* Warning if there are no cards after processing */}
       {fileType && !isProcessing && transformedCards.length === 0 && !hasErrors && (
-        <Alert variant="warning">
+        <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>No Cards Found</AlertTitle>
           <AlertDescription>

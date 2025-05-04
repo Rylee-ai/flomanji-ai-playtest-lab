@@ -6,6 +6,7 @@
 
 import { SimulationConfig, SimulationResult } from "@/types";
 import { SimulationOrchestrator } from "./SimulationOrchestrator";
+import { logCardOperation } from "@/utils/error-handling/cardErrorHandler";
 
 /**
  * Legacy wrapper for the new SimulationOrchestrator
@@ -17,6 +18,7 @@ export class SimulationRunner {
   constructor() {
     console.warn("SimulationRunner is deprecated. Use SimulationOrchestrator directly.");
     this.orchestrator = new SimulationOrchestrator();
+    logCardOperation("SimulationRunner instantiated (deprecated)", { timestamp: new Date() });
   }
 
   /**
@@ -26,6 +28,16 @@ export class SimulationRunner {
     config: SimulationConfig,
     rulesContent: string
   ): Promise<SimulationResult> {
-    return this.orchestrator.runSimulation(config, rulesContent);
+    logCardOperation("SimulationRunner.runSimulation called", { 
+      missionId: config.missionId,
+      characterId: config.characterId 
+    });
+    
+    try {
+      return await this.orchestrator.runSimulation(config, rulesContent);
+    } catch (error) {
+      console.error("Error in SimulationRunner:", error);
+      throw error;
+    }
   }
 }

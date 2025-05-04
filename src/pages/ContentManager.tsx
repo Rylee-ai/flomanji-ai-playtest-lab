@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import GameContentManager from "@/components/admin/GameContentManager";
 import { CardImporter } from "@/components/admin/import/CardImporter";
 import { CardExporter } from "@/components/admin/cards/CardExporter";
@@ -8,6 +8,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
+import { formatCardError } from "@/utils/error-handling/cardErrorHandler";
 
 const ContentManager = () => {
   const {
@@ -15,9 +16,19 @@ const ContentManager = () => {
     activeTab,
     loadCards,
   } = useCardManagement();
+  
+  const [isImporting, setIsImporting] = useState(false);
 
   const handleCardImport = async (cards, results) => {
     console.log("ContentManager: Import triggered with", cards.length, "cards");
+    
+    if (isImporting) {
+      toast.error("An import is already in progress. Please wait for it to complete.");
+      return;
+    }
+    
+    setIsImporting(true);
+    
     try {
       // Use batch size of 50 for large card sets
       const batchSize = 50;
@@ -32,6 +43,8 @@ const ContentManager = () => {
         toast.info(`Processing ${cards.length} cards in ${chunkedCards.length} batches...`);
         
         let successCount = 0;
+        let failedCount = 0;
+        
         for (let i = 0; i < chunkedCards.length; i++) {
           const batch = chunkedCards[i];
           const batchResults = {
@@ -39,14 +52,27 @@ const ContentManager = () => {
             imported: batch.length
           };
           
-          toast.loading(`Importing batch ${i+1}/${chunkedCards.length}...`, { id: `batch-${i}` });
-          await handleImport(batch, batchResults);
-          successCount += batch.length;
+          const batchToastId = `batch-${i}`;
+          toast.loading(`Importing batch ${i+1}/${chunkedCards.length}...`, { id: batchToastId });
           
-          toast.success(`Batch ${i+1} complete. ${successCount}/${cards.length} cards imported`);
+          try {
+            await handleImport(batch, batchResults);
+            successCount += batch.length;
+            toast.success(`Batch ${i+1} complete`, { id: batchToastId });
+          } catch (error) {
+            const formattedError = formatCardError(error, `batch ${i+1}`);
+            failedCount += batch.length;
+            toast.error(`Batch ${i+1} failed: ${formattedError.message}`, { id: batchToastId });
+          }
+          
+          toast.info(`Progress: ${successCount}/${cards.length} cards imported, ${failedCount} failed`);
         }
         
-        toast.success(`Successfully imported ${successCount} cards in ${chunkedCards.length} batches`);
+        if (failedCount === 0) {
+          toast.success(`Successfully imported all ${successCount} cards in ${chunkedCards.length} batches`);
+        } else {
+          toast.warning(`Import completed with issues: ${successCount} cards imported, ${failedCount} cards failed`);
+        }
       } else {
         // For smaller imports, handle all at once
         await handleImport(cards, results);
@@ -56,8 +82,9 @@ const ContentManager = () => {
       // Always reload cards to reflect the new imports
       await loadCards();
     } catch (error) {
-      console.error("Error during import:", error);
-      toast.error("Failed to import cards. Please try again.");
+      const formattedError = formatCardError(error, 'import');
+      console.error("Error during import:", formattedError);
+      toast.error(`Failed to import cards: ${formattedError.message}`);
       
       // Still try to reload cards to ensure UI is consistent
       try {
@@ -65,6 +92,8 @@ const ContentManager = () => {
       } catch (err) {
         console.error("Error reloading cards after failed import:", err);
       }
+    } finally {
+      setIsImporting(false);
     }
   };
 
@@ -79,7 +108,7 @@ const ContentManager = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="gap-2" asChild>
+          <Button variant="outline" size="sm" className="gap-2" asChild disabled={isImporting}>
             <label>
               <Download className="h-4 w-4" />
               <span>Export</span>

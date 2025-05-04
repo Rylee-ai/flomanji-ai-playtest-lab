@@ -1,6 +1,7 @@
 
 /**
  * Centralized error handling for card operations
+ * This utility provides standardized error handling across all card-related operations
  */
 
 /**
@@ -12,27 +13,36 @@ export interface CardOperationError {
   cardIndex?: number;
   cardName?: string;
   details?: unknown;
+  timestamp?: string;
+  operation?: string;
 }
 
 /**
  * Format an error into a standardized card operation error
+ * @param error The error to format
+ * @param context Optional context about where the error occurred
  */
 export function formatCardError(error: unknown, context?: string): CardOperationError {
   console.error(`Card error${context ? ` (${context})` : ''}:`, error);
   
+  const timestamp = new Date().toISOString();
+  
   if (error instanceof Error) {
     return {
       message: error.message,
-      details: error
+      details: error,
+      timestamp
     };
   } else if (typeof error === 'string') {
     return {
-      message: error
+      message: error,
+      timestamp
     };
   } else {
     return {
       message: 'Unknown error occurred',
-      details: error
+      details: error,
+      timestamp
     };
   }
 }
@@ -43,14 +53,16 @@ export function formatCardError(error: unknown, context?: string): CardOperation
 export function formatCardSpecificError(
   error: unknown, 
   cardIndex?: number, 
-  cardName?: string
+  cardName?: string,
+  operation?: string
 ): CardOperationError {
   const formattedError = formatCardError(error);
   
   return {
     ...formattedError,
     cardIndex,
-    cardName
+    cardName,
+    operation
   };
 }
 
@@ -61,7 +73,13 @@ export function cardErrorsToMessages(errors: CardOperationError[]): string[] {
   return errors.map(error => {
     if (error.cardIndex !== undefined || error.cardName) {
       const identifier = error.cardName || `Card #${error.cardIndex! + 1}`;
-      return `${identifier}: ${error.message}`;
+      let message = `${identifier}: ${error.message}`;
+      
+      if (error.operation) {
+        message = `${error.operation} - ${message}`;
+      }
+      
+      return message;
     }
     return error.message;
   });
@@ -88,4 +106,11 @@ export async function safeCardOperation<T>(
   } catch (error) {
     return { error: formatCardError(error, errorContext) };
   }
+}
+
+/**
+ * Log an operation for debugging purposes
+ */
+export function logCardOperation(operation: string, details?: unknown): void {
+  console.log(`[Card Operation] ${operation}`, details || '');
 }
