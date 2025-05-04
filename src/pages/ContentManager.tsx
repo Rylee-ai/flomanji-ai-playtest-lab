@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Download, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { FlomanjiCardImporter } from "@/components/admin/import/FlomanjiCardImporter";
+import { FlomanjiPlayerCharacterImporter } from "@/components/admin/import/FlomanjiPlayerCharacterImporter";
 
 const ContentManager = () => {
   const {
@@ -81,6 +82,7 @@ const ContentManager = () => {
             </label>
           </Button>
           
+          <FlomanjiPlayerCharacterImporter onComplete={loadCards} />
           <FlomanjiCardImporter onComplete={loadCards} />
           
           <CardImporter 
