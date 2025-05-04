@@ -8,7 +8,11 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
-import { formatCardError } from "@/utils/error-handling/cardErrorHandler";
+import { 
+  formatCardError, 
+  logCardOperation, 
+  safeCardOperation 
+} from "@/utils/error-handling/cardErrorHandler";
 
 const ContentManager = () => {
   const {
@@ -20,7 +24,10 @@ const ContentManager = () => {
   const [isImporting, setIsImporting] = useState(false);
 
   const handleCardImport = async (cards, results) => {
-    console.log("ContentManager: Import triggered with", cards.length, "cards");
+    logCardOperation("ContentManager: Import triggered", { 
+      cardCount: cards.length, 
+      cardType: activeTab 
+    });
     
     if (isImporting) {
       toast.error("An import is already in progress. Please wait for it to complete.");
@@ -56,13 +63,26 @@ const ContentManager = () => {
           toast.loading(`Importing batch ${i+1}/${chunkedCards.length}...`, { id: batchToastId });
           
           try {
-            await handleImport(batch, batchResults);
-            successCount += batch.length;
-            toast.success(`Batch ${i+1} complete`, { id: batchToastId });
+            // Use our safeCardOperation utility to handle potential errors
+            const { result, error } = await safeCardOperation(
+              async () => handleImport(batch, batchResults),
+              `batch ${i+1} import`
+            );
+            
+            if (error) {
+              failedCount += batch.length;
+              toast.error(`Batch ${i+1} failed: ${error.message}`, { id: batchToastId });
+              logCardOperation("Import batch failed", { batchIndex: i, error });
+            } else {
+              successCount += batch.length;
+              toast.success(`Batch ${i+1} complete`, { id: batchToastId });
+              logCardOperation("Import batch succeeded", { batchIndex: i, count: batch.length });
+            }
           } catch (error) {
             const formattedError = formatCardError(error, `batch ${i+1}`);
             failedCount += batch.length;
             toast.error(`Batch ${i+1} failed: ${formattedError.message}`, { id: batchToastId });
+            logCardOperation("Import batch exception", { batchIndex: i, error: formattedError });
           }
           
           toast.info(`Progress: ${successCount}/${cards.length} cards imported, ${failedCount} failed`);
@@ -70,13 +90,16 @@ const ContentManager = () => {
         
         if (failedCount === 0) {
           toast.success(`Successfully imported all ${successCount} cards in ${chunkedCards.length} batches`);
+          logCardOperation("Import completed successfully", { total: successCount });
         } else {
           toast.warning(`Import completed with issues: ${successCount} cards imported, ${failedCount} cards failed`);
+          logCardOperation("Import completed with failures", { success: successCount, failed: failedCount });
         }
       } else {
         // For smaller imports, handle all at once
         await handleImport(cards, results);
         toast.success(`Successfully imported ${cards.length} cards`);
+        logCardOperation("Small import completed", { count: cards.length });
       }
       
       // Always reload cards to reflect the new imports
@@ -85,6 +108,7 @@ const ContentManager = () => {
       const formattedError = formatCardError(error, 'import');
       console.error("Error during import:", formattedError);
       toast.error(`Failed to import cards: ${formattedError.message}`);
+      logCardOperation("Import failed with exception", { error: formattedError });
       
       // Still try to reload cards to ensure UI is consistent
       try {

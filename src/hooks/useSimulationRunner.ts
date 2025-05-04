@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { SimulationConfig } from "@/types";
 import { startSimulation, getExampleRules } from "@/lib/api";
@@ -6,6 +7,8 @@ import { recordMissionRun } from "@/lib/mission-analytics";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 import { MISSION_CARDS } from "@/lib/cards/mission-cards";
 import { clearOpenRouterCache } from "@/lib/openrouterCache";
+import { showErrorToast, showInfoToast, showSuccessToast } from "@/lib/toast";
+import { logCardOperation, formatCardError } from "@/utils/error-handling/cardErrorHandler";
 
 /**
  * Hook for running a simulation and tracking its state/results.
@@ -27,12 +30,20 @@ export function useSimulationRunner() {
   // Reset the OpenRouter cache and try a different model
   const retryWithDifferentModel = useCallback(async () => {
     if (!currentConfig) {
-      toast.error("No previous configuration found to retry");
+      showErrorToast("No previous configuration found to retry");
       return;
     }
     
     // Clear any cached model/API key to force a refresh
     clearOpenRouterCache();
+    
+    logCardOperation("Retrying simulation with different model", {
+      config: {
+        missionId: currentConfig.missionId,
+        players: currentConfig.players,
+        characterCount: currentConfig.characters?.length
+      }
+    });
     
     // Clear errors
     clearErrorState();
@@ -45,6 +56,12 @@ export function useSimulationRunner() {
   const runSimulation = useCallback(
     async (config: SimulationConfig) => {
       try {
+        logCardOperation("Starting simulation", {
+          missionId: config.missionId,
+          players: config.players,
+          characterCount: config.characters?.length
+        });
+        
         setIsLoading(true);
         setIsFinished(false);
         setLatestSimulationId(null);
@@ -56,7 +73,7 @@ export function useSimulationRunner() {
         const rulesContent = savedRules || getExampleRules();
 
         if (!localStorage.getItem("openrouter-api-key")) {
-          toast.error("Please set your OpenRouter API key in Settings first");
+          showErrorToast("Please set your OpenRouter API key in Settings first");
           setIsLoading(false);
           setIsFinished(false);
           return;
@@ -100,6 +117,12 @@ export function useSimulationRunner() {
 
           try {
             // Run the simulation!
+            showInfoToast("Running simulation...");
+            logCardOperation("Executing simulation", { 
+              missionId: simulationConfig.missionId,
+              characterCount: simulationConfig.fullCharacters?.length
+            });
+            
             const result = await startSimulation(simulationConfig, rulesContent);
             setLatestResult(result);
 
@@ -122,31 +145,40 @@ export function useSimulationRunner() {
               };
 
               recordMissionRun(runData);
+              logCardOperation("Simulation recorded", { 
+                simulationId: result.id,
+                missionId: config.missionId,
+                success: result.missionOutcome === "success"
+              });
             }
 
             setIsLoading(false);
             setIsFinished(true);
             setLatestSimulationId(result.id);
 
-            toast.success("Simulation completed successfully");
+            showSuccessToast("Simulation completed successfully");
           } catch (error) {
-            console.error("Simulation failed:", error);
-            setError(`${error.message || "Unknown error"}`);
+            const formattedError = formatCardError(error, "simulation execution");
+            console.error("Simulation failed:", formattedError);
+            setError(formattedError.message);
             setIsLoading(false);
             setIsFinished(false);
-            toast.error(`Simulation failed: ${error.message || "Unknown error"}`);
+            showErrorToast("Simulation failed", formattedError.message);
+            logCardOperation("Simulation execution failed", { error: formattedError });
           }
         } else {
-          toast.error("No characters selected");
+          showErrorToast("No characters selected");
           setIsLoading(false);
           setIsFinished(false);
         }
       } catch (error) {
-        console.error("Simulation failed:", error);
-        setError(`${error.message || "Unknown error"}`);
+        const formattedError = formatCardError(error, "simulation setup");
+        console.error("Simulation failed:", formattedError);
+        setError(formattedError.message);
         setIsLoading(false);
         setIsFinished(false);
-        toast.error(`Simulation failed: ${error.message || "Unknown error"}`);
+        showErrorToast("Simulation failed", formattedError.message);
+        logCardOperation("Simulation setup failed", { error: formattedError });
       }
     },
     []
