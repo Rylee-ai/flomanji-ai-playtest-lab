@@ -49,6 +49,17 @@ export const FLOMANJI_PLAYER_CHARACTERS: PlayerCharacterCard[] = [
         effect: "May attempt to bluff access into restricted areas (Charm check)"
       }
     ],
+    icons: [
+      { symbol: "🏄", meaning: "Beach Culture" },
+      { symbol: "🍺", meaning: "Party Animal" }
+    ],
+    keywords: ["spring break", "social", "charm", "beach"],
+    rules: [
+      "Start with 5 Health cards in hand",
+      "Discard lowest card per damage",
+      "Track Weirdness on a d10, starting at 0",
+      "Gain 5 Luck tokens"
+    ],
     flavor: "Dude! Flomanji! Totally epic waves... wait, this is a swamp? And that gator's got my cooler? Bogus!",
     imagePrompt: "Photorealistic portrait of a young man (Chad), sunburnt, wearing board shorts and a slightly bewildered expression. Background is a mix of beach party remnants and encroaching swamp vines. Focus on misplaced confidence."
   },
@@ -97,6 +108,17 @@ export const FLOMANJI_PLAYER_CHARACTERS: PlayerCharacterCard[] = [
         type: "Equipment",
         effect: "+1 to Authority checks with civilians"
       }
+    ],
+    icons: [
+      { symbol: "📋", meaning: "Bureaucracy Expert" },
+      { symbol: "🏠", meaning: "Suburban Authority" }
+    ],
+    keywords: ["bureaucrat", "enforcer", "suburban", "authority"],
+    rules: [
+      "Start with 5 Health cards in hand",
+      "Discard lowest card per damage",
+      "Track Weirdness on a d10, starting at 0",
+      "Gain 1 Luck token"
     ],
     flavor: "Regulation 7C clearly states all existential threats must be pre-approved by the architectural review board! This state is completely out of compliance!",
     imagePrompt: "Photorealistic portrait of a middle-aged woman (Brenda) with a stern expression, wearing a slightly-too-official polo shirt. She's holding a clipboard like a weapon. Background is a pristine but eerie suburban street. Focus on authority."
@@ -147,6 +169,17 @@ export const FLOMANJI_PLAYER_CHARACTERS: PlayerCharacterCard[] = [
         effect: "+1 to Knowledge checks about local fauna"
       }
     ],
+    icons: [
+      { symbol: "👣", meaning: "Cryptid Expert" },
+      { symbol: "🔍", meaning: "Investigation Expert" }
+    ],
+    keywords: ["cryptozoologist", "believer", "investigator", "paranormal"],
+    rules: [
+      "Start with 5 Health cards in hand",
+      "Discard lowest card per damage",
+      "Track Weirdness on a d10, starting at 0",
+      "Gain 5 Luck tokens"
+    ],
     flavor: "The Skunk Ape is real! The Mothman vacations here! The signs are everywhere... you just need the right kind of eyes... and maybe this blurry photo.",
     imagePrompt: "Photorealistic portrait of a man (Mort) with wide, slightly manic eyes, wearing outdoor gear and holding a strange device. Background is a dark, misty swamp or forest. Focus on earnest belief."
   },
@@ -195,6 +228,17 @@ export const FLOMANJI_PLAYER_CHARACTERS: PlayerCharacterCard[] = [
         type: "Equipment",
         effect: "+1 resistance to sun-related hazards"
       }
+    ],
+    icons: [
+      { symbol: "🐊", meaning: "Gator Handler" },
+      { symbol: "🌿", meaning: "Herbalist" }
+    ],
+    keywords: ["swamp", "healer", "animal handler", "survivalist"],
+    rules: [
+      "Start with 5 Health cards in hand",
+      "Discard lowest card per damage",
+      "Track Weirdness on a d10, starting at 0",
+      "Gain 2 Luck tokens"
     ],
     flavor: "Ain't nothin' in this swamp scares me more'n tax season. Now, hold still while I wrassle this here reptile... or brew ya somethin' for that rash.",
     imagePrompt: "Photorealistic portrait of a tough, weathered woman (Jolene) with determined eyes, perhaps with a coil of rope over her shoulder or holding herbs. Background is a dense swamp environment. Focus on resilience."
@@ -245,6 +289,17 @@ export const FLOMANJI_PLAYER_CHARACTERS: PlayerCharacterCard[] = [
         effect: "Once per game, reduce Heat by 1 in suburban regions"
       }
     ],
+    icons: [
+      { symbol: "👴", meaning: "Senior Wisdom" },
+      { symbol: "🏖️", meaning: "Snowbird" }
+    ],
+    keywords: ["retiree", "social", "snowbird", "complainer"],
+    rules: [
+      "Start with 5 Health cards in hand",
+      "Discard lowest card per damage",
+      "Track Weirdness on a d10, starting at 0",
+      "Gain 5 Luck tokens"
+    ],
     flavor: "Left New York for sunshine and early bird specials. Found... this Flomanji chaos instead. Oy vey. Where's the shuffleboard court?",
     imagePrompt: "Photorealistic portrait of an elderly man (Shelly), maybe in a slightly-too-loud Flomanji shirt and khaki shorts. He looks exasperated but shrewd, perhaps adjusting his glasses. Background is a sunny but slightly chaotic Flomanji suburban scene. Focus on his personality."
   },
@@ -293,6 +348,17 @@ export const FLOMANJI_PLAYER_CHARACTERS: PlayerCharacterCard[] = [
         type: "Special",
         effect: "+1 to resist intimidation, -1 to genuine charm"
       }
+    ],
+    icons: [
+      { symbol: "🎪", meaning: "Entertainment Worker" },
+      { symbol: "😒", meaning: "Burnout Expert" }
+    ],
+    keywords: ["employee", "service worker", "disgruntled", "crowd control"],
+    rules: [
+      "Start with 5 Health cards in hand",
+      "Discard lowest card per damage",
+      "Track Weirdness on a d10, starting at 0",
+      "Gain 2 Luck tokens"
     ],
     flavor: "Smile! Wave! Pretend that giant mosquito isn't draining your life force! After dealing with tourists all day, Flomanji is almost relaxing.",
     imagePrompt: "Photorealistic portrait of a tired-looking person (Darryl) in a partially removed, goofy theme park costume. Their expression is a mix of exhaustion and simmering rage. Background is a stylized, slightly nightmarish theme park setting. Focus on burnout."
@@ -343,6 +409,17 @@ export const FLOMANJI_PLAYER_CHARACTERS: PlayerCharacterCard[] = [
         effect: "+1 to wilderness survival knowledge checks"
       }
     ],
+    icons: [
+      { symbol: "🧰", meaning: "Survivalist" },
+      { symbol: "🔧", meaning: "Crafting Expert" }
+    ],
+    keywords: ["prepper", "survivalist", "prepared", "crafting"],
+    rules: [
+      "Start with 5 Health cards in hand",
+      "Discard lowest card per damage",
+      "Track Weirdness on a d10, starting at 0",
+      "Gain 3 Luck tokens"
+    ],
     flavor: "Knew it! Knew this day would come! Flomanji Rising! Good thing I buried those MREs... now where did I put that shovel?",
     imagePrompt: "Photorealistic portrait of a rugged individual (Rex) wearing practical gear, maybe a bit paranoid-looking. Background is a cluttered garage or bunker filled with survival supplies. Focus on preparedness."
   },
@@ -391,6 +468,17 @@ export const FLOMANJI_PLAYER_CHARACTERS: PlayerCharacterCard[] = [
         type: "Equipment",
         effect: "+1 to first impression Charm checks"
       }
+    ],
+    icons: [
+      { symbol: "📱", meaning: "Social Media Expert" },
+      { symbol: "🤳", meaning: "Selfie Specialist" }
+    ],
+    keywords: ["influencer", "social media", "trendy", "photogenic"],
+    rules: [
+      "Start with 5 Health cards in hand",
+      "Discard lowest card per damage",
+      "Track Weirdness on a d10, starting at 0",
+      "Gain 4 Luck tokens"
     ],
     flavor: "#FlomanjiLife #Survivor #NoFilter #SponsoredByPanic! OMG, you guys, this lighting is terrible for my aesthetic, but the existential dread is kinda trending?",
     imagePrompt: "Photorealistic portrait of a young woman (Tiffany) striking a pose for a selfie amidst chaos. She looks slightly panicked but is trying to maintain her influencer smile. Background is a visually striking but dangerous Flomanji location (e.g., edge of a sinkhole, picturesque but gator-filled swamp). Focus on curated reality vs. harsh reality."
@@ -441,6 +529,17 @@ export const FLOMANJI_PLAYER_CHARACTERS: PlayerCharacterCard[] = [
         effect: "May attempt to access restricted areas (Charm check)"
       }
     ],
+    icons: [
+      { symbol: "🗞️", meaning: "Journalist" },
+      { symbol: "✏️", meaning: "Blogger" }
+    ],
+    keywords: ["journalist", "investigator", "reporter", "curious"],
+    rules: [
+      "Start with 5 Health cards in hand",
+      "Discard lowest card per damage",
+      "Track Weirdness on a d10, starting at 0",
+      "Gain 4 Luck tokens"
+    ],
     flavor: "This is bigger than the county fair scandal! 'Flomanji Phenomenon Baffles Experts!' Just gotta get the story... and maybe survive to post it.",
     imagePrompt: "Photorealistic portrait of a determined-looking person (Lenny) holding a notepad and pen, maybe looking slightly harried. Background is a chaotic scene they are trying to document (e.g., aftermath of a Hazard, a strange Event). Focus on investigative drive."
   }
@@ -465,9 +564,3 @@ export const getAllFlomanjiPlayerCharacters = (): PlayerCharacterCard[] => {
 export const getFlomanjiPlayerCharacterById = (id: string): PlayerCharacterCard | undefined => {
   return FLOMANJI_PLAYER_CHARACTERS.find(card => card.id === id);
 };
-
-/**
- * Export all Flomanji player character cards for use in other modules
- */
-export { FLOMANJI_PLAYER_CHARACTERS };
-
