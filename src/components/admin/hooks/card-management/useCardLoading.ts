@@ -8,7 +8,7 @@ export const useCardLoading = (activeTab: CardType) => {
   const [cards, setCards] = useState<GameCard[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const loadCards = useCallback(async () => {
+  const loadCards = useCallback(async (): Promise<GameCard[]> => {
     setLoading(true);
     try {
       const loadedCards = await CardService.getCardsByType(activeTab);

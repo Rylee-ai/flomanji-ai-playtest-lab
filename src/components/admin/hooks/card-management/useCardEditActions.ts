@@ -6,7 +6,7 @@ import { CardService } from "@/services/CardService";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export const useCardEditActions = (
-  loadCards: () => Promise<void>,
+  loadCards: () => Promise<GameCard[]>,
   setIsFormOpen: (isOpen: boolean) => void,
   setEditingCard: (card?: GameCard) => void
 ) => {

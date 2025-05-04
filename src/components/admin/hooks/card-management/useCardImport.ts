@@ -6,7 +6,7 @@ import { CardService } from "@/services/CardService";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { GameCard } from "@/types/cards";
 
-export const useCardImport = (loadCards: () => Promise<void>) => {
+export const useCardImport = (loadCards: () => Promise<GameCard[]>) => {
   const [importProgress, setImportProgress] = useState(0);
   
   const handleImport = async (importedCards: CardFormValues[], results: CardImportResult) => {
