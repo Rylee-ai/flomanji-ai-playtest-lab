@@ -5,6 +5,21 @@ import { CardSuggestion } from "@/utils/ai-processing/AICardProcessorService";
 import { CardImportResult } from "@/types/cards/card-version";
 
 /**
+ * Handles errors that occur during file processing and returns appropriate error messages
+ */
+export const handleFileProcessingError = (error: unknown): string[] => {
+  console.error("File processing error:", error);
+  
+  if (error instanceof Error) {
+    return [`Failed to process file: ${error.message}`];
+  } else if (typeof error === 'string') {
+    return [`Failed to process file: ${error}`];
+  } else {
+    return ["Failed to process file: Unknown error"];
+  }
+};
+
+/**
  * Handle AI processing for cards
  */
 export const handleAIProcessing = async (
