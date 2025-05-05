@@ -11,13 +11,20 @@ export const useCardLoading = (activeTab: CardType) => {
   const loadCards = useCallback(async (): Promise<GameCard[]> => {
     setLoading(true);
     try {
+      // Load cards from CardService which now uses CardLibraryService
       const loadedCards = await CardService.getCardsByType(activeTab);
+      
+      if (loadedCards.length === 0) {
+        console.info(`No ${activeTab} cards found in file-based library`);
+      } else {
+        console.log(`Loaded ${loadedCards.length} ${activeTab} cards from file-based library`);
+      }
+      
       setCards(loadedCards);
       return loadedCards;
     } catch (error) {
       console.error("Error loading cards:", error);
       // Don't show error toast on initial load to avoid UI clutter
-      // We'll let the parent component handle error messaging
       return [];
     } finally {
       setLoading(false);

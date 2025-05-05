@@ -1,67 +1,76 @@
 
-import { useState } from "react";
+import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
-import { CardService } from "@/services/CardService";
-import { showSuccessToast, showErrorToast } from "@/lib/toast";
-import { GameCard } from "@/types/cards";
+import { FileBasedCardAdapter } from "@/utils/file-based/FileBasedCardAdapter";
+import { toast } from "sonner";
+import { logCardOperation } from "@/utils/error-handling/cardErrorHandler";
 
-export const useCardImport = (loadCards: () => Promise<GameCard[]>) => {
-  const [importProgress, setImportProgress] = useState(0);
-  
-  const handleImport = async (importedCards: CardFormValues[], results: CardImportResult) => {
-    if (!importedCards || importedCards.length === 0) {
-      showSuccessToast("No cards to import");
+export const useCardImport = (loadCards: () => Promise<any>) => {
+  /**
+   * Handle importing cards in a file-based system
+   */
+  const handleImport = async (
+    cards: CardFormValues[], 
+    results: CardImportResult
+  ): Promise<void> => {
+    if (!cards || cards.length === 0) {
+      toast.error("No cards to import");
       return;
     }
     
+    logCardOperation("Starting import in file-based mode", { cardCount: cards.length });
+    
     try {
-      setImportProgress(0);
-      
-      // Transform imported cards to GameCard format with unique IDs
-      const cardsToSave = importedCards.map(card => ({
-        ...card,
-        id: card.id || `${card.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        // Ensure icons is not optional to satisfy GameCard type
-        icons: card.icons || [],
-        // Ensure keywords is not optional
-        keywords: card.keywords || []
-      })) as GameCard[];
-      
-      // Save cards to database with batch processing
-      const { success, count, failed, errors } = await CardService.saveCards(
-        cardsToSave, 
-        {
-          batchSize: 50,
-          onProgress: (completed, total) => {
-            const progress = Math.round((completed / total) * 100);
-            setImportProgress(progress);
-          }
+      // Group cards by type for more organized handling
+      const cardsByType = cards.reduce((acc, card) => {
+        const type = card.type as CardType;
+        if (!acc[type]) {
+          acc[type] = [];
         }
+        acc[type].push(card);
+        return acc;
+      }, {} as Record<CardType, CardFormValues[]>);
+      
+      // In file-based mode, we would handle this differently
+      // Here we're just showing what would happen
+      let successCount = 0;
+      let failureCount = 0;
+      
+      for (const [type, typeCards] of Object.entries(cardsByType)) {
+        toast.info(`Processing ${typeCards.length} ${type} cards...`);
+        
+        // Use the adapter to simulate import
+        const importResult = await FileBasedCardAdapter.importCards(
+          typeCards, 
+          type as CardType
+        );
+        
+        if (importResult.success) {
+          successCount += typeCards.length;
+          toast.success(`${type}: ${importResult.created} would be created, ${importResult.updated} would be updated`);
+        } else {
+          failureCount += typeCards.length;
+          toast.error(`${type}: Import would have issues - ${importResult.errors.join(", ")}`);
+        }
+      }
+      
+      // Show final results
+      toast.info(
+        `File-based import simulation complete: ${successCount} cards would be imported, ${failureCount} would fail`
       );
       
-      if (success) {
-        if (failed && failed.length > 0) {
-          // Some cards failed but others succeeded
-          showSuccessToast(`Imported ${count} cards with ${failed.length} failures`);
-        } else {
-          // All cards imported successfully
-          showSuccessToast(`Successfully imported ${count} cards`);
-        }
-        
-        // Reload cards
-        await loadCards();
-      } else {
-        // All cards failed
-        showErrorToast(`Failed to import cards: ${errors?.[0] || 'Unknown error'}`);
-      }
+      // Reload cards to reflect any changes
+      // In a real implementation, we would need to update the source files
+      await loadCards();
+      
     } catch (error) {
-      console.error("Error importing cards:", error);
-      showErrorToast("Failed to import cards");
-    } finally {
-      setImportProgress(0);
+      console.error("Error during import simulation:", error);
+      toast.error(`Failed to simulate import: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
-  return { handleImport, importProgress };
+  return {
+    handleImport
+  };
 };

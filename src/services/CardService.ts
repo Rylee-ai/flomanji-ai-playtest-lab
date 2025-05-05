@@ -1,37 +1,28 @@
 
-import { BasicCardService } from './cards/BasicCardService';
-import { CardVersionService } from './cards/CardVersionService';
-import { CardBulkEditService } from './cards/CardBulkEditService';
-import { CardSearchService } from './cards/CardSearchService';
-import { CardValidationService } from './cards/CardValidationService';
+import { CardLibraryService } from './CardLibraryService';
 import { GameCard, CardType } from '@/types/cards';
 import { CardVersion, CardChangeRecord, CardBulkEditOperation } from '@/types/cards/card-version';
 import { formatCardError, safeCardOperation, logCardOperation } from '@/utils/error-handling/cardErrorHandler';
+import { toast } from 'sonner';
 
 /**
- * Card Service that coordinates operations between specialized card services
- * with improved error handling and batch processing
+ * Card Service that serves as the main entry point for card operations
+ * Now uses CardLibraryService for file-based card operations
  */
 export class CardService {
   /**
-   * Create or update a card in the database
+   * Create or update a card in memory (file-based mode)
+   * This would require a different paradigm for persistence in a file-based system
    */
   static async saveCard<T extends GameCard>(card: T): Promise<T> {
     logCardOperation('saveCard', { id: card.id, name: card.name, type: card.type });
+    toast.info("In file-based mode, card changes would require code changes");
     
-    try {
-      const savedCard = await BasicCardService.saveCard(card);
-      await CardVersionService.createCardVersion(card);
-      return savedCard as T;
-    } catch (error) {
-      const formattedError = formatCardError(error, 'saveCard');
-      console.error(`Failed to save card: ${formattedError.message}`, card);
-      throw error; // Re-throw to allow caller to handle
-    }
+    return CardLibraryService.saveCard(card);
   }
 
   /**
-   * Save multiple cards in a transaction with improved error handling and progress tracking
+   * Save multiple cards in memory (file-based mode)
    */
   static async saveCards<T extends GameCard>(
     cards: T[],
@@ -51,75 +42,16 @@ export class CardService {
     }
     
     logCardOperation('saveCards', { count: cards.length, types: [...new Set(cards.map(c => c.type))] });
+    toast.info("In file-based mode, bulk card changes would require code changes");
     
-    // For small batches, use the original method
-    if (cards.length <= 50 && !options) {
-      try {
-        const result = await BasicCardService.saveCards(cards);
-      
-        // Create version records for all cards
-        await Promise.all(cards.map(card => CardVersionService.createCardVersion(card)));
-
-        return result;
-      } catch (error) {
-        const formattedError = formatCardError(error, 'saveCards (small batch)');
-        return {
-          success: false,
-          count: 0,
-          errors: [formattedError.message]
-        };
-      }
-    }
-    
-    // For larger batches or when options are specified, use batched processing
-    const { batchSize = 50, onProgress } = options || {};
-    
-    logCardOperation('saveCards (batched)', { 
-      totalCards: cards.length,
-      batchSize 
-    });
-    
-    // Use GameCard[] for the internal implementation to fix type compatibility
-    const result = await CardBulkEditService.saveCardsBatched(
-      cards,
-      batchSize,
-      onProgress
-    );
-    
-    // Create version records for successfully saved cards
-    // We identify these by filtering out the failed ones
-    if (result.success && result.count > 0) {
-      const failedIds = new Set((result.failed || []).map(card => card.id));
-      const successfulCards = cards.filter(card => !failedIds.has(card.id));
-      
-      // Create versions in batches
-      const versionBatchSize = 20;
-      for (let i = 0; i < successfulCards.length; i += versionBatchSize) {
-        const batch = successfulCards.slice(i, i + versionBatchSize);
-        await Promise.all(batch.map(card => CardVersionService.createCardVersion(card)));
-      }
-      
-      logCardOperation('saveCards versions created', { 
-        count: successfulCards.length 
-      });
-    }
-
-    // Convert the generic GameCard[] failed array to T[] for type compatibility
-    const typedFailedCards = result.failed ? result.failed.map(card => card as T) : undefined;
-
-    return { 
-      success: result.success, 
-      count: result.count,
-      failed: typedFailedCards,
-      errors: result.errors
-    };
+    return CardLibraryService.saveCards(cards);
   }
 
   /**
-   * Get a card by ID with improved error handling
+   * Get a card by ID using file-based service
    */
   static async getCard<T extends GameCard>(id: string): Promise<T | null> {
-    const operation = async () => BasicCardService.getCard<T>(id);
+    const operation = async () => CardLibraryService.getCard<T>(id);
     const { result, error } = await safeCardOperation(operation, `getCard(${id})`);
     
     if (error) {
@@ -131,10 +63,10 @@ export class CardService {
   }
 
   /**
-   * Get cards by type with improved error handling
+   * Get cards by type using file-based service
    */
   static async getCardsByType<T extends GameCard>(type: CardType): Promise<T[]> {
-    const operation = async () => BasicCardService.getCardsByType<T>(type);
+    const operation = async () => CardLibraryService.getCardsByType<T>(type);
     const { result, error } = await safeCardOperation(operation, `getCardsByType(${type})`);
     
     if (error) {
@@ -146,10 +78,10 @@ export class CardService {
   }
 
   /**
-   * Get all cards
+   * Get all cards using file-based service
    */
   static async getAllCards(): Promise<GameCard[]> {
-    const operation = async () => BasicCardService.getAllCards();
+    const operation = async () => CardLibraryService.getAllCards();
     const { result, error } = await safeCardOperation(operation, 'getAllCards');
     
     if (error) {
@@ -161,53 +93,46 @@ export class CardService {
   }
 
   /**
-   * Delete a card
+   * Delete a card (file-based mode)
    */
   static async deleteCard(id: string): Promise<boolean> {
     logCardOperation('deleteCard', { id });
-    try {
-      return await BasicCardService.deleteCard(id);
-    } catch (error) {
-      const formattedError = formatCardError(error, `deleteCard(${id})`);
-      console.error(formattedError);
-      return false;
-    }
+    toast.info("In file-based mode, card deletion would require code changes");
+    
+    return CardLibraryService.deleteCard(id);
   }
 
   /**
-   * Get version history for a card
+   * Get version history for a card (file-based mode)
+   * In a fully implemented system, this could use git history
    */
   static async getCardVersionHistory(cardId: string): Promise<CardVersion[]> {
-    const operation = async () => CardVersionService.getCardVersionHistory(cardId);
-    const { result, error } = await safeCardOperation(operation, `getCardVersionHistory(${cardId})`);
-    
-    if (error) {
-      console.error(`Failed to get version history for card ${cardId}:`, error);
-      return [];
-    }
-    
-    return result || [];
+    console.log("Getting version history in file-based mode for card:", cardId);
+    // In file-based mode, we don't have version history unless we integrate with git
+    return [];
   }
 
   /**
-   * Record a bulk edit operation
+   * Record a bulk edit operation (file-based mode)
    */
   static async recordBulkEditOperation(operation: Omit<CardBulkEditOperation, 'id' | 'timestamp'>): Promise<string> {
-    return CardBulkEditService.recordBulkEditOperation(operation);
+    console.log("Recording bulk edit operation in file-based mode:", operation);
+    // This would be handled differently in file-based mode
+    return "file-based-operation";
   }
 
   /**
-   * Export cards to JSON
+   * Export cards to JSON - still works in file-based mode
    */
   static exportCardsToJSON(cards: GameCard[]): string {
     return JSON.stringify(cards, null, 2);
   }
 
   /**
-   * Search cards by text
+   * Search cards by text using file-based service
    */
   static async searchCards(query: string): Promise<GameCard[]> {
-    const operation = async () => CardSearchService.searchCards(query);
+    const operation = async () => CardLibraryService.searchCards(query);
     const { result, error } = await safeCardOperation(operation, `searchCards(${query})`);
     
     if (error) {
@@ -219,15 +144,9 @@ export class CardService {
   }
 
   /**
-   * Validate card against schema
+   * Validate card against schema - still works in file-based mode
    */
   static validateCard<T extends GameCard>(card: T, type: CardType): { valid: boolean; errors: string[] } {
-    try {
-      return CardValidationService.validateCard(card, type);
-    } catch (error) {
-      const formattedError = formatCardError(error, 'validateCard');
-      console.error(formattedError);
-      return { valid: false, errors: [formattedError.message] };
-    }
+    return CardLibraryService.validateCard(card, type);
   }
 }

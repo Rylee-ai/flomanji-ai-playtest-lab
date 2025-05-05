@@ -14,6 +14,7 @@ import {
   logCardOperation, 
   safeCardOperation 
 } from "@/utils/error-handling/cardErrorHandler";
+import { FileBasedModeNotice } from "@/components/admin/FileBasedModeNotice";
 
 const ContentManager = () => {
   const {
@@ -38,72 +39,7 @@ const ContentManager = () => {
     setIsImporting(true);
     
     try {
-      // Use batch size of 50 for large card sets
-      const batchSize = 50;
-      
-      if (cards.length > batchSize) {
-        // For large imports, split into chunks
-        const chunkedCards = [];
-        for (let i = 0; i < cards.length; i += batchSize) {
-          chunkedCards.push(cards.slice(i, Math.min(i + batchSize, cards.length)));
-        }
-        
-        toast.info(`Processing ${cards.length} cards in ${chunkedCards.length} batches...`);
-        
-        let successCount = 0;
-        let failedCount = 0;
-        
-        for (let i = 0; i < chunkedCards.length; i++) {
-          const batch = chunkedCards[i];
-          const batchResults = {
-            ...results,
-            imported: batch.length
-          };
-          
-          const batchToastId = `batch-${i}`;
-          toast.loading(`Importing batch ${i+1}/${chunkedCards.length}...`, { id: batchToastId });
-          
-          try {
-            // Use our safeCardOperation utility to handle potential errors
-            const { result, error } = await safeCardOperation(
-              async () => handleImport(batch, batchResults),
-              `batch ${i+1} import`
-            );
-            
-            if (error) {
-              failedCount += batch.length;
-              toast.error(`Batch ${i+1} failed: ${error.message}`, { id: batchToastId });
-              logCardOperation("Import batch failed", { batchIndex: i, error });
-            } else {
-              successCount += batch.length;
-              toast.success(`Batch ${i+1} complete`, { id: batchToastId });
-              logCardOperation("Import batch succeeded", { batchIndex: i, count: batch.length });
-            }
-          } catch (error) {
-            const formattedError = formatCardError(error, `batch ${i+1}`);
-            failedCount += batch.length;
-            toast.error(`Batch ${i+1} failed: ${formattedError.message}`, { id: batchToastId });
-            logCardOperation("Import batch exception", { batchIndex: i, error: formattedError });
-          }
-          
-          if (i % 2 === 0 || i === chunkedCards.length - 1) {
-            toast.info(`Progress: ${successCount}/${cards.length} cards imported, ${failedCount} failed`);
-          }
-        }
-        
-        if (failedCount === 0) {
-          toast.success(`Successfully imported all ${successCount} cards in ${chunkedCards.length} batches`);
-          logCardOperation("Import completed successfully", { total: successCount });
-        } else {
-          toast.warning(`Import completed with issues: ${successCount} cards imported, ${failedCount} cards failed`);
-          logCardOperation("Import completed with failures", { success: successCount, failed: failedCount });
-        }
-      } else {
-        // For smaller imports, handle all at once
-        await handleImport(cards, results);
-        toast.success(`Successfully imported ${cards.length} cards`);
-        logCardOperation("Small import completed", { count: cards.length });
-      }
+      await handleImport(cards, results);
       
       // Always reload cards to reflect the new imports
       await loadCards();
@@ -111,7 +47,6 @@ const ContentManager = () => {
       const formattedError = formatCardError(error, 'import');
       console.error("Error during import:", formattedError);
       toast.error(`Failed to import cards: ${formattedError.message}`);
-      logCardOperation("Import failed with exception", { error: formattedError });
       
       // Still try to reload cards to ensure UI is consistent
       try {
@@ -154,6 +89,8 @@ const ContentManager = () => {
             />
           </div>
         </div>
+        
+        <FileBasedModeNotice />
         
         <Tabs defaultValue="content" className="space-y-4">
           <TabsContent value="content" className="space-y-4 p-0 mt-0">

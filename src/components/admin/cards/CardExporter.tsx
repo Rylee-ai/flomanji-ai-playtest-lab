@@ -1,59 +1,53 @@
 
-import React, { useState } from "react";
-import { CardService } from "@/services/CardService";
+import React from "react";
 import { CardType } from "@/types/cards";
+import { FileBasedCardAdapter } from "@/utils/file-based/FileBasedCardAdapter";
 import { toast } from "sonner";
 
 interface CardExporterProps {
   cardType: CardType;
 }
 
-export const CardExporter = ({ cardType }: CardExporterProps) => {
-  const [isExporting, setIsExporting] = useState(false);
-  
-  const handleExport = async () => {
-    setIsExporting(true);
+export const CardExporter: React.FC<CardExporterProps> = ({ cardType }) => {
+  const handleExport = async (event: React.MouseEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    
     try {
-      // Get cards of the selected type
-      const cards = await CardService.getCardsByType(cardType);
+      toast.info(`Exporting ${cardType} cards...`);
+      
+      // Get cards from file-based system
+      const cards = await FileBasedCardAdapter.exportCards(cardType);
       
       if (!cards || cards.length === 0) {
         toast.warning(`No ${cardType} cards found to export`);
-        setIsExporting(false);
         return;
       }
       
-      // Convert to JSON
-      const json = CardService.exportCardsToJSON(cards);
+      // Create file for download
+      const blob = FileBasedCardAdapter.prepareExportFile(cards);
+      const fileName = FileBasedCardAdapter.generateExportFileName(cardType);
       
-      // Create download link
-      const blob = new Blob([json], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${cardType}-cards.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      // Create download link and trigger download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
       
-      toast.success(`${cards.length} ${cardType} cards exported successfully`);
+      // Clean up
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+      
+      toast.success(`Successfully exported ${cards.length} ${cardType} cards`);
     } catch (error) {
       console.error("Error exporting cards:", error);
-      toast.error(`Failed to export ${cardType} cards`);
-    } finally {
-      setIsExporting(false);
+      toast.error(`Failed to export cards: ${error instanceof Error ? error.message : String(error)}`);
     }
-    
-    return false; // Prevent default link behavior
   };
-
-  return (
-    <span 
-      onClick={handleExport} 
-      className={`cursor-pointer ${isExporting ? 'opacity-50' : ''}`}
-      aria-disabled={isExporting}
-    >
-      {isExporting ? "Exporting..." : "Export Cards"}
-    </span>
-  );
+  
+  // Hidden input that handles the export logic
+  return <input type="file" className="hidden" onClick={handleExport} />;
 };
