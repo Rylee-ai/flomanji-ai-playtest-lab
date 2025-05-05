@@ -1,35 +1,31 @@
 
-import { CardFormValues } from "@/types/forms/card-form";
-import { transformBaseCardData, BaseCardInput } from './base-transformer';
-
-interface NPCCardInput extends BaseCardInput {
-  checkDC?: number;
-  actions?: Array<{
-    description: string;
-    cost: number;
-    effect: string;
-  }>;
-}
+import { NPCCard } from '@/types/cards/npc';
+import { CardFormValues } from '@/types/forms/card-form';
+import { createBaseCard } from './base-transformer';
 
 /**
- * Transforms NPC card data from external JSON format to our internal format
- * @param cardData The raw NPC card data from external JSON
- * @returns Transformed NPC card data ready for import
+ * Transform raw NPC data to our internal NPC card format
  */
-export const transformNPCCardData = (cardData: NPCCardInput[]): CardFormValues[] => {
-  return cardData.map(card => {
-    // Get base transformed data
-    const baseCard = transformBaseCardData(card);
+export const transformNPCCardData = (jsonData: any[]): CardFormValues[] => {
+  return jsonData.map(npc => {
+    // First create the base card properties
+    const baseCard = createBaseCard(npc);
     
-    // Process actions
-    const actions = card.actions || [];
+    // Transform actions if present
+    const actions = Array.isArray(npc.actions) 
+      ? npc.actions.map((action: any) => ({
+          description: action.description || '',
+          cost: action.cost !== undefined ? action.cost : 1,
+          effect: action.effect || ''
+        }))
+      : [];
     
+    // Transform to NPC card
     return {
       ...baseCard,
-      type: 'npc' as const,
-      checkDC: card.checkDC || 7, // Default difficulty check
+      type: 'npc',
+      checkDC: npc.checkDC || 0,
       actions,
-      name: baseCard.name || "Unnamed NPC", // Ensure name is always defined
-    };
+    } as CardFormValues;
   });
 };

@@ -1,62 +1,34 @@
 
-import { CardFormValues } from "@/types/forms/card-form";
-import { transformBaseCardData, BaseCardInput } from './base-transformer';
-
-interface HazardCardInput extends BaseCardInput {
-  subType?: string;
-  difficultyClasses?: Record<string, number>;
-  onFailure?: string;
-  onSuccess?: string;
-  bossHazard?: boolean;
-}
+import { HazardCard } from '@/types/cards/hazard';
+import { CardFormValues } from '@/types/forms/card-form';
+import { createBaseCard } from './base-transformer';
 
 /**
- * Extract hazard subtype from type field or description
- * @param typeText The type field from external data
- * @returns The hazard subtype
+ * Transform raw hazard data to our internal hazard card format
  */
-export const extractHazardSubType = (typeText: string): 'environmental' | 'creature' | 'social' | 'weird' => {
-  const lowerText = typeText.toLowerCase();
-  
-  if (lowerText.includes('creature') || lowerText.includes('monster') || lowerText.includes('beast')) {
-    return 'creature';
-  }
-  if (lowerText.includes('social') || lowerText.includes('interaction') || lowerText.includes('npc')) {
-    return 'social';
-  }
-  if (lowerText.includes('weird') || lowerText.includes('strange') || lowerText.includes('supernatural')) {
-    return 'weird';
-  }
-  
-  // Default to environmental for other types
-  return 'environmental';
-};
-
-/**
- * Transforms hazard card data from external JSON format to our internal format
- * @param cardData The raw hazard card data from external JSON
- * @returns Transformed hazard card data ready for import
- */
-export const transformHazardCardData = (cardData: HazardCardInput[]): CardFormValues[] => {
-  return cardData.map(card => {
-    // Get base transformed data
-    const baseCard = transformBaseCardData(card);
+export const transformHazardCardData = (jsonData: any[]): CardFormValues[] => {
+  return jsonData.map(hazard => {
+    // First create the base card properties
+    const baseCard = createBaseCard(hazard);
     
-    // Extract hazard subtype from type field
-    const subType = extractHazardSubType(card.type);
+    // Define the difficulty classes object
+    const difficultyClasses = hazard.difficultyClasses || {};
     
-    // Process difficulty classes if available
-    const difficultyClasses = card.difficultyClasses || {};
+    // Define the gear bonuses array if present
+    const gearBonuses = Array.isArray(hazard.gearBonuses) 
+      ? hazard.gearBonuses 
+      : [];
     
+    // Transform to hazard card
     return {
       ...baseCard,
-      type: 'hazard' as const,
-      subType,
+      type: 'hazard',
+      subType: hazard.subType || 'environmental',
       difficultyClasses,
-      onFailure: card.onFailure || "Encounter fails with negative consequences.",
-      onSuccess: card.onSuccess || "",
-      bossHazard: card.bossHazard || false,
-      name: baseCard.name || "Unnamed Hazard", // Ensure name is always defined
-    };
+      onFailure: hazard.onFailure || '',
+      onSuccess: hazard.onSuccess || '',
+      bossHazard: hazard.bossHazard || false,
+      gearBonuses,
+    } as CardFormValues;
   });
 };

@@ -1,70 +1,43 @@
 
-import { CardFormValues } from "@/types/forms/card-form";
-import { transformBaseCardData, BaseCardInput } from './base-transformer';
-
-interface MissionCardInput extends BaseCardInput {
-  missionType?: 'exploration' | 'escape' | 'escort' | 'collection' | 'boss' | 'solo';
-  hook?: string;
-  mapLayout?: string;
-  startingHeat?: number;
-  objectives?: Array<{
-    description: string;
-    required: boolean;
-    reward?: string;
-    completionCheck?: string;
-    difficultyLevel?: number;
-  }>;
-  extractionRegion?: string;
-  scaling?: {
-    small?: string;
-    large?: string;
-  };
-}
+import { MissionSheet } from '@/types/cards/mission';
+import { CardFormValues } from '@/types/forms/card-form';
+import { createBaseCard } from './base-transformer';
 
 /**
- * Determine mission type from description
- * @param typeText The type field from external data
- * @returns The mission type
+ * Transform raw mission data to our internal mission card format
  */
-export const determineMissionType = (typeText: string): 'exploration' | 'escape' | 'escort' | 'collection' | 'boss' | 'solo' => {
-  const lowerText = typeText.toLowerCase();
-  
-  if (lowerText.includes('escape')) return 'escape';
-  if (lowerText.includes('escort')) return 'escort';
-  if (lowerText.includes('collection') || lowerText.includes('gather')) return 'collection';
-  if (lowerText.includes('boss')) return 'boss';
-  if (lowerText.includes('solo')) return 'solo';
-  
-  // Default to exploration
-  return 'exploration';
-};
-
-/**
- * Transforms Mission card data from external JSON format to our internal format
- * @param cardData The raw Mission card data from external JSON
- * @returns Transformed Mission card data ready for import
- */
-export const transformMissionCardData = (cardData: MissionCardInput[]): CardFormValues[] => {
-  return cardData.map(card => {
-    // Get base transformed data
-    const baseCard = transformBaseCardData(card);
+export const transformMissionCardData = (jsonData: any[]): CardFormValues[] => {
+  return jsonData.map(mission => {
+    // First create the base card properties
+    const baseCard = createBaseCard(mission);
     
-    // Determine mission type
-    const missionType = card.missionType || determineMissionType(card.type);
+    // Transform objectives to the correct format if needed
+    const objectives = Array.isArray(mission.objectives) 
+      ? mission.objectives.map((obj: any) => ({
+          description: obj.description || "Complete objective",
+          required: typeof obj.required === 'boolean' ? obj.required : true,
+          reward: obj.reward,
+          completionCheck: obj.completionCheck,
+          difficultyLevel: obj.difficultyLevel || 3
+        }))
+      : [];
     
+    // Transform to mission card
     return {
       ...baseCard,
-      type: missionType,
-      hook: card.hook || "No mission hook provided.",
-      mapLayout: card.mapLayout || "",
-      startingHeat: card.startingHeat || 0,
-      extractionRegion: card.extractionRegion || "",
-      objectives: card.objectives || [{ description: "Complete the mission", required: true }],
-      scaling: {
-        small: card.scaling?.small || "Standard setup",
-        large: card.scaling?.large || "Standard setup with additional challenges"
-      },
-      name: baseCard.name || "Unnamed Mission", // Ensure name is always defined
-    };
+      type: mission.type || 'escape',
+      hook: mission.hook || mission.description || '',
+      mapLayout: mission.mapLayout || 'Standard 5x5 grid',
+      startingHeat: mission.startingHeat || 0,
+      objectives: objectives,
+      extractionRegion: mission.extractionRegion || 'Southeast corner',
+      specialRules: Array.isArray(mission.specialRules) 
+        ? mission.specialRules 
+        : [],
+      scaling: mission.scaling || {
+        small: "Reduce difficulty checks by 1",
+        large: "Add 1 additional hazard"
+      }
+    } as CardFormValues;
   });
 };

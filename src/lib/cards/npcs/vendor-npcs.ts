@@ -3,76 +3,61 @@ import { NPCCard } from '@/types/cards/npc';
 
 export const VENDOR_NPC_CARDS: NPCCard[] = [
   {
-    id: "shady-pawn-shop-owner",
-    name: "Shady Pawn Shop Owner",
+    id: "swamp-outfitter",
+    name: "Swamp Outfitter",
     type: "npc",
     icons: [
       { symbol: "🛒", meaning: "Vendor" },
-      { symbol: "🗣️", meaning: "Social" }
+      { symbol: "🌿", meaning: "Swamp" }
     ],
-    keywords: ["Trade", "Urban/Suburb", "Gear Source"],
-    checkDC: 11,
+    keywords: ["Shop", "Gear", "Swamp"],
+    checkDC: 8,
     actions: [
       {
-        description: "Sell Gear",
+        description: "Browse Inventory",
         cost: 1,
-        effect: "Discard 1–2 non‑Artifact Gear → Draw that many Gear cards"
+        effect: "Draw 3 Gear Cards (Swamp-related). May purchase 1 for 2 Resources."
       },
       {
-        description: "Buy Gear",
+        description: "Haggle",
         cost: 1,
-        effect: "Charm DC 11 → Success: Draw 1 Gear; Failure: Lose 1 Action & Gain 1 Weirdness"
-      },
-      {
-        description: "Ask Questions",
-        cost: 1,
-        effect: "Moxie DC 9 → Success: Gain Info (view adjacent Hazard/Bonus); Failure: Gain 1 Heat"
+        effect: "Charm DC 8 → Success: Reduce cost of one item by 1 Resource"
       }
     ],
-    rules: ["Must have Gear to sell for Sell action"],
-    flavor: "Everything's got a price. Especially desperation.",
-    imagePrompt: "A shifty‑eyed owner behind a cluttered pawn‑shop counter, poorly lit, eyeing you suspiciously"
+    rules: [
+      "Only found in Swamp or Rural regions",
+      "Will not buy damaged goods"
+    ],
+    flavor: "Got everything you need to survive out there... for a price.",
+    imagePrompt: "Grizzled vendor with patched waders and a floating shop boat filled with survival gear"
   },
   {
-    id: "questionable-roadside-vendor",
-    name: "Questionable Roadside Vendor",
+    id: "beach-pawn-shop",
+    name: "Beach Pawn Shop",
     type: "npc",
     icons: [
-      { symbol: "🛒", meaning: "Vendor" },
-      { symbol: "🗣️", meaning: "Social" }
+      { symbol: "🏪", meaning: "Shop" },
+      { symbol: "🏖️", meaning: "Beach" }
     ],
-    keywords: ["Highway", "Rural", "Weirdness"],
+    keywords: ["Exchange", "Treasure", "Coastal"],
     checkDC: 9,
     actions: [
       {
-        description: "Browse Wares",
+        description: "Sell Treasures",
         cost: 1,
-        effect: "Luck DC 9 → Success: Draw 1 Gear; Failure: Draw 1 Gear & Gain 1 Weirdness; Natural 1: also Take 1 Damage or trigger minor Hazard"
-      }
-    ],
-    rules: ["Natural 1 on check triggers additional negative effect"],
-    flavor: "Taxidermy squirrels! Get 'em while they're… vaguely warm!",
-    imagePrompt: "Rickety stand piled with odd junk—taxidermy, jars of mysterious fluids"
-  },
-  {
-    id: "motel-manager",
-    name: "Motel Manager",
-    type: "npc",
-    icons: [
-      { symbol: "🏨", meaning: "Social" },
-      { symbol: "🗣️", meaning: "Social" }
-    ],
-    keywords: ["Shelter", "Trade"],
-    checkDC: 9,
-    actions: [
+        effect: "Sell any non-Artifact Treasure for +1 Resource over its base value"
+      },
       {
-        description: "Book Room",
+        description: "Buy Goods",
         cost: 1,
-        effect: "Charm DC 9 → Success: Rest here (heal 1 Health or reduce 1 Weirdness) or draw 1 Gear; Failure: Gain 1 Heat"
+        effect: "Draw 3 Gear Cards. May purchase 1 for 1 Resource."
       }
     ],
-    rules: ["Success allows immediate rest action"],
-    flavor: "Rooms are cheap… but your nightmares aren't.",
-    imagePrompt: "Tired manager behind a cluttered desk, neon 'Vacancy' sign flickering"
+    rules: [
+      "Only appears in Coastal or Tourist regions",
+      "Will not handle Artifacts or highly Weird items"
+    ],
+    flavor: "One man's trash washes up as another man's cash.",
+    imagePrompt: "Cluttered beachside shop with display cases full of odd trinkets and salvaged goods"
   }
 ];

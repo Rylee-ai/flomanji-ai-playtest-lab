@@ -1,28 +1,47 @@
 
-import { CardFormValues } from "@/types/forms/card-form";
-
 /**
- * Extracts and processes the card rules information from content
- * @param content The card section content
- * @param card The card object being built
- * @returns Updated card object with rules information
+ * Extract card rules information from markdown content
  */
-export const extractRulesInfo = (content: string, card: Partial<CardFormValues>): Partial<CardFormValues> => {
-  const rulesMatch = content.match(/\*\s*\*\*Rules:\*\*\s*([\s\S]*?)(?=\*\s*\*\*(?!Rules)|$)/i) || 
-                    content.match(/Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i) ||
-                    content.match(/\*\s*Rules:\s*([\s\S]*?)(?=\*\s*\*\*|$)/i);
+export const extractRulesInfo = (markdownContent: string) => {
+  // Try to find a rules section using various formats
+  const rulesSectionMatches = [
+    // Format: rules: 
+    //   - rule1
+    //   - rule2
+    markdownContent.match(/rules:\s*\n((?:\s*-\s*.*\n?)*)/i),
+    // Format: rules: rule1, rule2
+    markdownContent.match(/rules:\s*(.+?)(?:\n|$)/i),
+    // Fallback: look for a section titled "Rules:"
+    markdownContent.match(/rules:\s*\n([\s\S]*?)(?:\n\w+:|$)/i)
+  ].filter(Boolean);
   
-  if (rulesMatch) {
-    let rulesText = rulesMatch[1].trim()
-                    .replace(/^\s*\*\s*/gm, '') // Remove bullet points
-                    .replace(/\n+/g, ' ');      // Join multiple lines
-    
-    // Clean up any markdown formatting artifacts
-    rulesText = rulesText.replace(/\*\*/g, '').trim();
-    
-    console.log(`Found rules: "${rulesText.substring(0, Math.min(50, rulesText.length))}..."`);
-    card.rules = [rulesText];
+  if (rulesSectionMatches.length === 0) {
+    return { rules: [] };
   }
   
-  return card;
+  const rulesSection = rulesSectionMatches[0];
+  let rules: string[] = [];
+  
+  if (rulesSection[1].includes('-')) {
+    // List format
+    rules = rulesSection[1]
+      .split('\n')
+      .filter(line => line.trim().startsWith('-'))
+      .map(line => line.replace(/^\s*-\s*/, '').trim());
+  } else if (rulesSection[1].includes(',')) {
+    // Comma-separated format
+    rules = rulesSection[1]
+      .split(',')
+      .map(rule => rule.trim())
+      .filter(Boolean);
+  } else {
+    // Paragraph format, split by sentences or lines
+    rules = rulesSection[1]
+      .split(/\.(?=\s|$)|\n/)
+      .map(rule => rule.trim())
+      .filter(Boolean)
+      .map(rule => rule.endsWith('.') ? rule : `${rule}.`);
+  }
+  
+  return { rules };
 };

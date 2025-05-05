@@ -1,24 +1,40 @@
 
-import { CardFormValues } from "@/types/forms/card-form";
-
 /**
- * Extracts and processes the card keywords information from content
- * @param content The card section content
- * @param card The card object being built
- * @returns Updated card object with keyword information
+ * Extract card keyword information from markdown content
  */
-export const extractKeywordInfo = (content: string, card: Partial<CardFormValues>): Partial<CardFormValues> => {
-  const keywordMatch = content.match(/\*\s*\*\*Keywords:\*\*\s*([^\n]+)/i) || 
-                      content.match(/Keywords:\s*([^\n]+)/i) || 
-                      content.match(/\*\s*Keywords:\s*([^\n]+)/i);
+export const extractKeywordInfo = (markdownContent: string) => {
+  // Try to find a keywords section using various formats
+  const keywordSectionMatches = [
+    // Format: keywords: [keyword1, keyword2]
+    markdownContent.match(/keywords:\s*\[(.*?)\]/i),
+    // Format: keywords: 
+    //   - keyword1
+    //   - keyword2
+    markdownContent.match(/keywords:\s*\n((?:\s*-\s*.*\n?)*)/i),
+    // Format: keywords: keyword1, keyword2
+    markdownContent.match(/keywords:\s*(.+?)(?:\n|$)/i)
+  ].filter(Boolean);
   
-  if (keywordMatch) {
-    const keywordsText = keywordMatch[1].trim();
-    console.log(`Found keywords: "${keywordsText}"`);
-    // Split by commas and clean up each keyword
-    card.keywords = keywordsText.split(/,\s*/).map(k => k.trim()).filter(k => k);
-    console.log(`Extracted ${card.keywords.length} keywords`);
+  if (keywordSectionMatches.length === 0) {
+    return { keywords: [] };
   }
   
-  return card;
+  const keywordSection = keywordSectionMatches[0];
+  let keywords: string[] = [];
+  
+  if (keywordSection[1].includes('-')) {
+    // List format
+    keywords = keywordSection[1]
+      .split('\n')
+      .filter(line => line.trim().startsWith('-'))
+      .map(line => line.replace(/^\s*-\s*/, '').trim());
+  } else {
+    // Comma-separated or array format
+    keywords = keywordSection[1]
+      .split(/,|\|/)
+      .map(keyword => keyword.replace(/["\[\]]/g, '').trim())
+      .filter(Boolean);
+  }
+  
+  return { keywords };
 };
