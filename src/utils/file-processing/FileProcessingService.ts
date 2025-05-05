@@ -5,7 +5,6 @@ import { transformMarkdownToCards } from "@/utils/markdown";
 import { processImportedCards } from "@/utils/cardImport";
 import { transformCardData } from "@/utils/card-transformers";
 import { ensureCardIds } from "@/utils/card-transformers/base-transformer";
-import { parseMarkdownCardsAlternate } from "@/utils/markdown/parseMarkdownCardsAlternate";
 
 export interface FileProcessingResult {
   processedCards: CardFormValues[];
@@ -122,19 +121,26 @@ export class FileProcessingService {
       }
       
       // Ensure all cards have valid IDs
-      processedCards = ensureCardIds(processedCards, cardType) as CardFormValues[];
+      // Fix for type error: Cast to proper type and ensure IDs exist
+      const cardsWithValidatedIds = processedCards.map(card => {
+        // Ensure each card has an ID
+        if (!card.id) {
+          card.id = `${cardType}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+        }
+        return card;
+      });
       
       // Add logging to check what we've extracted
-      console.log(`Processed ${processedCards.length} cards:`);
-      if (processedCards.length > 0) {
-        console.log(`First card: ${processedCards[0].name}`);
-        if (processedCards.length > 1) {
-          console.log(`Second card: ${processedCards[1].name}`);
+      console.log(`Processed ${cardsWithValidatedIds.length} cards:`);
+      if (cardsWithValidatedIds.length > 0) {
+        console.log(`First card: ${cardsWithValidatedIds[0].name}`);
+        if (cardsWithValidatedIds.length > 1) {
+          console.log(`Second card: ${cardsWithValidatedIds[1].name}`);
         }
       }
       
       // Apply additional type-specific defaults and validation
-      processedCards = processedCards.map(card => {
+      processedCards = cardsWithValidatedIds.map(card => {
         // For gear cards, ensure category
         if (card.type === 'gear' && !card.category) {
           return { ...card, category: 'tool' };
@@ -175,3 +181,4 @@ export class FileProcessingService {
     }
   }
 }
+

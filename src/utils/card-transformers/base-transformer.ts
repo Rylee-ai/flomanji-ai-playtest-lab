@@ -71,7 +71,7 @@ export const transformBaseCardData = (rawCard: BaseCardInput): Partial<GameCard>
  * @param cardType Type of cards for prefix
  * @returns Cards with ensured IDs
  */
-export const ensureCardIds = <T extends GameCard>(cards: T[], cardType: CardType): T[] => {
+export const ensureCardIds = <T extends Partial<GameCard>>(cards: T[], cardType: CardType): T[] => {
   return cards.map(card => {
     if (!card.id || card.id.trim() === '') {
       return {
@@ -96,3 +96,4 @@ export const ensureCardIds = <T extends GameCard>(cards: T[], cardType: CardType
  * @deprecated Use transformBaseCardData instead
  */
 export const createBaseCard = transformBaseCardData;
+
