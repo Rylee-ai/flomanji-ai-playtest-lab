@@ -5,7 +5,7 @@ export const MISSION_CARDS: MissionSheet[] = [
   {
     id: "everglades-escape",
     name: "Everglades Escape",
-    type: "mission",
+    type: "escape", // Changed from "mission" to "escape" to match valid types
     icons: [
       { symbol: "🏃", meaning: "Escape" },
       { symbol: "🌿", meaning: "Swamp" }
