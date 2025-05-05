@@ -134,8 +134,8 @@ export function useCardImportOrchestrator({
   /**
    * Apply an AI suggestion to the cards
    */
-  const handleApplySuggestionWrapper = (index: number): CardFormValues[] => {
-    return handleApplySuggestion(
+  const handleApplySuggestionWrapper = async (index: number): Promise<CardFormValues[]> => {
+    return await handleApplySuggestion(
       index,
       applySuggestion,
       setTransformedCards,

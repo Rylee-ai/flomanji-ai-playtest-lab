@@ -111,12 +111,12 @@ export const handleApplySuggestion = async (
   }
   
   // If the suggestion was applied successfully
-  if (result && result.length > 0) {
+  if (result && Array.isArray(result) && result.length > 0) {
     // Update state
-    setCards(result);
+    setCards(result as CardFormValues[]);
     
     // Create and set import results
-    const results = createResults(result, errors);
+    const results = createResults(result as CardFormValues[], errors);
     setResults(results);
     
     logCardOperation("AI suggestion applied successfully", { 
@@ -124,7 +124,7 @@ export const handleApplySuggestion = async (
       updatedCardCount: result.length
     });
     
-    return result;
+    return result as CardFormValues[];
   }
   
   return [];
