@@ -2,8 +2,8 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileBasedModeHeader } from "@/components/admin/FileBasedModeHeader";
-import { GameContentManager } from "@/components/admin/GameContentManager";
-import { MissionOverviewGrid } from "@/components/admin/MissionOverviewGrid";
+import GameContentManager from "@/components/admin/GameContentManager";
+import MissionOverviewGrid from "@/components/admin/MissionOverviewGrid";
 import { CardType } from "@/types/cards";
 
 const ContentManager = () => {
@@ -24,7 +24,7 @@ const ContentManager = () => {
         </TabsContent>
         
         <TabsContent value="missions">
-          <MissionOverviewGrid />
+          <MissionOverviewGrid analyticsData={[]} />
         </TabsContent>
       </Tabs>
     </div>

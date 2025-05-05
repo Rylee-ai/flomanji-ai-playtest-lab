@@ -1,39 +1,39 @@
 
 /**
- * Extract card icon information from markdown content
+ * Extract icons from markdown content
  */
 export const extractIconInfo = (markdownContent: string) => {
-  const iconSection = markdownContent.match(/icons:\s*\n((?:\s*-\s*.*\n?)*)/i);
+  // Try to find icons using various formats
+  const iconMatches = [
+    // Format: icons: [Fire] [Water]
+    markdownContent.match(/icons?:\s*(?:\[([^\]]+)\])+/i),
+    // Format: icons: Fire, Water
+    markdownContent.match(/icons?:\s*(.+?)(?:\n|$)/i)
+  ].filter(Boolean);
   
-  if (!iconSection || !iconSection[1]) {
-    // Default icons if none found
-    return {
-      icons: []
-    };
+  if (iconMatches.length === 0) {
+    return { icons: [] };
   }
   
-  const iconLines = iconSection[1]
-    .split('\n')
-    .filter(line => line.trim().startsWith('-'));
+  // Parse icons based on format
+  let iconsText = iconMatches[0][1] || iconMatches[0][0].replace(/icons?:\s*/i, '');
+  let icons = [];
   
-  const icons = iconLines.map(line => {
-    // Try to extract symbol and meaning from format "- 🔥: Fire" or "- 🔥 (Fire)"
-    const symbolMeaningMatch = line.match(/-\s*([^\s:]+)(?::\s*|\s+\()(.*?)(?:\)|$)/);
-    
-    if (symbolMeaningMatch) {
-      return {
-        symbol: symbolMeaningMatch[1].trim(),
-        meaning: symbolMeaningMatch[2].trim()
-      };
-    }
-    
-    // Fallback: just extract the emoji/symbol
-    const symbolMatch = line.match(/-\s*([^\s]+)/);
-    return {
-      symbol: symbolMatch ? symbolMatch[1].trim() : '❓',
-      meaning: 'Unknown'
-    };
-  });
+  // If icons are in [Symbol] format
+  if (iconsText.includes('[')) {
+    const bracketMatches = iconsText.match(/\[([^\]]+)\]/g) || [];
+    icons = bracketMatches.map(match => {
+      const symbol = match.replace(/[\[\]]/g, '').trim();
+      return { symbol, meaning: symbol };
+    });
+  } 
+  // If icons are comma-separated
+  else {
+    icons = iconsText.split(/,\s*/).map(icon => {
+      const symbol = icon.trim();
+      return { symbol, meaning: symbol };
+    });
+  }
   
   return { icons };
 };

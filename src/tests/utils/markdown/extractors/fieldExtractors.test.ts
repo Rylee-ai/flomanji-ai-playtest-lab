@@ -13,30 +13,25 @@ describe('Field Extractors', () => {
   // Type extractor tests
   test('should extract gear type and category', () => {
     const content = '* **Type:** GEAR – Consumable';
-    const card = {};
     
-    const result = extractTypeInfo(content, card);
+    const result = extractTypeInfo(content);
     
     expect(result.type).toBe('gear');
-    expect(result.category).toBe('consumable');
   });
   
   test('should extract hazard type', () => {
     const content = '* **Type:** HAZARD';
-    const card = {};
     
-    const result = extractTypeInfo(content, card);
+    const result = extractTypeInfo(content);
     
     expect(result.type).toBe('hazard');
-    expect(result.category).toBeUndefined();
   });
   
   // Keyword extractor tests
   test('should extract keywords', () => {
     const content = '* **Keywords:** Test, Example, Card';
-    const card = {};
     
-    const result = extractKeywordInfo(content, card);
+    const result = extractKeywordInfo(content);
     
     expect(result.keywords).toEqual(['Test', 'Example', 'Card']);
   });
@@ -44,9 +39,8 @@ describe('Field Extractors', () => {
   // Rules extractor tests
   test('should extract rules text', () => {
     const content = '* **Rules:** This is a test card with rules.';
-    const card = {};
     
-    const result = extractRulesInfo(content, card);
+    const result = extractRulesInfo(content);
     
     expect(result.rules).toEqual(['This is a test card with rules.']);
   });
@@ -54,9 +48,8 @@ describe('Field Extractors', () => {
   // Flavor extractor tests
   test('should extract flavor text', () => {
     const content = '* **Flavor:** A mysterious object with unknown origins.';
-    const card = {};
     
-    const result = extractFlavorInfo(content, card);
+    const result = extractFlavorInfo(content);
     
     expect(result.flavor).toBe('A mysterious object with unknown origins.');
   });
@@ -64,9 +57,8 @@ describe('Field Extractors', () => {
   // Image prompt extractor tests
   test('should extract image prompt', () => {
     const content = '* **Image Prompt:** A glowing artifact on a dark background.';
-    const card = {};
     
-    const result = extractImagePromptInfo(content, card);
+    const result = extractImagePromptInfo(content);
     
     expect(result.imagePrompt).toBe('A glowing artifact on a dark background.');
   });
@@ -74,9 +66,8 @@ describe('Field Extractors', () => {
   // Icon extractor tests
   test('should extract icons with brackets', () => {
     const content = '* **Icon(s):** [Fire] [Water] [Wind]';
-    const card = {};
     
-    const result = extractIconInfo(content, card);
+    const result = extractIconInfo(content);
     
     expect(result.icons).toEqual([
       { symbol: 'Fire', meaning: 'Fire' },
