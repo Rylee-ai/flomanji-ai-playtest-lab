@@ -2,6 +2,7 @@
 import { CardType } from "@/types/cards";
 import { CardFormValues } from "@/types/forms/card-form";
 import { transformMarkdownToCards } from "@/utils/markdown";
+import { parseMarkdownCardsAlternate } from "@/utils/markdown/parseMarkdownCardsAlternate";
 import { processImportedCards } from "@/utils/cardImport";
 import { transformCardData } from "@/utils/card-transformers";
 import { ensureCardIds } from "@/utils/card-transformers/base-transformer";
@@ -181,4 +182,3 @@ export class FileProcessingService {
     }
   }
 }
-
