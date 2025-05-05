@@ -133,6 +133,7 @@ export function useCardImportOrchestrator({
 
   /**
    * Apply an AI suggestion to the cards
+   * Must be an async function to match the expected Promise return type
    */
   const handleApplySuggestionWrapper = async (index: number): Promise<CardFormValues[]> => {
     return await handleApplySuggestion(

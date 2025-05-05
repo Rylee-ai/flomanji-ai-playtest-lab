@@ -90,6 +90,7 @@ export const handleAIProcessing = async (
 
 /**
  * Apply an AI suggestion to the cards and update state
+ * This function must return a Promise to match the expected type in useCardImportOrchestrator
  */
 export const handleApplySuggestion = async (
   index: number,
@@ -101,33 +102,34 @@ export const handleApplySuggestion = async (
 ): Promise<CardFormValues[]> => {
   logCardOperation("Applying AI suggestion", { suggestionIndex: index });
   
-  // Use await to properly handle the Promise returned by safeCardOperation
-  const { result, error } = await safeCardOperation(() => applySuggestion(index), `apply suggestion ${index}`);
-  
-  if (error) {
-    console.error("Error applying suggestion:", error);
-    logCardOperation("Error applying AI suggestion", { suggestionIndex: index, error });
-    return [];
+  try {
+    // Since applySuggestion is synchronous, we need to wrap it in a Promise
+    const result = applySuggestion(index);
+    
+    // If the suggestion was applied successfully
+    if (result && Array.isArray(result) && result.length > 0) {
+      // Update state
+      setCards(result);
+      
+      // Create and set import results
+      const results = createResults(result, errors);
+      setResults(results);
+      
+      logCardOperation("AI suggestion applied successfully", { 
+        suggestionIndex: index,
+        updatedCardCount: result.length
+      });
+      
+      return Promise.resolve(result);
+    }
+    
+    return Promise.resolve([]);
+  } catch (error) {
+    const formattedError = formatCardError(error, `apply suggestion ${index}`);
+    console.error("Error applying suggestion:", formattedError);
+    logCardOperation("Error applying AI suggestion", { suggestionIndex: index, error: formattedError });
+    return Promise.resolve([]);
   }
-  
-  // If the suggestion was applied successfully
-  if (result && Array.isArray(result) && result.length > 0) {
-    // Update state
-    setCards(result as CardFormValues[]);
-    
-    // Create and set import results
-    const results = createResults(result as CardFormValues[], errors);
-    setResults(results);
-    
-    logCardOperation("AI suggestion applied successfully", { 
-      suggestionIndex: index,
-      updatedCardCount: result.length
-    });
-    
-    return result as CardFormValues[];
-  }
-  
-  return [];
 };
 
 /**
