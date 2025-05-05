@@ -45,7 +45,10 @@ export class FileBasedCardAdapter {
         created: 0,
         updated: 0,
         issues: 1,
-        errors: [formattedError.message],
+        errors: [{
+          name: "Import Error",
+          error: formattedError.message
+        }],
         warnings: [],
         success: false
       };

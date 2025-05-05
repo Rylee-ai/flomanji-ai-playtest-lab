@@ -48,10 +48,10 @@ export const useCardImport = (loadCards: () => Promise<any>) => {
         
         if (importResult.success) {
           successCount += typeCards.length;
-          toast.success(`${type}: ${importResult.created} would be created, ${importResult.updated} would be updated`);
+          toast.success(`${type}: ${importResult.created || 0} would be created, ${importResult.updated || 0} would be updated`);
         } else {
           failureCount += typeCards.length;
-          toast.error(`${type}: Import would have issues - ${importResult.errors.join(", ")}`);
+          toast.error(`${type}: Import would have issues - ${importResult.errors.map(e => e.error).join(", ")}`);
         }
       }
       

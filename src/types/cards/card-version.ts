@@ -43,10 +43,14 @@ export interface CardBulkEditOperation {
 export interface CardImportResult {
   imported: number;
   updated: number;
-  failed: number;
+  failed?: number;
+  created?: number;
+  success?: boolean;
   errors: {
     cardId?: string;
     name: string;
     error: string;
   }[];
+  warnings?: string[];
+  issues?: number;
 }
