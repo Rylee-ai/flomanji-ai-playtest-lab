@@ -16,6 +16,11 @@ export const MISSION_CARDS: MissionSheet[] = [
       "Extraction point is 6 spaces from starting location",
       "Game ends after 10 rounds or when all players are eliminated"
     ],
+    specialRules: [
+      "Swamp regions require Athletics checks to traverse",
+      "Night brings increased Weirdness checks",
+      "Finding hidden caches reduces Heat level"
+    ],
     flavor: "The swamp doesn't care if you live or die—and time is running out.",
     imagePrompt: "Aerial view of a vast, misty Everglades swamp with a small extraction helicopter visible in the distance",
     hook: "Your airboat has crashed deep in the Everglades. Night is falling, and strange sounds echo through the cypress trees. You must reach the extraction point before darkness consumes you.",
