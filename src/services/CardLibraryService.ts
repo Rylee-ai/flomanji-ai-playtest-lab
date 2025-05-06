@@ -19,6 +19,12 @@ import { formatCardError } from "@/utils/error-handling/cardErrorHandler";
 import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
 import { NPC_CARDS } from "@/lib/cards/npc-cards";
 import { MISSION_CARDS } from "@/lib/cards/mission-cards";
+import { GEAR_CARDS } from "@/lib/cards/gear-cards";
+import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
+import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
+import { AUTOMA_CARDS } from "@/lib/cards/automa-cards";
+import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
+import { FLOMANJI_PLAYER_CHARACTERS } from "@/lib/cards/flomanji-player-characters";
 
 /**
  * Service for loading card data from static files instead of a database
@@ -42,8 +48,26 @@ export class CardLibraryService {
       // Import mission cards
       this.cardCollections.mission = MISSION_CARDS;
       
-      // For other card types, we'll need to create and import them
-      // This will be expanded as we implement more card types
+      // Import treasure cards
+      this.cardCollections.treasure = TREASURE_CARDS;
+      
+      // Import gear cards
+      this.cardCollections.gear = GEAR_CARDS;
+      
+      // Import chaos cards
+      this.cardCollections.chaos = CHAOS_CARDS;
+      
+      // Import automa cards
+      this.cardCollections.automa = AUTOMA_CARDS;
+      
+      // Import flomanjified cards
+      this.cardCollections.flomanjified = FLOMANJIFIED_CARDS;
+      
+      // Import player character cards
+      this.cardCollections['player-character'] = FLOMANJI_PLAYER_CHARACTERS;
+      
+      // Note: Add any missing card types here as they become available
+      // For example: region, secret-objective, etc.
       
       console.log("Card collections loaded:", 
         Object.keys(this.cardCollections)
