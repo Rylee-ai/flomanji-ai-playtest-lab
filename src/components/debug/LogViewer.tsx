@@ -1,186 +1,197 @@
 
 import React, { useState, useEffect } from 'react';
-import { logger, LogEntry, LogLevel } from '@/utils/logging';
+import { log } from '@/utils/logging';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Trash2, Download, RefreshCw } from 'lucide-react';
 
-/**
- * Log viewer component for debugging
- */
+// Log entry display component
+const LogEntry = ({ entry }) => {
+  const { timestamp, level, message, details, sessionId } = entry;
+  
+  // Format the timestamp for display
+  const formattedTime = new Date(timestamp).toLocaleTimeString();
+  
+  // Determine styling based on log level
+  const levelStyles = {
+    debug: 'text-gray-500',
+    info: 'text-blue-500',
+    warn: 'text-amber-500',
+    error: 'text-red-500'
+  };
+  
+  return (
+    <div className="border-b border-gray-700 py-2">
+      <div className="flex justify-between">
+        <span className={`font-medium ${levelStyles[level]}`}>
+          [{level.toUpperCase()}]
+        </span>
+        <span className="text-gray-400 text-sm">
+          {formattedTime} - {sessionId.substring(0, 8)}
+        </span>
+      </div>
+      <div className="mt-1">
+        {message}
+      </div>
+      {details && (
+        <pre className="mt-1 text-sm bg-gray-800 p-2 rounded overflow-x-auto">
+          {typeof details === 'object' 
+            ? JSON.stringify(details, null, 2)
+            : details}
+        </pre>
+      )}
+    </div>
+  );
+};
+
+// Log filter component
+const LogFilter = ({ activeLevel, setActiveLevel }) => {
+  const levels = ['all', 'debug', 'info', 'warn', 'error'];
+  
+  return (
+    <div className="flex space-x-2 mb-4">
+      {levels.map(level => (
+        <Button
+          key={level}
+          variant={level === activeLevel ? "default" : "outline"}
+          size="sm"
+          onClick={() => setActiveLevel(level)}
+        >
+          {level.charAt(0).toUpperCase() + level.slice(1)}
+        </Button>
+      ))}
+    </div>
+  );
+};
+
+// Git exclusions component
+const GitExclusions = () => {
+  // Get all logs that have git exclusion info
+  const exclusionLogs = log.getAll().filter(
+    entry => entry.message === 'Git exclusion pattern recorded'
+  );
+  
+  if (exclusionLogs.length === 0) {
+    return <div className="text-gray-400">No git exclusions recorded</div>;
+  }
+  
+  return (
+    <div className="space-y-2">
+      <h3 className="text-lg font-medium mb-2">Git Exclusions</h3>
+      <div className="bg-gray-800 p-3 rounded">
+        {exclusionLogs.map((entry, index) => (
+          <div key={index} className="font-mono">
+            {entry.details?.pattern}
+          </div>
+        ))}
+      </div>
+      <p className="text-sm text-gray-400 mt-2">
+        These patterns would normally be added to .gitignore to exclude files from version control.
+        Since .gitignore is read-only, they're being tracked here instead.
+      </p>
+    </div>
+  );
+};
+
+// Main LogViewer component
 const LogViewer = () => {
-  const [logs, setLogs] = useState<LogEntry[]>([]);
-  const [activeTab, setActiveTab] = useState<LogLevel | 'all'>('all');
-  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [activeTab, setActiveTab] = useState('current');
+  const [activeLevel, setActiveLevel] = useState('all');
+  const [logs, setLogs] = useState([]);
   
+  // Update logs when tab or filter changes
   useEffect(() => {
-    // Initial load
-    loadLogs();
+    const allLogs = activeTab === 'current' ? log.getSession() : log.getAll();
     
-    // Set up auto-refresh if enabled
-    let interval: NodeJS.Timeout | null = null;
-    if (autoRefresh) {
-      interval = setInterval(loadLogs, 2000);
-    }
+    // Apply level filter if not 'all'
+    const filteredLogs = activeLevel === 'all'
+      ? allLogs
+      : allLogs.filter(entry => entry.level === activeLevel);
     
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [autoRefresh]);
+    setLogs(filteredLogs);
+  }, [activeTab, activeLevel]);
   
-  const loadLogs = () => {
-    const allLogs = logger.getLogs();
-    setLogs(allLogs.reverse()); // Show newest first
-  };
-  
-  const clearLogs = () => {
+  // Clear logs
+  const handleClearLogs = () => {
     if (confirm('Are you sure you want to clear all logs?')) {
-      logger.clearLogs();
-      setLogs([]);
-    }
-  };
-  
-  const downloadLogs = () => {
-    const logData = JSON.stringify(logs.slice().reverse(), null, 2);
-    const blob = new Blob([logData], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    
-    a.href = url;
-    a.download = `flomanji-logs-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-  
-  const filteredLogs = activeTab === 'all' 
-    ? logs 
-    : logs.filter(log => log.level === activeTab);
-  
-  const logLevelCounts = logs.reduce((acc, log) => {
-    acc[log.level] = (acc[log.level] || 0) + 1;
-    return acc;
-  }, {} as Record<LogLevel, number>);
-  
-  const getLogLevelColor = (level: LogLevel): string => {
-    switch (level) {
-      case 'debug': return 'bg-gray-200 text-gray-800';
-      case 'info': return 'bg-blue-500 text-white';
-      case 'warn': return 'bg-amber-500 text-white';
-      case 'error': return 'bg-red-500 text-white';
-      default: return 'bg-gray-500 text-white';
+      log.info('Logs cleared by user');
+      // Wait a moment so the clear message gets logged before clearing
+      setTimeout(() => {
+        log.clearAll();
+        setLogs([]);
+      }, 100);
     }
   };
   
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Application Logs</CardTitle>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="auto-refresh" 
-              checked={autoRefresh} 
-              onCheckedChange={(checked) => setAutoRefresh(!!checked)} 
-            />
-            <label htmlFor="auto-refresh" className="text-sm font-medium">
-              Auto-refresh
-            </label>
-          </div>
-          <Button variant="outline" size="sm" onClick={loadLogs}>
-            <RefreshCw className="h-4 w-4 mr-1" /> Refresh
-          </Button>
-          <Button variant="outline" size="sm" onClick={downloadLogs}>
-            <Download className="h-4 w-4 mr-1" /> Export
-          </Button>
-          <Button variant="outline" size="sm" onClick={clearLogs}>
-            <Trash2 className="h-4 w-4 mr-1" /> Clear
+    <div className="bg-gray-950 border border-gray-800 rounded-lg">
+      <div className="p-4 border-b border-gray-800">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Application Logs</h2>
+          <Button 
+            variant="destructive" 
+            size="sm" 
+            onClick={handleClearLogs}
+          >
+            Clear Logs
           </Button>
         </div>
-      </CardHeader>
-      <CardContent>
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as LogLevel | 'all')}>
-          <TabsList className="grid grid-cols-5 mb-4">
-            <TabsTrigger value="all" className="relative">
-              All
-              <Badge variant="secondary" className="ml-1">
-                {logs.length}
-              </Badge>
-            </TabsTrigger>
-            <TabsTrigger value="debug" className="relative">
-              Debug
-              <Badge variant="secondary" className="ml-1">
-                {logLevelCounts.debug || 0}
-              </Badge>
-            </TabsTrigger>
-            <TabsTrigger value="info" className="relative">
-              Info
-              <Badge variant="secondary" className="ml-1">
-                {logLevelCounts.info || 0}
-              </Badge>
-            </TabsTrigger>
-            <TabsTrigger value="warn" className="relative">
-              Warnings
-              <Badge variant="secondary" className="ml-1">
-                {logLevelCounts.warn || 0}
-              </Badge>
-            </TabsTrigger>
-            <TabsTrigger value="error" className="relative">
-              Errors
-              <Badge variant="secondary" className="ml-1">
-                {logLevelCounts.error || 0}
-              </Badge>
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value={activeTab} className="mt-0">
-            <ScrollArea className="h-[500px] rounded border">
-              {filteredLogs.length > 0 ? (
-                <div className="divide-y">
-                  {filteredLogs.map(log => (
-                    <div key={log.id} className="p-3 hover:bg-muted/50">
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex items-center">
-                          <Badge className={`mr-2 uppercase text-xs ${getLogLevelColor(log.level)}`}>
-                            {log.level}
-                          </Badge>
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(log.timestamp).toLocaleString()}
-                          </span>
-                        </div>
-                        <span className="text-xs text-muted-foreground truncate max-w-[150px]">
-                          Session: {log.sessionId.substring(0, 8)}
-                        </span>
-                      </div>
-                      <div className="font-medium">{log.message}</div>
-                      {log.details && (
-                        <pre className="mt-2 p-2 bg-muted rounded text-xs overflow-x-auto">
-                          {typeof log.details === 'object' 
-                            ? JSON.stringify(log.details, null, 2)
-                            : String(log.details)
-                          }
-                        </pre>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-full p-4 text-center">
-                  <div className="text-muted-foreground">
-                    No logs to display for the selected filter
-                  </div>
-                </div>
-              )}
-            </ScrollArea>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+      </div>
+      
+      <Tabs defaultValue="current" onValueChange={setActiveTab}>
+        <div className="p-4 border-b border-gray-800">
+          <div className="flex justify-between items-center">
+            <TabsList>
+              <TabsTrigger value="current">Current Session</TabsTrigger>
+              <TabsTrigger value="all">All Logs</TabsTrigger>
+              <TabsTrigger value="git">Git Exclusions</TabsTrigger>
+            </TabsList>
+            
+            {activeTab !== 'git' && (
+              <div className="flex justify-end">
+                <LogFilter activeLevel={activeLevel} setActiveLevel={setActiveLevel} />
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <TabsContent value="current" className="p-0">
+          <ScrollArea className="h-[500px] p-4">
+            {logs.length > 0 ? (
+              <div className="space-y-2">
+                {logs.map((entry, index) => (
+                  <LogEntry key={index} entry={entry} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-gray-400 py-8">
+                No logs for current session
+              </div>
+            )}
+          </ScrollArea>
+        </TabsContent>
+        
+        <TabsContent value="all" className="p-0">
+          <ScrollArea className="h-[500px] p-4">
+            {logs.length > 0 ? (
+              <div className="space-y-2">
+                {logs.map((entry, index) => (
+                  <LogEntry key={index} entry={entry} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-gray-400 py-8">
+                No logs available
+              </div>
+            )}
+          </ScrollArea>
+        </TabsContent>
+        
+        <TabsContent value="git" className="p-4">
+          <GitExclusions />
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };
 

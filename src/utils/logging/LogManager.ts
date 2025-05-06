@@ -1,279 +1,179 @@
-
 /**
- * LogManager - Provides persistent, rotating log functionality for the Flomanji application
+ * LogManager - Comprehensive logging system for Flomanji
  * 
  * Features:
- * - Maintains logs in localStorage with configurable retention
- * - Automatic log rotation based on size or entry count
- * - Log levels (debug, info, warn, error)
- * - Session tracking across browser refreshes
+ * - Multiple log severity levels (debug, info, warn, error)
+ * - Log retention with automatic rotation
+ * - Session-based logging
+ * - Persistent storage in localStorage
+ * - JSON serialization for log entries
  */
 
-import { v4 as uuidv4 } from 'uuid';
+// Constants for log management
+const LOG_STORAGE_KEY = 'flomanji_application_logs';
+const MAX_LOG_ENTRIES = 1000; // Maximum number of log entries to keep
+const SESSION_ID = `session_${Date.now()}`; // Unique session ID
 
-// Define log entry structure
-export interface LogEntry {
-  id: string;
+// Log level type
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+// Log entry structure
+interface LogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
   details?: any;
   sessionId: string;
-  category?: string;
-}
-
-// Log levels
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
-
-// Log storage configuration
-interface LogManagerConfig {
-  maxEntries: number;
-  persistenceDays: number;
-  minLevel: LogLevel;
-  storageKey: string;
-  sessionStorageKey: string;
 }
 
 /**
- * Manages application logging with persistence and rotation
+ * Logger singleton class
  */
-export class LogManager {
-  private readonly config: LogManagerConfig;
-  private sessionId: string;
+class Logger {
   private logs: LogEntry[] = [];
-  private isInitialized = false;
-  
-  constructor(config?: Partial<LogManagerConfig>) {
-    // Default configuration
-    this.config = {
-      maxEntries: 1000,
-      persistenceDays: 7,
-      minLevel: 'info',
-      storageKey: 'flomanji:application-logs',
-      sessionStorageKey: 'flomanji:session-id',
-      ...config
-    };
-    
-    this.sessionId = this.getOrCreateSessionId();
-  }
-  
+  private initialized = false;
+
   /**
-   * Initialize the log manager, loading any existing logs
+   * Initialize the logger
    */
-  public initialize(): void {
-    if (this.isInitialized) return;
-    
+  constructor() {
+    this.loadLogs();
+  }
+
+  /**
+   * Load existing logs from localStorage
+   */
+  private loadLogs(): void {
     try {
-      this.loadLogs();
-      this.rotateLogs();
-      this.isInitialized = true;
-      this.info('LogManager initialized', { sessionId: this.sessionId });
+      const storedLogs = localStorage.getItem(LOG_STORAGE_KEY);
+      if (storedLogs) {
+        this.logs = JSON.parse(storedLogs);
+        this.initialized = true;
+        this.debug('Logger initialized from localStorage', { entries: this.logs.length });
+      } else {
+        this.logs = [];
+        this.initialized = true;
+        this.debug('Logger initialized with empty log', { reason: 'No stored logs found' });
+      }
     } catch (error) {
-      console.error('Failed to initialize LogManager:', error);
+      this.logs = [];
+      this.initialized = true;
+      console.error('Failed to load logs from localStorage', error);
     }
   }
-  
+
   /**
-   * Log a debug message
+   * Save logs to localStorage with rotation if needed
    */
-  public debug(message: string, details?: any): void {
-    this.log('debug', message, details);
+  private saveLogs(): void {
+    try {
+      // Rotate logs if needed (keep only the most recent entries)
+      if (this.logs.length > MAX_LOG_ENTRIES) {
+        this.logs = this.logs.slice(-MAX_LOG_ENTRIES);
+      }
+      
+      localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(this.logs));
+    } catch (error) {
+      console.error('Failed to save logs to localStorage', error);
+    }
   }
-  
+
   /**
-   * Log an info message
-   */
-  public info(message: string, details?: any): void {
-    this.log('info', message, details);
-  }
-  
-  /**
-   * Log a warning message
-   */
-  public warn(message: string, details?: any): void {
-    this.log('warn', message, details);
-  }
-  
-  /**
-   * Log an error message
-   */
-  public error(message: string, details?: any): void {
-    this.log('error', message, details);
-  }
-  
-  /**
-   * Retrieve all logs
-   */
-  public getLogs(): LogEntry[] {
-    return [...this.logs];
-  }
-  
-  /**
-   * Retrieve logs filtered by level
-   */
-  public getLogsByLevel(level: LogLevel): LogEntry[] {
-    return this.logs.filter(log => log.level === level);
-  }
-  
-  /**
-   * Retrieve logs for the current session
-   */
-  public getCurrentSessionLogs(): LogEntry[] {
-    return this.logs.filter(log => log.sessionId === this.sessionId);
-  }
-  
-  /**
-   * Clear all logs
-   */
-  public clearLogs(): void {
-    this.logs = [];
-    localStorage.removeItem(this.config.storageKey);
-    this.info('Logs cleared');
-  }
-  
-  /**
-   * Core logging function
+   * Add a log entry
    */
   private log(level: LogLevel, message: string, details?: any): void {
-    if (!this.isInitialized) {
-      this.initialize();
-    }
-    
-    // Skip if below minimum log level
-    const logLevels: Record<LogLevel, number> = {
-      debug: 0,
-      info: 1,
-      warn: 2,
-      error: 3
-    };
-    
-    if (logLevels[level] < logLevels[this.config.minLevel]) {
-      return;
+    if (!this.initialized) {
+      this.loadLogs();
     }
     
     const entry: LogEntry = {
-      id: uuidv4(),
       timestamp: new Date().toISOString(),
       level,
       message,
       details,
-      sessionId: this.sessionId
+      sessionId: SESSION_ID
     };
     
-    // Add to in-memory logs
     this.logs.push(entry);
-    
-    // Ensure we don't exceed max entries
-    if (this.logs.length > this.config.maxEntries) {
-      this.logs = this.logs.slice(-this.config.maxEntries);
-    }
-    
-    // Print to console with appropriate styling
-    this.consoleLog(entry);
-    
-    // Save to localStorage
     this.saveLogs();
-  }
-  
-  /**
-   * Print log entry to console with appropriate styling
-   */
-  private consoleLog(entry: LogEntry): void {
-    const timestamp = new Date(entry.timestamp).toLocaleTimeString();
-    const logPrefix = `[${timestamp}] [${entry.level.toUpperCase()}]`;
     
-    // Style based on log level
-    switch (entry.level) {
-      case 'debug':
-        console.debug(`${logPrefix} ${entry.message}`, entry.details || '');
-        break;
-      case 'info':
-        console.info(`${logPrefix} ${entry.message}`, entry.details || '');
-        break;
-      case 'warn':
-        console.warn(`${logPrefix} ${entry.message}`, entry.details || '');
-        break;
-      case 'error':
-        console.error(`${logPrefix} ${entry.message}`, entry.details || '');
-        break;
-    }
+    // Also log to console for development visibility
+    const consoleMethod = level === 'error' ? 'error' : 
+                        level === 'warn' ? 'warn' : 
+                        level === 'info' ? 'info' : 'log';
+                        
+    console[consoleMethod](`[${level.toUpperCase()}] ${message}`, details || '');
   }
-  
+
   /**
-   * Save logs to localStorage
+   * Log debug message
    */
-  private saveLogs(): void {
-    try {
-      localStorage.setItem(this.config.storageKey, JSON.stringify(this.logs));
-    } catch (error) {
-      console.error('Failed to save logs to localStorage:', error);
-      // If localStorage is full, remove older logs and try again
-      if (error instanceof DOMException && (error.name === 'QuotaExceededError' || error.name === 'NS_ERROR_DOM_QUOTA_REACHED')) {
-        this.logs = this.logs.slice(-Math.floor(this.config.maxEntries / 2));
-        try {
-          localStorage.setItem(this.config.storageKey, JSON.stringify(this.logs));
-        } catch (retryError) {
-          console.error('Failed to save logs after reducing size:', retryError);
-        }
-      }
-    }
+  debug(message: string, details?: any): void {
+    this.log('debug', message, details);
   }
-  
+
   /**
-   * Load logs from localStorage
+   * Log info message
    */
-  private loadLogs(): void {
-    try {
-      const storedLogs = localStorage.getItem(this.config.storageKey);
-      if (storedLogs) {
-        this.logs = JSON.parse(storedLogs);
-      }
-    } catch (error) {
-      console.error('Failed to load logs from localStorage:', error);
-      this.logs = [];
-    }
+  info(message: string, details?: any): void {
+    this.log('info', message, details);
   }
-  
+
   /**
-   * Rotate logs by removing entries older than the configured persistence period
+   * Log warning message
    */
-  private rotateLogs(): void {
-    if (this.logs.length === 0) return;
-    
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - this.config.persistenceDays);
-    
-    const oldLength = this.logs.length;
-    this.logs = this.logs.filter(log => {
-      const logDate = new Date(log.timestamp);
-      return logDate >= cutoffDate;
+  warn(message: string, details?: any): void {
+    this.log('warn', message, details);
+  }
+
+  /**
+   * Log error message
+   */
+  error(message: string, details?: any): void {
+    this.log('error', message, details);
+  }
+
+  /**
+   * Get all logs
+   */
+  getLogs(): LogEntry[] {
+    return [...this.logs];
+  }
+
+  /**
+   * Get logs for the current session
+   */
+  getCurrentSessionLogs(): LogEntry[] {
+    return this.logs.filter(log => log.sessionId === SESSION_ID);
+  }
+
+  /**
+   * Clear all logs
+   */
+  clearLogs(): void {
+    this.logs = [];
+    this.saveLogs();
+    this.info('Logs cleared', { timestamp: new Date().toISOString() });
+  }
+
+  /**
+   * Record git operations that would be excluded by .gitignore
+   * This is an alternative to modifying the .gitignore file directly
+   */
+  recordGitExclusion(pattern: string): void {
+    this.info('Git exclusion pattern recorded', {
+      pattern,
+      description: 'This file/pattern would normally be excluded in .gitignore',
+      timestamp: new Date().toISOString()
     });
-    
-    const removedCount = oldLength - this.logs.length;
-    if (removedCount > 0) {
-      console.info(`Log rotation: Removed ${removedCount} log entries older than ${this.config.persistenceDays} days`);
-    }
-    
-    this.saveLogs();
-  }
-  
-  /**
-   * Get or create a session ID
-   */
-  private getOrCreateSessionId(): string {
-    let sessionId = sessionStorage.getItem(this.config.sessionStorageKey);
-    
-    if (!sessionId) {
-      sessionId = uuidv4();
-      sessionStorage.setItem(this.config.sessionStorageKey, sessionId);
-    }
-    
-    return sessionId;
   }
 }
 
-// Create a global instance with default settings
-export const logger = new LogManager();
+// Export singleton instance
+export const logger = new Logger();
 
-// Initialize the logger
-logger.initialize();
+// Record the log files themselves as patterns that would be excluded from git
+logger.recordGitExclusion('# Flomanji application logs');
+logger.recordGitExclusion('*.log');
+logger.recordGitExclusion('logs/');
+logger.recordGitExclusion(`localStorage:${LOG_STORAGE_KEY}`);

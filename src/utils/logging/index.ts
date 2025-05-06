@@ -12,5 +12,7 @@ export const log = {
   warn: (message: string, details?: any) => logger.warn(message, details),
   error: (message: string, details?: any) => logger.error(message, details),
   getAll: () => logger.getLogs(),
-  getSession: () => logger.getCurrentSessionLogs()
+  getSession: () => logger.getCurrentSessionLogs(),
+  clearAll: () => logger.clearLogs(),
+  recordGitExclusion: (pattern: string) => logger.recordGitExclusion(pattern)
 };

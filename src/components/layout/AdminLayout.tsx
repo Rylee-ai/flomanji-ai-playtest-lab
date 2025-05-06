@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Outlet, Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,7 +21,8 @@ import {
   FileText, 
   Bot, 
   Truck,
-  UserCheck
+  UserCheck,
+  Bug as BugIcon
 } from "lucide-react";
 import { log } from "@/utils/logging";
 
@@ -38,7 +40,7 @@ const AdminLayout = () => {
     { title: "Playtesters", icon: <UserCheck className="h-4 w-4 mr-2" />, href: "/waitlist-manager" },
     { title: "Shipping", icon: <Truck className="h-4 w-4 mr-2" />, href: "/shipping-manager" },
     { title: "Settings", icon: <Settings className="h-4 w-4 mr-2" />, href: "/settings" },
-    { title: "Debug", icon: <Bug className="h-4 w-4 mr-2" />, href: "/debug", section: 'admin' },
+    { title: "Debug", icon: <BugIcon className="h-4 w-4 mr-2" />, href: "/debug", section: 'admin' },
   ];
   
   return (
