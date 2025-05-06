@@ -85,5 +85,47 @@ export const valuableItems: TreasureCard[] = [
     useEffect: "Locate and activate an Ice Machine to reduce global Heat by 3",
     flavor: "Goblet: 'More valuable than gold in the Flomanji heat.'",
     imagePrompt: "A hand-drawn map on a napkin, leading through familiar landmarks to a circled \"ICE!\" spot."
+  },
+  {
+    id: "ancient-coin",
+    name: "Ancient Dubloons",
+    type: "treasure",
+    icons: [
+      { symbol: "💰", meaning: "Valuable" },
+      { symbol: "⚓", meaning: "Naval" }
+    ],
+    keywords: ["Currency", "Historical", "Trading"],
+    rules: [
+      "Spend 1: Gain +2 to any Charm check with natives",
+      "Spend 2: Avoid one Heat increase from trading/social",
+      "Value: Worth 1 point per coin remaining at end"
+    ],
+    value: 1,
+    consumable: true,
+    useEffect: "Spend to gain significant advantage in social interactions or trading",
+    flavor: "Spanish gold, pirate plunder—wealth transcends language.",
+    imagePrompt: "A handful of gold coins with worn Spanish markings, reflecting neon highlights despite their age"
+  },
+  {
+    id: "florida-womans-bottomless-purse",
+    name: "Florida Woman's Bottomless Purse",
+    type: "treasure",
+    icons: [
+      { symbol: "🎒", meaning: "Inventory" },
+      { symbol: "🌀", meaning: "Chaos" },
+      { symbol: "👥", meaning: "Social" }
+    ],
+    keywords: ["Storage", "Random Item Generation", "Unpredictable"],
+    rules: [
+      "While equipped (takes 1 Gear slot): Your hand size limit is increased by 2.",
+      "Once per game, spend 1 Action to \"Rummage.\" Shake the Goblet for Luck (DC 4).",
+      "Success = Draw 1 random Gear card. Failure = Draw 1 random Hazard card (Goblet: \"Found trouble instead!\")."
+    ],
+    value: 2,
+    consumable: false,
+    passiveEffect: "Hand size limit increased by 2",
+    useEffect: "Draw 1 random Gear card on success, or 1 random Hazard card on failure (Luck DC 4)",
+    flavor: "Goblet: 'Contains everything... lip balm, expired coupons, existential dread, maybe a small gator.'",
+    imagePrompt: "A large, garishly patterned purse overflowing with an impossible amount of random objects"
   }
-]
+];
