@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -14,7 +15,7 @@ import {
   Database           // Total Cards
 } from "lucide-react";
 
-import { TREASURE_CARDS } from "@/lib/cards/treasures";
+import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
 import { NPC_CARDS } from "@/lib/cards/npcs";
 import { GEAR_CARDS } from "@/lib/cards/gear-cards";
@@ -23,7 +24,6 @@ import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
 import { REGION_CARDS } from "@/lib/cards/region-cards";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 import { MISSION_CARDS } from "@/lib/cards/mission-cards";
-// There isn't a clear "Starting Gear" or "Event" array, so use placeholders/counts as needed.
 
 const CARD_BREAKDOWN = [
   {

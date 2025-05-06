@@ -4,6 +4,7 @@ import { createChatCompletion } from "@/lib/openrouterChat";
 import { drawRandomCard } from "../game-mechanics";
 import { TREASURE_CARDS } from "@/lib/cards/treasure-cards";
 import { getGobletNarration } from "../goblet-voice-manager";
+import { TreasureCard } from "@/types/cards/treasure";
 
 /**
  * Manages the discovery and effects of Treasure Cards
@@ -33,7 +34,7 @@ export class TreasureManager {
     }
     
     // Draw a random treasure card
-    const treasureCard = drawRandomCard(TREASURE_CARDS);
+    const treasureCard = drawRandomCard(TREASURE_CARDS) as TreasureCard;
     if (!treasureCard) {
       return messages;
     }

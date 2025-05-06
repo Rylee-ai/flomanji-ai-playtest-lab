@@ -52,7 +52,8 @@ export class CardQueryService {
         await CardCollectionLoader.loadAllCardCollections();
       }
       
-      const cards = CardCollectionLoader.getCollection<T>(type);
+      // Fixed: Changed getCollection to getCardCollection
+      const cards = CardCollectionLoader.getCardCollection(type) as T[];
       log.debug(`Retrieved ${cards.length} cards of type ${type}`);
       return cards;
     } catch (error) {

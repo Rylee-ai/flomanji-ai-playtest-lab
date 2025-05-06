@@ -3,6 +3,7 @@ import { SimulationConfig } from "@/types";
 import { MISSION_CARDS } from "@/lib/cards/mission-cards";
 import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 import { drawRandomCard } from "../game-mechanics";
+import { MissionSheet } from "@/types/cards/mission";
 
 /**
  * Manages game state setup and initialization
@@ -54,15 +55,16 @@ export class GameStateSetupManager {
       );
       
       if (availableMissions.length > 0) {
-        const selectedMission = drawRandomCard(availableMissions);
+        const selectedMission = drawRandomCard(availableMissions) as MissionSheet;
         if (selectedMission) {
           config.missionId = selectedMission.id;
           gameState.missionName = selectedMission.name;
           gameState.missionType = selectedMission.type;
-          gameState.objectives = selectedMission.objectives.map((obj: any) => ({
+          // Cast to MissionSheet to access objectives
+          gameState.objectives = (selectedMission as MissionSheet).objectives?.map((obj: any) => ({
             ...obj,
             completed: false
-          }));
+          })) || [];
         }
       }
     }
