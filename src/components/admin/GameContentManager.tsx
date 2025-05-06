@@ -123,7 +123,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="player-character" className="w-full justify-between">
                   Player Characters
                   <Badge 
-                    variant={activeTab === "player-character" ? "primary" : "secondary"} 
+                    variant={activeTab === "player-character" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["player-character"]}
                   </Badge>
@@ -131,7 +131,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="npc" className="w-full justify-between">
                   NPC Characters
                   <Badge 
-                    variant={activeTab === "npc" ? "primary" : "secondary"} 
+                    variant={activeTab === "npc" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["npc"]}
                   </Badge>
@@ -139,7 +139,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="flomanjified" className="w-full justify-between">
                   Flomanjified Roles
                   <Badge 
-                    variant={activeTab === "flomanjified" ? "primary" : "secondary"} 
+                    variant={activeTab === "flomanjified" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["flomanjified"]}
                   </Badge>
@@ -153,7 +153,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="treasure" className="w-full justify-between">
                   Treasure Cards
                   <Badge 
-                    variant={activeTab === "treasure" ? "primary" : "secondary"} 
+                    variant={activeTab === "treasure" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["treasure"]}
                   </Badge>
@@ -161,7 +161,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="gear" className="w-full justify-between">
                   Gear Cards
                   <Badge 
-                    variant={activeTab === "gear" ? "primary" : "secondary"} 
+                    variant={activeTab === "gear" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["gear"]}
                   </Badge>
@@ -169,7 +169,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="hazard" className="w-full justify-between">
                   Hazard Cards
                   <Badge 
-                    variant={activeTab === "hazard" ? "primary" : "secondary"} 
+                    variant={activeTab === "hazard" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["hazard"]}
                   </Badge>
@@ -177,7 +177,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="chaos" className="w-full justify-between">
                   Chaos Cards
                   <Badge 
-                    variant={activeTab === "chaos" ? "primary" : "secondary"} 
+                    variant={activeTab === "chaos" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["chaos"]}
                   </Badge>
@@ -185,7 +185,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="region" className="w-full justify-between">
                   Region Cards
                   <Badge 
-                    variant={activeTab === "region" ? "primary" : "secondary"} 
+                    variant={activeTab === "region" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["region"]}
                   </Badge>
@@ -199,7 +199,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="mission" className="w-full justify-between">
                   Mission Sheets
                   <Badge 
-                    variant={activeTab === "mission" ? "primary" : "secondary"} 
+                    variant={activeTab === "mission" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["mission"]}
                   </Badge>
@@ -207,7 +207,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="secret" className="w-full justify-between">
                   Secret Objectives
                   <Badge 
-                    variant={activeTab === "secret" ? "primary" : "secondary"} 
+                    variant={activeTab === "secret" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["secret"]}
                   </Badge>
@@ -215,7 +215,7 @@ const GameContentManager = () => {
                 <TabsTrigger value="automa" className="w-full justify-between">
                   Automa Cards
                   <Badge 
-                    variant={activeTab === "automa" ? "primary" : "secondary"} 
+                    variant={activeTab === "automa" ? "default" : "secondary"} 
                     className="ml-2">
                     {cardCounts["automa"]}
                   </Badge>
