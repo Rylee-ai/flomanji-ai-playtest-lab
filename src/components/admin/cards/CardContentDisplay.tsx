@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { memo } from "react";
 import { TabsContent } from "@/components/ui/tabs";
 import { TableWrapper } from "../tables/TableWrapper";
 import { CardType, GameCard } from "@/types/cards";
@@ -13,7 +13,7 @@ interface CardContentDisplayProps {
   onDeleteCard: (card: GameCard) => void;
 }
 
-export const CardContentDisplay: React.FC<CardContentDisplayProps> = ({
+export const CardContentDisplay: React.FC<CardContentDisplayProps> = memo(({
   activeTab,
   loading,
   cards,
@@ -41,4 +41,6 @@ export const CardContentDisplay: React.FC<CardContentDisplayProps> = ({
       )}
     </TabsContent>
   );
-};
+});
+
+CardContentDisplay.displayName = "CardContentDisplay";

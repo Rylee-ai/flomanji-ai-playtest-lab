@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
+
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { CardType, GameCard } from "@/types/cards";
 import { useCardLoading } from "./card-management/useCardLoading";
 import { useCardSelection } from "./card-management/useCardSelection";
@@ -15,17 +16,25 @@ import { CardCollectionLoader } from "@/services/card-library/CardCollectionLoad
 export const useCardManagement = () => {
   const [activeTab, setActiveTab] = useState<CardType>("treasure");
   
-  // Ensure CardCollectionLoader is initialized on mount
+  // Ensure CardCollectionLoader is initialized on mount - but only do this once
   useEffect(() => {
-    if (!CardCollectionLoader.isLoaded()) {
-      log.info("Initializing card collections on useCardManagement mount");
-      CardCollectionLoader.loadAllCardCollections().catch(error => {
-        log.error("Failed to initialize card collections", { error });
-      });
-    }
+    const ensureCollectionsLoaded = async () => {
+      if (!CardCollectionLoader.isLoaded() && !CardCollectionLoader.isCurrentlyLoading()) {
+        log.info("Initializing card collections on useCardManagement mount");
+        try {
+          await CardCollectionLoader.loadAllCardCollections();
+          log.info("Card collections loaded in useCardManagement");
+        } catch (error) {
+          log.error("Failed to initialize card collections", { error });
+          toast.error("Failed to load cards. Please try refreshing the page.");
+        }
+      }
+    };
+    
+    ensureCollectionsLoaded();
   }, []);
   
-  // Card loading functionality
+  // Card loading functionality with the active tab
   const {
     cards,
     loading,
@@ -59,70 +68,63 @@ export const useCardManagement = () => {
   const { handleImport } = useCardImport(loadCards);
 
   // Initialize with a loadCards call and log the result
+  // Use a debounced version to prevent excessive calls
   useEffect(() => {
     log.info("Loading cards for tab", { activeTab });
     
-    loadCards()
-      .then(loadedCards => {
-        log.info("Successfully loaded cards", { 
-          cardType: activeTab,
-          count: loadedCards.length 
-        });
-        
-        // Run diagnostics after successful load
-        setTimeout(() => {
-          analyzeCardCounts();
-        }, 500);
-      })
-      .catch(error => {
-        console.error("Initial card loading error:", error);
-        log.error("Failed to load cards", { error, cardType: activeTab });
-        toast.error("Failed to load cards. Please refresh the page.");
-      });
+    let isMounted = true;
     
-    // Refresh cards every 2 minutes
+    const loadCardsAndLog = async () => {
+      try {
+        const loadedCards = await loadCards();
+        
+        if (isMounted) {
+          log.info("Successfully loaded cards", { 
+            cardType: activeTab,
+            count: loadedCards.length 
+          });
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error("Initial card loading error:", error);
+          log.error("Failed to load cards", { error, cardType: activeTab });
+          toast.error("Failed to load cards. Please refresh the page.");
+        }
+      }
+    };
+    
+    loadCardsAndLog();
+    
+    // Only set up refresh interval if no global refresh is happening
     const refreshInterval = setInterval(() => {
-      log.debug("Auto-refreshing cards", { cardType: activeTab });
-      loadCards().catch(err => {
-        log.error("Auto-refresh cards error:", { error: err, cardType: activeTab });
-      });
-    }, 120000); // 2 minutes
+      if (isMounted) {
+        log.debug("Auto-refreshing cards", { cardType: activeTab });
+        loadCards().catch(err => {
+          if (isMounted) {
+            log.error("Auto-refresh cards error:", { error: err, cardType: activeTab });
+          }
+        });
+      }
+    }, 180000); // 3 minutes
     
     return () => {
+      isMounted = false;
       clearInterval(refreshInterval);
       log.debug("Cleaned up card refresh interval", { cardType: activeTab });
     };
-  }, [loadCards, activeTab]);
-
-  // Reload cards when activeTab changes AND force re-init of CardCollectionLoader
-  useEffect(() => {
-    log.info("Active tab changed, reloading cards", { newTab: activeTab });
-    
-    // Force re-initialization of card collections to ensure all are loaded
-    CardCollectionLoader.loadAllCardCollections()
-      .then(() => {
-        log.info("Card collections reloaded after tab change");
-        loadCards().catch(error => {
-          log.error("Failed to load cards after tab change", { error, cardType: activeTab });
-        });
-      })
-      .catch(error => {
-        log.error("Failed to reload card collections after tab change", { error });
-      });
-      
   }, [activeTab, loadCards]);
 
   // Extended version of handleEditCard that also sets activeTab and loads version history
-  const handleEditCard = async (card: GameCard) => {
+  const handleEditCard = useCallback(async (card: GameCard) => {
     log.info("Editing card", { id: card.id, name: card.name, type: card.type });
     setActiveTab(card.type as CardType);
     const history = await editCard(card);
     setVersionHistory(history);
     setIsFormOpen(true);
-  };
+  }, [editCard, setActiveTab, setIsFormOpen, setVersionHistory]);
 
   // Enhanced import handler with better logging
-  const enhancedImportHandler = (cards: CardFormValues[], results: CardImportResult) => {
+  const enhancedImportHandler = useCallback((cards: CardFormValues[], results: CardImportResult) => {
     log.info("Importing cards", { 
       count: cards.length, 
       type: activeTab,
@@ -131,7 +133,15 @@ export const useCardManagement = () => {
     });
     
     return handleImport(cards, results);
-  };
+  }, [activeTab, handleImport]);
+
+  // Handle tab change with minimal performance impact
+  const handleTabChange = useCallback((newTab: CardType) => {
+    if (newTab === activeTab) return;
+    
+    log.info("Changing active tab", { from: activeTab, to: newTab });
+    setActiveTab(newTab);
+  }, [activeTab]);
 
   return {
     selectedCard,
@@ -140,7 +150,7 @@ export const useCardManagement = () => {
     editingCard,
     versionHistory,
     setSelectedCard,
-    setActiveTab,
+    setActiveTab: handleTabChange,
     setIsFormOpen,
     getCardById,
     handleViewCard,

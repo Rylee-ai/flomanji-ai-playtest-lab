@@ -1,9 +1,10 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { CardType } from "@/types/cards";
 import { CardCollectionLoader } from "@/services/card-library/CardCollectionLoader";
 import { calculateCardCounts } from "../utils/cardCountUtils";
 import { log } from "@/utils/logging";
+import { toast } from "sonner";
 
 /**
  * Hook to provide persistent card counts across all collections,
@@ -12,6 +13,7 @@ import { log } from "@/utils/logging";
 export const useAllCardCounts = () => {
   const [cardCounts, setCardCounts] = useState<Record<CardType | string, number>>({});
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     const loadAllCardCounts = async () => {
@@ -37,15 +39,18 @@ export const useAllCardCounts = () => {
         });
         
         setCardCounts(counts);
+        setLastUpdated(new Date());
       } catch (error) {
         log.error("Failed to load all card counts", { 
           error: error instanceof Error ? error.message : String(error) 
         });
+        toast.error("Failed to load card counts. Please try refreshing.");
       } finally {
         setLoading(false);
       }
     };
 
+    // Initial load
     loadAllCardCounts();
     
     // Set up refresh interval
@@ -81,20 +86,26 @@ export const useAllCardCounts = () => {
       });
       
       setCardCounts(counts);
+      setLastUpdated(new Date());
       return true;
     } catch (error) {
       log.error("Failed to refresh all card counts", { 
         error: error instanceof Error ? error.message : String(error) 
       });
+      toast.error("Failed to refresh card counts. Please try again.");
       return false;
     } finally {
       setLoading(false);
     }
   };
 
+  // Memoized card counts to prevent unnecessary re-renders
+  const memoizedCardCounts = useMemo(() => cardCounts, [cardCounts]);
+
   return {
-    cardCounts,
+    cardCounts: memoizedCardCounts,
     loading,
-    refreshCardCounts
+    refreshCardCounts,
+    lastUpdated
   };
 };

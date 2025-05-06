@@ -6,17 +6,26 @@ import GameContentManager from "@/components/admin/GameContentManager";
 import MissionOverviewGrid from "@/components/admin/MissionOverviewGrid";
 import { CardType } from "@/types/cards";
 import { log } from "@/utils/logging";
+import { CardCollectionLoader } from "@/services/card-library/CardCollectionLoader";
 
 const ContentManager = () => {
   const [activeSection, setActiveSection] = React.useState<"cards" | "missions">("cards");
 
-  // Log page visit for analytics
+  // Log page visit for analytics and ensure card collections are loaded
   useEffect(() => {
     log.info("Content Manager page accessed", {
       activeSection,
       timestamp: new Date().toISOString()
     });
-  }, []);
+    
+    // Ensure card collections are initialized when the page loads
+    if (!CardCollectionLoader.isLoaded() && !CardCollectionLoader.isCurrentlyLoading()) {
+      log.info("Initializing card collections on Content Manager page access");
+      CardCollectionLoader.loadAllCardCollections().catch(error => {
+        log.error("Failed to initialize card collections from Content Manager page", { error });
+      });
+    }
+  }, [activeSection]);
 
   // Log section changes
   const handleSectionChange = (value: string) => {
@@ -50,4 +59,4 @@ const ContentManager = () => {
   );
 };
 
-export default ContentManager;
+export default React.memo(ContentManager);

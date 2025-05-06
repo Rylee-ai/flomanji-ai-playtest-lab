@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Tabs } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { CardPreviewModal } from "./CardPreviewModal";
@@ -34,53 +34,58 @@ const GameContentManager = () => {
     getActiveCards,
     loadCards,
     handleImport,
-    loading,
+    loading: cardsLoading,
     cards
   } = useCardManagement();
 
-  // Use our new hook for persistent card counts
-  const { cardCounts, loading: countsLoading, refreshCardCounts } = useAllCardCounts();
+  // Use our hook for persistent card counts across all tabs
+  const { cardCounts, loading: countsLoading, refreshCardCounts, lastUpdated } = useAllCardCounts();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastLoadTime, setLastLoadTime] = useState<Date | null>(null);
 
-  // Force initialization of card collections on first render
+  // Force initialization of card collections on first render, but only once
   useEffect(() => {
-    if (!CardCollectionLoader.isLoaded()) {
-      log.info("GameContentManager mounted - initializing card collections");
-      CardCollectionLoader.loadAllCardCollections()
-        .then(() => {
+    const initializeCards = async () => {
+      if (!CardCollectionLoader.isLoaded() && !CardCollectionLoader.isCurrentlyLoading()) {
+        log.info("GameContentManager mounted - initializing card collections");
+        try {
+          await CardCollectionLoader.loadAllCardCollections();
           log.info("Card collections initialized successfully");
           analyzeCardCounts();
-          setLastLoadTime(new Date());
-        })
-        .catch(error => {
+        } catch (error) {
           log.error("Failed to initialize card collections", { error });
           toast.error("Failed to load cards. Please refresh the page.");
-        });
-    } else {
-      log.info("GameContentManager mounted - card collections already loaded");
-      setTimeout(() => {
-        analyzeCardCounts();
-        setLastLoadTime(new Date());
-      }, 500);
-    }
+        }
+      } else {
+        log.info("GameContentManager mounted - card collections already loaded or loading");
+        setTimeout(() => {
+          analyzeCardCounts();
+        }, 200);
+      }
+    };
+
+    initializeCards();
   }, []);
 
-  // Force refresh of card data
-  const handleRefreshCards = async () => {
+  // Force refresh of card data - optimized to avoid race conditions
+  const handleRefreshCards = useCallback(async () => {
+    if (isRefreshing) return; // Prevent multiple simultaneous refreshes
+    
     log.info("Manual refresh of cards requested", { cardType: activeTab });
     setIsRefreshing(true);
+    
     try {
       // Re-initialize all card collections
       await CardCollectionLoader.loadAllCardCollections();
-      // Now load the active tab cards
-      await loadCards();
-      // Refresh the card counts
-      await refreshCardCounts();
+      
+      // Refresh both the active tab cards and all card counts
+      await Promise.all([
+        loadCards(),
+        refreshCardCounts()
+      ]);
+      
       // Run diagnostics after refresh
       analyzeCardCounts();
-      setLastLoadTime(new Date());
       log.info("Cards refreshed successfully", { cardType: activeTab });
       toast.success("Cards refreshed successfully");
     } catch (error) {
@@ -93,25 +98,29 @@ const GameContentManager = () => {
     } finally {
       setIsRefreshing(false);
     }
-  };
+  }, [activeTab, loadCards, refreshCardCounts, isRefreshing]);
 
-  // Handle import completion
-  const handleCardImport = (cards, results) => {
+  // Handle import completion with optimized refresh
+  const handleCardImport = useCallback((cards, results) => {
     log.info("Card import completed", { 
       count: cards.length,
       cardType: activeTab,
       results
     });
+    
+    // Import the cards first
     handleImport(cards, results);
-    // Run diagnostics after import and refresh card counts
+    
+    // Then refresh card counts without reloading everything
     setTimeout(async () => {
       analyzeCardCounts();
       await refreshCardCounts();
-    }, 500);
-  };
+    }, 300);
+  }, [activeTab, handleImport, refreshCardCounts]);
 
   const card = selectedCard ? getCardById(selectedCard) : null;
   const activeCards = getActiveCards();
+  const loading = cardsLoading || countsLoading;
   
   return (
     <Card className="border shadow-sm">
@@ -124,9 +133,9 @@ const GameContentManager = () => {
           activeTab={activeTab}
         />
         
-        {lastLoadTime && (
+        {lastUpdated && (
           <div className="mb-4 text-xs text-muted-foreground">
-            Last updated: {lastLoadTime.toLocaleTimeString()}
+            Last updated: {lastUpdated.toLocaleTimeString()}
           </div>
         )}
         
@@ -179,4 +188,4 @@ const GameContentManager = () => {
   );
 };
 
-export default GameContentManager;
+export default React.memo(GameContentManager);

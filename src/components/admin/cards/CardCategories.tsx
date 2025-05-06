@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { memo } from "react";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { CardType } from "@/types/cards";
@@ -9,7 +9,8 @@ interface CardCategoryProps {
   cardCounts: Record<CardType | string, number>;
 }
 
-export const CharacterCards: React.FC<CardCategoryProps> = ({ activeTab, cardCounts }) => {
+// Optimize with memo to prevent unnecessary re-renders
+export const CharacterCards: React.FC<CardCategoryProps> = memo(({ activeTab, cardCounts }) => {
   return (
     <div>
       <h3 className="text-sm font-medium mb-2 text-muted-foreground">Characters</h3>
@@ -41,9 +42,11 @@ export const CharacterCards: React.FC<CardCategoryProps> = ({ activeTab, cardCou
       </TabsList>
     </div>
   );
-};
+});
 
-export const ItemsAndEncounterCards: React.FC<CardCategoryProps> = ({ activeTab, cardCounts }) => {
+CharacterCards.displayName = "CharacterCards";
+
+export const ItemsAndEncounterCards: React.FC<CardCategoryProps> = memo(({ activeTab, cardCounts }) => {
   return (
     <div>
       <h3 className="text-sm font-medium mb-2 text-muted-foreground">Items & Encounters</h3>
@@ -91,9 +94,11 @@ export const ItemsAndEncounterCards: React.FC<CardCategoryProps> = ({ activeTab,
       </TabsList>
     </div>
   );
-};
+});
 
-export const GameStructureCards: React.FC<CardCategoryProps> = ({ activeTab, cardCounts }) => {
+ItemsAndEncounterCards.displayName = "ItemsAndEncounterCards";
+
+export const GameStructureCards: React.FC<CardCategoryProps> = memo(({ activeTab, cardCounts }) => {
   return (
     <div>
       <h3 className="text-sm font-medium mb-2 text-muted-foreground">Game Structure</h3>
@@ -125,4 +130,6 @@ export const GameStructureCards: React.FC<CardCategoryProps> = ({ activeTab, car
       </TabsList>
     </div>
   );
-};
+});
+
+GameStructureCards.displayName = "GameStructureCards";
