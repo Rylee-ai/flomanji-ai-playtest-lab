@@ -11,11 +11,13 @@ interface TreasureCardDisplayProps {
 }
 
 export const TreasureCardDisplay: React.FC<TreasureCardDisplayProps> = ({ card }) => {
+  const isArtifact = card.type === "artifact";
+  
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant={card.type === "artifact" ? "secondary" : "outline"}>
-          {card.type === "artifact" ? "Artifact" : "Treasure"}
+        <Badge variant={isArtifact ? "secondary" : "outline"}>
+          {isArtifact ? "Artifact" : "Treasure"}
         </Badge>
         {card.value && <Badge variant="outline">Value: {card.value}</Badge>}
         {card.consumable && <Badge variant="outline">Consumable</Badge>}

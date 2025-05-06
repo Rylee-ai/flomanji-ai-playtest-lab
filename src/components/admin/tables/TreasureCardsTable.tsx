@@ -1,7 +1,5 @@
 
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Eye, Pencil, Trash } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -10,68 +8,72 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { GameCard } from "@/types/cards";
 import { TreasureCard } from "@/types/cards/treasure";
+import { Badge } from "@/components/ui/badge";
+import { TableActionButtons } from "./components/ActionButtons";
 
 interface TreasureCardsTableProps {
-  cards: TreasureCard[];
+  cards: GameCard[];
   onViewCard: (id: string) => void;
-  onEditCard: (card: TreasureCard) => void;
-  onDeleteCard: (card: TreasureCard) => void;
+  onEditCard: (card: GameCard) => void;
+  onDeleteCard: (card: GameCard) => void;
 }
 
-export const TreasureCardsTable = ({ cards, onViewCard, onEditCard, onDeleteCard }: TreasureCardsTableProps) => {
+export const TreasureCardsTable = ({
+  cards,
+  onViewCard,
+  onEditCard,
+  onDeleteCard,
+}: TreasureCardsTableProps) => {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Type</TableHead>
-          <TableHead>Icons</TableHead>
-          <TableHead>Keywords</TableHead>
-          <TableHead>Value</TableHead>
-          <TableHead>Consumable</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {cards.map((card) => (
-          <TableRow key={card.id}>
-            <TableCell>{card.name}</TableCell>
-            <TableCell>{card.type}</TableCell>
-            <TableCell>{card.icons.map(icon => icon.symbol).join(" ")}</TableCell>
-            <TableCell>{card.keywords.join(", ")}</TableCell>
-            <TableCell>{card.value || "-"}</TableCell>
-            <TableCell>{card.consumable ? "Yes" : "No"}</TableCell>
-            <TableCell className="space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => onViewCard(card.id)}
-              >
-                <Eye className="h-4 w-4 mr-1" />
-                View
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => onEditCard(card)}
-              >
-                <Pencil className="h-4 w-4 mr-1" />
-                Edit
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => onDeleteCard(card)}
-                className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-              >
-                <Trash className="h-4 w-4 mr-1" />
-                Delete
-              </Button>
-            </TableCell>
+    <div className="overflow-auto border rounded-md">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[300px]">Name</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>Value</TableHead>
+            <TableHead>Consumable</TableHead>
+            <TableHead className="w-[300px]">Effect</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {cards.map((card) => {
+            const treasureCard = card as TreasureCard;
+            return (
+              <TableRow key={card.id}>
+                <TableCell className="font-medium">{card.name}</TableCell>
+                <TableCell>
+                  <Badge variant={treasureCard.type === "artifact" ? "secondary" : "outline"}>
+                    {treasureCard.type === "artifact" ? "Artifact" : "Treasure"}
+                  </Badge>
+                </TableCell>
+                <TableCell>{treasureCard.value || "-"}</TableCell>
+                <TableCell>
+                  {treasureCard.consumable ? (
+                    <Badge variant="default">Consumable</Badge>
+                  ) : (
+                    "No"
+                  )}
+                </TableCell>
+                <TableCell className="text-sm max-w-[300px] truncate">
+                  {treasureCard.passiveEffect || treasureCard.useEffect || "-"}
+                </TableCell>
+                <TableCell className="text-right">
+                  <TableActionButtons
+                    card={card}
+                    onView={onViewCard}
+                    onEdit={onEditCard}
+                    onDelete={onDeleteCard}
+                  />
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </div>
   );
 };

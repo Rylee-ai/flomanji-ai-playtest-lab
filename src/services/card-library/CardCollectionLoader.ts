@@ -116,14 +116,14 @@ export class CardCollectionLoader {
       CardCollectionLoader.collections["flomanjified"] = [...FLOMANJIFIED_CARDS];
       log.info(`Loaded ${FLOMANJIFIED_CARDS.length} flomanjified cards`);
       
-      // Load treasure cards
-      CardCollectionLoader.collections["treasure"] = [...TREASURE_CARDS.filter(card => card.type === "treasure")];
-      CardCollectionLoader.collections["artifact"] = [...TREASURE_CARDS.filter(card => card.type === "artifact")];
-      log.info(`Loaded ${TREASURE_CARDS.length} treasure cards (${
-        TREASURE_CARDS.filter(card => card.type === "treasure").length
-      } treasures and ${
-        TREASURE_CARDS.filter(card => card.type === "artifact").length
-      } artifacts)`);
+      // Load treasure and artifact cards
+      const treasureCards = TREASURE_CARDS.filter(card => card.type === "treasure");
+      const artifactCards = TREASURE_CARDS.filter(card => card.type === "artifact");
+      
+      CardCollectionLoader.collections["treasure"] = treasureCards;
+      CardCollectionLoader.collections["artifact"] = artifactCards;
+      
+      log.info(`Loaded ${treasureCards.length} treasure cards and ${artifactCards.length} artifact cards (${TREASURE_CARDS.length} total)`);
       
       // Additional card types can be loaded here as they're implemented
 

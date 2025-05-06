@@ -33,6 +33,11 @@ export const useAllCardCounts = () => {
         // Calculate counts using the existing utility
         const counts = calculateCardCounts(allCards);
         
+        // Combine treasure and artifact counts for the UI
+        if (counts["treasure"] && counts["artifact"]) {
+          counts["treasure"] = counts["treasure"] + counts["artifact"];
+        }
+        
         log.info("All card counts loaded", { 
           totalCards: allCards.length,
           counts 
@@ -79,6 +84,11 @@ export const useAllCardCounts = () => {
       
       // Calculate updated counts
       const counts = calculateCardCounts(allCards);
+      
+      // Combine treasure and artifact counts for the UI
+      if (counts["treasure"] && counts["artifact"]) {
+        counts["treasure"] = counts["treasure"] + counts["artifact"];
+      }
       
       log.info("All card counts refreshed", { 
         totalCards: allCards.length,
