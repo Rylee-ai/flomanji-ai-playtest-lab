@@ -27,12 +27,20 @@ export const calculateCardCounts = (cards: GameCard[]): Record<CardType | string
     "solo": 0
   };
 
+  if (!cards || cards.length === 0) {
+    log.debug("No cards provided to calculateCardCounts");
+    return initialCounts as Record<CardType | string, number>;
+  }
+
   log.debug("Calculating card counts for cards array", { 
     totalCards: cards.length,
     types: [...new Set(cards.map(c => c.type))]
   });
 
   const counts = cards.reduce((counts, card) => {
+    if (!card || !card.type) {
+      return counts;
+    }
     const type = card.type;
     counts[type] = (counts[type] || 0) + 1;
     return counts;

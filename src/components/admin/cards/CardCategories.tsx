@@ -6,7 +6,7 @@ import { CardType } from "@/types/cards";
 
 interface CardCategoryProps {
   activeTab: CardType;
-  cardCounts: Record<CardType, number>;
+  cardCounts: Record<CardType | string, number>;
 }
 
 export const CharacterCards: React.FC<CardCategoryProps> = ({ activeTab, cardCounts }) => {
@@ -19,7 +19,7 @@ export const CharacterCards: React.FC<CardCategoryProps> = ({ activeTab, cardCou
           <Badge 
             variant={activeTab === "player-character" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["player-character"]}
+            {cardCounts["player-character"] || 0}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="npc" className="w-full justify-between">
@@ -27,7 +27,7 @@ export const CharacterCards: React.FC<CardCategoryProps> = ({ activeTab, cardCou
           <Badge 
             variant={activeTab === "npc" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["npc"]}
+            {cardCounts["npc"] || 0}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="flomanjified" className="w-full justify-between">
@@ -35,7 +35,7 @@ export const CharacterCards: React.FC<CardCategoryProps> = ({ activeTab, cardCou
           <Badge 
             variant={activeTab === "flomanjified" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["flomanjified"]}
+            {cardCounts["flomanjified"] || 0}
           </Badge>
         </TabsTrigger>
       </TabsList>
@@ -53,7 +53,7 @@ export const ItemsAndEncounterCards: React.FC<CardCategoryProps> = ({ activeTab,
           <Badge 
             variant={activeTab === "treasure" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["treasure"]}
+            {cardCounts["treasure"] || 0}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="gear" className="w-full justify-between">
@@ -61,7 +61,7 @@ export const ItemsAndEncounterCards: React.FC<CardCategoryProps> = ({ activeTab,
           <Badge 
             variant={activeTab === "gear" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["gear"]}
+            {cardCounts["gear"] || 0}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="hazard" className="w-full justify-between">
@@ -69,7 +69,7 @@ export const ItemsAndEncounterCards: React.FC<CardCategoryProps> = ({ activeTab,
           <Badge 
             variant={activeTab === "hazard" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["hazard"]}
+            {cardCounts["hazard"] || 0}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="chaos" className="w-full justify-between">
@@ -77,7 +77,7 @@ export const ItemsAndEncounterCards: React.FC<CardCategoryProps> = ({ activeTab,
           <Badge 
             variant={activeTab === "chaos" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["chaos"]}
+            {cardCounts["chaos"] || 0}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="region" className="w-full justify-between">
@@ -85,7 +85,7 @@ export const ItemsAndEncounterCards: React.FC<CardCategoryProps> = ({ activeTab,
           <Badge 
             variant={activeTab === "region" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["region"]}
+            {cardCounts["region"] || 0}
           </Badge>
         </TabsTrigger>
       </TabsList>
@@ -103,7 +103,7 @@ export const GameStructureCards: React.FC<CardCategoryProps> = ({ activeTab, car
           <Badge 
             variant={activeTab === "mission" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["mission"]}
+            {cardCounts["mission"] || 0}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="secret" className="w-full justify-between">
@@ -111,7 +111,7 @@ export const GameStructureCards: React.FC<CardCategoryProps> = ({ activeTab, car
           <Badge 
             variant={activeTab === "secret" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["secret"]}
+            {cardCounts["secret"] || 0}
           </Badge>
         </TabsTrigger>
         <TabsTrigger value="automa" className="w-full justify-between">
@@ -119,7 +119,7 @@ export const GameStructureCards: React.FC<CardCategoryProps> = ({ activeTab, car
           <Badge 
             variant={activeTab === "automa" ? "default" : "secondary"} 
             className="ml-2">
-            {cardCounts["automa"]}
+            {cardCounts["automa"] || 0}
           </Badge>
         </TabsTrigger>
       </TabsList>

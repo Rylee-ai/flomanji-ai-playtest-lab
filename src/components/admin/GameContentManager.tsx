@@ -10,10 +10,10 @@ import { log } from "@/utils/logging";
 import { ContentManagerHeader } from "./cards/ContentManagerHeader";
 import { CharacterCards, ItemsAndEncounterCards, GameStructureCards } from "./cards/CardCategories";
 import { CardContentDisplay } from "./cards/CardContentDisplay";
-import { calculateCardCounts } from "./utils/cardCountUtils";
 import { analyzeCardCounts } from "@/utils/diagnostics/cardCountDiagnostics";
 import { toast } from "sonner";
 import { CardCollectionLoader } from "@/services/card-library/CardCollectionLoader";
+import { useAllCardCounts } from "./hooks/useAllCardCounts";
 
 const GameContentManager = () => {
   const {
@@ -37,6 +37,9 @@ const GameContentManager = () => {
     loading,
     cards
   } = useCardManagement();
+
+  // Use our new hook for persistent card counts
+  const { cardCounts, loading: countsLoading, refreshCardCounts } = useAllCardCounts();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastLoadTime, setLastLoadTime] = useState<Date | null>(null);
@@ -73,6 +76,8 @@ const GameContentManager = () => {
       await CardCollectionLoader.loadAllCardCollections();
       // Now load the active tab cards
       await loadCards();
+      // Refresh the card counts
+      await refreshCardCounts();
       // Run diagnostics after refresh
       analyzeCardCounts();
       setLastLoadTime(new Date());
@@ -98,17 +103,15 @@ const GameContentManager = () => {
       results
     });
     handleImport(cards, results);
-    // Run diagnostics after import
-    setTimeout(() => {
+    // Run diagnostics after import and refresh card counts
+    setTimeout(async () => {
       analyzeCardCounts();
+      await refreshCardCounts();
     }, 500);
   };
 
   const card = selectedCard ? getCardById(selectedCard) : null;
   const activeCards = getActiveCards();
-  
-  // Calculate card counts from the full cards array
-  const cardCounts = calculateCardCounts(cards);
   
   return (
     <Card className="border shadow-sm">
