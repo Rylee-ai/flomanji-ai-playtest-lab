@@ -11,7 +11,7 @@ import {
 import { GameCard } from "@/types/cards";
 import { TreasureCard } from "@/types/cards/treasure";
 import { Badge } from "@/components/ui/badge";
-import { TableActionButtons } from "./components/ActionButtons";
+import { CardActions } from "@/components/admin/cards/components/CardActions";
 
 interface TreasureCardsTableProps {
   cards: GameCard[];
@@ -62,11 +62,11 @@ export const TreasureCardsTable = ({
                   {treasureCard.passiveEffect || treasureCard.useEffect || "-"}
                 </TableCell>
                 <TableCell className="text-right">
-                  <TableActionButtons
+                  <CardActions
                     card={card}
-                    onView={onViewCard}
-                    onEdit={onEditCard}
-                    onDelete={onDeleteCard}
+                    onViewCard={onViewCard}
+                    onEditCard={onEditCard}
+                    onDeleteCard={onDeleteCard}
                   />
                 </TableCell>
               </TableRow>
