@@ -1,3 +1,4 @@
+
 import React from "react";
 import { GameCard } from "@/types/cards";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PlayerCharacterCard } from "@/types/cards/player-character";
+import { Badge } from "@/components/ui/badge";
 
 interface CardGridProps {
   cards: GameCard[];
@@ -79,6 +82,48 @@ export const CardGrid = ({
     return selectedCards.some(c => c.id === card.id);
   };
 
+  // Render character stats badges if it's a player character card
+  const renderCharacterInfo = (card: GameCard) => {
+    if (card.type === 'player-character') {
+      const characterCard = card as PlayerCharacterCard;
+      return (
+        <div className="space-y-2 mt-2">
+          <div className="flex items-center justify-between">
+            <Badge variant="secondary" className="font-medium text-xs">
+              {characterCard.role}
+            </Badge>
+            <Badge variant="outline" className="font-medium text-xs">
+              HP: {characterCard.health}
+            </Badge>
+          </div>
+          
+          <div className="grid grid-cols-5 gap-1">
+            <Badge variant="outline" className="text-xs" title="Brawn">
+              B:{characterCard.stats.brawn}
+            </Badge>
+            <Badge variant="outline" className="text-xs" title="Moxie">
+              M:{characterCard.stats.moxie}
+            </Badge>
+            <Badge variant="outline" className="text-xs" title="Charm">
+              C:{characterCard.stats.charm}
+            </Badge>
+            <Badge variant="outline" className="text-xs" title="Grit">
+              G:{characterCard.stats.grit}
+            </Badge>
+            <Badge variant="outline" className="text-xs" title="Weird Sense">
+              W:{characterCard.stats.weirdSense}
+            </Badge>
+          </div>
+          
+          <div className="border-t border-muted pt-1 mt-1">
+            <p className="text-xs font-semibold truncate">{characterCard.ability.name}</p>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 p-2 sm:p-4">
       {cards.map((card) => (
@@ -137,7 +182,10 @@ export const CardGrid = ({
               )}
             </div>
             <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2 truncate">{card.name}</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{card.type}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">{card.type}</p>
+            
+            {renderCharacterInfo(card)}
+            
           </CardContent>
           <CardFooter className="flex flex-wrap gap-2 p-3 sm:p-4 pt-0">
             <Button 
