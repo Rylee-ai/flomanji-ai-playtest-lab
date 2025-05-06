@@ -1,7 +1,7 @@
 
 import { CardType, GameCard } from "@/types/cards";
 import { log } from "@/utils/logging";
-import { FLOMANJIFIED_CARDS } from "./flomanjified-cards";
+import { FLOMANJIFIED_CARDS } from "./flomanjified";
 
 // This file serves as a placeholder for the card library
 // The actual card data will be loaded from external sources
@@ -17,7 +17,7 @@ export const MISSION_CARDS: GameCard[] = [];
 export const PLAYER_CHARACTER_CARDS: GameCard[] = [];
 export const REGION_CARDS: GameCard[] = [];
 export const CHAOS_CARDS: GameCard[] = [];
-export const FLOMANJIFIED_CARDS: GameCard[] = FLOMANJIFIED_CARDS;
+export { FLOMANJIFIED_CARDS };
 export const SECRET_CARDS: GameCard[] = [];
 export const AUTOMA_CARDS: GameCard[] = [];
 
