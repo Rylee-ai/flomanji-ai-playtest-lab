@@ -6,7 +6,8 @@ import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
 import { NPC_CARDS } from "@/lib/cards/npcs";
 import { GEAR_CARDS } from "@/lib/cards/gear-cards";
 import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
-import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
+import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified";
+import { TREASURE_CARDS } from "@/lib/cards/treasures";
 
 /**
  * Service responsible for loading and caching card collections
@@ -115,13 +116,24 @@ export class CardCollectionLoader {
       CardCollectionLoader.collections["flomanjified"] = [...FLOMANJIFIED_CARDS];
       log.info(`Loaded ${FLOMANJIFIED_CARDS.length} flomanjified cards`);
       
+      // Load treasure cards
+      CardCollectionLoader.collections["treasure"] = [...TREASURE_CARDS.filter(card => card.type === "treasure")];
+      CardCollectionLoader.collections["artifact"] = [...TREASURE_CARDS.filter(card => card.type === "artifact")];
+      log.info(`Loaded ${TREASURE_CARDS.length} treasure cards (${
+        TREASURE_CARDS.filter(card => card.type === "treasure").length
+      } treasures and ${
+        TREASURE_CARDS.filter(card => card.type === "artifact").length
+      } artifacts)`);
+      
       // Additional card types can be loaded here as they're implemented
 
       log.info("Card collections initialized", { 
         collectionCount: Object.keys(CardCollectionLoader.collections).length,
         playerCharacterCount: CardCollectionLoader.collections["player-character"].length,
         npcCount: CardCollectionLoader.collections["npc"].length,
-        flomanjifiedCount: CardCollectionLoader.collections["flomanjified"].length
+        flomanjifiedCount: CardCollectionLoader.collections["flomanjified"].length,
+        treasureCount: CardCollectionLoader.collections["treasure"].length,
+        artifactCount: CardCollectionLoader.collections["artifact"].length
       });
       
       CardCollectionLoader.hasLoadedCards = true;
