@@ -1,5 +1,5 @@
 
-import { CardLibraryService } from './CardLibraryService';
+import { CardLibraryService } from './card-library';
 import { GameCard, CardType } from '@/types/cards';
 import { CardVersion, CardChangeRecord, CardBulkEditOperation } from '@/types/cards/card-version';
 import { formatCardError, safeCardOperation, logCardOperation } from '@/utils/error-handling/cardErrorHandler';
