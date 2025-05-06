@@ -3,7 +3,7 @@ import React from 'react';
 import { TreasureCard } from '@/types/cards/treasure';
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Coin, Shield, PocketKnife } from "lucide-react";
+import { Coins, Shield, PocketKnife } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface TreasureCardDisplayProps {
@@ -46,7 +46,7 @@ export const TreasureCardDisplay: React.FC<TreasureCardDisplayProps> = ({ card }
       <Collapsible className="w-full">
         <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md p-2 text-sm font-medium hover:bg-accent/10">
           <div className="flex items-center gap-2">
-            <Coin className="h-4 w-4" />
+            <Coins className="h-4 w-4" />
             <span>Detailed Rules</span>
           </div>
           <span className="text-xs text-muted-foreground">Click to expand</span>
