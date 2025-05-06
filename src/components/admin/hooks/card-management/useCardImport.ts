@@ -5,10 +5,14 @@ import { CardImportResult } from "@/types/cards/card-version";
 import { FileBasedCardAdapter } from "@/utils/file-based/FileBasedCardAdapter";
 import { toast } from "sonner";
 import { logCardOperation } from "@/utils/error-handling/cardErrorHandler";
+import { log } from "@/utils/logging";
+import { useState } from "react";
 
 export const useCardImport = (loadCards: () => Promise<any>) => {
+  const [isImporting, setIsImporting] = useState(false);
+
   /**
-   * Handle importing cards in a file-based system
+   * Handle importing cards in a file-based system with improved feedback and logging
    */
   const handleImport = async (
     cards: CardFormValues[], 
@@ -16,10 +20,20 @@ export const useCardImport = (loadCards: () => Promise<any>) => {
   ): Promise<void> => {
     if (!cards || cards.length === 0) {
       toast.error("No cards to import");
+      log.warn("Import failed: No cards to import");
       return;
     }
     
+    // Log import operation details
+    log.info("Starting card import operation", { 
+      cardCount: cards.length,
+      cardTypes: [...new Set(cards.map(card => card.type))]
+    });
+    
+    // Also use the existing logging mechanism for backward compatibility
     logCardOperation("Starting import in file-based mode", { cardCount: cards.length });
+    
+    setIsImporting(true);
     
     try {
       // Group cards by type for more organized handling
@@ -32,15 +46,20 @@ export const useCardImport = (loadCards: () => Promise<any>) => {
         return acc;
       }, {} as Record<CardType, CardFormValues[]>);
       
+      // Log the distribution of cards by type
+      log.debug("Card import distribution by type", { distribution: Object.fromEntries(
+        Object.entries(cardsByType).map(([type, cards]) => [type, cards.length])
+      )});
+      
       // In file-based mode, we would handle this differently
-      // Here we're just showing what would happen
       let successCount = 0;
       let failureCount = 0;
       
       for (const [type, typeCards] of Object.entries(cardsByType)) {
         toast.info(`Processing ${typeCards.length} ${type} cards...`);
+        log.info(`Processing batch of ${type} cards`, { count: typeCards.length });
         
-        // Use the adapter to simulate import
+        // Use the adapter to import cards
         const importResult = await FileBasedCardAdapter.importCards(
           typeCards, 
           type as CardType
@@ -48,29 +67,52 @@ export const useCardImport = (loadCards: () => Promise<any>) => {
         
         if (importResult.success) {
           successCount += typeCards.length;
-          toast.success(`${type}: ${importResult.created || 0} would be created, ${importResult.updated || 0} would be updated`);
+          toast.success(`${type}: ${importResult.created || 0} cards created, ${importResult.updated || 0} updated`);
+          log.info(`Successfully imported ${type} cards`, { 
+            created: importResult.created,
+            updated: importResult.updated
+          });
         } else {
           failureCount += typeCards.length;
-          toast.error(`${type}: Import would have issues - ${importResult.errors.map(e => e.error).join(", ")}`);
+          toast.error(`${type}: Import failed - ${importResult.errors.map(e => e.error).join(", ")}`);
+          log.error(`Failed to import ${type} cards`, { 
+            errors: importResult.errors
+          });
         }
       }
       
       // Show final results
-      toast.info(
-        `File-based import simulation complete: ${successCount} cards would be imported, ${failureCount} would fail`
-      );
+      if (failureCount > 0) {
+        toast.warning(
+          `Import completed with issues: ${successCount} cards imported, ${failureCount} failed`
+        );
+        log.warn("Import completed with issues", {
+          success: successCount,
+          failure: failureCount
+        });
+      } else {
+        toast.success(
+          `Successfully imported ${successCount} cards`
+        );
+        log.info("Import completed successfully", { count: successCount });
+      }
       
-      // Reload cards to reflect any changes
-      // In a real implementation, we would need to update the source files
+      // Reload cards to reflect the changes
       await loadCards();
       
     } catch (error) {
-      console.error("Error during import simulation:", error);
-      toast.error(`Failed to simulate import: ${error instanceof Error ? error.message : String(error)}`);
+      console.error("Error during import:", error);
+      toast.error(`Import failed: ${error instanceof Error ? error.message : String(error)}`);
+      log.error("Card import operation failed", { 
+        error: error instanceof Error ? error.message : String(error)
+      });
+    } finally {
+      setIsImporting(false);
     }
   };
 
   return {
-    handleImport
+    handleImport,
+    isImporting
   };
 };

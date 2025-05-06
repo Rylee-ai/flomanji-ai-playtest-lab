@@ -1,3 +1,4 @@
+
 /**
  * LogManager - Comprehensive logging system for Flomanji
  * 
@@ -7,6 +8,7 @@
  * - Session-based logging
  * - Persistent storage in localStorage
  * - JSON serialization for log entries
+ * - Git exclusion pattern recording
  */
 
 // Constants for log management
@@ -102,7 +104,7 @@ class Logger {
                         level === 'warn' ? 'warn' : 
                         level === 'info' ? 'info' : 'log';
                         
-    console[consoleMethod](`[${level.toUpperCase()}] ${message}`, details || '');
+    console[consoleMethod](`[${new Date().toLocaleTimeString()}] [${level.toUpperCase()}] ${message}`, details || '');
   }
 
   /**
@@ -167,6 +169,17 @@ class Logger {
       timestamp: new Date().toISOString()
     });
   }
+  
+  /**
+   * Record operation on content manager
+   * Logs all operations related to card management for future reference
+   */
+  recordContentOperation(operation: string, details: any): void {
+    this.info(`Content operation: ${operation}`, {
+      ...details,
+      timestamp: new Date().toISOString()
+    });
+  }
 }
 
 // Export singleton instance
@@ -177,3 +190,9 @@ logger.recordGitExclusion('# Flomanji application logs');
 logger.recordGitExclusion('*.log');
 logger.recordGitExclusion('logs/');
 logger.recordGitExclusion(`localStorage:${LOG_STORAGE_KEY}`);
+
+// Log that we're using the file-based approach for card management
+logger.recordContentOperation('Using file-based card management', {
+  reason: 'Database not available, using file-based system as fallback',
+  timestamp: new Date().toISOString()
+});

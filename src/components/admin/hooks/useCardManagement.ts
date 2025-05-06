@@ -7,6 +7,9 @@ import { useCardEditActions } from "./card-management/useCardEditActions";
 import { useCardImport } from "./card-management/useCardImport";
 import { CardService } from "@/services/CardService";
 import { toast } from "sonner";
+import { log } from "@/utils/logging";
+import { CardFormValues } from "@/types/forms/card-form";
+import { CardImportResult } from "@/types/cards/card-version";
 
 export const useCardManagement = () => {
   const [activeTab, setActiveTab] = useState<CardType>("treasure");
@@ -44,29 +47,64 @@ export const useCardManagement = () => {
   // Card import functionality
   const { handleImport } = useCardImport(loadCards);
 
-  // Initialize with a loadCards call
+  // Initialize with a loadCards call and log the result
   useEffect(() => {
-    loadCards().catch(error => {
-      console.error("Initial card loading error:", error);
-      toast.error("Failed to load cards. Please refresh the page.");
-    });
+    log.info("Loading cards for tab", { activeTab });
     
-    // Refresh cards every minute
-    const refreshInterval = setInterval(() => {
-      loadCards().catch(err => {
-        console.error("Refresh cards error:", err);
+    loadCards()
+      .then(loadedCards => {
+        log.info("Successfully loaded cards", { 
+          cardType: activeTab,
+          count: loadedCards.length 
+        });
+      })
+      .catch(error => {
+        console.error("Initial card loading error:", error);
+        log.error("Failed to load cards", { error, cardType: activeTab });
+        toast.error("Failed to load cards. Please refresh the page.");
       });
-    }, 60000);
     
-    return () => clearInterval(refreshInterval);
-  }, [loadCards]);
+    // Refresh cards every 2 minutes
+    const refreshInterval = setInterval(() => {
+      log.debug("Auto-refreshing cards", { cardType: activeTab });
+      loadCards().catch(err => {
+        log.error("Auto-refresh cards error:", { error: err, cardType: activeTab });
+      });
+    }, 120000); // 2 minutes
+    
+    return () => {
+      clearInterval(refreshInterval);
+      log.debug("Cleaned up card refresh interval", { cardType: activeTab });
+    };
+  }, [loadCards, activeTab]);
+
+  // Reload cards when activeTab changes
+  useEffect(() => {
+    log.info("Active tab changed, reloading cards", { newTab: activeTab });
+    loadCards().catch(error => {
+      log.error("Failed to load cards after tab change", { error, cardType: activeTab });
+    });
+  }, [activeTab, loadCards]);
 
   // Extended version of handleEditCard that also sets activeTab and loads version history
   const handleEditCard = async (card: GameCard) => {
+    log.info("Editing card", { id: card.id, name: card.name, type: card.type });
     setActiveTab(card.type as CardType);
     const history = await editCard(card);
     setVersionHistory(history);
     setIsFormOpen(true);
+  };
+
+  // Enhanced import handler with better logging
+  const enhancedImportHandler = (cards: CardFormValues[], results: CardImportResult) => {
+    log.info("Importing cards", { 
+      count: cards.length, 
+      type: activeTab,
+      success: results.imported || 0,
+      failed: results.failed || 0
+    });
+    
+    return handleImport(cards, results);
   };
 
   return {
@@ -85,7 +123,7 @@ export const useCardManagement = () => {
     handleFormSubmit,
     getActiveCards,
     handleDeleteCard,
-    handleImport,
+    handleImport: enhancedImportHandler,
     loading,
     cards,
     loadCards,
