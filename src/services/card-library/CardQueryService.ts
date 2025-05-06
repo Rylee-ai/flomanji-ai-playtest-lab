@@ -2,6 +2,7 @@
 import { CardType, GameCard } from "@/types/cards";
 import { CardCollectionLoader } from "./CardCollectionLoader";
 import { formatCardError } from "@/utils/error-handling/cardErrorHandler";
+import { log } from "@/utils/logging";
 
 /**
  * Responsible for querying card collections
@@ -24,12 +25,18 @@ export class CardQueryService {
         const collection = collections[type as CardType];
         const card = collection.find(card => card.id === id);
         if (card) {
+          log.debug(`Found card with ID ${id} in ${type} collection`);
           return card as T;
         }
       }
       
+      log.warn(`Card with ID ${id} not found in any collection`);
       return null;
     } catch (error) {
+      log.error(`Failed to get card with ID ${id}`, { 
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
       console.error(`Failed to get card with ID ${id}:`, error);
       return null;
     }
@@ -45,8 +52,14 @@ export class CardQueryService {
         await CardCollectionLoader.loadAllCardCollections();
       }
       
-      return CardCollectionLoader.getCollection<T>(type);
+      const cards = CardCollectionLoader.getCollection<T>(type);
+      log.debug(`Retrieved ${cards.length} cards of type ${type}`);
+      return cards;
     } catch (error) {
+      log.error(`Failed to get cards of type ${type}`, { 
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
       console.error(`Failed to get cards of type ${type}:`, error);
       return [];
     }
@@ -63,8 +76,14 @@ export class CardQueryService {
       }
       
       const collections = CardCollectionLoader.getCardCollections();
-      return Object.values(collections).flat();
+      const allCards = Object.values(collections).flat();
+      log.debug(`Retrieved ${allCards.length} total cards from all collections`);
+      return allCards;
     } catch (error) {
+      log.error('Failed to get all cards', { 
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
       console.error('Failed to get all cards:', error);
       return [];
     }
@@ -84,14 +103,21 @@ export class CardQueryService {
       const lowercaseQuery = query.toLowerCase();
       
       // Filter cards by name, type, or keywords
-      return allCards.filter(card => 
+      const results = allCards.filter(card => 
         card.name.toLowerCase().includes(lowercaseQuery) || 
         card.type.toLowerCase().includes(lowercaseQuery) || 
         (card.keywords && card.keywords.some(k => 
           k.toLowerCase().includes(lowercaseQuery)
         ))
       );
+      
+      log.debug(`Search for "${query}" returned ${results.length} results`);
+      return results;
     } catch (error) {
+      log.error(`Failed to search cards with query "${query}"`, { 
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
       console.error(`Failed to search cards with query "${query}":`, error);
       return [];
     }

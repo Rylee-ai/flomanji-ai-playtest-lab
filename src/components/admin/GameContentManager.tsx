@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { CardPreviewModal } from "./CardPreviewModal";
@@ -11,6 +11,7 @@ import { ContentManagerHeader } from "./cards/ContentManagerHeader";
 import { CharacterCards, ItemsAndEncounterCards, GameStructureCards } from "./cards/CardCategories";
 import { CardContentDisplay } from "./cards/CardContentDisplay";
 import { calculateCardCounts } from "./utils/cardCountUtils";
+import { analyzeCardCounts } from "@/utils/diagnostics/cardCountDiagnostics";
 
 const GameContentManager = () => {
   const {
@@ -37,16 +38,29 @@ const GameContentManager = () => {
 
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // Run diagnostics on mount to identify any card count issues
+  useEffect(() => {
+    log.info("GameContentManager mounted - running card diagnostics");
+    setTimeout(() => {
+      analyzeCardCounts();
+    }, 1000);
+  }, []);
+
   // Force refresh of card data
   const handleRefreshCards = async () => {
     log.info("Manual refresh of cards requested", { cardType: activeTab });
     setIsRefreshing(true);
     try {
       await loadCards();
+      // Run diagnostics after refresh
+      analyzeCardCounts();
       log.info("Cards refreshed successfully", { cardType: activeTab });
     } catch (error) {
       console.error("Failed to refresh cards:", error);
-      log.error("Failed to refresh cards", { error, cardType: activeTab });
+      log.error("Failed to refresh cards", { 
+        error: error instanceof Error ? error.message : String(error),
+        cardType: activeTab
+      });
     } finally {
       setIsRefreshing(false);
     }
@@ -60,6 +74,10 @@ const GameContentManager = () => {
       results
     });
     handleImport(cards, results);
+    // Run diagnostics after import
+    setTimeout(() => {
+      analyzeCardCounts();
+    }, 500);
   };
 
   const card = selectedCard ? getCardById(selectedCard) : null;

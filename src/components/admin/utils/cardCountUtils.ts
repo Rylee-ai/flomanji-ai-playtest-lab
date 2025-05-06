@@ -1,5 +1,6 @@
 
 import { CardType, GameCard } from "@/types/cards";
+import { log } from "@/utils/logging";
 
 /**
  * Calculate card counts for each card type
@@ -19,9 +20,14 @@ export const calculateCardCounts = (cards: GameCard[]): Record<CardType, number>
     "automa": 0
   };
 
-  return cards.reduce((counts, card) => {
+  const counts = cards.reduce((counts, card) => {
     const type = card.type as CardType;
     counts[type] = (counts[type] || 0) + 1;
     return counts;
   }, initialCounts) as Record<CardType, number>;
+  
+  // Log the counts for debugging
+  log.debug("Card counts calculated", { counts });
+  
+  return counts;
 };

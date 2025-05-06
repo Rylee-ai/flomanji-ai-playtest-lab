@@ -1,9 +1,9 @@
-
 import { CardLibraryService } from './card-library';
 import { GameCard, CardType } from '@/types/cards';
 import { CardVersion, CardChangeRecord, CardBulkEditOperation } from '@/types/cards/card-version';
 import { formatCardError, safeCardOperation, logCardOperation } from '@/utils/error-handling/cardErrorHandler';
 import { toast } from 'sonner';
+import { log } from '@/utils/logging';
 
 /**
  * Card Service that serves as the main entry point for card operations
@@ -16,6 +16,7 @@ export class CardService {
    */
   static async saveCard<T extends GameCard>(card: T): Promise<T> {
     logCardOperation('saveCard', { id: card.id, name: card.name, type: card.type });
+    log.info("Card save operation requested", { id: card.id, name: card.name, type: card.type });
     toast.info("In file-based mode, card changes would require code changes");
     
     return CardLibraryService.saveCard(card);
@@ -66,15 +67,22 @@ export class CardService {
    * Get cards by type using file-based service
    */
   static async getCardsByType<T extends GameCard>(type: CardType): Promise<T[]> {
+    log.info(`Fetching cards of type: ${type}`);
     const operation = async () => CardLibraryService.getCardsByType<T>(type);
     const { result, error } = await safeCardOperation(operation, `getCardsByType(${type})`);
     
     if (error) {
+      log.error(`Failed to get cards of type ${type}`, { 
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
       console.error(`Failed to get cards of type ${type}:`, error);
       return [];
     }
     
-    return result || [];
+    const cards = result || [];
+    log.info(`Successfully retrieved ${cards.length} cards of type ${type}`);
+    return cards;
   }
 
   /**

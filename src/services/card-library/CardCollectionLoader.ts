@@ -1,5 +1,6 @@
 
 import { CardType, GameCard } from "@/types/cards";
+import { log } from "@/utils/logging";
 
 // Import all card collections
 import { HAZARD_CARDS } from "@/lib/cards/hazard-cards";
@@ -11,6 +12,8 @@ import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 import { AUTOMA_CARDS } from "@/lib/cards/automa-cards";
 import { FLOMANJIFIED_CARDS } from "@/lib/cards/flomanjified-cards";
 import { FLOMANJI_PLAYER_CHARACTERS } from "@/lib/cards/flomanji-player-characters";
+import { SECRET_OBJECTIVES } from "@/lib/cards/secret-objectives";
+import { REGION_CARDS } from "@/lib/cards/region-cards";
 
 /**
  * Responsible for loading and providing access to all card collections
@@ -23,38 +26,62 @@ export class CardCollectionLoader {
    */
   public static async loadAllCardCollections(): Promise<void> {
     try {
+      log.info("Loading all card collections", { timestamp: new Date().toISOString() });
+      
       // Import hazard cards
       this.cardCollections.hazard = HAZARD_CARDS;
+      log.debug("Loaded hazard cards", { count: HAZARD_CARDS.length });
       
       // Import NPC cards
       this.cardCollections.npc = NPC_CARDS;
+      log.debug("Loaded NPC cards", { count: NPC_CARDS.length });
       
       // Import mission cards
       this.cardCollections.mission = MISSION_CARDS;
+      log.debug("Loaded mission cards", { count: MISSION_CARDS.length });
       
       // Import treasure cards
       this.cardCollections.treasure = TREASURE_CARDS;
+      log.debug("Loaded treasure cards", { count: TREASURE_CARDS.length });
       
       // Import gear cards
       this.cardCollections.gear = GEAR_CARDS;
+      log.debug("Loaded gear cards", { count: GEAR_CARDS.length });
       
       // Import chaos cards
       this.cardCollections.chaos = CHAOS_CARDS;
+      log.debug("Loaded chaos cards", { count: CHAOS_CARDS.length });
       
       // Import automa cards
       this.cardCollections.automa = AUTOMA_CARDS;
+      log.debug("Loaded automa cards", { count: AUTOMA_CARDS.length });
       
       // Import flomanjified cards
       this.cardCollections.flomanjified = FLOMANJIFIED_CARDS;
+      log.debug("Loaded flomanjified cards", { count: FLOMANJIFIED_CARDS.length });
       
       // Import player character cards
       this.cardCollections['player-character'] = FLOMANJI_PLAYER_CHARACTERS;
+      log.debug("Loaded player character cards", { count: FLOMANJI_PLAYER_CHARACTERS.length });
       
-      console.log("Card collections loaded:", 
-        Object.keys(this.cardCollections)
+      // Import secret objective cards
+      this.cardCollections.secret = SECRET_OBJECTIVES;
+      log.debug("Loaded secret objective cards", { count: SECRET_OBJECTIVES.length });
+      
+      // Import region cards
+      this.cardCollections.region = REGION_CARDS;
+      log.debug("Loaded region cards", { count: REGION_CARDS.length });
+      
+      log.info("All card collections loaded", { 
+        totalCards: Object.values(this.cardCollections).reduce((total, cards) => total + cards.length, 0),
+        collectionSizes: Object.keys(this.cardCollections)
           .map(type => `${type}: ${this.cardCollections[type as CardType]?.length || 0}`)
-      );
+      });
     } catch (error) {
+      log.error("Error loading card collections", { 
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      });
       console.error("Error loading card collections:", error);
       throw new Error(`Failed to load card collections: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -78,6 +105,8 @@ export class CardCollectionLoader {
    * Get a specific card collection by type
    */
   public static getCollection<T extends GameCard>(type: CardType): T[] {
-    return (this.cardCollections[type] || []) as T[];
+    const collection = this.cardCollections[type] || [];
+    log.debug(`Getting collection for type: ${type}`, { count: collection.length });
+    return collection as T[];
   }
 }

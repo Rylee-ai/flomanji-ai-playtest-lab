@@ -20,7 +20,8 @@ export const useCardLoading = (activeTab: CardType) => {
       const endTime = performance.now();
       
       if (loadedCards.length === 0) {
-        log.info(`No ${activeTab} cards found in file-based library`);
+        log.warn(`No ${activeTab} cards found in file-based library`);
+        toast.warning(`No ${activeTab} cards found. Check your card collections.`);
       } else {
         log.info(`Loaded ${loadedCards.length} ${activeTab} cards from file-based library`, {
           timeMs: Math.round(endTime - startTime)
@@ -33,7 +34,8 @@ export const useCardLoading = (activeTab: CardType) => {
       console.error("Error loading cards:", error);
       log.error("Failed to load cards", { 
         error: error instanceof Error ? error.message : String(error),
-        cardType: activeTab
+        cardType: activeTab,
+        stack: error instanceof Error ? error.stack : undefined
       });
       
       // Show error toast for failed loads except on initial page load
