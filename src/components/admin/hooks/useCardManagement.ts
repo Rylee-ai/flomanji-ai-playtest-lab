@@ -11,9 +11,20 @@ import { log } from "@/utils/logging";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
 import { analyzeCardCounts } from "@/utils/diagnostics/cardCountDiagnostics";
+import { CardCollectionLoader } from "@/services/card-library/CardCollectionLoader";
 
 export const useCardManagement = () => {
   const [activeTab, setActiveTab] = useState<CardType>("treasure");
+  
+  // Ensure CardCollectionLoader is initialized on mount
+  useEffect(() => {
+    if (!CardCollectionLoader.isLoaded()) {
+      log.info("Initializing card collections on useCardManagement mount");
+      CardCollectionLoader.loadAllCardCollections().catch(error => {
+        log.error("Failed to initialize card collections", { error });
+      });
+    }
+  }, []);
   
   // Card loading functionality
   const {
@@ -84,12 +95,22 @@ export const useCardManagement = () => {
     };
   }, [loadCards, activeTab]);
 
-  // Reload cards when activeTab changes
+  // Reload cards when activeTab changes AND force re-init of CardCollectionLoader
   useEffect(() => {
     log.info("Active tab changed, reloading cards", { newTab: activeTab });
-    loadCards().catch(error => {
-      log.error("Failed to load cards after tab change", { error, cardType: activeTab });
-    });
+    
+    // Force re-initialization of card collections to ensure all are loaded
+    CardCollectionLoader.loadAllCardCollections()
+      .then(() => {
+        log.info("Card collections reloaded after tab change");
+        loadCards().catch(error => {
+          log.error("Failed to load cards after tab change", { error, cardType: activeTab });
+        });
+      })
+      .catch(error => {
+        log.error("Failed to reload card collections after tab change", { error });
+      });
+      
   }, [activeTab, loadCards]);
 
   // Extended version of handleEditCard that also sets activeTab and loads version history

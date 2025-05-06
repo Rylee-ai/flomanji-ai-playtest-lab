@@ -19,7 +19,8 @@ import { REGION_CARDS } from "@/lib/cards/region-cards";
  * Responsible for loading and providing access to all card collections
  */
 export class CardCollectionLoader {
-  private static cardCollections: Record<CardType, GameCard[]> = {} as Record<CardType, number>;
+  // Fix the critical type error - this was incorrectly typed as Record<CardType, number>
+  private static cardCollections: Record<CardType, GameCard[]> = {} as Record<CardType, GameCard[]>;
   private static isInitialized: boolean = false;
   
   /**
