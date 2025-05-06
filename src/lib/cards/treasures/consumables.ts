@@ -66,25 +66,25 @@ export const consumables: TreasureCard[] = [
     imagePrompt: "A futuristic-looking key fob with a golf cart icon and a small, flickering screen."
   },
   {
-    id: "conch-of-calling",
-    name: "The Conch of Calling",
+    id: "mermaid-tears",
+    name: "Mermaid's Tears",
     type: "artifact",
     icons: [
-      { symbol: "🐚", meaning: "Shell" },
-      { symbol: "🔊", meaning: "Sound" },
-      { symbol: "🏖️", meaning: "Coastal" }
+      { symbol: "🧜‍♀️", meaning: "Mythical" },
+      { symbol: "💧", meaning: "Water" },
+      { symbol: "❤️", meaning: "Healing" }
     ],
-    keywords: ["Summoning", "Risk/Reward", "Coastal Lore"],
+    keywords: ["Magical", "Water", "Healing"],
     rules: [
-      "Once per game, spend 1 Action to blow the Conch. The Goblet plays a deep horn sound and prompts: \"The sound echoes... Who answers?\" Shake Luck (DC 4).",
-      "Success = Draw 1 helpful NPC card. Failure = Draw 1 dangerous Hazard card (Animal or Environmental)."
+      "When used: Remove 2 Weirdness from any character",
+      "When used in coastal region: Also heal 2 damage",
+      "Consumable: Discard after use"
     ],
     value: 2,
     consumable: true,
-    passiveEffect: "",
-    useEffect: "Summon either help or trouble depending on a Luck check",
-    flavor: "Goblet: 'Summons something from the deep... hope it's friendly.'",
-    imagePrompt: "A large, beautiful conch shell, perhaps with strange carvings or a faint glow."
+    useEffect: "Remove 2 Weirdness from any character; if used in a coastal region, also heal 2 damage",
+    flavor: "Crystallized emotion from the depths—impossible, yet here they are.",
+    imagePrompt: "A small vial of iridescent blue-green tears that seem to contain miniature ocean waves"
   },
   {
     id: "jungle-remedy",
@@ -105,26 +105,5 @@ export const consumables: TreasureCard[] = [
     useEffect: "Heal 3 damage, but roll d10 - on 1-3, gain 1 Weirdness",
     flavor: "Bitter herbs, toxic frogs, secret ingredients—pain fades but at what cost?",
     imagePrompt: "A small pouch of vibrant colored powders and crushed leaves with a strange pulsing glow"
-  },
-  {
-    id: "mermaid-tears",
-    name: "Mermaid's Tears",
-    type: "artifact",
-    icons: [
-      { symbol: "🧜‍♀️", meaning: "Mythical" },
-      { symbol: "💧", meaning: "Water" },
-      { symbol: "❤️", meaning: "Healing" }
-    ],
-    keywords: ["Magical", "Water", "Healing"],
-    rules: [
-      "When used: Remove 2 Weirdness from any character",
-      "When used in coastal region: Also heal 2 damage",
-      "Consumable: Discard after use"
-    ],
-    value: 2,
-    consumable: true,
-    useEffect: "Remove 2 Weirdness from any character; if used in a coastal region, also heal 2 damage",
-    flavor: "Crystallized emotion from the depths—impossible, yet here they are.",
-    imagePrompt: "A small vial of iridescent blue-green tears that seem to contain miniature ocean waves"
   }
 ];

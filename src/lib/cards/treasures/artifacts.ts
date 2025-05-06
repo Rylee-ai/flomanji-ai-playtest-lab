@@ -4,6 +4,28 @@ import { TreasureCard } from "@/types/cards/treasure";
 // Cards that are mystical artifacts with special powers or effects
 export const artifacts: TreasureCard[] = [
   {
+    id: "goblet-of-questionable-rehydration",
+    name: "The Goblet of Questionable Rehydration",
+    type: "artifact",
+    icons: [
+      { symbol: "🏆", meaning: "Goblet" },
+      { symbol: "❤️", meaning: "Health" },
+      { symbol: "❓", meaning: "Mystery" }
+    ],
+    keywords: ["Revival", "Cursed?", "Unique"],
+    rules: [
+      "This card is not drawn normally. It is gained only when a player is Eliminated (reaches 0 Health) for the first time.",
+      "The Goblet announces: \"Not yet... Flomanji offers a drink...\" The player gains this card.",
+      "At the start of their next turn, they discard this card, return to the Starting Region with 1 Health, and gain 3 Weirdness."
+    ],
+    value: 3,
+    consumable: true,
+    passiveEffect: "",
+    useEffect: "Return from elimination with 1 Health in the Starting Region, but gain 3 Weirdness",
+    flavor: "Goblet: 'Drink deep... or don't. The effect is the same. Welcome back... mostly.'",
+    imagePrompt: "A tarnished, perhaps slightly glowing chalice that vaguely resembles the main Flomanji Goblet centerpiece, possibly filled with murky liquid"
+  },
+  {
     id: "crystal-skull",
     name: "Crystal Skull",
     type: "artifact",
@@ -45,49 +67,6 @@ export const artifacts: TreasureCard[] = [
     useEffect: "Prevent the next Weirdness gain this round; if Heat ≥ 7, also reduce Heat by 1",
     flavor: "Jungle vines form an ancient sigil that pulses with soft green light.",
     imagePrompt: "A wooden amulet with intricate vine carvings that glow with soft emerald light"
-  },
-  {
-    id: "goblet-of-questionable-rehydration",
-    name: "The Goblet of Questionable Rehydration",
-    type: "artifact",
-    icons: [
-      { symbol: "🏆", meaning: "Goblet" },
-      { symbol: "❤️", meaning: "Health" },
-      { symbol: "❓", meaning: "Mystery" }
-    ],
-    keywords: ["Revival", "Cursed?", "Unique"],
-    rules: [
-      "This card is not drawn normally. It is gained only when a player is Eliminated (reaches 0 Health) for the first time.",
-      "The Goblet announces: \"Not yet... Flomanji offers a drink...\" The player gains this card.",
-      "At the start of their next turn, they discard this card, return to the Starting Region with 1 Health, and gain 3 Weirdness."
-    ],
-    value: 3,
-    consumable: true,
-    passiveEffect: "",
-    useEffect: "Return from elimination with 1 Health in the Starting Region, but gain 3 Weirdness",
-    flavor: "Goblet: 'Drink deep... or don't. The effect is the same. Welcome back... mostly.'",
-    imagePrompt: "A tarnished, perhaps slightly glowing chalice that vaguely resembles the main Flomanji Goblet centerpiece, possibly filled with murky liquid"
-  },
-  {
-    id: "skunk-apes-forgotten-deodorant",
-    name: "Skunk Ape's Forgotten Deodorant",
-    type: "artifact",
-    icons: [
-      { symbol: "👃", meaning: "Odor" },
-      { symbol: "🐒", meaning: "Animal" },
-      { symbol: "🌀", meaning: "Weirdness" }
-    ],
-    keywords: ["Repellent", "Passive", "Weirdness Gain"],
-    rules: [
-      "While equipped (takes 1 Gear slot): Animal Hazards involving 'Smell' or 'Tracking' cannot target you.",
-      "However, at the start of each of your turns, gain 1 Weirdness (Goblet: \"The other smell... it lingers...\")."
-    ],
-    value: 2,
-    consumable: false,
-    passiveEffect: "Immunity to Animal Hazards involving 'Smell' or 'Tracking', but gain 1 Weirdness per turn",
-    useEffect: "",
-    flavor: "Goblet: 'It doesn't smell good, but it definitely doesn't smell like you.'",
-    imagePrompt: "A bizarre, oversized stick of deodorant labeled \"Swamp Musk - Extra Strength,\" covered in bits of fur and leaves"
   },
   {
     id: "sentient-severed-mermaid-hand",
@@ -132,6 +111,27 @@ export const artifacts: TreasureCard[] = [
     useEffect: "Teleport to a random unexplored Region on the map",
     flavor: "Goblet: 'Points north? South? Sometimes... sideways through reality.'",
     imagePrompt: "A strange, triangular compass whose needle spins erratically or points to bizarre symbols instead of directions"
+  },
+  {
+    id: "conch-of-calling",
+    name: "The Conch of Calling",
+    type: "artifact",
+    icons: [
+      { symbol: "🐚", meaning: "Shell" },
+      { symbol: "🔊", meaning: "Sound" },
+      { symbol: "🏖️", meaning: "Coastal" }
+    ],
+    keywords: ["Summoning", "Risk/Reward", "Coastal Lore"],
+    rules: [
+      "Once per game, spend 1 Action to blow the Conch. The Goblet plays a deep horn sound and prompts: \"The sound echoes... Who answers?\" Shake Luck (DC 4).",
+      "Success = Draw 1 helpful NPC card. Failure = Draw 1 dangerous Hazard card (Animal or Environmental)."
+    ],
+    value: 2,
+    consumable: true,
+    passiveEffect: "",
+    useEffect: "Summon either help or trouble depending on a Luck check",
+    flavor: "Goblet: 'Summons something from the deep... hope it's friendly.'",
+    imagePrompt: "A large, beautiful conch shell, perhaps with strange carvings or a faint glow."
   },
   {
     id: "mothman-discarded-contact-lens",
@@ -234,13 +234,14 @@ export const artifacts: TreasureCard[] = [
     keywords: ["Goblet Interaction", "Minor Buff", "Weirdness Gain"],
     rules: [
       "While equipped (takes 1 Gear slot): Once per game, spend 1 Action to \"Consult the Cousin.\"",
-      "Hold this card near the main Flomanji Goblet. The main Goblet will offer a choice of two minor boons (e.g., Heal 1 Damage, +1 on next check, reveal adjacent region).",
+      "Hold this card near the main Flomanji Goblet.",
+      "The main Goblet will offer a choice of two minor boons (e.g., Heal 1 Damage, +1 on next check, reveal adjacent region).",
       "Gain 1 Weirdness after receiving the boon."
     ],
     value: 2,
     consumable: false,
     passiveEffect: "",
-    useEffect: "Receive a choice of two minor boons from the main Flomanji Goblet, but gain 1 Weirdness",
+    useEffect: "Consult with the Goblet for a choice of minor boons",
     flavor: "Goblet: 'Oh... him. Less powerful, arguably more annoying. Fine, ask your question.'",
     imagePrompt: "A slightly smaller, travel-mug version of the main Flomanji Goblet, perhaps made of stainless steel with similar weird carvings, looking slightly less impressive"
   }

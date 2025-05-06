@@ -105,27 +105,5 @@ export const valuableItems: TreasureCard[] = [
     useEffect: "Spend to gain significant advantage in social interactions or trading",
     flavor: "Spanish gold, pirate plunder—wealth transcends language.",
     imagePrompt: "A handful of gold coins with worn Spanish markings, reflecting neon highlights despite their age"
-  },
-  {
-    id: "florida-womans-bottomless-purse",
-    name: "Florida Woman's Bottomless Purse",
-    type: "treasure",
-    icons: [
-      { symbol: "🎒", meaning: "Inventory" },
-      { symbol: "🌀", meaning: "Chaos" },
-      { symbol: "👥", meaning: "Social" }
-    ],
-    keywords: ["Storage", "Random Item Generation", "Unpredictable"],
-    rules: [
-      "While equipped (takes 1 Gear slot): Your hand size limit is increased by 2.",
-      "Once per game, spend 1 Action to \"Rummage.\" Shake the Goblet for Luck (DC 4).",
-      "Success = Draw 1 random Gear card. Failure = Draw 1 random Hazard card (Goblet: \"Found trouble instead!\")."
-    ],
-    value: 2,
-    consumable: false,
-    passiveEffect: "Hand size limit increased by 2",
-    useEffect: "Draw 1 random Gear card on success, or 1 random Hazard card on failure (Luck DC 4)",
-    flavor: "Goblet: 'Contains everything... lip balm, expired coupons, existential dread, maybe a small gator.'",
-    imagePrompt: "A large, garishly patterned purse overflowing with an impossible amount of random objects"
   }
 ];

@@ -2,7 +2,6 @@
 import React from 'react';
 import { TreasureCard } from '@/types/cards/treasure';
 import { Badge } from "@/components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Coins, Shield, PocketKnife } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
@@ -20,7 +19,7 @@ export const TreasureCardDisplay: React.FC<TreasureCardDisplayProps> = ({ card }
           {isArtifact ? "Artifact" : "Treasure"}
         </Badge>
         {card.value && <Badge variant="outline">Value: {card.value}</Badge>}
-        {card.consumable && <Badge variant="outline">Consumable</Badge>}
+        {card.consumable && <Badge variant="default">Consumable</Badge>}
       </div>
 
       <div className="rounded-md bg-primary/5 p-3">
