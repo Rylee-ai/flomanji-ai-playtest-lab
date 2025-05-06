@@ -7,17 +7,20 @@ import {
   npcCardSchema,
   missionCardSchema
 } from "@/schemas/card-schemas";
-import { processGearCard } from "./card-processors/gear-processor";
-import { processTreasureCard } from "./card-processors/treasure-processor";
-import { processHazardCard } from "./card-processors/hazard-processor";
-import { processNPCCard } from "./card-processors/npc-processor";
-import { processMissionCard } from "./card-processors/mission-processor";
-import { processPlayerCharacterCard } from "./card-processors/player-character-processor";
-import { processFlomanjifiedCard } from "./card-processors/flomanjified-processor";
-import { processChaosCard } from "./card-processors/chaos-processor";
-import { processRegionCard } from "./card-processors/region-processor";
-import { processSecretCard } from "./card-processors/secret-processor";
-import { processAutomaCard } from "./card-processors/automa-processor";
+
+import {
+  processGearCard,
+  processTreasureCard,
+  processHazardCard,
+  processNPCCard,
+  processMissionCard,
+  processPlayerCharacterCard,
+  processFlomanjifiedCard,
+  processChaosCard,
+  processRegionCard,
+  processSecretCard,
+  processAutomaCard
+} from "./card-processors";
 
 export const processImportedCards = (jsonData: any, cardType: CardType): Partial<GameCard>[] => {
   try {
