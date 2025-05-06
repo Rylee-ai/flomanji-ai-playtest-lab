@@ -47,7 +47,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
   const isNoSearchResults = searchQuery && filteredCards.length === 0;
 
   return (
-    <>
+    <div className="bg-background rounded-md overflow-hidden">
       <ViewToggle 
         view={view}
         setView={setView}
@@ -58,7 +58,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
       />
       
       {isNoSearchResults ? (
-        <Alert className="bg-muted/50">
+        <Alert className="bg-muted/50 mx-2 sm:mx-4 mb-4">
           <Search className="h-4 w-4" />
           <AlertDescription>
             No cards match your search for "{searchQuery}". Try a different search term.
@@ -66,7 +66,7 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
         </Alert>
       ) : (
         displayedCards.length === 0 ? (
-          <div className="py-16 text-center">
+          <div className="py-16 text-center mx-2 sm:mx-4 mb-4">
             <h3 className="text-lg font-medium text-muted-foreground">No cards found</h3>
             <p className="text-sm text-muted-foreground mt-1">
               Click "Add New Card" to create your first card in this category.
@@ -84,13 +84,15 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
               onImageUpload={handleImageUpload}
             />
           ) : (
-            <TableSwitcher
-              activeTab={activeTab}
-              cards={displayedCards}
-              onViewCard={onViewCard}
-              onEditCard={onEditCard}
-              onDeleteCard={handleDeleteCard}
-            />
+            <div className="px-2 sm:px-4 pb-4">
+              <TableSwitcher
+                activeTab={activeTab}
+                cards={displayedCards}
+                onViewCard={onViewCard}
+                onEditCard={onEditCard}
+                onDeleteCard={handleDeleteCard}
+              />
+            </div>
           )
         )
       )}
@@ -100,6 +102,6 @@ export const TableWrapper = ({ activeTab, cards, onViewCard, onEditCard, onDelet
         onClose={closeDeleteDialog}
         onConfirm={onDeleteCard}
       />
-    </>
+    </div>
   );
 };

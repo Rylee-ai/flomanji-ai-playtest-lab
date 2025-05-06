@@ -88,35 +88,37 @@ export const CardGrid = ({
       const characterCard = card as PlayerCharacterCard;
       return (
         <div className="space-y-2 mt-2">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-1">
             <Badge variant="secondary" className="font-medium text-xs">
               {characterCard.role}
             </Badge>
-            <Badge variant="outline" className="font-medium text-xs">
+            <Badge variant="outline" className="font-medium text-xs whitespace-nowrap">
               HP: {characterCard.health}
             </Badge>
           </div>
           
           <div className="grid grid-cols-5 gap-1">
-            <Badge variant="outline" className="text-xs" title="Brawn">
+            <Badge variant="outline" className="text-xs px-1.5" title="Brawn">
               B:{characterCard.stats.brawn}
             </Badge>
-            <Badge variant="outline" className="text-xs" title="Moxie">
+            <Badge variant="outline" className="text-xs px-1.5" title="Moxie">
               M:{characterCard.stats.moxie}
             </Badge>
-            <Badge variant="outline" className="text-xs" title="Charm">
+            <Badge variant="outline" className="text-xs px-1.5" title="Charm">
               C:{characterCard.stats.charm}
             </Badge>
-            <Badge variant="outline" className="text-xs" title="Grit">
+            <Badge variant="outline" className="text-xs px-1.5" title="Grit">
               G:{characterCard.stats.grit}
             </Badge>
-            <Badge variant="outline" className="text-xs" title="Weird Sense">
+            <Badge variant="outline" className="text-xs px-1.5" title="Weird Sense">
               W:{characterCard.stats.weirdSense}
             </Badge>
           </div>
           
           <div className="border-t border-muted pt-1 mt-1">
-            <p className="text-xs font-semibold truncate">{characterCard.ability.name}</p>
+            <p className="text-xs font-semibold line-clamp-1" title={characterCard.ability.name}>
+              {characterCard.ability.name}
+            </p>
           </div>
         </div>
       );
@@ -125,10 +127,10 @@ export const CardGrid = ({
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 p-2 sm:p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-2 sm:p-4 bg-background">
       {cards.map((card) => (
         <Card key={card.id} className={cn(
-          "overflow-hidden group relative hover:shadow-lg transition-shadow",
+          "overflow-hidden group relative hover:shadow-lg transition-shadow border-gray-700",
           isSelected(card) && "ring-2 ring-primary"
         )}>
           {onSelectCard && (
@@ -141,8 +143,8 @@ export const CardGrid = ({
             </div>
           )}
           
-          <CardContent className="p-3 sm:p-4">
-            <div className="relative aspect-[3/4] mb-3 sm:mb-4 bg-muted rounded-lg overflow-hidden">
+          <CardContent className="p-3">
+            <div className="relative aspect-[3/4] mb-3 bg-gray-800 rounded-lg overflow-hidden">
               {card.imageUrl ? (
                 <div className="relative w-full h-full">
                   <img 
@@ -159,14 +161,15 @@ export const CardGrid = ({
                   )}
                 </div>
               ) : (
-                <div className="flex items-center justify-center w-full h-full hover:bg-muted/80 transition-colors">
+                <div className="flex items-center justify-center w-full h-full hover:bg-gray-700 transition-colors">
                   <label 
                     htmlFor={`image-upload-${card.id}`}
                     className="cursor-pointer flex flex-col items-center justify-center p-4 text-center"
                   >
-                    <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground mb-2" />
-                    <span className="text-xs sm:text-sm text-muted-foreground">Upload Image</span>
-                    <p className="text-xs text-muted-foreground mt-1">Max 5MB</p>
+                    <Upload className="w-6 h-6 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-400">Upload</span>
+                    <span className="text-xs text-gray-400">Image</span>
+                    <p className="text-xs text-gray-500 mt-1">Max 5MB</p>
                   </label>
                   <input
                     type="file"
@@ -181,38 +184,40 @@ export const CardGrid = ({
                 </div>
               )}
             </div>
-            <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2 truncate">{card.name}</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground">{card.type}</p>
+            <h3 className="font-semibold text-base line-clamp-1 mb-1" title={card.name}>{card.name}</h3>
+            <p className="text-xs text-muted-foreground">{card.type}</p>
             
             {renderCharacterInfo(card)}
-            
           </CardContent>
-          <CardFooter className="flex flex-wrap gap-2 p-3 sm:p-4 pt-0">
+          
+          <CardFooter className="flex flex-col sm:flex-row gap-2 p-3 pt-0">
             <Button 
               variant="outline" 
-              size="sm"
+              size="sm" 
               onClick={() => onViewCard(card.id)}
-              className="flex-1 min-w-[70px] text-xs sm:text-sm"
+              className="w-full sm:flex-1 h-8"
             >
-              <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+              <Eye className="h-3.5 w-3.5 mr-1" />
               View
             </Button>
+            
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => onEditCard(card)}
-              className="flex-1 min-w-[70px] text-xs sm:text-sm"
+              className="w-full sm:flex-1 h-8"
             >
-              <Pencil className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+              <Pencil className="h-3.5 w-3.5 mr-1" />
               Edit
             </Button>
+            
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => onDeleteCard(card)}
-              className="flex-1 min-w-[70px] text-xs sm:text-sm text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              className="w-full sm:flex-1 h-8 text-destructive hover:bg-destructive hover:text-destructive-foreground"
             >
-              <Trash className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+              <Trash className="h-3.5 w-3.5 mr-1" />
               Delete
             </Button>
           </CardFooter>

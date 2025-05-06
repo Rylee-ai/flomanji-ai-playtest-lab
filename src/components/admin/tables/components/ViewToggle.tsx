@@ -24,8 +24,8 @@ export const ViewToggle = ({
   onSearch
 }: ViewToggleProps) => {
   return (
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-      <div className="flex items-center gap-2 w-full md:w-auto">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 p-2 sm:p-4 bg-background">
+      <div className="flex items-center gap-2 w-full sm:w-auto">
         {selectedCards.length > 0 ? (
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium">{selectedCards.length} selected</span>
@@ -35,18 +35,18 @@ export const ViewToggle = ({
             />
           </div>
         ) : (
-          <div className="relative w-full md:w-64">
+          <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search cards..."
-              className="pl-8 h-9"
+              className="pl-8 h-9 w-full"
               onChange={(e) => onSearch && onSearch(e.target.value)}
             />
           </div>
         )}
       </div>
       
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 ml-auto">
         <Button
           variant="outline"
           size="sm"
