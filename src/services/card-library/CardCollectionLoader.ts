@@ -19,7 +19,8 @@ import { REGION_CARDS } from "@/lib/cards/region-cards";
  * Responsible for loading and providing access to all card collections
  */
 export class CardCollectionLoader {
-  private static cardCollections: Record<CardType, GameCard[]> = {} as Record<CardType, GameCard[]>;
+  private static cardCollections: Record<CardType, GameCard[]> = {} as Record<CardType, number>;
+  private static isInitialized: boolean = false;
   
   /**
    * Load all card collections into memory
@@ -72,12 +73,16 @@ export class CardCollectionLoader {
       this.cardCollections.region = REGION_CARDS;
       log.debug("Loaded region cards", { count: REGION_CARDS.length });
       
+      // Mark as initialized after loading everything
+      this.isInitialized = true;
+      
       log.info("All card collections loaded", { 
         totalCards: Object.values(this.cardCollections).reduce((total, cards) => total + cards.length, 0),
         collectionSizes: Object.keys(this.cardCollections)
           .map(type => `${type}: ${this.cardCollections[type as CardType]?.length || 0}`)
       });
     } catch (error) {
+      this.isInitialized = false;
       log.error("Error loading card collections", { 
         error: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined
@@ -91,6 +96,13 @@ export class CardCollectionLoader {
    * Get all loaded card collections
    */
   public static getCardCollections(): Record<CardType, GameCard[]> {
+    if (!this.isInitialized) {
+      log.warn("Attempting to get card collections before initialization");
+      // Initialize synchronously if not done yet
+      this.loadAllCardCollections().catch(error => {
+        console.error("Failed to load card collections:", error);
+      });
+    }
     return this.cardCollections;
   }
 
@@ -98,13 +110,20 @@ export class CardCollectionLoader {
    * Check if card collections have been loaded
    */
   public static isLoaded(): boolean {
-    return Object.keys(this.cardCollections).length > 0;
+    return this.isInitialized;
   }
 
   /**
    * Get a specific card collection by type
    */
   public static getCollection<T extends GameCard>(type: CardType): T[] {
+    if (!this.isInitialized) {
+      log.warn(`Attempting to get ${type} collection before initialization`);
+      // Initialize synchronously if not done yet
+      this.loadAllCardCollections().catch(error => {
+        console.error("Failed to load card collections:", error);
+      });
+    }
     const collection = this.cardCollections[type] || [];
     log.debug(`Getting collection for type: ${type}`, { count: collection.length });
     return collection as T[];

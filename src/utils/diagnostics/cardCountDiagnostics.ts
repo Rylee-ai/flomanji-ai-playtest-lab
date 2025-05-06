@@ -29,13 +29,42 @@ export function analyzeCardCounts(): void {
   
   // Check specific interesting collections
   if (collections.gear) {
-    log.info("Gear card details", {
-      total: collections.gear.length,
-      consumable: collections.gear.filter(c => (c as any).category === 'consumable').length,
-      tool: collections.gear.filter(c => (c as any).category === 'tool').length,
-      weapon: collections.gear.filter(c => (c as any).category === 'weapon').length,
-      vehicle: collections.gear.filter(c => (c as any).category === 'vehicle').length,
-      supply: collections.gear.filter(c => (c as any).category === 'supply').length
-    });
+    try {
+      // Check gear card categories
+      const gearCategoryBreakdown = {
+        consumable: collections.gear.filter(c => (c as any).category === 'consumable').length,
+        tool: collections.gear.filter(c => (c as any).category === 'tool').length,
+        weapon: collections.gear.filter(c => (c as any).category === 'weapon').length,
+        vehicle: collections.gear.filter(c => (c as any).category === 'vehicle').length,
+        supply: collections.gear.filter(c => (c as any).category === 'supply').length,
+        uncategorized: collections.gear.filter(c => !(c as any).category).length
+      };
+      
+      log.info("Gear card details", {
+        total: collections.gear.length,
+        ...gearCategoryBreakdown,
+        firstFewIDs: collections.gear.slice(0, 3).map(c => c.id)
+      });
+    } catch (err) {
+      log.error("Error analyzing gear cards", { error: String(err) });
+    }
+  }
+  
+  if (collections.treasure) {
+    try {
+      // Check treasure breakdown
+      const treasureTypeBreakdown = {
+        regularTreasure: collections.treasure.filter(c => c.type === 'treasure').length,
+        artifacts: collections.treasure.filter(c => c.type === 'artifact').length
+      };
+      
+      log.info("Treasure card details", {
+        total: collections.treasure.length,
+        ...treasureTypeBreakdown,
+        firstFewIDs: collections.treasure.slice(0, 3).map(c => c.id)
+      });
+    } catch (err) {
+      log.error("Error analyzing treasure cards", { error: String(err) });
+    }
   }
 }

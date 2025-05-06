@@ -12,6 +12,8 @@ import { CharacterCards, ItemsAndEncounterCards, GameStructureCards } from "./ca
 import { CardContentDisplay } from "./cards/CardContentDisplay";
 import { calculateCardCounts } from "./utils/cardCountUtils";
 import { analyzeCardCounts } from "@/utils/diagnostics/cardCountDiagnostics";
+import { toast } from "sonner";
+import { CardCollectionLoader } from "@/services/card-library/CardCollectionLoader";
 
 const GameContentManager = () => {
   const {
@@ -37,13 +39,29 @@ const GameContentManager = () => {
   } = useCardManagement();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastLoadTime, setLastLoadTime] = useState<Date | null>(null);
 
-  // Run diagnostics on mount to identify any card count issues
+  // Force initialization of card collections on first render
   useEffect(() => {
-    log.info("GameContentManager mounted - running card diagnostics");
-    setTimeout(() => {
-      analyzeCardCounts();
-    }, 1000);
+    if (!CardCollectionLoader.isLoaded()) {
+      log.info("GameContentManager mounted - initializing card collections");
+      CardCollectionLoader.loadAllCardCollections()
+        .then(() => {
+          log.info("Card collections initialized successfully");
+          analyzeCardCounts();
+          setLastLoadTime(new Date());
+        })
+        .catch(error => {
+          log.error("Failed to initialize card collections", { error });
+          toast.error("Failed to load cards. Please refresh the page.");
+        });
+    } else {
+      log.info("GameContentManager mounted - card collections already loaded");
+      setTimeout(() => {
+        analyzeCardCounts();
+        setLastLoadTime(new Date());
+      }, 500);
+    }
   }, []);
 
   // Force refresh of card data
@@ -51,16 +69,22 @@ const GameContentManager = () => {
     log.info("Manual refresh of cards requested", { cardType: activeTab });
     setIsRefreshing(true);
     try {
+      // Re-initialize all card collections
+      await CardCollectionLoader.loadAllCardCollections();
+      // Now load the active tab cards
       await loadCards();
       // Run diagnostics after refresh
       analyzeCardCounts();
+      setLastLoadTime(new Date());
       log.info("Cards refreshed successfully", { cardType: activeTab });
+      toast.success("Cards refreshed successfully");
     } catch (error) {
       console.error("Failed to refresh cards:", error);
       log.error("Failed to refresh cards", { 
         error: error instanceof Error ? error.message : String(error),
         cardType: activeTab
       });
+      toast.error("Failed to refresh cards. Please try again.");
     } finally {
       setIsRefreshing(false);
     }
@@ -96,6 +120,12 @@ const GameContentManager = () => {
           onImport={handleCardImport}
           activeTab={activeTab}
         />
+        
+        {lastLoadTime && (
+          <div className="mb-4 text-xs text-muted-foreground">
+            Last updated: {lastLoadTime.toLocaleTimeString()}
+          </div>
+        )}
         
         <Tabs value={activeTab} onValueChange={value => setActiveTab(value as CardType)} className="w-full">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">

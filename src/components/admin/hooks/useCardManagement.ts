@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { log } from "@/utils/logging";
 import { CardFormValues } from "@/types/forms/card-form";
 import { CardImportResult } from "@/types/cards/card-version";
+import { analyzeCardCounts } from "@/utils/diagnostics/cardCountDiagnostics";
 
 export const useCardManagement = () => {
   const [activeTab, setActiveTab] = useState<CardType>("treasure");
@@ -57,6 +58,11 @@ export const useCardManagement = () => {
           cardType: activeTab,
           count: loadedCards.length 
         });
+        
+        // Run diagnostics after successful load
+        setTimeout(() => {
+          analyzeCardCounts();
+        }, 500);
       })
       .catch(error => {
         console.error("Initial card loading error:", error);
