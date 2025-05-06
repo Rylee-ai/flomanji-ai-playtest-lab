@@ -1,11 +1,10 @@
 
-import { GearCard, TreasureCard } from "@/types/cards";
 import { createBaseCard } from "./base-processor";
 
 /**
  * Process gear card data into the required format
  */
-export const processGearCard = (validatedCard: any): Partial<GearCard> => ({
+export const processGearCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'gear',
   category: validatedCard.category || 'tool',
@@ -14,7 +13,7 @@ export const processGearCard = (validatedCard: any): Partial<GearCard> => ({
 /**
  * Process treasure card data into the required format
  */
-export const processTreasureCard = (validatedCard: any): Partial<TreasureCard> => ({
+export const processTreasureCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'treasure',
   value: validatedCard.value,

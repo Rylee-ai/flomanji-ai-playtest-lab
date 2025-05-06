@@ -1,11 +1,10 @@
 
-import { NPCCard, PlayerCharacterCard, FlomanjifiedRoleCard } from "@/types/cards";
 import { createBaseCard } from "./base-processor";
 
 /**
  * Process NPC card data into the required format
  */
-export const processNPCCard = (validatedCard: any): Partial<NPCCard> => ({
+export const processNPCCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'npc',
   checkDC: validatedCard.checkDC,
@@ -15,7 +14,7 @@ export const processNPCCard = (validatedCard: any): Partial<NPCCard> => ({
 /**
  * Process player character card data into the required format
  */
-export const processPlayerCharacterCard = (validatedCard: any): Partial<PlayerCharacterCard> => ({
+export const processPlayerCharacterCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'player-character',
   role: validatedCard.role,
@@ -30,7 +29,7 @@ export const processPlayerCharacterCard = (validatedCard: any): Partial<PlayerCh
 /**
  * Process flomanjified role card data into the required format
  */
-export const processFlomanjifiedCard = (validatedCard: any): Partial<FlomanjifiedRoleCard> => ({
+export const processFlomanjifiedCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'flomanjified',
   originalRole: validatedCard.originalRole,

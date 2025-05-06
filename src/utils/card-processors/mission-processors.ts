@@ -1,12 +1,11 @@
 
-import { MissionSheet, RegionCard } from "@/types/cards";
 import { createBaseCard } from "./base-processor";
 
 /**
  * Process mission card data into the required format
  * For mission cards, we preserve the specific mission type
  */
-export const processMissionCard = (validatedCard: any): Partial<MissionSheet> => {
+export const processMissionCard = (validatedCard: any): Partial<any> => {
   const missionType = validatedCard.type as 'exploration' | 'escape' | 'escort' | 'collection' | 'boss' | 'solo';
   
   return {
@@ -24,7 +23,7 @@ export const processMissionCard = (validatedCard: any): Partial<MissionSheet> =>
 /**
  * Process region card data into the required format
  */
-export const processRegionCard = (validatedCard: any): Partial<RegionCard> => ({
+export const processRegionCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'region',
   biomeTags: validatedCard.biomeTags,

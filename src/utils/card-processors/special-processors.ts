@@ -1,11 +1,10 @@
 
-import { AutomaCard, ChaosCard, HazardCard, SecretObjectiveCard } from "@/types/cards";
 import { createBaseCard } from "./base-processor";
 
 /**
  * Process hazard card data into the required format
  */
-export const processHazardCard = (validatedCard: any): Partial<HazardCard> => ({
+export const processHazardCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'hazard',
   subType: validatedCard.subType,
@@ -19,7 +18,7 @@ export const processHazardCard = (validatedCard: any): Partial<HazardCard> => ({
 /**
  * Process chaos card data into the required format
  */
-export const processChaosCard = (validatedCard: any): Partial<ChaosCard> => ({
+export const processChaosCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'chaos',
   heatEffect: validatedCard.heatEffect,
@@ -30,7 +29,7 @@ export const processChaosCard = (validatedCard: any): Partial<ChaosCard> => ({
 /**
  * Process automa card data into the required format
  */
-export const processAutomaCard = (validatedCard: any): Partial<AutomaCard> => ({
+export const processAutomaCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'automa',
   movement: validatedCard.movement,
@@ -41,7 +40,7 @@ export const processAutomaCard = (validatedCard: any): Partial<AutomaCard> => ({
 /**
  * Process secret objective card data into the required format
  */
-export const processSecretCard = (validatedCard: any): Partial<SecretObjectiveCard> => ({
+export const processSecretCard = (validatedCard: any): Partial<any> => ({
   ...createBaseCard(validatedCard),
   type: 'secret',
   alignment: validatedCard.alignment,

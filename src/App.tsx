@@ -7,6 +7,7 @@ import { publicRoutes } from "@/routes/public.routes";
 import { adminRoutes } from "@/routes/admin.routes";
 import { playerRoutes } from "@/routes/player.routes";
 import { AppProviders } from "@/components/providers/AppProviders";
+import { log } from "@/utils/logging";
 
 const App = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -14,13 +15,16 @@ const App = () => {
 
   useEffect(() => {
     try {
+      log.info("Application initializing");
+      
       const timer = setTimeout(() => {
         setIsLoaded(true);
+        log.info("Application successfully mounted");
       }, 100);
       
       return () => clearTimeout(timer);
     } catch (error) {
-      console.error("Critical app initialization error:", error);
+      log.error("Critical app initialization error:", error);
       setHasError(true);
     }
   }, []);
