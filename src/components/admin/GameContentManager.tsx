@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Tabs } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -46,21 +45,21 @@ const GameContentManager = () => {
   // Force initialization of card collections on first render, but only once
   useEffect(() => {
     const initializeCards = async () => {
-      if (!CardCollectionLoader.isLoaded() && !CardCollectionLoader.isCurrentlyLoading()) {
-        log.info("GameContentManager mounted - initializing card collections");
-        try {
-          await CardCollectionLoader.loadAllCardCollections();
-          log.info("Card collections initialized successfully");
-          analyzeCardCounts();
-        } catch (error) {
-          log.error("Failed to initialize card collections", { error });
-          toast.error("Failed to load cards. Please refresh the page.");
+      log.info("GameContentManager mounted - initializing card collections");
+      try {
+        // Force re-initialization of card collections to ensure we load the latest data
+        await CardCollectionLoader.resetCollections();
+        await CardCollectionLoader.loadAllCardCollections();
+        log.info("Card collections initialized successfully");
+        analyzeCardCounts();
+        
+        // Also refresh the current active tab's cards
+        if (loadCards) {
+          await loadCards();
         }
-      } else {
-        log.info("GameContentManager mounted - card collections already loaded or loading");
-        setTimeout(() => {
-          analyzeCardCounts();
-        }, 200);
+      } catch (error) {
+        log.error("Failed to initialize card collections", { error });
+        toast.error("Failed to load cards. Please refresh the page.");
       }
     };
 

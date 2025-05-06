@@ -2,6 +2,10 @@
 import { GameCard, CardType } from "@/types/cards";
 import { log } from "@/utils/logging";
 import { toast } from "sonner";
+import { PLAYER_CHARACTER_CARDS } from "@/lib/cards/player-character-cards";
+import { NPC_CARDS } from "@/lib/cards/npcs";
+import { GEAR_CARDS } from "@/lib/cards/gear-cards";
+import { CHAOS_CARDS } from "@/lib/cards/chaos-cards";
 
 /**
  * Service responsible for loading and caching card collections
@@ -89,9 +93,29 @@ export class CardCollectionLoader {
       cardTypes.forEach(type => {
         CardCollectionLoader.collections[type] = [];
       });
+      
+      // Load player character cards from the PLAYER_CHARACTER_CARDS collection
+      CardCollectionLoader.collections["player-character"] = [...PLAYER_CHARACTER_CARDS];
+      log.info(`Loaded ${PLAYER_CHARACTER_CARDS.length} player character cards`);
+      
+      // Load NPC cards
+      CardCollectionLoader.collections["npc"] = [...NPC_CARDS];
+      log.info(`Loaded ${NPC_CARDS.length} NPC cards`);
+      
+      // Load gear cards
+      CardCollectionLoader.collections["gear"] = [...GEAR_CARDS];
+      log.info(`Loaded ${GEAR_CARDS.length} gear cards`);
+      
+      // Load chaos cards
+      CardCollectionLoader.collections["chaos"] = [...CHAOS_CARDS];
+      log.info(`Loaded ${CHAOS_CARDS.length} chaos cards`);
+      
+      // Additional card types can be loaded here as they're implemented
 
-      log.info("Card collections initialized as empty", { 
-        collectionCount: Object.keys(CardCollectionLoader.collections).length 
+      log.info("Card collections initialized", { 
+        collectionCount: Object.keys(CardCollectionLoader.collections).length,
+        playerCharacterCount: CardCollectionLoader.collections["player-character"].length,
+        npcCount: CardCollectionLoader.collections["npc"].length
       });
       
       CardCollectionLoader.hasLoadedCards = true;
