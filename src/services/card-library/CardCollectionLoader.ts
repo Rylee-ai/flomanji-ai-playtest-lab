@@ -50,6 +50,17 @@ export class CardCollectionLoader {
       log.warn(`Attempting to access ${type} card collection before it's been loaded`);
       return [];
     }
+    
+    // Special handling for treasure cards in the UI
+    if (type === "treasure") {
+      // When "treasure" type is requested from the UI, we need to return both treasure and artifact types
+      const treasureCards = CardCollectionLoader.collections["treasure"] || [];
+      const artifactCards = CardCollectionLoader.collections["artifact"] || [];
+      
+      log.info(`Returning combined ${treasureCards.length} treasure and ${artifactCards.length} artifact cards (${treasureCards.length + artifactCards.length} total)`);
+      return [...treasureCards, ...artifactCards];
+    }
+    
     return CardCollectionLoader.collections[type] || [];
   }
 
@@ -116,14 +127,17 @@ export class CardCollectionLoader {
       CardCollectionLoader.collections["flomanjified"] = [...FLOMANJIFIED_CARDS];
       log.info(`Loaded ${FLOMANJIFIED_CARDS.length} flomanjified cards`);
       
-      // Load treasure cards and artifact cards separately - log complete array stats first
-      log.info(`Total TREASURE_CARDS array contains ${TREASURE_CARDS.length} cards`);
+      // Load treasure cards - load the full array first for debugging
+      const allTreasureCards = [...TREASURE_CARDS];
+      log.info(`Total TREASURE_CARDS array contains ${allTreasureCards.length} cards`);
       
-      const treasureCards = TREASURE_CARDS.filter(card => card.type === "treasure");
-      const artifactCards = TREASURE_CARDS.filter(card => card.type === "artifact");
+      // Then filter properly into separate collections
+      const treasureCards = allTreasureCards.filter(card => card.type === "treasure");
+      const artifactCards = allTreasureCards.filter(card => card.type === "artifact");
       
       log.info(`After filtering, found ${treasureCards.length} treasure cards and ${artifactCards.length} artifact cards (${treasureCards.length + artifactCards.length} total)`);
       
+      // Set the collections
       CardCollectionLoader.collections["treasure"] = treasureCards;
       CardCollectionLoader.collections["artifact"] = artifactCards;
       
@@ -135,8 +149,7 @@ export class CardCollectionLoader {
         collectionCount: Object.keys(CardCollectionLoader.collections).length,
         treasureCount: CardCollectionLoader.collections["treasure"].length,
         artifactCount: CardCollectionLoader.collections["artifact"].length,
-        totalTreasureAndArtifact: CardCollectionLoader.collections["treasure"].length + CardCollectionLoader.collections["artifact"].length,
-        totalInTREASURE_CARDS: TREASURE_CARDS.length
+        totalTreasureAndArtifact: CardCollectionLoader.collections["treasure"].length + CardCollectionLoader.collections["artifact"].length
       });
       
       CardCollectionLoader.hasLoadedCards = true;

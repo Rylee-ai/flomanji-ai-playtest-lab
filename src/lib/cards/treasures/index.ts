@@ -49,4 +49,3 @@ export const getTreasureById = (id: string): TreasureCard | undefined =>
 // Helper function to get cards by keyword
 export const getTreasuresByKeyword = (keyword: string): TreasureCard[] => 
   TREASURE_CARDS.filter(card => card.keywords.includes(keyword));
-

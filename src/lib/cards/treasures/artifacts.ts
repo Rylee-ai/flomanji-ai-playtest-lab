@@ -47,11 +47,11 @@ export const artifacts: TreasureCard[] = [
     imagePrompt: "A wooden amulet with intricate vine carvings that glow with soft emerald light"
   },
   {
-    id: "the-goblet-of-questionable-rehydration",
+    id: "questionable-goblet",
     name: "The Goblet of Questionable Rehydration",
     type: "artifact",
     icons: [
-      { symbol: "🥤", meaning: "Goblet" },
+      { symbol: "🏆", meaning: "Goblet" },
       { symbol: "❤️", meaning: "Health" },
       { symbol: "❓", meaning: "Mystery" }
     ],
@@ -68,7 +68,7 @@ export const artifacts: TreasureCard[] = [
     imagePrompt: "A tarnished, perhaps slightly glowing chalice that vaguely resembles the main Flomanji Goblet centerpiece, possibly filled with murky liquid"
   },
   {
-    id: "fountain-of-youth-runoff-jug",
+    id: "fountain-of-youth-jug",
     name: "Fountain of Youth Runoff Jug",
     type: "artifact",
     icons: [
@@ -89,7 +89,7 @@ export const artifacts: TreasureCard[] = [
     imagePrompt: "A simple plastic gallon jug filled with faintly glowing water, labeled \"Ponce's Drain Water - Do Not Drink?\" in faded marker"
   },
   {
-    id: "sentient-severed-mermaid-hand",
+    id: "sentient-mermaid-hand",
     name: "Sentient Severed Mermaid Hand",
     type: "artifact",
     icons: [
@@ -132,7 +132,7 @@ export const artifacts: TreasureCard[] = [
     imagePrompt: "A strange, triangular compass whose needle spins erratically or points to bizarre symbols instead of directions"
   },
   {
-    id: "the-conch-of-calling",
+    id: "conch-of-calling",
     name: "The Conch of Calling",
     type: "artifact",
     icons: [
@@ -152,7 +152,7 @@ export const artifacts: TreasureCard[] = [
     imagePrompt: "A large, beautiful conch shell, perhaps with strange carvings or a faint glow"
   },
   {
-    id: "mothman-discarded-contact-lens",
+    id: "mothman-contact-lens",
     name: "Mothman's Discarded Contact Lens",
     type: "artifact",
     icons: [
@@ -196,7 +196,7 @@ export const artifacts: TreasureCard[] = [
     imagePrompt: "A kitschy but menacing-looking Tiki mug with glowing red eyes"
   },
   {
-    id: "swamp-ape-lucky-loincloth",
+    id: "swamp-ape-loincloth",
     name: "Swamp Ape's Lucky Loincloth",
     type: "artifact",
     icons: [
@@ -218,7 +218,7 @@ export const artifacts: TreasureCard[] = [
     imagePrompt: "A ragged piece of hide fashioned into a crude garment, looking surprisingly durable but unpleasant"
   },
   {
-    id: "ring-of-snowbird-king",
+    id: "snowbird-king-ring",
     name: "Ring of the Snowbird King",
     type: "artifact",
     icons: [
@@ -241,7 +241,7 @@ export const artifacts: TreasureCard[] = [
     imagePrompt: "A large, gaudy gold ring with a shuffleboard court design instead of a gemstone"
   },
   {
-    id: "flomanji-goblet-forgotten-cousin",
+    id: "flomanji-goblet-cousin",
     name: "The Flomanji Goblet's Forgotten Cousin (Travel Mug)",
     type: "artifact",
     icons: [

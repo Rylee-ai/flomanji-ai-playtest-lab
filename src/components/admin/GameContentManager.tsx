@@ -54,27 +54,23 @@ const GameContentManager = () => {
         await CardCollectionLoader.loadAllCardCollections();
         
         // Log detailed information about treasure cards for debugging
-        const treasureCards = CardCollectionLoader.getCardCollection("treasure");
-        const artifactCards = CardCollectionLoader.getCardCollection("artifact");
+        const treasureCollection = CardCollectionLoader.getCardCollection("treasure");
         
         log.info("Card collections initialized with treasure data", {
-          treasureCount: treasureCards.length,
-          artifactCount: artifactCards.length,
-          totalTreasureCards: treasureCards.length + artifactCards.length
+          treasureCount: treasureCollection.length,
+          allCollections: Object.keys(CardCollectionLoader.getCardCollections())
         });
         
         analyzeCardCounts();
         
         // Also refresh the current active tab's cards 
-        if (loadCards) {
-          await loadCards();
-        }
+        await loadCards();
         
         // Refresh card counts to update UI
         await refreshCardCounts();
         
         // Display success message
-        toast.success(`Card library loaded with ${treasureCards.length + artifactCards.length} treasure & artifact cards`);
+        toast.success(`Card library loaded with ${treasureCollection.length} treasure & artifact cards`);
       } catch (error) {
         log.error("Failed to initialize card collections", { 
           error: error instanceof Error ? error.message : String(error) 
@@ -160,9 +156,9 @@ const GameContentManager = () => {
       <CardContent className="p-6">
         <ContentManagerHeader 
           onAddNew={handleAddNew}
-          onRefresh={handleRefreshCards}
+          onRefresh={handleRefreshCards || (() => {})}
           isRefreshing={isRefreshing}
-          onImport={handleCardImport}
+          onImport={handleImport}
           activeTab={activeTab}
         />
         

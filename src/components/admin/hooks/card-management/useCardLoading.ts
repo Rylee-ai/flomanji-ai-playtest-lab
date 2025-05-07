@@ -16,19 +16,15 @@ export const useCardLoading = (activeTab: CardType) => {
     log.debug(`Loading cards for type: ${activeTab}`);
 
     try {
-      // Special handling for treasure cards - include both treasure and artifact types
+      // Ensure collections are loaded first
+      await CardCollectionLoader.loadAllCardCollections();
+      
+      // For treasure tab specifically, we need special handling
       if (activeTab === "treasure") {
-        await CardCollectionLoader.loadAllCardCollections();
-        const treasureCards = CardCollectionLoader.getCardCollection("treasure");
-        const artifactCards = CardCollectionLoader.getCardCollection("artifact");
+        // Get combined treasure cards directly from CardCollectionLoader
+        const combinedCards = CardCollectionLoader.getCardCollection("treasure");
         
-        // Log both collections for debugging
-        log.debug(`Retrieved ${treasureCards.length} treasure cards`);
-        log.debug(`Retrieved ${artifactCards.length} artifact cards`);
-        
-        const combinedCards = [...treasureCards, ...artifactCards];
-        
-        log.debug(`Combined into ${combinedCards.length} total cards`);
+        log.debug(`Retrieved ${combinedCards.length} total treasure cards (including artifacts)`);
         setCards(combinedCards);
         setLoading(false);
         return combinedCards;
