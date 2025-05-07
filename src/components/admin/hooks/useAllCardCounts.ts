@@ -33,9 +33,17 @@ export const useAllCardCounts = () => {
         // Calculate counts using the existing utility
         const counts = calculateCardCounts(allCards);
         
-        // Combine treasure and artifact counts for the UI
-        if (counts["treasure"] && counts["artifact"]) {
-          counts["treasure"] = counts["treasure"] + counts["artifact"];
+        // Specifically check treasure and artifact counts for debugging
+        const treasureCount = collections["treasure"] ? collections["treasure"].length : 0;
+        const artifactCount = collections["artifact"] ? collections["artifact"].length : 0;
+        
+        log.debug(`Card counts calculation found: ${treasureCount} treasures and ${artifactCount} artifacts`);
+        
+        // Combine treasure and artifact counts for the UI display
+        if (counts["treasure"] !== undefined && counts["artifact"] !== undefined) {
+          const combinedCount = counts["treasure"] + counts["artifact"];
+          counts["treasure"] = combinedCount;
+          log.debug(`Combined treasure count for UI: ${combinedCount}`);
         }
         
         log.info("All card counts loaded", { 
@@ -76,6 +84,7 @@ export const useAllCardCounts = () => {
     
     try {
       // Force re-initialization of card collections
+      CardCollectionLoader.resetCollections();
       await CardCollectionLoader.loadAllCardCollections();
       
       // Get updated collections
@@ -85,9 +94,17 @@ export const useAllCardCounts = () => {
       // Calculate updated counts
       const counts = calculateCardCounts(allCards);
       
-      // Combine treasure and artifact counts for the UI
-      if (counts["treasure"] && counts["artifact"]) {
-        counts["treasure"] = counts["treasure"] + counts["artifact"];
+      // Specifically check treasure and artifact counts after refresh
+      const treasureCount = collections["treasure"] ? collections["treasure"].length : 0;
+      const artifactCount = collections["artifact"] ? collections["artifact"].length : 0;
+      
+      log.debug(`After refresh: ${treasureCount} treasures and ${artifactCount} artifacts`);
+      
+      // Combine treasure and artifact counts for the UI display
+      if (counts["treasure"] !== undefined && counts["artifact"] !== undefined) {
+        const combinedCount = counts["treasure"] + counts["artifact"];
+        counts["treasure"] = combinedCount;
+        log.debug(`Combined treasure count for UI after refresh: ${combinedCount}`);
       }
       
       log.info("All card counts refreshed", { 

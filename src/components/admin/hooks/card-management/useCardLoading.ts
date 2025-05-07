@@ -21,9 +21,14 @@ export const useCardLoading = (activeTab: CardType) => {
         await CardCollectionLoader.loadAllCardCollections();
         const treasureCards = CardCollectionLoader.getCardCollection("treasure");
         const artifactCards = CardCollectionLoader.getCardCollection("artifact");
+        
+        // Log before combining to help debug
+        log.debug(`Retrieved ${treasureCards.length} treasure cards`);
+        log.debug(`Retrieved ${artifactCards.length} artifact cards`);
+        
         const combinedCards = [...treasureCards, ...artifactCards];
         
-        log.debug(`Retrieved ${combinedCards.length} cards (${treasureCards.length} treasures and ${artifactCards.length} artifacts)`);
+        log.debug(`Combined into ${combinedCards.length} total cards`);
         setCards(combinedCards);
         setLoading(false);
         return combinedCards;

@@ -20,7 +20,15 @@ export const TREASURE_CARDS: TreasureCard[] = [
   ...specialTools
 ];
 
-log.info(`Treasure cards initialized with ${TREASURE_CARDS.length} items`);
+// Add detailed logging to track card counts
+log.info(`Treasure cards initialized with ${TREASURE_CARDS.length} total items`, {
+  valuableItems: valuableItems.length,
+  artifacts: artifacts.length,
+  consumables: consumables.length,
+  specialItems: specialItems.length,
+  defensiveItems: defensiveItems.length,
+  specialTools: specialTools.length
+});
 
 // Helper functions for retrieving specific card types
 export const getTreasureItems = (): TreasureCard[] => 

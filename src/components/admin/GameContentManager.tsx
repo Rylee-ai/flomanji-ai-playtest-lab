@@ -47,10 +47,22 @@ const GameContentManager = () => {
     const initializeCards = async () => {
       log.info("GameContentManager mounted - initializing card collections");
       try {
+        // Reset collections to ensure a clean start
+        CardCollectionLoader.resetCollections();
+        
         // Force re-initialization of card collections to ensure we load the latest data
-        await CardCollectionLoader.resetCollections();
         await CardCollectionLoader.loadAllCardCollections();
-        log.info("Card collections initialized successfully");
+        
+        // Log detailed information about treasure cards for debugging
+        const treasureCards = CardCollectionLoader.getCardCollection("treasure");
+        const artifactCards = CardCollectionLoader.getCardCollection("artifact");
+        
+        log.info("Card collections initialized with treasure data", {
+          treasureCount: treasureCards.length,
+          artifactCount: artifactCards.length,
+          totalTreasureCards: treasureCards.length + artifactCards.length
+        });
+        
         analyzeCardCounts();
         
         // Also refresh the current active tab's cards
@@ -58,7 +70,9 @@ const GameContentManager = () => {
           await loadCards();
         }
       } catch (error) {
-        log.error("Failed to initialize card collections", { error });
+        log.error("Failed to initialize card collections", { 
+          error: error instanceof Error ? error.message : String(error) 
+        });
         toast.error("Failed to load cards. Please refresh the page.");
       }
     };
@@ -74,6 +88,9 @@ const GameContentManager = () => {
     setIsRefreshing(true);
     
     try {
+      // Reset collections first to ensure a clean reload
+      CardCollectionLoader.resetCollections();
+      
       // Re-initialize all card collections
       await CardCollectionLoader.loadAllCardCollections();
       
@@ -83,12 +100,23 @@ const GameContentManager = () => {
         refreshCardCounts()
       ]);
       
+      // Log detailed information about treasure cards for debugging
+      if (activeTab === "treasure") {
+        const treasureCards = CardCollectionLoader.getCardCollection("treasure");
+        const artifactCards = CardCollectionLoader.getCardCollection("artifact");
+        
+        log.info("Treasure cards refreshed with counts", {
+          treasureCount: treasureCards.length,
+          artifactCount: artifactCards.length,
+          totalTreasureCards: treasureCards.length + artifactCards.length
+        });
+      }
+      
       // Run diagnostics after refresh
       analyzeCardCounts();
       log.info("Cards refreshed successfully", { cardType: activeTab });
       toast.success("Cards refreshed successfully");
     } catch (error) {
-      console.error("Failed to refresh cards:", error);
       log.error("Failed to refresh cards", { 
         error: error instanceof Error ? error.message : String(error),
         cardType: activeTab

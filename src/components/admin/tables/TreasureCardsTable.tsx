@@ -26,6 +26,9 @@ export const TreasureCardsTable = ({
   onEditCard,
   onDeleteCard,
 }: TreasureCardsTableProps) => {
+  // Debug logging to check what cards are being passed to the table
+  console.log(`TreasureCardsTable received ${cards.length} cards`);
+  
   return (
     <div className="overflow-auto border rounded-md">
       <Table>

@@ -117,8 +117,13 @@ export class CardCollectionLoader {
       log.info(`Loaded ${FLOMANJIFIED_CARDS.length} flomanjified cards`);
       
       // Load treasure cards and artifact cards separately
+      // First, log the total count to debug any issues
+      log.debug(`Total TREASURE_CARDS array contains ${TREASURE_CARDS.length} cards`);
+      
       const treasureCards = TREASURE_CARDS.filter(card => card.type === "treasure");
       const artifactCards = TREASURE_CARDS.filter(card => card.type === "artifact");
+      
+      log.debug(`After filtering, found ${treasureCards.length} treasure cards and ${artifactCards.length} artifact cards (${treasureCards.length + artifactCards.length} total)`);
       
       CardCollectionLoader.collections["treasure"] = treasureCards;
       CardCollectionLoader.collections["artifact"] = artifactCards;
@@ -129,11 +134,10 @@ export class CardCollectionLoader {
 
       log.info("Card collections initialized", { 
         collectionCount: Object.keys(CardCollectionLoader.collections).length,
-        playerCharacterCount: CardCollectionLoader.collections["player-character"].length,
-        npcCount: CardCollectionLoader.collections["npc"].length,
-        flomanjifiedCount: CardCollectionLoader.collections["flomanjified"].length,
         treasureCount: CardCollectionLoader.collections["treasure"].length,
-        artifactCount: CardCollectionLoader.collections["artifact"].length
+        artifactCount: CardCollectionLoader.collections["artifact"].length,
+        totalTreasureAndArtifact: CardCollectionLoader.collections["treasure"].length + CardCollectionLoader.collections["artifact"].length,
+        totalInTREASURE_CARDS: TREASURE_CARDS.length
       });
       
       CardCollectionLoader.hasLoadedCards = true;
@@ -162,5 +166,6 @@ export class CardCollectionLoader {
     CardCollectionLoader.collections = {} as Record<CardType, GameCard[]>;
     CardCollectionLoader.hasLoadedCards = false;
     CardCollectionLoader.loadError = null;
+    log.info("Card collections have been reset");
   }
 }
