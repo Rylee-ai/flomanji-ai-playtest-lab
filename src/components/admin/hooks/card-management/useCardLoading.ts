@@ -22,7 +22,7 @@ export const useCardLoading = (activeTab: CardType) => {
         const treasureCards = CardCollectionLoader.getCardCollection("treasure");
         const artifactCards = CardCollectionLoader.getCardCollection("artifact");
         
-        // Log before combining to help debug
+        // Log both collections for debugging
         log.debug(`Retrieved ${treasureCards.length} treasure cards`);
         log.debug(`Retrieved ${artifactCards.length} artifact cards`);
         

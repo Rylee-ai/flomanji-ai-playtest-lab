@@ -27,7 +27,9 @@ log.info(`Treasure cards initialized with ${TREASURE_CARDS.length} total items`,
   consumables: consumables.length,
   specialItems: specialItems.length,
   defensiveItems: defensiveItems.length,
-  specialTools: specialTools.length
+  specialTools: specialTools.length,
+  treasureTypeCount: TREASURE_CARDS.filter(card => card.type === 'treasure').length,
+  artifactTypeCount: TREASURE_CARDS.filter(card => card.type === 'artifact').length
 });
 
 // Helper functions for retrieving specific card types
@@ -47,3 +49,4 @@ export const getTreasureById = (id: string): TreasureCard | undefined =>
 // Helper function to get cards by keyword
 export const getTreasuresByKeyword = (keyword: string): TreasureCard[] => 
   TREASURE_CARDS.filter(card => card.keywords.includes(keyword));
+

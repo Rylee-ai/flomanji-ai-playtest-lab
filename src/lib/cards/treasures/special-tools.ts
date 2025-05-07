@@ -1,92 +1,108 @@
 
 import { TreasureCard } from "@/types/cards/treasure";
 
-// Cards that function as unique tools or gadgets
+// Cards that provide special tools and abilities
 export const specialTools: TreasureCard[] = [
   {
-    id: "mothman-discarded-contact-lens",
-    name: "Mothman's Discarded Contact Lens",
+    id: "fortune-compass",
+    name: "Fortune Compass",
     type: "artifact",
     icons: [
-      { symbol: "👁️", meaning: "Vision" },
-      { symbol: "🦋", meaning: "Bug" },
-      { symbol: "❓", meaning: "Mystery" }
+      { symbol: "🧭", meaning: "Navigation" },
+      { symbol: "🍀", meaning: "Luck" }
     ],
-    keywords: ["Enhanced Perception", "Weirdness Gain", "Fragile"],
+    keywords: ["Navigation", "Luck", "Decision"],
     rules: [
-      "While equipped (takes 1 Gear slot): You can look at the top card of any deck (Hazard, Gear, Chaos, etc.) once per turn as a free action.",
-      "Each time you use this, gain 1 Weirdness.",
-      "If you take 2 or more Damage from a single source, discard this Artifact (Goblet: \"It cracked!\")."
+      "When used for decisions: Reroll any one die",
+      "When used for navigation: Choose movement outcome",
+      "Limit: Can be used once per round"
     ],
     value: 2,
     consumable: false,
-    passiveEffect: "",
-    useEffect: "Look at the top card of any deck as a free action, but gain 1 Weirdness",
-    flavor: "Goblet: 'Sees things man was not meant to see... like the expiration date on that gas station taquito.'",
-    imagePrompt: "An oversized, slightly iridescent contact lens resting on a leaf, seeming to reflect more than just the surrounding light"
+    passiveEffect: "+1 Luck while carried",
+    useEffect: "Reroll any one die OR choose your outcome when moving between regions",
+    flavor: "The needle doesn't point north—it points toward fortune.",
+    imagePrompt: "An antique brass compass whose needle glows with shifting neon colors and never points north"
   },
   {
-    id: "florida-woman-purse",
-    name: "Florida Woman's Bottomless Purse",
+    id: "ancient-coin",
+    name: "Ancient Dubloons",
     type: "treasure",
     icons: [
-      { symbol: "🎒", meaning: "Inventory" },
-      { symbol: "🌀", meaning: "Chaos" },
-      { symbol: "👥", meaning: "Social" }
+      { symbol: "💰", meaning: "Valuable" },
+      { symbol: "⚓", meaning: "Naval" }
     ],
-    keywords: ["Storage", "Random Item Generation", "Unpredictable"],
+    keywords: ["Currency", "Historical", "Trading"],
     rules: [
-      "While equipped (takes 1 Gear slot): Your hand size limit is increased by 2.",
-      "Once per game, spend 1 Action to \"Rummage.\" Shake the Goblet for Luck (DC 4). Success = Draw 1 random Gear card. Failure = Draw 1 random Hazard card (Goblet: \"Found trouble instead!\")."
+      "Spend 1: Gain +2 to any Charm check with natives",
+      "Spend 2: Avoid one Heat increase from trading/social",
+      "Value: Worth 1 point per coin remaining at end"
     ],
-    value: 2,
-    consumable: false,
-    passiveEffect: "Hand size increased by 2",
-    useEffect: "Draw 1 random Gear card on success, or 1 random Hazard card on failure (Luck DC 4)",
-    flavor: "Goblet: 'Contains everything... lip balm, expired coupons, existential dread, maybe a small gator.'",
-    imagePrompt: "A large, garishly patterned purse overflowing with an impossible amount of random objects"
+    value: 1,
+    consumable: true,
+    useEffect: "Spend to gain significant advantage in social interactions or trading",
+    flavor: "Spanish gold, pirate plunder—wealth transcends language.",
+    imagePrompt: "A handful of gold coins with worn Spanish markings, reflecting neon highlights despite their age"
   },
   {
-    id: "cursed-tiki-mug",
-    name: "The Cursed Tiki Mug",
+    id: "ritual-mask",
+    name: "Ritual Mask",
     type: "artifact",
     icons: [
-      { symbol: "🥤", meaning: "Cup" },
-      { symbol: "⚰️", meaning: "Curse" },
-      { symbol: "🌀", meaning: "Weirdness" }
+      { symbol: "🎭", meaning: "Disguise" },
+      { symbol: "🔮", meaning: "Magic" }
     ],
-    keywords: ["Buff", "Curse", "Weirdness Gain"],
+    keywords: ["Ritual", "Disguise", "Protection"],
     rules: [
-      "While equipped (takes 1 Gear slot): Gain +1 to a Stat of your choice (declare at start of turn, lasts until your next turn).",
-      "However, at the end of your turn, gain 1 Weirdness.",
-      "Cannot be unequipped voluntarily."
+      "When worn: Gain immunity to one specific hazard type",
+      "Side effect: Weirdness checks suffer -1 penalty",
+      "Attunement: Must spend 1 Action to attune to new hazard type"
     ],
     value: 2,
     consumable: false,
-    passiveEffect: "+1 to a chosen Stat, changed at the start of each turn",
-    useEffect: "Gain 1 Weirdness at the end of each turn while equipped",
-    flavor: "Goblet: 'Grants power... demands sanity. Fair trade?'",
-    imagePrompt: "A kitschy but menacing-looking Tiki mug with glowing red eyes"
+    passiveEffect: "Provides immunity to one attuned hazard type",
+    useEffect: "Spend 1 Action to attune the mask to a new hazard type",
+    flavor: "The eyes see beyond this world—wear it and you will too.",
+    imagePrompt: "A wooden tribal mask with asymmetrical features, feathers, and glowing painted symbols"
   },
   {
-    id: "self-driving-golf-cart-keys",
-    name: "Self-Driving Golf Cart Keys (Beta Test)",
+    id: "swamp-map",
+    name: "Smuggler's Swamp Map",
     type: "treasure",
     icons: [
-      { symbol: "🚗", meaning: "Vehicle" },
-      { symbol: "🔌", meaning: "Tech" },
-      { symbol: "⚡", meaning: "Glitch" }
+      { symbol: "🗺️", meaning: "Navigation" },
+      { symbol: "🐊", meaning: "Swamp" }
     ],
-    keywords: ["Enhanced Movement", "Unreliable", "Risk/Reward"],
+    keywords: ["Navigation", "Secret", "Information"],
     rules: [
-      "Once per game, spend 1 Action to activate. Declare \"Engage Auto-Drive!\" Move 2 Regions towards the Mission Objective (Goblet determines path).",
-      "After the move, shake Luck (DC 4). Failure = The cart glitches; end movement in a random adjacent Hazard or gain 1 Weirdness."
+      "When used for movement: Choose path instead of random",
+      "When used for search: +2 to find hidden paths or caches",
+      "Consumable: Mark off after 3 uses"
+    ],
+    value: 1,
+    consumable: true,
+    useEffect: "Choose your path instead of random draw, or gain +2 to Search checks in swamp regions",
+    flavor: "Smugglers don't share their routes—this map came at great cost.",
+    imagePrompt: "A weathered, stained map on parchment showing hidden waterways and secret caches marked in faded ink"
+  },
+  {
+    id: "spirit-whistle",
+    name: "Spirit Whistle",
+    type: "artifact",
+    icons: [
+      { symbol: "👻", meaning: "Spirit" },
+      { symbol: "🎵", meaning: "Sound" }
+    ],
+    keywords: ["Magical", "Communication", "Sound"],
+    rules: [
+      "When used: Draw 1 Chaos Card and see effect before playing",
+      "Can discard to negate one Chaos Card",
+      "Consumable: Discard after negating a card"
     ],
     value: 2,
     consumable: true,
-    passiveEffect: "",
-    useEffect: "Move 2 regions toward objective with risk of glitching",
-    flavor: "Goblet: 'It knows where you want to go... probably. Steering algorithm still learning.'",
-    imagePrompt: "A futuristic-looking key fob with a golf cart icon and a small, flickering screen."
+    useEffect: "Preview the next Chaos Card before it takes effect, or discard this to negate one Chaos Card completely",
+    flavor: "Its haunting tone stretches across the veil between worlds.",
+    imagePrompt: "A small bone whistle carved with spirit faces that seem to shift when not directly observed"
   }
 ];

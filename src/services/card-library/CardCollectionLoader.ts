@@ -116,23 +116,22 @@ export class CardCollectionLoader {
       CardCollectionLoader.collections["flomanjified"] = [...FLOMANJIFIED_CARDS];
       log.info(`Loaded ${FLOMANJIFIED_CARDS.length} flomanjified cards`);
       
-      // Load treasure cards and artifact cards separately
-      // First, log the total count to debug any issues
-      log.debug(`Total TREASURE_CARDS array contains ${TREASURE_CARDS.length} cards`);
+      // Load treasure cards and artifact cards separately - log complete array stats first
+      log.info(`Total TREASURE_CARDS array contains ${TREASURE_CARDS.length} cards`);
       
       const treasureCards = TREASURE_CARDS.filter(card => card.type === "treasure");
       const artifactCards = TREASURE_CARDS.filter(card => card.type === "artifact");
       
-      log.debug(`After filtering, found ${treasureCards.length} treasure cards and ${artifactCards.length} artifact cards (${treasureCards.length + artifactCards.length} total)`);
+      log.info(`After filtering, found ${treasureCards.length} treasure cards and ${artifactCards.length} artifact cards (${treasureCards.length + artifactCards.length} total)`);
       
       CardCollectionLoader.collections["treasure"] = treasureCards;
       CardCollectionLoader.collections["artifact"] = artifactCards;
       
-      log.info(`Loaded ${treasureCards.length} treasure cards and ${artifactCards.length} artifact cards (${TREASURE_CARDS.length} total)`);
+      log.info(`Loaded ${treasureCards.length} treasure cards and ${artifactCards.length} artifact cards (${treasureCards.length + artifactCards.length} total)`);
       
       // Additional card types can be loaded here as they're implemented
 
-      log.info("Card collections initialized", { 
+      log.info("Card collections initialized successfully", { 
         collectionCount: Object.keys(CardCollectionLoader.collections).length,
         treasureCount: CardCollectionLoader.collections["treasure"].length,
         artifactCount: CardCollectionLoader.collections["artifact"].length,

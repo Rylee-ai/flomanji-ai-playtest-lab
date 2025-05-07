@@ -1,30 +1,8 @@
 
 import { TreasureCard } from "@/types/cards/treasure";
 
-// Cards that are mystical artifacts with special powers or effects
+// Cards that are magical artifacts with special powers
 export const artifacts: TreasureCard[] = [
-  {
-    id: "goblet-of-questionable-rehydration",
-    name: "The Goblet of Questionable Rehydration",
-    type: "artifact",
-    icons: [
-      { symbol: "🏆", meaning: "Goblet" },
-      { symbol: "❤️", meaning: "Health" },
-      { symbol: "❓", meaning: "Mystery" }
-    ],
-    keywords: ["Revival", "Cursed?", "Unique"],
-    rules: [
-      "This card is not drawn normally. It is gained only when a player is Eliminated (reaches 0 Health) for the first time.",
-      "The Goblet announces: \"Not yet... Flomanji offers a drink...\" The player gains this card.",
-      "At the start of their next turn, they discard this card, return to the Starting Region with 1 Health, and gain 3 Weirdness."
-    ],
-    value: 3,
-    consumable: true,
-    passiveEffect: "",
-    useEffect: "Return from elimination with 1 Health in the Starting Region, but gain 3 Weirdness",
-    flavor: "Goblet: 'Drink deep... or don't. The effect is the same. Welcome back... mostly.'",
-    imagePrompt: "A tarnished, perhaps slightly glowing chalice that vaguely resembles the main Flomanji Goblet centerpiece, possibly filled with murky liquid"
-  },
   {
     id: "crystal-skull",
     name: "Crystal Skull",
@@ -69,11 +47,53 @@ export const artifacts: TreasureCard[] = [
     imagePrompt: "A wooden amulet with intricate vine carvings that glow with soft emerald light"
   },
   {
+    id: "the-goblet-of-questionable-rehydration",
+    name: "The Goblet of Questionable Rehydration",
+    type: "artifact",
+    icons: [
+      { symbol: "🥤", meaning: "Goblet" },
+      { symbol: "❤️", meaning: "Health" },
+      { symbol: "❓", meaning: "Mystery" }
+    ],
+    keywords: ["Revival", "Cursed?", "Unique"],
+    rules: [
+      "This card is not drawn normally. It is gained only when a player is Eliminated (reaches 0 Health) for the first time.",
+      "The Goblet announces: \"Not yet... Flomanji offers a drink...\" The player gains this card.",
+      "At the start of their next turn, they discard this card, return to the Starting Region with 1 Health, and gain 3 Weirdness."
+    ],
+    value: 3,
+    consumable: true,
+    useEffect: "Return from elimination with 1 Health, but gain 3 Weirdness",
+    flavor: "Goblet: 'Drink deep... or don't. The effect is the same. Welcome back... mostly.'",
+    imagePrompt: "A tarnished, perhaps slightly glowing chalice that vaguely resembles the main Flomanji Goblet centerpiece, possibly filled with murky liquid"
+  },
+  {
+    id: "fountain-of-youth-runoff-jug",
+    name: "Fountain of Youth Runoff Jug",
+    type: "artifact",
+    icons: [
+      { symbol: "💧", meaning: "Water" },
+      { symbol: "❤️", meaning: "Health" },
+      { symbol: "⏳", meaning: "Age" }
+    ],
+    keywords: ["Healing", "Rejuvenation", "Risk/Reward", "Consumable"],
+    rules: [
+      "Discard this card. Declare \"Drinking the good stuff!\"",
+      "Heal all Damage and remove all negative Status tokens.",
+      "Then, shake the Goblet for a Luck check (DC 5). Failure = Gain 2 Weirdness."
+    ],
+    value: 3,
+    consumable: true,
+    useEffect: "Heal all Damage and remove all negative Status tokens, but risk gaining 2 Weirdness on a failed Luck check (DC 5)",
+    flavor: "Goblet: 'Tastes like immortality... and sulfur. Mostly sulfur.'",
+    imagePrompt: "A simple plastic gallon jug filled with faintly glowing water, labeled \"Ponce's Drain Water - Do Not Drink?\" in faded marker"
+  },
+  {
     id: "sentient-severed-mermaid-hand",
     name: "Sentient Severed Mermaid Hand",
     type: "artifact",
     icons: [
-      { symbol: "✋", meaning: "Hand" },
+      { symbol: "👋", meaning: "Hand" },
       { symbol: "💧", meaning: "Water" },
       { symbol: "🌀", meaning: "Weirdness" }
     ],
@@ -86,7 +106,7 @@ export const artifacts: TreasureCard[] = [
     value: 2,
     consumable: false,
     passiveEffect: "",
-    useEffect: "Receive a cryptic clue about the Mission Objective or nearest Treasure/Artifact, but gain 1 Weirdness",
+    useEffect: "Receive cryptic clues about objectives or treasures, but gain 1 Weirdness",
     flavor: "Goblet: 'It points... sometimes helpfully, sometimes towards more trouble.'",
     imagePrompt: "A realistic but unsettling severed hand with scales and webbed fingers, perhaps twitching slightly or pointing"
   },
@@ -95,7 +115,7 @@ export const artifacts: TreasureCard[] = [
     name: "The Everglades Triangle Compass",
     type: "artifact",
     icons: [
-      { symbol: "🗺️", meaning: "Map" },
+      { symbol: "🧭", meaning: "Map" },
       { symbol: "❓", meaning: "Mystery" },
       { symbol: "⚡", meaning: "Glitch" }
     ],
@@ -107,13 +127,12 @@ export const artifacts: TreasureCard[] = [
     ],
     value: 2,
     consumable: true,
-    passiveEffect: "",
-    useEffect: "Teleport to a random unexplored Region on the map",
+    useEffect: "Teleport to a random unexplored Region",
     flavor: "Goblet: 'Points north? South? Sometimes... sideways through reality.'",
     imagePrompt: "A strange, triangular compass whose needle spins erratically or points to bizarre symbols instead of directions"
   },
   {
-    id: "conch-of-calling",
+    id: "the-conch-of-calling",
     name: "The Conch of Calling",
     type: "artifact",
     icons: [
@@ -123,15 +142,14 @@ export const artifacts: TreasureCard[] = [
     ],
     keywords: ["Summoning", "Risk/Reward", "Coastal Lore"],
     rules: [
-      "Once per game, spend 1 Action to blow the Conch. The Goblet plays a deep horn sound and prompts: \"The sound echoes... Who answers?\" Shake Luck (DC 4).",
-      "Success = Draw 1 helpful NPC card. Failure = Draw 1 dangerous Hazard card (Animal or Environmental)."
+      "Once per game, spend 1 Action to blow the Conch. The Goblet plays a deep horn sound and prompts: \"The sound echoes... Who answers?\"",
+      "Shake Luck (DC 4). Success = Draw 1 helpful NPC card. Failure = Draw 1 dangerous Hazard card (Animal or Environmental)."
     ],
     value: 2,
     consumable: true,
-    passiveEffect: "",
-    useEffect: "Summon either help or trouble depending on a Luck check",
+    useEffect: "Summon either a helpful NPC or dangerous Hazard depending on Luck check (DC 4)",
     flavor: "Goblet: 'Summons something from the deep... hope it's friendly.'",
-    imagePrompt: "A large, beautiful conch shell, perhaps with strange carvings or a faint glow."
+    imagePrompt: "A large, beautiful conch shell, perhaps with strange carvings or a faint glow"
   },
   {
     id: "mothman-discarded-contact-lens",
@@ -139,7 +157,7 @@ export const artifacts: TreasureCard[] = [
     type: "artifact",
     icons: [
       { symbol: "👁️", meaning: "Vision" },
-      { symbol: "🦋", meaning: "Bug" },
+      { symbol: "🦟", meaning: "Bug" },
       { symbol: "❓", meaning: "Mystery" }
     ],
     keywords: ["Enhanced Perception", "Weirdness Gain", "Fragile"],
@@ -150,8 +168,8 @@ export const artifacts: TreasureCard[] = [
     ],
     value: 2,
     consumable: false,
-    passiveEffect: "",
-    useEffect: "Look at the top card of any deck as a free action, but gain 1 Weirdness",
+    passiveEffect: "Look at the top card of any deck once per turn (free action), but gain 1 Weirdness each time",
+    useEffect: "",
     flavor: "Goblet: 'Sees things man was not meant to see... like the expiration date on that gas station taquito.'",
     imagePrompt: "An oversized, slightly iridescent contact lens resting on a leaf, seeming to reflect more than just the surrounding light"
   },
@@ -160,7 +178,7 @@ export const artifacts: TreasureCard[] = [
     name: "The Cursed Tiki Mug",
     type: "artifact",
     icons: [
-      { symbol: "🥤", meaning: "Cup" },
+      { symbol: "🏺", meaning: "Cup" },
       { symbol: "⚰️", meaning: "Curse" },
       { symbol: "🌀", meaning: "Weirdness" }
     ],
@@ -172,17 +190,17 @@ export const artifacts: TreasureCard[] = [
     ],
     value: 2,
     consumable: false,
-    passiveEffect: "+1 to a chosen Stat, changed at the start of each turn",
-    useEffect: "Gain 1 Weirdness at the end of each turn while equipped",
+    passiveEffect: "+1 to a stat of your choice each turn, but gain 1 Weirdness at the end of your turn",
+    useEffect: "",
     flavor: "Goblet: 'Grants power... demands sanity. Fair trade?'",
     imagePrompt: "A kitschy but menacing-looking Tiki mug with glowing red eyes"
   },
   {
-    id: "swamp-apes-lucky-loincloth",
+    id: "swamp-ape-lucky-loincloth",
     name: "Swamp Ape's Lucky Loincloth",
     type: "artifact",
     icons: [
-      { symbol: "👔", meaning: "Fashion" },
+      { symbol: "👘", meaning: "Fashion" },
       { symbol: "🐒", meaning: "Animal" },
       { symbol: "🍀", meaning: "Luck" }
     ],
@@ -194,13 +212,13 @@ export const artifacts: TreasureCard[] = [
     ],
     value: 2,
     consumable: false,
-    passiveEffect: "+2 Luck, -2 Charm on all relevant Stat Checks",
+    passiveEffect: "+2 Luck but -2 Charm on relevant checks",
     useEffect: "",
     flavor: "Goblet: 'Smells like victory... and wet fur. Mostly wet fur.'",
     imagePrompt: "A ragged piece of hide fashioned into a crude garment, looking surprisingly durable but unpleasant"
   },
   {
-    id: "ring-of-the-snowbird-king",
+    id: "ring-of-snowbird-king",
     name: "Ring of the Snowbird King",
     type: "artifact",
     icons: [
@@ -215,10 +233,10 @@ export const artifacts: TreasureCard[] = [
       "Success = Control the NPC for one action (e.g., make them give you Gear, mislead another player).",
       "Failure = The NPC rallies others against you; gain -1 Charm permanently."
     ],
-    value: 3,
+    value: 2,
     consumable: false,
     passiveEffect: "",
-    useEffect: "Attempt to control a 'Retiree' or 'Snowbird' NPC for one action (Charm DC 5)",
+    useEffect: "Control a 'Retiree' or 'Snowbird' NPC for one action on success, or suffer permanent -1 Charm on failure",
     flavor: "Goblet: 'Smells faintly of Ben-Gay and early bird specials.'",
     imagePrompt: "A large, gaudy gold ring with a shuffleboard court design instead of a gemstone"
   },
@@ -228,20 +246,19 @@ export const artifacts: TreasureCard[] = [
     type: "artifact",
     icons: [
       { symbol: "🏆", meaning: "Goblet" },
-      { symbol: "✈️", meaning: "Travel" },
+      { symbol: "🧳", meaning: "Travel" },
       { symbol: "❓", meaning: "Mystery" }
     ],
     keywords: ["Goblet Interaction", "Minor Buff", "Weirdness Gain"],
     rules: [
       "While equipped (takes 1 Gear slot): Once per game, spend 1 Action to \"Consult the Cousin.\"",
-      "Hold this card near the main Flomanji Goblet.",
-      "The main Goblet will offer a choice of two minor boons (e.g., Heal 1 Damage, +1 on next check, reveal adjacent region).",
-      "Gain 1 Weirdness after receiving the boon."
+      "Hold this card near the main Flomanji Goblet. The main Goblet will offer a choice of two minor boons.",
+      "(e.g., Heal 1 Damage, +1 on next check, reveal adjacent region). Gain 1 Weirdness after receiving the boon."
     ],
     value: 2,
     consumable: false,
     passiveEffect: "",
-    useEffect: "Consult with the Goblet for a choice of minor boons",
+    useEffect: "Receive a choice of two minor boons from the Goblet, but gain 1 Weirdness",
     flavor: "Goblet: 'Oh... him. Less powerful, arguably more annoying. Fine, ask your question.'",
     imagePrompt: "A slightly smaller, travel-mug version of the main Flomanji Goblet, perhaps made of stainless steel with similar weird carvings, looking slightly less impressive"
   }

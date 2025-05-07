@@ -65,10 +65,16 @@ const GameContentManager = () => {
         
         analyzeCardCounts();
         
-        // Also refresh the current active tab's cards
+        // Also refresh the current active tab's cards 
         if (loadCards) {
           await loadCards();
         }
+        
+        // Refresh card counts to update UI
+        await refreshCardCounts();
+        
+        // Display success message
+        toast.success(`Card library loaded with ${treasureCards.length + artifactCards.length} treasure & artifact cards`);
       } catch (error) {
         log.error("Failed to initialize card collections", { 
           error: error instanceof Error ? error.message : String(error) 
@@ -78,7 +84,7 @@ const GameContentManager = () => {
     };
 
     initializeCards();
-  }, []);
+  }, [loadCards, refreshCardCounts]);
 
   // Force refresh of card data - optimized to avoid race conditions
   const handleRefreshCards = useCallback(async () => {
