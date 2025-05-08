@@ -31,9 +31,9 @@ const App = () => {
 
   // Combine all routes - make sure publicRoutes comes first to properly handle the homepage
   const allRoutes = [
-    ...publicRoutes,
-    ...adminRoutes,
-    ...playerRoutes,
+    ...publicRoutes,       // Public routes including homepage (/) must come first
+    ...adminRoutes,        // Admin routes (/admin, /dashboard -> /admin)
+    ...playerRoutes,       // Player routes
     // Redirect from index.html to base path
     {
       path: "/index.html",
@@ -45,6 +45,18 @@ const App = () => {
       element: <NotFound />
     }
   ];
+
+  // Log route configuration on startup for debugging
+  useEffect(() => {
+    if (isLoaded) {
+      log.info("Route configuration loaded", { 
+        publicRouteCount: publicRoutes.length,
+        adminRouteCount: adminRoutes.length,
+        playerRouteCount: playerRoutes.length,
+        totalRoutes: allRoutes.length
+      });
+    }
+  }, [isLoaded]);
 
   // Use the useRoutes hook to transform route objects into React elements
   const RoutedContent = () => {

@@ -1,5 +1,5 @@
 
-import { RouteObject } from "react-router-dom";
+import { RouteObject, Navigate } from "react-router-dom";
 import AdminLayout from "@/components/layout/AdminLayout";
 import Dashboard from "@/pages/Dashboard";
 import ContentManager from "@/pages/ContentManager";
@@ -11,9 +11,15 @@ import SimulationDetail from "@/pages/SimulationDetail";
 import WaitlistManager from "@/pages/WaitlistManager";
 import AgentManager from "@/pages/AgentManager";
 import ShippingManager from "@/pages/ShippingManager";
-import Debug from "@/pages/Debug"; // Added Debug page
+import Debug from "@/pages/Debug"; 
 
 export const adminRoutes: RouteObject[] = [
+  // Redirect from /dashboard to /admin (legacy support)
+  {
+    path: "/dashboard",
+    element: <Navigate to="/admin" replace />
+  },
+  // Main admin routes
   {
     path: "/admin",
     element: <AdminLayout />,
@@ -28,7 +34,7 @@ export const adminRoutes: RouteObject[] = [
       { path: "waitlist", element: <WaitlistManager /> },
       { path: "agents", element: <AgentManager /> },
       { path: "shipping", element: <ShippingManager /> },
-      { path: "debug", element: <Debug /> }, // Added Debug route
+      { path: "debug", element: <Debug /> },
     ],
   },
 ];

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContextType } from "@/hooks/auth/types";
 import { showInfoToast, showErrorToast } from "@/lib/toast";
+import { log } from "@/utils/logging";
 
 export const useDashboardNavigation = (auth: AuthContextType) => {
   const { user, profile, isLoading, refreshProfile } = auth;
@@ -19,12 +20,12 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
   const getDashboardPath = () => {
     // Default to player dashboard if no profile or if profile load is still pending
     if (!profile) {
-      console.log("No profile available, defaulting to /player dashboard");
+      log.info("No profile available, defaulting to /player dashboard");
       return "/player";
     }
     
-    console.log(`Navigating based on role: ${profile.role}`);
-    return profile.role === "admin" ? "/dashboard" : "/player";
+    log.info(`Navigating based on role: ${profile.role}`);
+    return profile.role === "admin" ? "/admin" : "/player";
   };
 
   // Handle dashboard navigation with robust error handling
@@ -39,7 +40,7 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
 
     // If not logged in (shouldn't happen due to UI hiding), redirect to auth
     if (!user) {
-      console.error("Dashboard click attempted without login");
+      log.error("Dashboard click attempted without login");
       showInfoToast("Not signed in", "Please sign in to access your dashboard");
       navigate('/auth');
       return;
@@ -48,14 +49,14 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
     try {
       // If no profile, try to refresh it before navigation
       if (!profile) {
-        console.warn("Profile not loaded yet. Attempting refresh before navigation.");
+        log.warn("Profile not loaded yet. Attempting refresh before navigation.");
         showInfoToast("Loading your profile", "Please wait while we access your information");
         
         // Try to refresh the profile and navigate on success
         refreshProfile().then(success => {
           if (success) {
             const path = getDashboardPath();
-            console.log(`Profile refresh successful, navigating to: ${path}`);
+            log.info(`Profile refresh successful, navigating to: ${path}`);
             navigate(path);
           } else {
             setNavError("Could not load your profile information. Please try again.");
@@ -65,11 +66,11 @@ export const useDashboardNavigation = (auth: AuthContextType) => {
       } else {
         // Profile is loaded, navigate directly
         const path = getDashboardPath();
-        console.log(`Navigating to ${path} for ${profile.role} user: ${profile.email}`);
+        log.info(`Navigating to ${path} for ${profile.role} user: ${profile.email}`);
         navigate(path);
       }
     } catch (error) {
-      console.error("Navigation error:", error);
+      log.error("Navigation error:", error);
       setNavError("An error occurred while navigating to your dashboard");
       showErrorToast("An unexpected error occurred. Please try again.");
     }
