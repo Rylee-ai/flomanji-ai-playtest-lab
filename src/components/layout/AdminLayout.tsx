@@ -32,15 +32,15 @@ const AdminLayout = () => {
   const location = useLocation();
   
   const navItems = [
-    { title: "Dashboard", icon: <Home className="h-4 w-4 mr-2" />, href: "/dashboard" },
-    { title: "Simulations", icon: <PlaySquare className="h-4 w-4 mr-2" />, href: "/simulations" },
-    { title: "Content", icon: <LayoutGrid className="h-4 w-4 mr-2" />, href: "/content" },
-    { title: "Rules", icon: <FileText className="h-4 w-4 mr-2" />, href: "/rules" },
-    { title: "AI Agents", icon: <Bot className="h-4 w-4 mr-2" />, href: "/agents" },
-    { title: "Playtesters", icon: <UserCheck className="h-4 w-4 mr-2" />, href: "/waitlist-manager" },
-    { title: "Shipping", icon: <Truck className="h-4 w-4 mr-2" />, href: "/shipping-manager" },
-    { title: "Settings", icon: <Settings className="h-4 w-4 mr-2" />, href: "/settings" },
-    { title: "Debug", icon: <BugIcon className="h-4 w-4 mr-2" />, href: "/debug", section: 'admin' },
+    { title: "Dashboard", icon: <Home className="h-4 w-4 mr-2" />, href: "/admin" },
+    { title: "Simulations", icon: <PlaySquare className="h-4 w-4 mr-2" />, href: "/admin/simulations" },
+    { title: "Content", icon: <LayoutGrid className="h-4 w-4 mr-2" />, href: "/admin/content" },
+    { title: "Rules", icon: <FileText className="h-4 w-4 mr-2" />, href: "/admin/rules" },
+    { title: "AI Agents", icon: <Bot className="h-4 w-4 mr-2" />, href: "/admin/agents" },
+    { title: "Playtesters", icon: <UserCheck className="h-4 w-4 mr-2" />, href: "/admin/waitlist" },
+    { title: "Shipping", icon: <Truck className="h-4 w-4 mr-2" />, href: "/admin/shipping" },
+    { title: "Settings", icon: <Settings className="h-4 w-4 mr-2" />, href: "/admin/settings" },
+    { title: "Debug", icon: <BugIcon className="h-4 w-4 mr-2" />, href: "/admin/debug", section: 'admin' },
   ];
   
   return (

@@ -29,7 +29,7 @@ const App = () => {
     }
   }, []);
 
-  // Combine all routes
+  // Combine all routes - make sure publicRoutes comes first to properly handle the homepage
   const allRoutes = [
     ...publicRoutes,
     ...adminRoutes,

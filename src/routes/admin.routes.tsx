@@ -15,7 +15,7 @@ import Debug from "@/pages/Debug"; // Added Debug page
 
 export const adminRoutes: RouteObject[] = [
   {
-    path: "/",
+    path: "/admin",
     element: <AdminLayout />,
     children: [
       { index: true, element: <Dashboard /> },
