@@ -3,7 +3,7 @@
 
 ![Flomanji Card Back](/lovable-uploads/e5635414-17a2-485e-86cb-feaf926b9af5.png)
 
-A sophisticated AI-powered simulation tool for playtesting the Flomanji tabletop role-playing game - a semi-cooperative survival horror adventure set in an alternate 1987 Florida overrun with supernatural threats.
+An AI-powered simulation tool for playtesting the Flomanji tabletop role-playing game - a semi-cooperative survival horror adventure set in an alternate 1987 Florida overrun with supernatural threats.
 
 ## 🌴 Welcome to Flomanji
 
@@ -11,81 +11,101 @@ A sophisticated AI-powered simulation tool for playtesting the Flomanji tabletop
 
 Flomanji is a unique tabletop RPG that blends horror, absurdist comedy, and cooperative gameplay, all centered around the mysterious Flomanji Goblet - a sentient drinking vessel that serves as game master, dice roller, and unpredictable chaos engine. This digital Playtest Lab allows game designers to simulate playtests using advanced AI agents, generating detailed logs and analytics to refine the game experience.
 
-## 🎮 Game Overview
+## 🎮 Game Systems
 
-### The World of Flomanji
+### Twin-Timer Mechanics
 
-In an alternate 1987 Florida, reality has fractured. Strange phenomena have transformed the landscape into a dangerous playground of supernatural threats. Players control survivors attempting to complete missions while managing dual threats:
+Flomanji's core tension comes from two escalating threat meters:
 
-- **Heat**: A global danger counter (0-10) that rises each round
-- **Weirdness**: An individual corruption meter (0-10) that transforms characters when maxed
+- **Heat**: A global danger counter (0-10) that increases each round
+- **Weirdness**: Individual corruption meters (0-10) that transform characters when maxed
 
 When a character's Weirdness reaches 10, they become "Flomanjified" - transformed into a chaotic entity with unpredictable new abilities and motivations.
 
-### Core Game Mechanics
+### Core Gameplay
 
-- **Twin Timers System**: Heat and Weirdness create escalating tension
 - **Action Economy**: Each player takes 2 actions per turn from: Move, Use Gear, Interact, Team-Up, Rest, or Mission
 - **Dice System**: 2d6 + Stat checks against difficulty classes
-- **Card-Driven Gameplay**: Gear, hazards, treasures, and character abilities represented by cards
-- **The Flomanji Goblet**: A physical smart device that serves as game master, dice roller, and atmosphere generator
+- **Card-Driven Elements**: Gear, hazards, treasures, and character abilities represented by various card types
+- **The Flomanji Goblet**: Acts as game master, dice roller, and atmosphere generator with various voice personalities
 
 ## 🧪 AI Playtest Lab Features
 
-- **AI-Driven Simulations**: Test scenarios with advanced language model agents
-- **Multi-Agent System**: Orchestrates Game Master, Player, and Critic agents
-- **Complete Game State Tracking**: Monitors character stats, inventory, objectives, and map progression
-- **Rich Output Logs**: Generate detailed transcripts with GM narration, player decisions, and dice outcomes
-- **Advanced Analytics**: Track mission completion rates, character performance, and difficulty progression
-- **Decap CMS Integration**: Maintain cards, rules, and scenarios in a user-friendly interface
+### Simulation Architecture
 
-## 👤 Character Roles & Stats
+The Playtest Lab uses a sophisticated multi-agent architecture built around the `SimulationOrchestrator` class, which manages:
 
-Characters in Flomanji are defined by five core stats:
+- Game Master Agent: Narrates the game and responds to player actions
+- Player Agents: Make decisions based on character profiles and game state
+- Critic Agent: Analyzes gameplay for balance and narrative quality
 
-- **Brawn**: Physical strength for fighting and feats of power
-- **Moxie**: Agility and quick thinking for evasion and fast action
-- **Charm**: Social ability for negotiation and manipulation
-- **Grit**: Resilience and determination for enduring hardship
-- **Weird Sense**: Supernatural sensitivity for dealing with the uncanny
+### Simulation Components
 
-Each character also has unique abilities, starter gear, and special traits that allow them to approach challenges in different ways.
+- **SimulationRunner**: Coordinates the overall simulation process
+- **RoundManager**: Handles round progression and phase sequencing
+- **PlayerManager**: Controls character actions and decision-making
+- **GameStateManager**: Tracks the complete game state including regions, objectives, and character stats
+- **NarrationManager**: Generates narrative descriptions and scenario text
+
+### Analytical Tools
+
+- Mission success rates across different character combinations
+- Heat and Weirdness progression charts
+- Objective completion statistics
+- Critical failure points and bottlenecks
+- Character effectiveness comparisons
 
 ## 🃏 Card Types
 
-The Flomanji system uses various card types:
+The game features multiple card categories, each managed through dedicated collections:
 
+- **Treasure & Artifacts**: Valuable items with passive and active effects
+- **Hazards**: Environmental, creature, social, and supernatural threats
 - **Gear**: Tools, weapons, and equipment to help players survive
-- **Hazards**: Dangerous encounters requiring skill checks to overcome
-- **Treasure**: Valuable items that provide benefits or serve as mission objectives
-- **Region**: Map sections with unique effects and challenges
+- **Regions**: Map sections with unique effects and challenges
 - **Character**: Player-controlled survivors with unique abilities
 - **Chaos**: Global effects that alter gameplay rules temporarily
 - **Flomanjified**: Transformation cards for characters who succumb to Weirdness
 
-## 🗺️ Mission Types
+## 👥 Character System
+
+### Core Stats
+
+Characters are defined by five primary attributes:
+
+- **Brawn**: Physical strength for combat and feats of power
+- **Moxie**: Agility and quick thinking for evasion and fast action
+- **Charm**: Social ability for negotiation and interaction
+- **Grit**: Resilience and determination for enduring hardship
+- **Weird Sense**: Sensitivity to supernatural phenomena
+
+Each character also has health, weirdness, and luck meters, along with unique abilities and starter gear.
+
+## 📋 Mission Types
+
+The system supports various mission templates:
 
 - **Exploration**: Discover secrets and map unknown regions
 - **Escape**: Flee from overwhelming danger to a safe extraction point
-- **Escort**: Protect NPCs while navigating hazardous terrain
+- **Escort**: Protect NPCs while navigating hazards
 - **Collection**: Gather specific treasures or artifacts
 - **Boss**: Confront and defeat a powerful entity
 - **Solo**: Single-player challenges with specialized rules
 
 ## 🖥️ Technology Stack
 
-- React + TypeScript
-- TailwindCSS + Shadcn UI
-- OpenAI API for agent simulations
-- Decap CMS (formerly Netlify CMS)
-- Netlify Hosting
+- **Frontend**: React + TypeScript with TailwindCSS + Shadcn UI
+- **AI Integration**: OpenRouter API for language model access
+- **State Management**: Custom game state system with React Context
+- **Data Storage**: Local storage with optional cloud sync
+- **Development Tooling**: Vite, ESLint, TypeScript
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js (v18+)
-- OpenAI API key
+- OpenRouter API key
 
 ### Installation
 
@@ -94,19 +114,20 @@ The Flomanji system uses various card types:
 3. Start the development server: `npm run dev`
 4. Access the app at http://localhost:8080
 
-### Setting Up OpenAI API
+### Setting Up OpenRouter API
 
 1. Navigate to the Settings page
-2. Enter your OpenAI API key
-3. Click "Save API Key"
+2. Enter your OpenRouter API key
+3. Select your preferred language model
+4. Click "Save Settings"
 
-## 📋 Usage
+## 📊 Using the Playtest Lab
 
 ### Running a Simulation
 
 1. Navigate to Simulations > New Simulation
-2. Enter a scenario prompt or select a mission template
-3. Configure settings (rounds, player count, characters, etc.)
+2. Configure your scenario (rounds, player count, characters, etc.)
+3. Set mission parameters and advanced options
 4. Click "Start Simulation"
 5. Review the resulting play log and critic feedback
 
@@ -122,33 +143,8 @@ The Flomanji system uses various card types:
 1. Navigate to the Content page
 2. Create, edit, or delete cards of any type
 3. Preview how cards will appear in-game
-4. Import/export card collections for sharing
+4. Import/export card collections
 
-## 📊 Analytics & Balance
-
-The Playtest Lab provides powerful analytics:
-
-- Mission success rates across different character combinations
-- Heat and Weirdness progression charts
-- Objective completion statistics
-- Critical failure points and bottlenecks
-- Character effectiveness comparisons
-
-## 🔧 Deployment
-
-This application is designed to be deployed on Netlify:
-
-1. Connect your GitHub repository to Netlify
-2. Configure build settings:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-3. Enable Netlify Identity for authentication
-4. Configure environment variables (OPENAI_API_KEY) in Netlify settings
-
-## 📄 License
+## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👥 Contributing
-
-Contributions to improve the Flomanji Playtest Lab are welcome! Please see our contribution guidelines for more information.
