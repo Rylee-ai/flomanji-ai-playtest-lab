@@ -1,8 +1,7 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { User, Menu, X, Cup } from "lucide-react";
+import { User, Menu, X } from "lucide-react";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -36,15 +35,8 @@ const PublicHeader: React.FC<PublicHeaderProps> = ({
   return (
     <header className="border-b border-gray-800 bg-black z-10">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="font-bold text-xl flex items-center gap-2">
-          <span className="text-amber-400">FLOMANJI</span>
-          <span className="flex items-center">
-            <Cup className="h-5 w-5 mr-1 text-emerald-400 animate-pulse" />
-            <span className="text-emerald-400 font-semibold italic relative">
-              GOBLET
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-600/0 via-emerald-400 to-emerald-600/0"></span>
-            </span>
-          </span>
+        <Link to="/" className="font-bold text-xl flex items-center text-amber-400">
+          <span>FLOMANJI</span>
         </Link>
         
         <div className="hidden md:flex items-center space-x-6">
