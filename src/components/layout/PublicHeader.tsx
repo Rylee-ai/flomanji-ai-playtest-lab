@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { User, Menu, X, CupSoda } from "lucide-react";
+import { User, Menu, X, Cup } from "lucide-react";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +39,7 @@ const PublicHeader: React.FC<PublicHeaderProps> = ({
         <Link to="/" className="font-bold text-xl flex items-center gap-2">
           <span className="text-amber-400">FLOMANJI</span>
           <span className="flex items-center">
-            <CupSoda className="h-5 w-5 mr-1 text-emerald-400 animate-pulse" />
+            <Cup className="h-5 w-5 mr-1 text-emerald-400 animate-pulse" />
             <span className="text-emerald-400 font-semibold italic relative">
               GOBLET
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-emerald-600/0 via-emerald-400 to-emerald-600/0"></span>
