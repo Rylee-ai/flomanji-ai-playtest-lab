@@ -1,6 +1,7 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Clock, Users, Info, Goblet } from "lucide-react";
+import { Clock, Users, Info, CupSoda } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 /**
@@ -183,7 +184,7 @@ export const HeroSection = ({
           >
             {/* Goblet Header */}
             <div className="flex items-center justify-center md:justify-start mb-4">
-              <Goblet className="h-8 w-8 md:h-10 md:w-10 text-emerald-500 mr-3 animate-pulse" />
+              <CupSoda className="h-8 w-8 md:h-10 md:w-10 text-emerald-500 mr-3 animate-pulse" />
               <h2 className="text-2xl md:text-3xl font-bold text-emerald-300">
                 Meet The <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-emerald-200 to-teal-300">Goblet</span>
               </h2>
