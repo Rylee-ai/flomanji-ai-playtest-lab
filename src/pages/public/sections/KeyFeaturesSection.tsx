@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Shield, Map, Grid3X3 } from "lucide-react";
+import { Gamepad, Layers, Star, CircleDot } from "lucide-react";
 import { SectionBadge } from "@/components/sections/SectionBadge";
 
 export const KeyFeaturesSection = () => (
@@ -31,11 +31,11 @@ export const KeyFeaturesSection = () => (
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500 to-yellow-300 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
               <CardContent className="pt-8 relative z-10">
                 <div className="bg-gray-800/80 p-3 rounded-lg inline-block mb-4 group-hover:bg-yellow-900/30 group-hover:border-yellow-700/40 transition-colors border border-gray-700/50">
-                  <Zap className="h-6 w-6 text-yellow-500" />
+                  <Gamepad className="h-6 w-6 text-yellow-500" />
                 </div>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-yellow-400 transition-colors">AI Game Master</h3>
+                <h3 className="text-lg font-bold mb-2 group-hover:text-yellow-400 transition-colors">Mission Types</h3>
                 <p className="text-gray-400 text-sm">
-                  Dynamic storytelling powered by AI that adapts to your choices and creates unique gameplay experiences.
+                  Tackle diverse mission types including exploration, escape, escort, collection, and boss missions, each with unique objectives and challenges.
                 </p>
               </CardContent>
             </Card>
@@ -43,11 +43,11 @@ export const KeyFeaturesSection = () => (
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-300 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
               <CardContent className="pt-8 relative z-10">
                 <div className="bg-gray-800/80 p-3 rounded-lg inline-block mb-4 group-hover:bg-green-900/30 group-hover:border-green-700/40 transition-colors border border-gray-700/50">
-                  <Shield className="h-6 w-6 text-green-500" />
+                  <Layers className="h-6 w-6 text-green-500" />
                 </div>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-green-400 transition-colors">Risk Management</h3>
+                <h3 className="text-lg font-bold mb-2 group-hover:text-green-400 transition-colors">Diverse Card Types</h3>
                 <p className="text-gray-400 text-sm">
-                  Balance heat levels, resources, and strategy to survive the increasingly chaotic environment.
+                  Use an array of cards including gear, hazards, treasures, NPCs, regions, chaos effects, and the unique Flomanjified transformation cards.
                 </p>
               </CardContent>
             </Card>
@@ -55,11 +55,11 @@ export const KeyFeaturesSection = () => (
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-300 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
               <CardContent className="pt-8 relative z-10">
                 <div className="bg-gray-800/80 p-3 rounded-lg inline-block mb-4 group-hover:bg-blue-900/30 group-hover:border-blue-700/40 transition-colors border border-gray-700/50">
-                  <Map className="h-6 w-6 text-blue-500" />
+                  <Star className="h-6 w-6 text-blue-500" />
                 </div>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-blue-400 transition-colors">Mission System</h3>
+                <h3 className="text-lg font-bold mb-2 group-hover:text-blue-400 transition-colors">Character Roles</h3>
                 <p className="text-gray-400 text-sm">
-                  Complete unique objectives while exploring distinctive regions with special challenges.
+                  Choose from unique character roles, each with distinctive abilities, starting gear, and transformation potential at maximum Weirdness.
                 </p>
               </CardContent>
             </Card>
@@ -67,11 +67,11 @@ export const KeyFeaturesSection = () => (
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-300 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
               <CardContent className="pt-8 relative z-10">
                 <div className="bg-gray-800/80 p-3 rounded-lg inline-block mb-4 group-hover:bg-red-900/30 group-hover:border-red-700/40 transition-colors border border-gray-700/50">
-                  <Grid3X3 className="h-6 w-6 text-red-500" />
+                  <CircleDot className="h-6 w-6 text-red-500" />
                 </div>
-                <h3 className="text-lg font-bold mb-2 group-hover:text-red-400 transition-colors">Flomanjified Cards</h3>
+                <h3 className="text-lg font-bold mb-2 group-hover:text-red-400 transition-colors">AI Playtest Lab</h3>
                 <p className="text-gray-400 text-sm">
-                  Encounter bizarre paradise-themed hazards, characters and treasures with unique abilities.
+                  Use our AI-powered simulation system to test scenarios, character builds, and missions before physically playing them with your group.
                 </p>
               </CardContent>
             </Card>

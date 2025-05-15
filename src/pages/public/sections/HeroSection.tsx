@@ -110,13 +110,13 @@ export const HeroSection = ({
               FLOMANJI:
             </span>
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-500 drop-shadow-[0_2px_8.5px_rgba(252,174,38,0.25)] animate-[fade-in_1.15s_ease-in]">
-              Can You Escape Paradise?
+              Twin-Timer Survival
             </span>
           </h1>
 
           {/* Subheading */}
           <p className="text-center text-base md:text-xl max-w-xl mb-8 text-white/95 font-medium drop-shadow-[0_2px_9px_rgba(0,0,0,0.25)] leading-relaxed animate-fade-in">
-            A deck-building survival adventure where paradise and chaos collide in an unforgettable journey of strategy and suspense.
+            Balance Heat and Weirdness as you navigate through a dangerous paradise, where character transformation and strategic action management are essential for survival.
           </p>
           
           {/* CTA Button */}

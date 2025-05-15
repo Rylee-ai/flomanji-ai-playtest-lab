@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Map, Sparkles } from "lucide-react";
+import { Thermometer, Brain, Cards } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SectionBadge } from "@/components/sections/SectionBadge";
 
@@ -31,18 +31,18 @@ export const GameOverviewSection = () => (
             <Card className="bg-gradient-to-br from-amber-950/30 to-amber-900/10 p-5 rounded-lg border border-amber-800/30 hover:border-amber-700/50 transition-all shadow-lg group hover:-translate-y-1 duration-300">
               <CardContent className="p-0">
                 <div className="flex items-center justify-center h-12 w-12 bg-amber-900/40 rounded-md mb-4 group-hover:bg-amber-800/60 transition-colors">
-                  <Zap className="h-6 w-6 text-amber-400" />
+                  <Thermometer className="h-6 w-6 text-amber-400" />
                 </div>
-                <h4 className="font-bold mb-3 text-xl text-amber-300">Deck Building</h4>
+                <h4 className="font-bold mb-3 text-xl text-amber-300">Twin-Timer System</h4>
                 <Badge className="bg-amber-600/80 hover:bg-amber-600 mb-4">Core Mechanic</Badge>
                 <p className="text-gray-300 mb-4">
-                  Build your survival deck from a mix of Gear, Treasures, and Character cards. Each card has unique effects that can combo with others.
+                  Balance your character's Heat and Weirdness levels, with each increasing the tension and unlocking new abilities or risks.
                 </p>
                 <ul className="text-sm text-gray-400 space-y-2 list-disc list-inside">
-                  <li>Start with basic gear cards</li>
-                  <li>Find treasures during exploration</li>
-                  <li>Unlock character-specific abilities</li>
-                  <li>Create powerful card combinations</li>
+                  <li>Heat caps at 10, triggering mission failure</li>
+                  <li>High Heat (9+) increases Weirdness</li>
+                  <li>Weirdness transforms characters at max level</li>
+                  <li>Risk management is key to survival</li>
                 </ul>
               </CardContent>
             </Card>
@@ -50,18 +50,20 @@ export const GameOverviewSection = () => (
             <Card className="bg-gradient-to-br from-blue-950/30 to-blue-900/10 p-5 rounded-lg border border-blue-800/30 hover:border-blue-700/50 transition-all shadow-lg group hover:-translate-y-1 duration-300">
               <CardContent className="p-0">
                 <div className="flex items-center justify-center h-12 w-12 bg-blue-900/40 rounded-md mb-4 group-hover:bg-blue-800/60 transition-colors">
-                  <Map className="h-6 w-6 text-blue-400" />
+                  <Cards className="h-6 w-6 text-blue-400" />
                 </div>
-                <h4 className="font-bold mb-3 text-xl text-blue-300">Heat System</h4>
+                <h4 className="font-bold mb-3 text-xl text-blue-300">Action Economy</h4>
                 <Badge className="bg-blue-600/80 hover:bg-blue-600 mb-4">Core Mechanic</Badge>
                 <p className="text-gray-300 mb-4">
-                  Manage your Heat level as you explore. Higher Heat increases both risks and rewards, making each decision crucial.
+                  Each character gets two actions per turn, choosing from six distinct action types to navigate missions.
                 </p>
                 <ul className="text-sm text-gray-400 space-y-2 list-disc list-inside">
-                  <li>Heat rises from hazards & actions</li>
-                  <li>Max Heat level of 10</li>
-                  <li>Special abilities unlock at high Heat</li>
-                  <li>Find ways to reduce Heat levels</li>
+                  <li>Move between connected regions</li>
+                  <li>Use gear for powerful effects</li>
+                  <li>Interact with the environment</li>
+                  <li>Team-up with other characters</li>
+                  <li>Rest to recover resources</li>
+                  <li>Complete mission objectives</li>
                 </ul>
               </CardContent>
             </Card>
@@ -69,18 +71,19 @@ export const GameOverviewSection = () => (
             <Card className="bg-gradient-to-br from-green-950/30 to-green-900/10 p-5 rounded-lg border border-green-800/30 hover:border-green-700/50 transition-all shadow-lg group hover:-translate-y-1 duration-300">
               <CardContent className="p-0">
                 <div className="flex items-center justify-center h-12 w-12 bg-green-900/40 rounded-md mb-4 group-hover:bg-green-800/60 transition-colors">
-                  <Sparkles className="h-6 w-6 text-green-400" />
+                  <Brain className="h-6 w-6 text-green-400" />
                 </div>
-                <h4 className="font-bold mb-3 text-xl text-green-300">Character Abilities</h4>
+                <h4 className="font-bold mb-3 text-xl text-green-300">Character Stats</h4>
                 <Badge className="bg-green-600/80 hover:bg-green-600 mb-4">Core Mechanic</Badge>
                 <p className="text-gray-300 mb-4">
-                  Each character has unique abilities that shape their playstyle and offer different strategies for survival.
+                  Five distinct character attributes determine your capabilities and playstyle for overcoming challenges.
                 </p>
                 <ul className="text-sm text-gray-400 space-y-2 list-disc list-inside">
-                  <li>Unique starting abilities</li>
-                  <li>Unlock more as you level up</li>
-                  <li>Synergize with specific cards</li>
-                  <li>Transform at max Weirdness</li>
+                  <li>Brawn: Physical strength</li>
+                  <li>Moxie: Courage and fortitude</li>
+                  <li>Charm: Social influence</li>
+                  <li>Grit: Mental resilience</li>
+                  <li>Weird Sense: Perception of the strange</li>
                 </ul>
               </CardContent>
             </Card>
