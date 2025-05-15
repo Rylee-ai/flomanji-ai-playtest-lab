@@ -107,16 +107,16 @@ export const HeroSection = ({
             {/* Logo / Title */}
             <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 md:mb-2 leading-tight drop-shadow-[0_2px_10px_rgba(249,220,94,0.18)] text-center md:text-left max-w-full break-words">
               <span className="block text-white animate-[fade-in_0.67s_ease-in] drop-shadow-[0_2px_10px_rgba(255,255,255,0.17)]">
-                FLOMANJI:
+                FLOMANJI
               </span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-500 drop-shadow-[0_2px_8.5px_rgba(252,174,38,0.25)] animate-[fade-in_1.15s_ease-in]">
-                Twin-Timer Survival
+                The Goblet's Realm
               </span>
             </h1>
 
             {/* Subheading */}
             <p className="text-center md:text-left text-base md:text-xl max-w-xl mb-8 text-white/95 font-medium drop-shadow-[0_2px_9px_rgba(0,0,0,0.25)] leading-relaxed animate-fade-in">
-              Balance Heat and Weirdness as you navigate through a dangerous paradise, where character transformation and strategic action management are essential for survival.
+              Experience the thrill of adventure through the eyes of Goblet - your ornately carved AI game master who brings the wild world of Flomanji to life.
             </p>
             
             {/* CTA Button */}
