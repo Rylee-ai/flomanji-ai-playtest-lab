@@ -2,7 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Thermometer, Brain, Cards } from "lucide-react";
+import { Thermometer, Brain, CreditCard } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SectionBadge } from "@/components/sections/SectionBadge";
 
@@ -50,7 +50,7 @@ export const GameOverviewSection = () => (
             <Card className="bg-gradient-to-br from-blue-950/30 to-blue-900/10 p-5 rounded-lg border border-blue-800/30 hover:border-blue-700/50 transition-all shadow-lg group hover:-translate-y-1 duration-300">
               <CardContent className="p-0">
                 <div className="flex items-center justify-center h-12 w-12 bg-blue-900/40 rounded-md mb-4 group-hover:bg-blue-800/60 transition-colors">
-                  <Cards className="h-6 w-6 text-blue-400" />
+                  <CreditCard className="h-6 w-6 text-blue-400" />
                 </div>
                 <h4 className="font-bold mb-3 text-xl text-blue-300">Action Economy</h4>
                 <Badge className="bg-blue-600/80 hover:bg-blue-600 mb-4">Core Mechanic</Badge>
