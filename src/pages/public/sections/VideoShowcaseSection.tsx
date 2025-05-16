@@ -1,13 +1,13 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Play, Video } from "lucide-react";
+import { Play, Gamepad } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { SectionBadge } from "@/components/sections/SectionBadge";
 
 /**
- * 1987-Inspired VHS Video Showcase 
- * Displays a promotional video with retro VHS styling
+ * 1987-Inspired Arcade Video Showcase 
+ * Displays a promotional video with retro arcade styling
  */
 export const VideoShowcaseSection = () => {
   const [videoPlaying, setVideoPlaying] = useState(false);
@@ -18,8 +18,11 @@ export const VideoShowcaseSection = () => {
   };
 
   return (
-    <section className="py-20 bg-gray-950 relative overflow-hidden">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <section className="py-16 bg-gray-950 relative overflow-hidden">
+      {/* Arcade grid background */}
+      <div className="absolute inset-0 arcade-grid opacity-10"></div>
+      
+      <div className="container mx-auto px-4 max-w-5xl">
         <div className="grid grid-cols-12 gap-6">
           {/* Left side with badge and line */}
           <div className="col-span-12 md:col-span-1 flex flex-col items-center">
@@ -28,16 +31,16 @@ export const VideoShowcaseSection = () => {
 
           {/* Content */}
           <div className="col-span-12 md:col-span-11">
-            <h2 className="text-3xl font-extrabold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-pink-200 to-pink-400 drop-shadow-md animate-fade-in font-playfair">
+            <h2 className="text-2xl md:text-3xl readable-heading font-retro mb-6 text-cyan-300">
               THE GOBLET EXPERIENCE
             </h2>
             
-            <div className="max-w-4xl mx-auto">
-              {/* VHS-style video player */}
-              <div className="relative bg-black rounded-lg overflow-hidden border-8 border-gray-900 shadow-[0_0_40px_rgba(236,72,153,0.3)]">
-                {/* VHS label */}
+            <div className="max-w-3xl mx-auto">
+              {/* Arcade-style video player */}
+              <div className="relative bg-black rounded-lg overflow-hidden border-4 border-gray-800 arcade-border">
+                {/* Arcade ticket label */}
                 <div className="absolute -right-2 -top-2 transform rotate-6 bg-white py-1 px-3 text-xs font-bold text-black z-10 font-mono">
-                  FLOMANJI-1987
+                  INSERT COIN
                 </div>
                 
                 {/* Video Content */}
@@ -47,72 +50,62 @@ export const VideoShowcaseSection = () => {
                       {!videoPlaying ? (
                         <>
                           <div className="text-center mb-4">
-                            <Video className="w-16 h-16 mx-auto text-pink-500 mb-4" />
-                            <h3 className="text-pink-500 font-bold text-xl mb-2 font-mono tracking-widest">THE GOBLET SPEAKS</h3>
-                            <p className="text-gray-400 text-sm max-w-md mx-auto">
-                              Experience the enigmatic Goblet in action as it guides players through the supernatural dangers of 1987 Florida
+                            <Gamepad className="w-12 h-12 mx-auto text-cyan-400 mb-4" />
+                            <h3 className="text-cyan-400 font-bold text-xl mb-2 font-retro tracking-wide">PLAY DEMO</h3>
+                            <p className="text-gray-200 text-sm max-w-md mx-auto readable-text">
+                              See the Goblet in action guiding players through 1987 Florida
                             </p>
                           </div>
                           <Button 
                             onClick={handlePlayVideo}
-                            className="bg-pink-600 hover:bg-pink-700 text-white group flex items-center gap-2"
+                            className="bg-cyan-600 hover:bg-cyan-700 text-white group flex items-center gap-2"
                           >
                             <Play className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                            Play Demo Reel
+                            INSERT COIN TO PLAY
                           </Button>
                         </>
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gray-900">
-                          <p className="text-white/70 text-sm">Video demonstration placeholder</p>
+                          <p className="text-cyan-300 text-base font-retro">GAME DEMO LOADING...</p>
                           {/* In a real implementation, we'd embed an actual video here */}
                         </div>
                       )}
                     </div>
                     
-                    {/* VHS Effects */}
+                    {/* Arcade Effects */}
                     <div className="absolute inset-0 pointer-events-none">
-                      {/* Scanlines */}
-                      <div className="absolute inset-0" style={{
-                        backgroundImage: "linear-gradient(transparent 50%, rgba(0, 0, 0, 0.1) 50%)",
-                        backgroundSize: "100% 4px",
-                        mixBlendMode: "overlay"
-                      }}></div>
+                      {/* Scanlines - more subtle for readability */}
+                      <div className="absolute inset-0 arcade-scanline opacity-30"></div>
                       
-                      {/* Color bleeding */}
-                      <div className="absolute inset-0 opacity-10" style={{
+                      {/* Subtle color bleeding for arcade feel */}
+                      <div className="absolute inset-0 opacity-5" style={{
                         backgroundImage: "linear-gradient(90deg, #ff0000, #00ff00, #0000ff)",
                         mixBlendMode: "color"
                       }}></div>
                       
                       {/* Noise */}
-                      <div className="absolute inset-0 opacity-5 mix-blend-overlay bg-noise"></div>
-                      
-                      {/* Tracking lines - random position */}
-                      <div className="absolute h-6 w-full left-0 bg-white/10 mix-blend-overlay blur-sm" style={{
-                        top: `${Math.random() * 100}%`,
-                        transform: "translateY(-50%)"
-                      }}></div>
+                      <div className="absolute inset-0 opacity-5 mix-blend-overlay arcade-static"></div>
                     </div>
                   </AspectRatio>
                 </div>
                 
-                {/* VCR Controls */}
-                <div className="bg-gray-900 p-3 flex justify-center gap-4 font-mono text-xs text-gray-400">
-                  <button className="hover:text-pink-400">■ STOP</button>
-                  <button className="hover:text-pink-400">▶ PLAY</button>
-                  <button className="hover:text-pink-400">◼︎◼︎ PAUSE</button>
-                  <button className="hover:text-pink-400">◀◀ REW</button>
-                  <button className="hover:text-pink-400">▶▶ FF</button>
-                  <div className="ml-auto text-[10px] flex items-center">
-                    <span className="text-green-400 mr-1">●</span> REC
+                {/* Arcade Controls */}
+                <div className="bg-gray-900 p-3 flex justify-between items-center">
+                  <div className="font-mono text-xs text-gray-200 flex gap-4">
+                    <button className="hover:text-cyan-400 px-2 py-1 rounded border border-gray-700">PLAY</button>
+                    <button className="hover:text-cyan-400 px-2 py-1 rounded border border-gray-700">PAUSE</button>
+                  </div>
+                  <div className="text-[10px] flex items-center">
+                    <span className="inline-block w-2 h-2 bg-red-500 rounded-full mr-1"></span>
+                    <span className="text-gray-300 font-mono">HIGH SCORE: 9999</span>
                   </div>
                 </div>
               </div>
               
-              {/* Video Info */}
-              <div className="mt-6 text-center">
-                <p className="text-gray-400 text-sm">
-                  ©1987 FLOMANJI ENTERPRISES - RECORDED IN MIAMI, FL - VHS HI-FI STEREO
+              {/* Video Info - clearer text */}
+              <div className="mt-4 text-center">
+                <p className="text-gray-300 text-sm font-mono">
+                  ©1987 FLOMANJI ARCADE - MIAMI, FL
                 </p>
               </div>
             </div>

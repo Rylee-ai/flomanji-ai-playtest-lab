@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border-2 border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
@@ -22,12 +22,17 @@ const buttonVariants = cva(
         success: "bg-green-600 text-white hover:bg-green-700",
         warning: "bg-yellow-600 text-white hover:bg-yellow-700",
         info: "bg-blue-600 text-white hover:bg-blue-700",
+        // New arcade-styled button variants
+        arcade: "bg-cyan-600 text-white border-2 border-cyan-400 shadow-[0_0_10px_rgba(0,255,255,0.5)] hover:bg-cyan-700 hover:shadow-[0_0_15px_rgba(0,255,255,0.7)] transition-all",
+        arcadeRed: "bg-red-600 text-white border-2 border-red-400 shadow-[0_0_10px_rgba(255,0,0,0.5)] hover:bg-red-700 hover:shadow-[0_0_15px_rgba(255,0,0,0.7)] transition-all",
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
+        // New arcade-styled size
+        arcade: "h-12 px-6 py-2 text-base font-bold tracking-wider",
       },
     },
     defaultVariants: {

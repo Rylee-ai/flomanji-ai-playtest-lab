@@ -12,8 +12,10 @@ import { FooterSection } from "./sections/FooterSection";
 import { VideoShowcaseSection } from "./sections/VideoShowcaseSection";
 import { GameCardGallery } from "./sections/GameCardGallery";
 
-// Add the new 1987-themed sections in the flow
-
+/**
+ * HomePage Component - Now with improved spacing and readability
+ * while maintaining 1987 arcade aesthetics
+ */
 const HomePage = () => {
   const waitlistRef = useRef<HTMLDivElement>(null);
 
@@ -23,29 +25,32 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
+      {/* Hero Section */}
       <HeroSection scrollToWaitlist={scrollToWaitlist} />
       
-      {/* Added IDs for anchor link targets */}
-      <section id="overview"><GameOverviewSection /></section>
-      <section id="features"><KeyFeaturesSection /></section>
-      <section id="design-pillars"><DesignPillarsSection /></section>
+      {/* Main Content - Added IDs for anchor links with better spacing between sections */}
+      <section id="overview" className="border-t border-gray-800"><GameOverviewSection /></section>
+      <section id="features" className="border-t border-gray-800"><KeyFeaturesSection /></section>
+      <section id="design-pillars" className="border-t border-gray-800"><DesignPillarsSection /></section>
       
-      {/* New 1987-themed sections */}
+      {/* 1987 Arcade-themed sections */}
       <VideoShowcaseSection />
       <GameCardGallery />
       
-      <section id="gameplay">
+      {/* Gameplay Link - More visible */}
+      <section id="gameplay" className="py-6 bg-gray-900 border-t border-b border-gray-800">
         <a
           href="/gameplay"
-          className="block text-amber-400 hover:underline hover-scale transition cursor-pointer text-lg py-4 text-center"
+          className="block text-cyan-300 hover:underline hover:text-cyan-400 hover-scale transition cursor-pointer text-lg py-4 text-center font-retro"
           aria-label="Go to the Gameplay page"
         >
-          Explore Gameplay Details &rarr;
+          EXPLORE GAMEPLAY DETAILS &rarr;
         </a>
       </section>
       
+      {/* Call to Action and Info Sections */}
       <CallToActionSection scrollToWaitlist={scrollToWaitlist} />
-      <section id="faq"><GameSpecificationsSection /></section>
+      <section id="faq" className="border-t border-gray-800"><GameSpecificationsSection /></section>
       <PreOrderSection />
       <WaitlistSignupSection ref={waitlistRef} />
       <FooterSection />
