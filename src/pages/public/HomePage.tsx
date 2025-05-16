@@ -9,8 +9,10 @@ import { GameSpecificationsSection } from "./sections/GameSpecificationsSection"
 import { PreOrderSection } from "./sections/PreOrderSection";
 import { WaitlistSignupSection } from "./sections/WaitlistSignupSection";
 import { FooterSection } from "./sections/FooterSection";
+import { VideoShowcaseSection } from "./sections/VideoShowcaseSection";
+import { GameCardGallery } from "./sections/GameCardGallery";
 
-// Restoring the original 1-2-3 flow with the DesignPillarsSection as the third component
+// Add the new 1987-themed sections in the flow
 
 const HomePage = () => {
   const waitlistRef = useRef<HTMLDivElement>(null);
@@ -22,10 +24,16 @@ const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-black text-white">
       <HeroSection scrollToWaitlist={scrollToWaitlist} />
+      
       {/* Added IDs for anchor link targets */}
       <section id="overview"><GameOverviewSection /></section>
       <section id="features"><KeyFeaturesSection /></section>
       <section id="design-pillars"><DesignPillarsSection /></section>
+      
+      {/* New 1987-themed sections */}
+      <VideoShowcaseSection />
+      <GameCardGallery />
+      
       <section id="gameplay">
         <a
           href="/gameplay"
@@ -35,6 +43,7 @@ const HomePage = () => {
           Explore Gameplay Details &rarr;
         </a>
       </section>
+      
       <CallToActionSection scrollToWaitlist={scrollToWaitlist} />
       <section id="faq"><GameSpecificationsSection /></section>
       <PreOrderSection />
